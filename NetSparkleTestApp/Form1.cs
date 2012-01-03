@@ -32,11 +32,11 @@ namespace NetSparkleTestApp
             DialogResult res = MessageBox.Show("Update detected, perform unattended", "Update", MessageBoxButtons.YesNoCancel);
 
             if (res == System.Windows.Forms.DialogResult.Yes)
-                e.NextAction = nNextUpdateAction.performUpdateUnattended;
+                e.NextAction = NextUpdateAction.PerformUpdateUnattended;
             else if (res == System.Windows.Forms.DialogResult.Cancel)
-                e.NextAction = nNextUpdateAction.prohibitUpdate;
+                e.NextAction = NextUpdateAction.ProhibitUpdate;
             else
-                e.NextAction = nNextUpdateAction.showStandardUserInterface;
+                e.NextAction = NextUpdateAction.ShowStandardUserInterface;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

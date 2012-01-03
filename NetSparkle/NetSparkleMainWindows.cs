@@ -10,10 +10,16 @@ using System.IO;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// Form to show the main window
+    /// </summary>
     public partial class NetSparkleMainWindows : Form, IDisposable
     {
         private StreamWriter sw = null;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public NetSparkleMainWindows()
         {
             // init ui
@@ -23,6 +29,10 @@ namespace AppLimit.NetSparkle
             sw = File.CreateText(Path.Combine(Environment.ExpandEnvironmentVariables("%temp%"), "NetSparkle.log"));
         }
 
+        /// <summary>
+        /// Reports a message
+        /// </summary>
+        /// <param name="message">the message</param>
         public void Report(String message)
         {
             if (lstActions.InvokeRequired)
@@ -41,6 +51,10 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Reports a message to a file
+        /// </summary>
+        /// <param name="msg">the message</param>
         private void ReportToFile(String msg)
         {
             try

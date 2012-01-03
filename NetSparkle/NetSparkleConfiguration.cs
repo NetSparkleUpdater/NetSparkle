@@ -21,13 +21,37 @@ namespace AppLimit.NetSparkle
     /// </summary>    
     public class NetSparkleConfiguration
     {
-        public String   ApplicationName     { get; private set; }
-        public String   InstalledVersion    { get; private set; }
-        public Boolean  CheckForUpdate      { get; private set; }
+        /// <summary>
+        /// The application name
+        /// </summary>
+        public string   ApplicationName     { get; private set; }
+        /// <summary>
+        /// The currently-installed version
+        /// </summary>
+        public string   InstalledVersion    { get; private set; }
+        /// <summary>
+        /// Flag to indicate if we should check for updates
+        /// </summary>
+        public bool     CheckForUpdate      { get; private set; }
+        /// <summary>
+        /// Last check time
+        /// </summary>
         public DateTime LastCheckTime       { get; private set; }
-        public String   SkipThisVersion     { get; private set; }
-        public Boolean  DidRunOnce           { get; private set; }
-        public Boolean ShowDiagnosticWindow { get; private set; }
+        /// <summary>
+        /// The last-skipped version number
+        /// </summary>
+        public string   SkipThisVersion     { get; private set; }
+        /// <summary>
+        /// The application ran once
+        /// </summary>
+        public bool     DidRunOnce           { get; private set; }
+        /// <summary>
+        /// Flag to indicate showing the diagnostic window
+        /// </summary>
+        public bool     ShowDiagnosticWindow { get; private set; }
+        /// <summary>
+        /// Last profile update
+        /// </summary>
         public DateTime LastProfileUpdate   { get; private set; }
 
         /// <summary>
@@ -42,17 +66,23 @@ namespace AppLimit.NetSparkle
         /// <summary>
         /// The constructor reads out all configured values
         /// </summary>        
-        public NetSparkleConfiguration(String ReferenceAssembly)
-            : this(ReferenceAssembly, true)
+        /// <param name="referenceAssembly">the reference assembly name</param>
+        public NetSparkleConfiguration(String referenceAssembly)
+            : this(referenceAssembly, true)
         { }
 
-        public NetSparkleConfiguration(String ReferenceAssembly, Boolean UseReflectionBasedAssemblyAccessor)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="referenceAssembly">the name of hte reference assembly</param>
+        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        public NetSparkleConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
         {
             // set the value
-            this.UseReflectionBasedAssemblyAccessor = UseReflectionBasedAssemblyAccessor;
+            this.UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
 
             // save the referecne assembly
-            _referenceAssembly = ReferenceAssembly;
+            _referenceAssembly = referenceAssembly;
 
             try
             {
@@ -60,7 +90,7 @@ namespace AppLimit.NetSparkle
                 InitWithDefaultValues();
 
                 // set some value from the binary
-                NetSparkleAssemblyAccessor accessor = new NetSparkleAssemblyAccessor(ReferenceAssembly, this.UseReflectionBasedAssemblyAccessor);
+                NetSparkleAssemblyAccessor accessor = new NetSparkleAssemblyAccessor(referenceAssembly, this.UseReflectionBasedAssemblyAccessor);
                 ApplicationName     = accessor.AssemblyProduct;
                 InstalledVersion    = accessor.AssemblyVersion;
 

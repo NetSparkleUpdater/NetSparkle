@@ -1,44 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Threading;
-using System.Net;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Management;
-using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
+using System.Net;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// The operation has started
+    /// </summary>
+    /// <param name="sender">the sender</param>
     public delegate void LoopStartedOperation(Object sender);
+    /// <summary>
+    /// The operation has ended
+    /// </summary>
+    /// <param name="sender">the sender</param>
+    /// <param name="UpdateRequired"><c>true</c> if an update is required</param>
     public delegate void LoopFinishedOperation(Object sender, Boolean UpdateRequired);
-
-    /// <summary>
-    /// Everytime when netsparkle detects an update the 
-    /// consumer can decide what should happen as next with the help 
-    /// of the UpdateDatected event
-    /// </summary>
-    public enum nNextUpdateAction
-    {
-        showStandardUserInterface = 1,
-        performUpdateUnattended = 2,
-        prohibitUpdate = 3
-    }
-
-    /// <summary>
-    /// Contains all information for the update detected event
-    /// </summary>
-    public class UpdateDetectedEventArgs : EventArgs
-    {
-        public nNextUpdateAction NextAction;
-        public NetSparkleConfiguration ApplicationConfig;
-        public NetSparkleAppCastItem LatestVersion;        
-    }
 
     /// <summary>
     /// This delegate will be used when an update was detected to allow library 
@@ -48,6 +29,9 @@ namespace AppLimit.NetSparkle
     /// <param name="e"></param>
     public delegate void UpdateDetected(Object sender, UpdateDetectedEventArgs e);
 
+    /// <summary>
+    /// Class to communicate with a sparkle-based appcast
+    /// </summary>
     public class Sparkle : IDisposable
     {
         private BackgroundWorker _worker = new BackgroundWorker();
@@ -222,8 +206,8 @@ namespace AppLimit.NetSparkle
         /// the check. You should only call this function when your app is initialized and 
         /// shows its main window.
         /// </summary>
-        /// <param name="doInitialCheck"></param>
-        /// <param name="checkFrequency"></param>
+        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+        /// <param name="checkFrequency">the frequency between checks.</param>
         public void StartLoop(Boolean doInitialCheck, TimeSpan checkFrequency)
         {
             StartLoop(doInitialCheck, false, checkFrequency);
@@ -235,8 +219,8 @@ namespace AppLimit.NetSparkle
         /// the check. You should only call this function when your app is initialized and 
         /// shows its main window.
         /// </summary>
-        /// <param name="doInitialCheck"></param>
-        /// <param name="forceInitialCheck"></param>
+        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+        /// <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
         public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck)
         {
             StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
@@ -248,9 +232,9 @@ namespace AppLimit.NetSparkle
         /// the check. You should only call this function when your app is initialized and 
         /// shows its main window.
         /// </summary>
-        /// <param name="doInitialCheck"></param>
-        /// <param name="forceInitialCheck"></param>
-        /// <param name="checkFrequency"></param>
+        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+        /// <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
+        /// <param name="checkFrequency">the frequency between checks.</param>
         public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
         {
             // first set the event handle
@@ -295,7 +279,7 @@ namespace AppLimit.NetSparkle
         /// <summary>
         /// This method updates the profile information which can be sended to the server if enabled    
         /// </summary>
-        /// <param name="config"></param>
+        /// <param name="config">the configuration</param>
         public void UpdateSystemProfileInformation(NetSparkleConfiguration config)
         {
             // check if profile data is enabled
@@ -317,7 +301,7 @@ namespace AppLimit.NetSparkle
         /// <summary>
         /// Profile data thread
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">the configuration object</param>
         private void ProfileDataThreadStart(object obj)
         {
             try
@@ -356,9 +340,10 @@ namespace AppLimit.NetSparkle
         /// the calling process has access to the internet and read access to the 
         /// reference assembly. This method is also called from the background loops.
         /// </summary>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public Boolean IsUpdateRequired(NetSparkleConfiguration config, out NetSparkleAppCastItem latestVersion)
+        /// <param name="config">the configuration</param>
+        /// <param name="latestVersion">returns the latest version</param>
+        /// <returns><c>true</c> if an update is required</returns>
+        public bool IsUpdateRequired(NetSparkleConfiguration config, out NetSparkleAppCastItem latestVersion)
         {
             // report
             ReportDiagnosticMessage("Downloading and checking appcast");
@@ -419,20 +404,17 @@ namespace AppLimit.NetSparkle
         /// This method reads the local sparkle configuration for the given
         /// reference assembly
         /// </summary>
-        /// <param name="AppReferenceAssembly"></param>
-        /// <returns></returns>
+        /// <returns>the configuration</returns>
         public NetSparkleConfiguration GetApplicationConfig()
         {
-            NetSparkleConfiguration config;
-            config = new NetSparkleConfiguration(_AppReferenceAssembly);
-            return config;
+            return new NetSparkleConfiguration(_AppReferenceAssembly);;
         }
 
         /// <summary>
         /// This method shows the update ui and allows to perform the 
         /// update process
         /// </summary>
-        /// <param name="currentItem"></param>
+        /// <param name="currentItem">the item to show the UI for</param>
         public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem)
         {
             // create the form
@@ -556,26 +538,26 @@ namespace AppLimit.NetSparkle
                 ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + latestVersion.Version);
 
                 // send notification if needed
-                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = nNextUpdateAction.showStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
+                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
                 if (updateDetected != null)
                     updateDetected(this, ev);
                 
                 // check results
                 switch(ev.NextAction)
                 {
-                    case nNextUpdateAction.performUpdateUnattended:
+                    case NextUpdateAction.PerformUpdateUnattended:
                         {
                             ReportDiagnosticMessage("Unattended update whished from consumer");
                             EnableSilentMode = true;
                             _worker.ReportProgress(1, latestVersion);
                             break;
                         }
-                    case nNextUpdateAction.prohibitUpdate:
+                    case NextUpdateAction.ProhibitUpdate:
                         {
                             ReportDiagnosticMessage("Update prohibited from consumer");
                             break;
                         }
-                    case nNextUpdateAction.showStandardUserInterface:
+                    case NextUpdateAction.ShowStandardUserInterface:
                     default:
                         {
                             ReportDiagnosticMessage("Standard UI update whished from consumer");

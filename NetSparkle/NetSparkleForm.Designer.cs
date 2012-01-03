@@ -1,5 +1,8 @@
 ﻿namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// The main form
+    /// </summary>
     partial class NetSparkleForm
     {
         /// <summary>
@@ -72,7 +75,7 @@
             this.skipButton.Font = null;
             this.skipButton.Name = "skipButton";
             this.skipButton.UseVisualStyleBackColor = true;
-            this.skipButton.Click += new System.EventHandler(this.skipButton_Click);
+            this.skipButton.Click += new System.EventHandler(this.OnSkipButtonClick);
             // 
             // buttonRemind
             // 
@@ -83,7 +86,7 @@
             this.buttonRemind.Font = null;
             this.buttonRemind.Name = "buttonRemind";
             this.buttonRemind.UseVisualStyleBackColor = true;
-            this.buttonRemind.Click += new System.EventHandler(this.buttonRemind_Click);
+            this.buttonRemind.Click += new System.EventHandler(this.OnRemindClick);
             // 
             // updateButton
             // 
@@ -94,7 +97,7 @@
             this.updateButton.Font = null;
             this.updateButton.Name = "updateButton";
             this.updateButton.UseVisualStyleBackColor = true;
-            this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
+            this.updateButton.Click += new System.EventHandler(this.OnUpdateButtonClick);
             // 
             // panel1
             // 

@@ -8,10 +8,18 @@ using System.Security.Cryptography;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// Class to verify a DSA signature
+    /// </summary>
     public class NetSparkleDSAVerificator
     {
         private DSACryptoServiceProvider _provider;
 
+        /// <summary>
+        /// Determines if a public key exists in this 
+        /// </summary>
+        /// <param name="publicKey"></param>
+        /// <returns></returns>
         public static Boolean ExistsPublicKey(String publicKey)
         {
                 // 1. try to load this from resource
@@ -26,6 +34,10 @@ namespace AppLimit.NetSparkle
                 return true;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="publicKey">the public key</param>
         public NetSparkleDSAVerificator(String publicKey)
         {
             // 1. try to load this from resource
@@ -46,6 +58,12 @@ namespace AppLimit.NetSparkle
             }            
         }
 
+        /// <summary>
+        /// Verifies the DSA signature
+        /// </summary>
+        /// <param name="signature">expected signature</param>
+        /// <param name="binaryPath">the path to the binary</param>
+        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
         public Boolean VerifyDSASignature(String signature, String binaryPath)
         {
             if (_provider == null)
@@ -66,6 +84,12 @@ namespace AppLimit.NetSparkle
             return _provider.VerifyData(bData, bHash);            
         }
 
+        /// <summary>
+        /// Gets a file resource
+        /// </summary>
+        /// <param name="publicKey">the public key</param>
+        /// <param name="data">the data stream</param>
+        /// <returns>the data stream</returns>
         private static Stream TryGetFileResource(String publicKey, Stream data)
         {
             if (File.Exists(publicKey))
@@ -75,10 +99,14 @@ namespace AppLimit.NetSparkle
             return data;
         }
 
+        /// <summary>
+        /// Get a resource stream
+        /// </summary>
+        /// <param name="publicKey">the public key</param>
+        /// <returns>a stream</returns>
         private static Stream TryGetResourceStream(String publicKey)
         {
             Stream data = null;
-
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 var resourceName = asm.GetManifestResourceNames().FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);

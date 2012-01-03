@@ -1,5 +1,8 @@
 ﻿namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// A progress bar
+    /// </summary>
     partial class NetSparkleDownloadProgress
     {
         /// <summary>
@@ -62,7 +65,7 @@
             this.btnInstallAndReLaunch.Font = null;
             this.btnInstallAndReLaunch.Name = "btnInstallAndReLaunch";
             this.btnInstallAndReLaunch.UseVisualStyleBackColor = true;
-            this.btnInstallAndReLaunch.Click += new System.EventHandler(this.btnInstallAndReLaunch_Click);
+            this.btnInstallAndReLaunch.Click += new System.EventHandler(this.OnInstallAndReLaunchClick);
             // 
             // lblSecurityHint
             // 

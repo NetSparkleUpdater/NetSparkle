@@ -4,10 +4,19 @@ using System.Windows.Forms;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// The main form
+    /// </summary>
     public partial class NetSparkleForm : Form
     {
         NetSparkleAppCastItem _currentItem;
         
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="appIcon"></param>
+        /// <param name="windowIcon"></param>
         public NetSparkleForm(NetSparkleAppCastItem item, Image appIcon, Icon windowIcon)
         {            
             InitializeComponent();
@@ -39,6 +48,9 @@ namespace AppLimit.NetSparkle
                 Icon = windowIcon;
         }
 
+        /// <summary>
+        /// Removes the release notes control
+        /// </summary>
         public void RemoveReleaseNotesControls()
         {
             if (label3.Parent == null)
@@ -59,7 +71,12 @@ namespace AppLimit.NetSparkle
             this.Size = newSize;
         }
 
-        private void skipButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Event called when the skip button is clicked
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        private void OnSkipButtonClick(object sender, EventArgs e)
         {
             // set the dialog result to no
             this.DialogResult = DialogResult.No;
@@ -68,7 +85,12 @@ namespace AppLimit.NetSparkle
             Close();
         }
 
-        private void buttonRemind_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Event called when the "remind me later" button is clicked
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        private void OnRemindClick(object sender, EventArgs e)
         {
             // set the dialog result ot retry
             this.DialogResult = DialogResult.Retry;
@@ -77,7 +99,12 @@ namespace AppLimit.NetSparkle
             Close();
         }
 
-        private void updateButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Called when the "Update button" is clicked
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        private void OnUpdateButtonClick(object sender, EventArgs e)
         {
             // set the result to yes
             DialogResult = DialogResult.Yes;

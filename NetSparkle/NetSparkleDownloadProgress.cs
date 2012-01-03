@@ -14,6 +14,9 @@ using System.Reflection;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// A progress bar
+    /// </summary>
     public partial class NetSparkleDownloadProgress : Form
     {
         private String _tempName;
@@ -22,6 +25,17 @@ namespace AppLimit.NetSparkle
         private Sparkle _sparkle;
         private Boolean _unattend;
 
+        // TODO JAG - refactor form and actions with events.
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sparkle">the sparkle instance</param>
+        /// <param name="item"></param>
+        /// <param name="referencedAssembly"></param>
+        /// <param name="appIcon">application icon</param>
+        /// <param name="windowIcon">window icon</param>
+        /// <param name="Unattend"><c>true</c> if this is an unattended install</param>
         public NetSparkleDownloadProgress(Sparkle sparkle, NetSparkleAppCastItem item, String referencedAssembly, Image appIcon, Icon windowIcon, Boolean Unattend)
         {
             InitializeComponent();
@@ -58,15 +72,20 @@ namespace AppLimit.NetSparkle
 
             // start async download
             WebClient Client = new WebClient();
-            Client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(Client_DownloadProgressChanged);
-            Client.DownloadFileCompleted += new AsyncCompletedEventHandler(Client_DownloadFileCompleted);
+            Client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(OnClientDownloadProgressChanged);
+            Client.DownloadFileCompleted += new AsyncCompletedEventHandler(OnClientDownloadFileCompleted);
 
             Uri url = new Uri(item.DownloadLink);
 
             Client.DownloadFileAsync(url, _tempName);
         }
 
-        private void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        /// <summary>
+        /// Event called when the download of the binary is complete
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        public void OnClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             progressDownload.Visible = false;
             btnInstallAndReLaunch.Visible = true;            
@@ -119,15 +138,25 @@ namespace AppLimit.NetSparkle
                
             // Check the unattended mode
             if (_unattend)
-                btnInstallAndReLaunch_Click(null, null);
+                OnInstallAndReLaunchClick(null, null);
         }
                
-        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        /// <summary>
+        /// Event called when the client download progress changes
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        public void OnClientDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             progressDownload.Value = e.ProgressPercentage;            
         }
 
-        private void btnInstallAndReLaunch_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Event called when the "Install and relaunch" button is clicked
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not use.d</param>
+        private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
             // get the commandline 
             String cmdLine = Environment.CommandLine;

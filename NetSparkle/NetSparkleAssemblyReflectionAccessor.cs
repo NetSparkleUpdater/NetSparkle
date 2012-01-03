@@ -8,18 +8,25 @@ using AppLimit.NetSparkle.Interfaces;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// Assembly reflection accessor
+    /// </summary>
     public class NetSparkleAssemblyReflectionAccessor : INetSparkleAssemblyAccessor
     {
         private Assembly _assembly;
         private List<Attribute> _assemblyAttributes = new List<Attribute>();
 
-        public NetSparkleAssemblyReflectionAccessor(String assemblyName)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="assemblyName">the assembly name</param>
+        public NetSparkleAssemblyReflectionAccessor(string assemblyName)
         {
             if (assemblyName == null)
                 _assembly = Assembly.GetEntryAssembly();
             else
             {
-                String absolutePath = Path.GetFullPath(assemblyName);
+                string absolutePath = Path.GetFullPath(assemblyName);
                 if (!File.Exists(absolutePath))
                     throw new FileNotFoundException();
 
@@ -84,6 +91,9 @@ namespace AppLimit.NetSparkle
 
         #region Assembly Attribute Accessors
 
+        /// <summary>
+        /// Gets the assembly title
+        /// </summary>
         public string AssemblyTitle
         {
             get
@@ -93,6 +103,9 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the version
+        /// </summary>
         public string AssemblyVersion
         {
             get
@@ -101,6 +114,9 @@ namespace AppLimit.NetSparkle
             }
         }        
 
+        /// <summary>
+        /// Gets the description
+        /// </summary>
         public string AssemblyDescription
         {
             get
@@ -110,6 +126,9 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the product
+        /// </summary>
         public string AssemblyProduct
         {
             get
@@ -119,6 +138,9 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the copyright
+        /// </summary>
         public string AssemblyCopyright
         {
             get
@@ -128,6 +150,9 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the company
+        /// </summary>
         public string AssemblyCompany
         {
             get

@@ -9,6 +9,9 @@ using AppLimit.NetSparkle.Interfaces;
 
 namespace AppLimit.NetSparkle
 {
+    /// <summary>
+    /// A diagnostic accessor
+    /// </summary>
     public class NetSparkleAssemblyDiagnosticsAccessor : INetSparkleAssemblyAccessor
     {
         private string fileVersion;
@@ -18,7 +21,11 @@ namespace AppLimit.NetSparkle
         private string legalCopyright;
         private string fileDescription;
 
-        public NetSparkleAssemblyDiagnosticsAccessor(String assemblyName)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="assemblyName">the assembly name</param>
+        public NetSparkleAssemblyDiagnosticsAccessor(string assemblyName)
         {
             if (assemblyName != null)
             {
@@ -33,6 +40,9 @@ namespace AppLimit.NetSparkle
 
         #region Assembly Attribute Accessors
 
+        /// <summary>
+        /// Gets the Title
+        /// </summary>
         public string AssemblyTitle
         {
             get
@@ -41,6 +51,9 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the version
+        /// </summary>
         public string AssemblyVersion
         {
             get
@@ -49,11 +62,17 @@ namespace AppLimit.NetSparkle
             }
         }        
 
+        /// <summary>
+        /// Gets the description
+        /// </summary>
         public string AssemblyDescription
         {
             get { return fileDescription; }
         }
 
+        /// <summary>
+        /// gets the product
+        /// </summary>
         public string AssemblyProduct
         {
             get
@@ -62,11 +81,17 @@ namespace AppLimit.NetSparkle
             }
         }
 
+        /// <summary>
+        /// Gets the copyright
+        /// </summary>
         public string AssemblyCopyright
         {
             get { return legalCopyright; }
         }
 
+        /// <summary>
+        /// Gets the company
+        /// </summary>
         public string AssemblyCompany
         {
             get
