@@ -1,0 +1,14 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <Target Name="Version">	 
+	  <AssemblyInfo  Condition="'$(CCNetLabel)' != ''" CodeLanguage="CS"
+		  OutputFile=".\AssemblyInfo.cs"
+		  AssemblyVersion="$(CCNetLabel)"
+		  AssemblyFileVersion="$(CCNetLabel)"
+      AssemblyTitle="NetSparkle"
+      AssemblyDescription="NetSparkle is an auto udpate framework for .NET developers"
+      AssemblyCompany="Dirk Eisenberg"
+      AssemblyCopyright="Copyright © Dirk Eisenberg 2010" />  				  
+  </Target>
+</Project>
+ 

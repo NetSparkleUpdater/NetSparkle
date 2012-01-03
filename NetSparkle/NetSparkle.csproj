@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{74635A21-2BAD-4522-AB95-E3E5703CD301}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AppLimit.NetSparkle</RootNamespace>
+    <AssemblyName>AppLimit.NetSparkle</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="NetSparkle.cs" />
+    <Compile Include="NetSparkleAppCaseItem.cs" />
+    <Compile Include="NetSparkleAppCast.cs" />
+    <Compile Include="NetSparkleAssemblyAccessor.cs" />
+    <Compile Include="NetSparkleConfiguration.cs" />
+    <Compile Include="NetSparkleDeviceInventory.cs" />
+    <Compile Include="NetSparkleDownloadProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetSparkleDownloadProgress.Designer.cs">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NetSparkleDSAVerificator.cs" />
+    <Compile Include="NetSparkleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetSparkleForm.Designer.cs">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NetSparkleMainWindows.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NetSparkleMainWindows.Designer.cs">
+      <DependentUpon>NetSparkleMainWindows.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.bg.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.de.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.es-MX.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.fr.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.it.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.lt.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.nl.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.pt-BR.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.ru.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.zh-CN.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleDownloadProgress.zh-TW.resx">
+      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.bg.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.de.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.es-MX.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.fr.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.it.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.lt.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.nl.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.pt-BR.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.ru.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.zh-CN.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleForm.zh-TW.resx">
+      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NetSparkleMainWindows.resx">
+      <DependentUpon>NetSparkleMainWindows.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ArtWork\software-update-available.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

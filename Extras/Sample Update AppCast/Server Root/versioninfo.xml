@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">   
+	<channel>      
+		<title>NetSparkle TestCase</title>      
+		<link>http://update.applimit.com/netsparkle/versioninfo.xml</link>     
+		<description></description>      
+		<language>en</language>               
+		<item>            
+			<title>Version 1.0.1</title>
+			<sparkle:releaseNotesLink>http://update.applimit.com/netsparkle/1.0.1/rnotes.html</sparkle:releaseNotesLink>
+			<pubDate>Sun, 31 Oct 2010 10:21:11 +0000</pubDate>
+			<enclosure 
+				url="http://update.applimit.com/netsparkle/1.0.1/NetSparklTestApp-1.0.1.exe"
+				length="5120" 
+				type="application/octet-stream"
+				sparkle:version="1.0.1" 
+				sparkle:dsaSignature="ngnGYS1ELmGWlhWp0FAzwjmc8VdAFkyIuoybSUwPkpmt+HusArTINQ=="
+			/>
+		</item>
+		<item>            
+			<title>Version 1.0.2</title>
+			<sparkle:releaseNotesLink>http://update.applimit.com/netsparkle/1.0.2/rnotes.html</sparkle:releaseNotesLink>
+			<pubDate>Sun, 31 Dec 2010 10:31:11 +0000</pubDate>
+			<enclosure 
+				url="http://update.applimit.com/netsparkle/1.0.2/NetSparklTestApp-1.0.2.exe"
+				length="5120" 
+				type="application/octet-stream"
+				sparkle:version="1.0.2" 
+				sparkle:dsaSignature="R0Umm343UUfeJ15fV0nDQ2Gg0AsHbGUU76GpsWv2H+agMWXADXpg2g=="
+			/>
+		</item>
+	</channel>
+</rss>
