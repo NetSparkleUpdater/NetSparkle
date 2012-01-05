@@ -33,7 +33,7 @@ namespace AppLimit.NetSparkle
                 _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath);
 
                 if (_assembly == null)
-                    throw new Exception("Unable to load assembly " + absolutePath);                
+                    throw new ArgumentNullException("Unable to load assembly " + absolutePath);                
             }
 
             // read the attributes            
@@ -41,7 +41,7 @@ namespace AppLimit.NetSparkle
                 _assemblyAttributes.Add(CreateAttribute(data));
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
-                throw new Exception("Unable to load assembly attributes from " + _assembly.FullName);                                    
+                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + _assembly.FullName);                                    
         }
 
         /// <summary>

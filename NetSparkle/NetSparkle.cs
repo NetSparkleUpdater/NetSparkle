@@ -6,6 +6,9 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
+using AppLimit.NetSparkle.Interfaces;
+using System.IO;
+using System.Diagnostics;
 
 namespace AppLimit.NetSparkle
 {
@@ -34,8 +37,28 @@ namespace AppLimit.NetSparkle
     /// </summary>
     public class Sparkle : IDisposable
     {
-        private BackgroundWorker _worker = new BackgroundWorker();
+        /// <summary>
+        /// Event to fire if this instance needs to exit the appliction.
+        /// </summary>
+        public event EventHandler ApplicationExitRequested;
 
+        /// <summary>
+        /// This event will be raised when a check loop will be started
+        /// </summary>
+        public event LoopStartedOperation CheckLoopStarted;
+
+        /// <summary>
+        /// This event will be raised when a check loop is finished
+        /// </summary>
+        public event LoopFinishedOperation CheckLoopFinished;
+
+        /// <summary>
+        /// This event can be used to override the standard user interface
+        /// process when an update is detected
+        /// </summary>
+        public event UpdateDetected UpdateDetected;
+
+        private BackgroundWorker _worker = new BackgroundWorker();
         private String _AppCastUrl;
         private String _AppReferenceAssembly;
 
@@ -44,43 +67,97 @@ namespace AppLimit.NetSparkle
 
         private EventWaitHandle _exitHandle;
         private EventWaitHandle _loopingHandle;
-        
-        private NetSparkleMainWindows _DiagnosticWindow;
-
+       
         private TimeSpan _CheckFrequency;
 
+        private string _downloadTempFileName;
+        private WebClient _webDownloadClient;
+        private NetSparkleDiagnostic _diagnostic;
+
+        /// <summary>
+        /// ctor which needs the appcast url
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        public Sparkle(String appcastUrl)
+            : this(appcastUrl, null)
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url and a referenceassembly
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="referenceAssembly">the reference assembly</param>
+        public Sparkle(String appcastUrl, String referenceAssembly)
+            : this(appcastUrl, referenceAssembly, false)
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url and a referenceassembly
+        /// </summary>        
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="referenceAssembly">the reference assembly</param>
+        /// <param name="showDiagnostic">show the diagnostics window.</param>
+        public Sparkle(String appcastUrl, String referenceAssembly, bool showDiagnostic)
+        {
+            // preconfige ssl trust
+            TrustEverySSLConnection = false;
+
+            // configure ssl cert link
+            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
+
+            // enable visual style to ensure that we have XP style or higher
+            // also in WPF applications
+            System.Windows.Forms.Application.EnableVisualStyles();
+
+            // reset vars
+            ApplicationIcon = null;
+            _AppReferenceAssembly = null;            
+
+            // set var
+            this.ShowDiagnosticWindow = showDiagnostic;
+            _diagnostic = new NetSparkleDiagnostic(showDiagnostic);
+
+            // set the reference assembly
+            if (referenceAssembly != null)
+            {
+                _AppReferenceAssembly = referenceAssembly;
+                _diagnostic.Report("Checking the following file: " + _AppReferenceAssembly);
+            }
+
+            // show if needed
+            ShowDiagnosticWindowIfNeeded();            
+
+            // adjust the delegates
+            _worker.WorkerReportsProgress = true;
+            _worker.DoWork += new DoWorkEventHandler(OnWorkerDoWork);
+            _worker.ProgressChanged += new ProgressChangedEventHandler(OnWorkerProgressChanged);
+
+            // build the wait handle
+            _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+            _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+
+            // set the url
+            _AppCastUrl = appcastUrl;
+            _diagnostic.Report("Using the following url: " + _AppCastUrl);            
+        }
+
+        #region Properties
         /// <summary>
         /// Enables system profiling against a profile server
         /// </summary>
-        public Boolean EnableSystemProfiling = false;
+        public Boolean EnableSystemProfiling { get; private set; }
 
         /// <summary>
         /// Hides the release notes view when an update was found. This 
         /// mode is switched on automatically when no sparkle:releaseNotesLink
         /// tag was found in the app cast         
         /// </summary>
-        public Boolean HideReleaseNotes = false;
+        public Boolean HideReleaseNotes { get; private set; }
 
         /// <summary>
         /// Contains the profile url for System profiling
         /// </summary>
-        public Uri SystemProfileUrl;
-
-        /// <summary>
-        /// This event will be raised when a check loop will be started
-        /// </summary>
-        public event LoopStartedOperation checkLoopStarted;
-
-        /// <summary>
-        /// This event will be raised when a check loop is finished
-        /// </summary>
-        public event LoopFinishedOperation checkLoopFinished;
-
-        /// <summary>
-        /// This event can be used to override the standard user interface
-        /// process when an update is detected
-        /// </summary>
-        public event UpdateDetected updateDetected;
+        public Uri SystemProfileUrl { get; private set; }
 
         /// <summary>
         /// This property holds an optional application icon
@@ -98,19 +175,19 @@ namespace AppLimit.NetSparkle
         /// <summary>
         /// This property enables a diagnostic window for debug reasons
         /// </summary>
-        public Boolean ShowDiagnosticWindow { get; set; }
+        public bool ShowDiagnosticWindow { get; set; }
 
         /// <summary>
         /// This property enables the silent mode, this means 
         /// the application will be updated without user interaction
         /// </summary>
-        public Boolean EnableSilentMode { get; set; }
+        public bool EnableSilentMode { get; set; }
 
         /// <summary>
         /// This property returns true when the upadete loop is running
         /// and files when the loop is not running
         /// </summary>
-        public Boolean IsUpdateLoopRunning
+        public bool IsUpdateLoopRunning
         {
             get
             {
@@ -122,71 +199,25 @@ namespace AppLimit.NetSparkle
         /// This property defines if we trust every ssl connection also when 
         /// this connection has not a valid cert
         /// </summary>
-        public Boolean TrustEverySSLConnection { get; set; }      
+        public bool TrustEverySSLConnection { get; set; }
 
         /// <summary>
-        /// ctor which needs the appcast url
+        /// The user interface window that shows the release notes and
+        /// asks the user to skip, later or update
         /// </summary>
-        /// <param name="appcastUrl"></param>
-        public Sparkle(String appcastUrl)
-            : this(appcastUrl, null)
-        { }
+        public INetSparkleForm UserWindow { get; set; }
 
         /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
+        /// The user interface window that shows a download progress bar,
+        /// and then asks to install and relaunch the application
         /// </summary>
-        public Sparkle(String appcastUrl, String referenceAssembly)
-            : this(appcastUrl, referenceAssembly, false)
-        { }
+        public INetSparkleDownloadProgress ProgressWindow { get; set; }
 
         /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
-        /// </summary>        
-        public Sparkle(String appcastUrl, String referenceAssembly, Boolean ShowDiagnostic)
-        {
-            // preconfige ssl trust
-            TrustEverySSLConnection = false;
-
-            // configure ssl cert link
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
-
-            // enable visual style to ensure that we have XP style or higher
-            // also in WPF applications
-            System.Windows.Forms.Application.EnableVisualStyles();
-
-            // reset vars
-            ApplicationIcon = null;
-            _AppReferenceAssembly = null;            
-
-            // set var
-            ShowDiagnosticWindow = ShowDiagnostic;
-
-            // create the diagnotic window
-            _DiagnosticWindow = new NetSparkleMainWindows();
-
-            // set the reference assembly
-            if (referenceAssembly != null)
-            {
-                _AppReferenceAssembly = referenceAssembly;
-                _DiagnosticWindow.Report("Checking the following file: " + _AppReferenceAssembly);
-            }
-
-            // show if needed
-            ShowDiagnosticWindowIfNeeded();            
-
-            // adjust the delegates
-            _worker.WorkerReportsProgress = true;
-            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
-            _worker.ProgressChanged += new ProgressChangedEventHandler(_worker_ProgressChanged);
-
-            // build the wait handle
-            _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-            _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-
-            // set the url
-            _AppCastUrl = appcastUrl;
-            _DiagnosticWindow.Report("Using the following url: " + _AppCastUrl);            
-        }
+        /// The configuration.
+        /// </summary>
+        public NetSparkleConfiguration Configuration { get; set; }
+        #endregion
 
         /// <summary>
         /// The method starts a NetSparkle background loop
@@ -252,7 +283,7 @@ namespace AppLimit.NetSparkle
             _CheckFrequency = checkFrequency;
 
             // create and configure the worker
-            _DiagnosticWindow.Report("Starting background worker");
+            _diagnostic.Report("Starting background worker");
 
             // start the work
             _worker.RunWorkerAsync();
@@ -407,7 +438,12 @@ namespace AppLimit.NetSparkle
         /// <returns>the configuration</returns>
         public NetSparkleConfiguration GetApplicationConfig()
         {
-            return new NetSparkleConfiguration(_AppReferenceAssembly);;
+            if (this.Configuration == null)
+            {
+                this.Configuration = new NetSparkleRegistryConfiguration(_AppReferenceAssembly);
+            }
+            this.Configuration.Reload();
+            return this.Configuration;
         }
 
         /// <summary>
@@ -417,29 +453,20 @@ namespace AppLimit.NetSparkle
         /// <param name="currentItem">the item to show the UI for</param>
         public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem)
         {
-            // create the form
-            NetSparkleForm frm = new NetSparkleForm(currentItem, ApplicationIcon, ApplicationWindowIcon);
-
-            // configure the form
-            frm.TopMost = true;
-
-            if (HideReleaseNotes)
-                frm.RemoveReleaseNotesControls();
-
-            // show it
-            DialogResult dlgResult = frm.ShowDialog();
-
-            if (dlgResult == DialogResult.No)
+            if (this.UserWindow == null)
             {
-                // skip this version
-                NetSparkleConfiguration config = new NetSparkleConfiguration(_AppReferenceAssembly);
-                config.SetVersionToSkip(currentItem.Version);
+                // create the form
+                this.UserWindow = new NetSparkleForm(currentItem, ApplicationIcon, ApplicationWindowIcon);
             }
-            else if (dlgResult == DialogResult.Yes)
+            this.UserWindow.CurrentItem = currentItem;
+            if (this.HideReleaseNotes)
             {
-                // download the binaries
-                InitDownloadAndInstallProcess(currentItem);
+                this.UserWindow.HideReleaseNotes();
             }
+            // clear if already set.
+            this.UserWindow.UserResponded -= new EventHandler(OnUserWindowUserResponded);
+            this.UserWindow.UserResponded += new EventHandler(OnUserWindowUserResponded);
+            this.UserWindow.Show();
         }
 
         /// <summary>
@@ -448,14 +475,253 @@ namespace AppLimit.NetSparkle
         /// <param name="message"></param>
         public void ReportDiagnosticMessage(String message)
         {
-            if (_DiagnosticWindow.InvokeRequired)
+            _diagnostic.Report(message);
+        }
+
+        /// <summary>
+        /// Starts the download process
+        /// </summary>
+        /// <param name="item">the appcast item to download</param>
+        private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
+        {
+            // get the filename of the download lin
+            string[] segments = item.DownloadLink.Split('/');
+            string fileName = segments[segments.Length - 1];
+
+            // get temp path
+            _downloadTempFileName = Environment.ExpandEnvironmentVariables("%temp%\\" + fileName);
+            if (this.ProgressWindow == null)
             {
-                _DiagnosticWindow.Invoke(new Action<String>(ReportDiagnosticMessage), message);                
+                this.ProgressWindow = new NetSparkleDownloadProgress(this, item, ApplicationIcon, ApplicationWindowIcon, EnableSilentMode);
+            }
+            this.ProgressWindow.TempFileName = _downloadTempFileName;
+            this.ProgressWindow.InstallAndRelaunch += new EventHandler(OnProgressWindowInstallAndRelaunch);
+            
+            // set up the download client
+            // start async download
+            _webDownloadClient = new WebClient();
+            _webDownloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
+            _webDownloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(this.ProgressWindow.OnClientDownloadFileCompleted);
+
+            this.ProgressWindow.ShowDialog();
+
+            Uri url = new Uri(item.DownloadLink);
+            _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+        }
+
+        /// <summary>
+        /// Runs the downloaded installer
+        /// </summary>
+        private void RunDownloadedInstaller()
+        {
+            // get the commandline 
+            string cmdLine = Environment.CommandLine;
+            string workingDir = Environment.CurrentDirectory;
+
+            // generate the batch file path
+            string cmd = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
+            string installerCMD;
+
+            // get the file type
+            if (Path.GetExtension(_downloadTempFileName).Equals(".exe", StringComparison.CurrentCultureIgnoreCase))
+            {
+                // build the command line 
+                installerCMD = _downloadTempFileName;
+            }
+            else if (Path.GetExtension(_downloadTempFileName).Equals(".msi", StringComparison.CurrentCultureIgnoreCase))
+            {
+                // buid the command line
+                installerCMD = "msiexec /i \"" + _downloadTempFileName + "\"";
             }
             else
             {
-                _DiagnosticWindow.Report(message);
+                MessageBox.Show("Updater not supported, please execute " + _downloadTempFileName + " manually", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Exit(-1);
+                return;
             }
+
+            // generate the batch file                
+            ReportDiagnosticMessage("Generating MSI batch in " + Path.GetFullPath(cmd));
+
+            using (StreamWriter write = new StreamWriter(cmd))
+            {
+                write.WriteLine(installerCMD);
+                write.WriteLine("cd " + workingDir);
+                write.WriteLine(cmdLine);
+                write.Close();
+            }
+
+            // report
+            ReportDiagnosticMessage("Going to execute batch: " + cmd);
+
+            // start the installer helper
+            Process process = new Process();
+            process.StartInfo.FileName = cmd;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            process.Start();
+
+            // quit the app
+            Exit(0);
+        }
+
+        /// <summary>
+        /// Attempts to exit the application
+        /// </summary>
+        /// <param name="returnCode">the return code.</param>
+        private void Exit( int returnCode)
+        {
+            if (ApplicationExitRequested != null)
+            {
+                ApplicationExitRequested(this, new EventArgs());
+            }
+            else
+            {
+                Environment.Exit(returnCode);
+            }
+        }
+
+        /// <summary>
+        /// Shows the diagnostics window
+        /// </summary>
+        private void ShowDiagnosticWindowIfNeeded()
+        {
+            bool isShown = false;
+            if (this.Configuration != null)
+            {
+                isShown = this.Configuration.ShowDiagnosticWindow;
+            }
+            _diagnostic.ShowDiagnosticWindowIfNeeded(isShown);
+        }
+
+        /// <summary>
+        /// Determine if the remote X509 certificate is validate
+        /// </summary>
+        /// <param name="sender">the web request</param>
+        /// <param name="certificate">the certificate</param>
+        /// <param name="chain">the chain</param>
+        /// <param name="sslPolicyErrors">how to handle policy errors</param>
+        /// <returns><c>true</c> if the cert is valid</returns>
+        private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (TrustEverySSLConnection)
+            {
+                // verify if we talk about our app cast dll 
+                HttpWebRequest req = sender as HttpWebRequest;
+                if (req == null)
+                    return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
+
+                // if so just return our trust 
+                if (req.RequestUri.Equals(new Uri(_AppCastUrl)))
+                    return true;
+                else
+                    return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
+            }
+            else
+            {
+                // check our cert                 
+                return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
+            }
+        }
+
+        /// <summary>
+        /// Does a one-off check for updates
+        /// </summary>
+        /// <param name="isUserInterfaceShown"><c>true</c> if the user interface is to be shown.</param>
+        public bool CheckForUpdates(bool isUserInterfaceShown)
+        {
+            NetSparkleConfiguration config = GetApplicationConfig();
+            // update profile information is needed
+            UpdateSystemProfileInformation(config);
+
+            // check if update is required
+            NetSparkleAppCastItem latestVersion = null;
+            if (IsUpdateRequired(config, out latestVersion))
+            {
+                // show the update window
+                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + latestVersion.Version);
+
+                // send notification if needed
+                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
+                if (UpdateDetected != null)
+                    UpdateDetected(this, ev);
+
+                // check results
+                if (isUserInterfaceShown)
+                {
+                    switch (ev.NextAction)
+                    {
+                        case NextUpdateAction.PerformUpdateUnattended:
+                            EnableSilentMode = true;
+                            Update(latestVersion);
+                            break;
+                        case NextUpdateAction.ProhibitUpdate:
+                            break;
+                        case NextUpdateAction.ShowStandardUserInterface:
+                        default:
+                            Update(latestVersion);
+                            break;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Updates from appcast
+        /// </summary>
+        /// <param name="currentItem">the current (top-most) item in the app-cast</param>
+        private void Update(NetSparkleAppCastItem currentItem)
+        {
+            if (currentItem != null)
+            {
+                // show the update ui
+                if (EnableSilentMode)
+                {
+                    InitDownloadAndInstallProcess(currentItem);
+                }
+                else
+                {
+                    ShowUpdateNeededUI(currentItem);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cancels the install
+        /// </summary>
+        public void CancelInstall()
+        {
+        }
+
+        /// <summary>
+        /// Called when the user responds to the "skip, later, install" question.
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        void OnUserWindowUserResponded(object sender, EventArgs e)
+        {
+            if (this.UserWindow.Result == DialogResult.No)
+            {
+                // skip this version
+                NetSparkleConfiguration config = GetApplicationConfig();
+                config.SetVersionToSkip(this.UserWindow.CurrentItem.Version);
+            }
+            else if (this.UserWindow.Result == DialogResult.Yes)
+            {
+                // download the binaries
+                InitDownloadAndInstallProcess(this.UserWindow.CurrentItem);
+            }
+        }
+
+        /// <summary>
+        /// Called when the progress bar fires the update event
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
+        {
+            RunDownloadedInstaller();
         }
 
         /// <summary>
@@ -463,13 +729,13 @@ namespace AppLimit.NetSparkle
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void _worker_DoWork(object sender, DoWorkEventArgs e)
+        void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // store the did run once feature
-            Boolean goIntoLoop = true;
-            Boolean checkTSP = true;
-            Boolean doInitialCheck = _DoInitialCheck;
-            Boolean isInitialCheck = true;
+            bool goIntoLoop = true;
+            bool checkTSP = true;
+            bool doInitialCheck = _DoInitialCheck;
+            bool isInitialCheck = true;
 
             // start our lifecycles
             do
@@ -478,8 +744,8 @@ namespace AppLimit.NetSparkle
                 Boolean bUpdateRequired = false;
 
                 // notify
-                if (checkLoopStarted != null)
-                    checkLoopStarted(this);
+                if (CheckLoopStarted != null)
+                    CheckLoopStarted(this);
 
                 // report status
                 if (doInitialCheck == false)
@@ -539,11 +805,11 @@ namespace AppLimit.NetSparkle
 
                 // send notification if needed
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
-                if (updateDetected != null)
-                    updateDetected(this, ev);
-                
+                if (UpdateDetected != null)
+                    UpdateDetected(this, ev);
+
                 // check results
-                switch(ev.NextAction)
+                switch (ev.NextAction)
                 {
                     case NextUpdateAction.PerformUpdateUnattended:
                         {
@@ -564,15 +830,15 @@ namespace AppLimit.NetSparkle
                             _worker.ReportProgress(1, latestVersion);
                             break;
                         }
-                }                
+                }
 
             WaitSection:
                 // reset initialcheck
                 isInitialCheck = false;
 
                 // notify
-                if (checkLoopFinished != null)
-                    checkLoopFinished(this, bUpdateRequired);
+                if (CheckLoopFinished != null)
+                    CheckLoopFinished(this, bUpdateRequired);
 
                 // report wait statement
                 ReportDiagnosticMessage(String.Format("Sleeping for an other {0} minutes, exit event or force update check event", _CheckFrequency.TotalMinutes));
@@ -620,79 +886,16 @@ namespace AppLimit.NetSparkle
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void _worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void OnWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             switch (e.ProgressPercentage)
             {
                 case 1:
-                    {
-                        // get the current item
-                        NetSparkleAppCastItem currentItem = e.UserState as NetSparkleAppCastItem;
-
-                        // show the update ui
-                        if (EnableSilentMode == true)
-                            InitDownloadAndInstallProcess(currentItem);
-                        else
-                            ShowUpdateNeededUI(currentItem);
-
-                        break;
-                    }
+                    Update(e.UserState as NetSparkleAppCastItem);
+                    break;
                 case 0:
-                    {
-                        ReportDiagnosticMessage(e.UserState.ToString());
-                        break;
-                    }
-            }
-        }
-
-        private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
-        {
-            NetSparkleDownloadProgress dlProgress = new NetSparkleDownloadProgress(this, item, _AppReferenceAssembly, ApplicationIcon, ApplicationWindowIcon, EnableSilentMode);
-            dlProgress.ShowDialog();
-        }
-
-        private void ShowDiagnosticWindowIfNeeded()
-        {
-            if (_DiagnosticWindow.InvokeRequired)
-            {
-                _DiagnosticWindow.Invoke(new Action(ShowDiagnosticWindowIfNeeded));
-            }
-            else
-            {
-                // check the diagnotic value
-                NetSparkleConfiguration config = new NetSparkleConfiguration(_AppReferenceAssembly);
-                if (config.ShowDiagnosticWindow || ShowDiagnosticWindow)
-                {
-                    Point newLocation = new Point();
-
-                    newLocation.X = Screen.PrimaryScreen.Bounds.Width - _DiagnosticWindow.Width;
-                    newLocation.Y = 0;
-
-                    _DiagnosticWindow.Location = newLocation;
-                    _DiagnosticWindow.Show();
-                }
-            }
-        }
-
-        private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            if (TrustEverySSLConnection)
-            {
-                // verify if we talk about our app cast dll 
-                HttpWebRequest req = sender as HttpWebRequest;
-                if (req == null)
-                    return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
-
-                // if so just return our trust 
-                if (req.RequestUri.Equals(new Uri(_AppCastUrl)))
-                    return true;
-                else
-                    return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
-            }
-            else
-            {
-                // check our cert                 
-                return (certificate is X509Certificate2) ? ((X509Certificate2)certificate).Verify() : false;
+                    ReportDiagnosticMessage(e.UserState.ToString());
+                    break;
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using NLog;
 
 namespace AppLimit.NetSparkle
 {
@@ -15,7 +16,7 @@ namespace AppLimit.NetSparkle
     /// </summary>
     public partial class NetSparkleMainWindows : Form, IDisposable
     {
-        private StreamWriter sw = null;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Constructor
@@ -24,9 +25,6 @@ namespace AppLimit.NetSparkle
         {
             // init ui
             InitializeComponent();
-
-            // init logfile
-            sw = File.CreateText(Path.Combine(Environment.ExpandEnvironmentVariables("%temp%"), "NetSparkle.log"));
         }
 
         /// <summary>
@@ -43,47 +41,17 @@ namespace AppLimit.NetSparkle
                 DateTime c = DateTime.Now;
                 String msg = "[" + c.ToLongTimeString() + "." + c.Millisecond + "] " + message;
 
-                // report to file
-                ReportToFile(msg);
-
                 // report the message into ui
                 lstActions.Items.Add(msg);
             }
         }
-
-        /// <summary>
-        /// Reports a message to a file
-        /// </summary>
-        /// <param name="msg">the message</param>
-        private void ReportToFile(String msg)
-        {
-            try
-            {
-                // write 
-                sw.WriteLine(msg);
-
-                // flush
-                sw.Flush();
-            } catch(Exception)
-            {
-
-            }
-        }
-
         #region IDisposable Members
 
         void IDisposable.Dispose()
         {
-            // flush again
-            sw.Flush();
-
-            // close the stream
-            sw.Dispose();
-
             // close the base
             base.Dispose();
         }
-
         #endregion
     }
 }

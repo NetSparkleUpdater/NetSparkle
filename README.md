@@ -22,9 +22,20 @@ NetSparkle is MIT-Licensed [MitLicense]
 - Visual Studio 2008, or
 - Visual Studio 2010
 
-## Install
+## Dependencies
 
+- [NLog] (included in lib/, you may want to update). 
+ 
+## Differences with [CodePlex]
 
+I forked NetSparkle because I had some requirements for a client program that weren't easily met by the standard version.
+
+ - This version allows for a custom UI instead of the two Windows Forms dialog
+ - Allows for one-time check for updates instead of running on a loop
+ - Allows for custom configuration objects instead of reading/writing to the registry
+ - Refactored the diagnostic to use NLog instead of a custom filestream (that tends to lock)
+ - Refactored exiting the application to fire an event for shutdown instead of Environment.Exit
 
 [CodePlex]: http://netsparkle.codeplex.com
 [MitLicense]: http://netsparkle.codeplex.com/license
+[NLog]: http://nlog-project.org/

@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using AppLimit.NetSparkle.Interfaces;
 
 namespace AppLimit.NetSparkle
 {
     /// <summary>
     /// The main form
     /// </summary>
-    public partial class NetSparkleForm : Form
+    public partial class NetSparkleForm : Form, INetSparkleForm
     {
         NetSparkleAppCastItem _currentItem;
-        
+
+        /// <summary>
+        /// Event fired when the user has responded to the 
+        /// skip, later, install question.
+        /// </summary>
+        public event EventHandler UserResponded;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -46,6 +53,45 @@ namespace AppLimit.NetSparkle
 
             if (windowIcon != null)
                 Icon = windowIcon;
+
+            this.TopMost = true;
+        }
+
+        /// <summary>
+        /// The current item being installed
+        /// </summary>
+        NetSparkleAppCastItem INetSparkleForm.CurrentItem
+        {
+            get { return _currentItem; }
+            set { _currentItem = value; }
+        }
+
+        /// <summary>
+        /// The result of ShowDialog()
+        /// </summary>
+        DialogResult INetSparkleForm.Result
+        {
+            get { return this.DialogResult; }
+        }
+
+        /// <summary>
+        /// Hides the release notes
+        /// </summary>
+        void INetSparkleForm.HideReleaseNotes()
+        {
+            RemoveReleaseNotesControls();
+        }
+
+        /// <summary>
+        /// Shows the dialog
+        /// </summary>
+        void INetSparkleForm.Show()
+        {
+            base.ShowDialog();
+            if (UserResponded != null)
+            {
+                UserResponded(this, new EventArgs());
+            }
         }
 
         /// <summary>
