@@ -21,6 +21,12 @@ namespace AppLimit.NetSparkle.Interfaces
         string TempFileName { get; set; }
 
         /// <summary>
+        /// Gets or sets a flag indicating if the downloaded file matches its listed
+        /// DSA hash.
+        /// </summary>
+        bool IsDownloadDSAValid { get; set; }
+
+        /// <summary>
         /// Show the UI and waits
         /// </summary>
         void ShowDialog();

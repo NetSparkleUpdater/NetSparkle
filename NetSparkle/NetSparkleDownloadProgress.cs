@@ -29,6 +29,7 @@ namespace AppLimit.NetSparkle
         private NetSparkleAppCastItem _item;
         private Sparkle _sparkle;
         private bool _unattend;
+        private bool _isDownloadDSAValid;
 
         /// <summary>
         /// Constructor
@@ -76,6 +77,20 @@ namespace AppLimit.NetSparkle
         }
 
         /// <summary>
+        /// Gets or sets a flag indicating if the downloaded file matches its listed
+        /// DSA hash.
+        /// </summary>
+        public bool IsDownloadDSAValid
+        {
+            get { return _isDownloadDSAValid; }
+            set
+            {
+                _isDownloadDSAValid = value;
+                UpdateDownloadValid();
+            }
+        }
+
+        /// <summary>
         /// Show the UI and waits
         /// </summary>
         void INetSparkleDownloadProgress.ShowDialog()
@@ -106,7 +121,7 @@ namespace AppLimit.NetSparkle
                 }
                 else
                 {
-                    Boolean bDSAOk = false;
+                    this.IsDownloadDSAValid = false;
 
                     // report
                     _sparkle.ReportDiagnosticMessage("Performing DSA check");
@@ -129,22 +144,30 @@ namespace AppLimit.NetSparkle
                             {
                                 // check the DSA Code and modify the back color            
                                 NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
-                                bDSAOk = dsaVerifier.VerifyDSASignature(_item.DSASignature, _tempName);
+                                this.IsDownloadDSAValid = dsaVerifier.VerifyDSASignature(_item.DSASignature, _tempName);
                             }
                         }
                     }
 
-                    if (!bDSAOk)
-                    {
-                        Size = new Size(Size.Width, 137);
-                        lblSecurityHint.Visible = true;
-                        BackColor = Color.Tomato;
-                    }
+                    UpdateDownloadValid();
                 }
 
                 // Check the unattended mode
                 if (_unattend)
                     OnInstallAndReLaunchClick(null, null);
+            }
+        }
+
+        /// <summary>
+        /// Updates the UI to indicate if the download is valid
+        /// </summary>
+        private void UpdateDownloadValid()
+        {
+            if (!this.IsDownloadDSAValid)
+            {
+                Size = new Size(Size.Width, 137);
+                lblSecurityHint.Visible = true;
+                BackColor = Color.Tomato;
             }
         }
                

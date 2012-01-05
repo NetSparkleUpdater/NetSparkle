@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using AppLimit.NetSparkle.Interfaces;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace AppLimit.NetSparkle
 {
@@ -501,7 +502,7 @@ namespace AppLimit.NetSparkle
             // start async download
             _webDownloadClient = new WebClient();
             _webDownloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
-            _webDownloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(this.ProgressWindow.OnClientDownloadFileCompleted);
+            _webDownloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
 
             this.ProgressWindow.ShowDialog();
 
@@ -692,6 +693,10 @@ namespace AppLimit.NetSparkle
         /// </summary>
         public void CancelInstall()
         {
+            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            {
+                _webDownloadClient.CancelAsync();
+            }
         }
 
         /// <summary>
@@ -898,5 +903,49 @@ namespace AppLimit.NetSparkle
                     break;
             }
         }
+
+        /// <summary>
+        /// Called when the installer is downloaded
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">used to determine if the download was successful.</param>
+        void OnWebDownloadClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            if (!e.Cancelled && e.Error == null)
+            {
+                // test the item for DSA signature
+                bool isDSAOk = false;
+
+                // report
+                ReportDiagnosticMessage("Performing DSA check");
+
+                // get the assembly
+                if (File.Exists(_downloadTempFileName))
+                {
+                    // check if the file was downloaded successfully
+                    String absolutePath = Path.GetFullPath(_downloadTempFileName);
+                    if (!File.Exists(absolutePath))
+                        throw new FileNotFoundException();
+
+                    // get the assembly reference from which we start the update progress
+                    // only from this trusted assembly the public key can be used
+                    Assembly refassembly = System.Reflection.Assembly.GetEntryAssembly();
+                    if (refassembly != null)
+                    {
+                        // Check if we found the public key in our entry assembly
+                        if (NetSparkleDSAVerificator.ExistsPublicKey("NetSparkle_DSA.pub"))
+                        {
+                            // check the DSA Code and modify the back color            
+                            NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
+                            isDSAOk = dsaVerifier.VerifyDSASignature(this.UserWindow.CurrentItem.DSASignature, _downloadTempFileName);
+                        }
+                    }
+                }
+                this.ProgressWindow.IsDownloadDSAValid = isDSAOk;
+            }
+            this.ProgressWindow.OnClientDownloadFileCompleted(sender, e);
+        }
+
+
     }
 }
