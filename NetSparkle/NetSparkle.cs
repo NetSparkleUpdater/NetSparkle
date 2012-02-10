@@ -504,10 +504,10 @@ namespace AppLimit.NetSparkle
             _webDownloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
             _webDownloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
 
-            this.ProgressWindow.ShowDialog();
-
             Uri url = new Uri(item.DownloadLink);
             _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+
+            this.ProgressWindow.ShowDialog();
         }
 
         /// <summary>
