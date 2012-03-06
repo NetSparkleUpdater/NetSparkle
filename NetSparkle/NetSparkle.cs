@@ -352,10 +352,14 @@ namespace AppLimit.NetSparkle
 
                     // perform the webrequest
                     HttpWebRequest request = HttpWebRequest.Create(requestUrl) as HttpWebRequest;
-                    using (WebResponse response = request.GetResponse())
+                    if (request != null)
                     {
-                        // close the response 
-                        response.Close();
+                        request.UseDefaultCredentials = true;
+                        using (WebResponse response = request.GetResponse())
+                        {
+                            // close the response 
+                            response.Close();
+                        }
                     }
                 }
             }
@@ -501,6 +505,7 @@ namespace AppLimit.NetSparkle
             // set up the download client
             // start async download
             _webDownloadClient = new WebClient();
+            _webDownloadClient.UseDefaultCredentials = true;
             _webDownloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
             _webDownloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
 
