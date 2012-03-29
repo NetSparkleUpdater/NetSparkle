@@ -218,6 +218,15 @@ namespace AppLimit.NetSparkle
         /// The configuration.
         /// </summary>
         public NetSparkleConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the app cast URL
+        /// </summary>
+        public string AppcastUrl
+        {
+            get { return _AppCastUrl; }
+            set { _AppCastUrl = value; }
+        }
         #endregion
 
         /// <summary>
@@ -314,17 +323,32 @@ namespace AppLimit.NetSparkle
         /// </summary>
         private void UnregisterEvents()
         {
-            if ( this.ProgressWindow != null )
-            {
-                this.ProgressWindow.InstallAndRelaunch -= new EventHandler(OnProgressWindowInstallAndRelaunch);
-            }
+            ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
+            _worker.DoWork -= new DoWorkEventHandler(OnWorkerDoWork);
+            _worker.ProgressChanged -= new ProgressChangedEventHandler(OnWorkerProgressChanged);
+            _worker = null;
 
             if (_webDownloadClient != null)
             {
-                _webDownloadClient.DownloadProgressChanged -= new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
+                if (this.ProgressWindow != null)
+                {
+                    _webDownloadClient.DownloadProgressChanged -= new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
+                }
                 _webDownloadClient.DownloadFileCompleted -= new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
                 _webDownloadClient = null;
             }
+            if (this.UserWindow != null)
+            {
+                this.UserWindow.UserResponded -= new EventHandler(OnUserWindowUserResponded);
+                this.UserWindow = null;
+            }
+
+            if (this.ProgressWindow != null)
+            {
+                this.ProgressWindow.InstallAndRelaunch -= new EventHandler(OnProgressWindowInstallAndRelaunch);
+                this.ProgressWindow = null;
+            }
+
         }
 
         /// <summary>
@@ -977,11 +1001,15 @@ namespace AppLimit.NetSparkle
                         }
                     }
                 }
-                this.ProgressWindow.IsDownloadDSAValid = isDSAOk;
+                if (this.ProgressWindow != null)
+                {
+                    this.ProgressWindow.IsDownloadDSAValid = isDSAOk;
+                }
             }
-            this.ProgressWindow.OnClientDownloadFileCompleted(sender, e);
+            if (this.ProgressWindow != null)
+            {
+                this.ProgressWindow.OnClientDownloadFileCompleted(sender, e);
+            }
         }
-
-
     }
 }
