@@ -306,6 +306,25 @@ namespace AppLimit.NetSparkle
         public void Dispose()
         {
             StopLoop();
+            UnregisterEvents();
+        }
+
+        /// <summary>
+        /// Unregisters events so that we don't have multiple items updating
+        /// </summary>
+        private void UnregisterEvents()
+        {
+            if ( this.ProgressWindow != null )
+            {
+                this.ProgressWindow.InstallAndRelaunch -= new EventHandler(OnProgressWindowInstallAndRelaunch);
+            }
+
+            if (_webDownloadClient != null)
+            {
+                _webDownloadClient.DownloadProgressChanged -= new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
+                _webDownloadClient.DownloadFileCompleted -= new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
+                _webDownloadClient = null;
+            }
         }
 
         /// <summary>
@@ -499,11 +518,23 @@ namespace AppLimit.NetSparkle
             {
                 this.ProgressWindow = new NetSparkleDownloadProgress(this, item, ApplicationIcon, ApplicationWindowIcon, EnableSilentMode);
             }
+            else
+            {
+                this.ProgressWindow.InstallAndRelaunch -= new EventHandler(OnProgressWindowInstallAndRelaunch);
+            }
+
             this.ProgressWindow.TempFileName = _downloadTempFileName;
             this.ProgressWindow.InstallAndRelaunch += new EventHandler(OnProgressWindowInstallAndRelaunch);
             
             // set up the download client
             // start async download
+            if (_webDownloadClient != null)
+            {
+                _webDownloadClient.DownloadProgressChanged -= new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
+                _webDownloadClient.DownloadFileCompleted -= new AsyncCompletedEventHandler(OnWebDownloadClientDownloadFileCompleted);
+                _webDownloadClient = null;
+            }
+
             _webDownloadClient = new WebClient();
             _webDownloadClient.UseDefaultCredentials = true;
             _webDownloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(this.ProgressWindow.OnClientDownloadProgressChanged);
