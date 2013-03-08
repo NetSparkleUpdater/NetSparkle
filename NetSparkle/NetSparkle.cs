@@ -73,7 +73,7 @@ namespace AppLimit.NetSparkle
 
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
-        private NetSparkleDiagnostic _diagnostic;
+        //private NetSparkleDiagnostic _diagnostic;
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -115,18 +115,15 @@ namespace AppLimit.NetSparkle
             _AppReferenceAssembly = null;            
 
             // set var
-            this.ShowDiagnosticWindow = showDiagnostic;
-            _diagnostic = new NetSparkleDiagnostic(showDiagnostic);
+//            this.ShowDiagnosticWindow = showDiagnostic;
+//            _diagnostic = new NetSparkleDiagnostic(showDiagnostic);
 
             // set the reference assembly
             if (referenceAssembly != null)
             {
                 _AppReferenceAssembly = referenceAssembly;
-                _diagnostic.Report("Checking the following file: " + _AppReferenceAssembly);
+                Debug.WriteLine("Checking the following file: " + _AppReferenceAssembly);
             }
-
-            // show if needed
-            ShowDiagnosticWindowIfNeeded();            
 
             // adjust the delegates
             _worker.WorkerReportsProgress = true;
@@ -139,7 +136,7 @@ namespace AppLimit.NetSparkle
 
             // set the url
             _AppCastUrl = appcastUrl;
-            _diagnostic.Report("Using the following url: " + _AppCastUrl);            
+            Debug.WriteLine("Using the following url: " + _AppCastUrl);            
         }
 
         #region Properties
@@ -284,16 +281,12 @@ namespace AppLimit.NetSparkle
             // Start the helper thread as a background worker to 
             // get well ui interaction                        
 
-            // show if needed
-            ShowDiagnosticWindowIfNeeded();
-
             // store infos
             _DoInitialCheck = doInitialCheck;
             _ForceInitialCheck = forceInitialCheck;
             _CheckFrequency = checkFrequency;
 
-            // create and configure the worker
-            _diagnostic.Report("Starting background worker");
+           ReportDiagnosticMessage("Starting background worker");
 
             // start the work
             _worker.RunWorkerAsync();
@@ -523,7 +516,7 @@ namespace AppLimit.NetSparkle
         /// <param name="message"></param>
         public void ReportDiagnosticMessage(String message)
         {
-            _diagnostic.Report(message);
+            Debug.WriteLine("netsparkle: "+message);
         }
 
         /// <summary>
@@ -641,18 +634,18 @@ namespace AppLimit.NetSparkle
             }
         }
 
-        /// <summary>
-        /// Shows the diagnostics window
-        /// </summary>
-        private void ShowDiagnosticWindowIfNeeded()
-        {
-            bool isShown = false;
-            if (this.Configuration != null)
-            {
-                isShown = this.Configuration.ShowDiagnosticWindow;
-            }
-            _diagnostic.ShowDiagnosticWindowIfNeeded(isShown);
-        }
+//        /// <summary>
+//        /// Shows the diagnostics window
+//        /// </summary>
+//        private void ShowDiagnosticWindowIfNeeded()
+//        {
+//            bool isShown = false;
+//            if (this.Configuration != null)
+//            {
+//                isShown = this.Configuration.ShowDiagnosticWindow;
+//            }
+//            _diagnostic.ShowDiagnosticWindowIfNeeded(isShown));
+//        }
 
         /// <summary>
         /// Determine if the remote X509 certificate is validate

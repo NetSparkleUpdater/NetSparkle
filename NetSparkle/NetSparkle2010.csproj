@@ -102,9 +102,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\lib\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -151,20 +148,13 @@
     <Compile Include="NetSparkleForm.Designer.cs">
       <DependentUpon>NetSparkleForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetSparkleDiagnostic.cs" />
-    <Compile Include="NetSparkleMainWindows.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="NetSparkleMainWindows.Designer.cs">
-      <DependentUpon>NetSparkleMainWindows.cs</DependentUpon>
-    </Compile>
     <Compile Include="NetSparkleRegistryConfiguration.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UpdateDetechedEventArgs.cs" />
+    <Compile Include="UpdateDetectedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="NetSparkleDownloadProgress.bg.resx">
@@ -239,9 +229,6 @@
     <EmbeddedResource Include="NetSparkleForm.zh-TW.resx">
       <DependentUpon>NetSparkleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleMainWindows.resx">
-      <DependentUpon>NetSparkleMainWindows.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -249,12 +236,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ArtWork\software-update-available.png" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

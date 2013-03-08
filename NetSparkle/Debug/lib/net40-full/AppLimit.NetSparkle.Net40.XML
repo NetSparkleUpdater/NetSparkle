@@ -1,0 +1,1050 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AppLimit.NetSparkle.Net40</name>
+    </assembly>
+    <members>
+        <member name="T:AppLimit.NetSparkle.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleConfiguration">
+            <summary>
+            Abstract class to handle 
+            update intervals.
+            
+            CheckForUpdate  - Boolean    - Whether NetSparkle should check for updates
+            LastCheckTime   - time_t     - Time of last check
+            SkipThisVersion - String     - If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
+            DidRunOnce      - Boolean    - Check only one time when the app launched
+            </summary>    
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.#ctor(System.String)">
+            <summary>
+            The constructor reads out all configured values
+            </summary>        
+            <param name="referenceAssembly">the reference assembly name</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.#ctor(System.String,System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="referenceAssembly">the name of hte reference assembly</param>
+            <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.TouchProfileTime">
+            <summary>
+            Touches to profile time
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.TouchCheckTime">
+            <summary>
+            Touches the check time to now, should be used after a check directly
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.SetVersionToSkip(System.String)">
+            <summary>
+            This method allows to skip a specific version
+            </summary>
+            <param name="version">the version to skeip</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.Reload">
+            <summary>
+            Reloads the configuration object
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleConfiguration.InitWithDefaultValues">
+            <summary>
+            This method set's default values for the config
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.ApplicationName">
+            <summary>
+            The application name
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.InstalledVersion">
+            <summary>
+            The currently-installed version
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.CheckForUpdate">
+            <summary>
+            Flag to indicate if we should check for updates
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.LastCheckTime">
+            <summary>
+            Last check time
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.SkipThisVersion">
+            <summary>
+            The last-skipped version number
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.DidRunOnce">
+            <summary>
+            The application ran once
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.ShowDiagnosticWindow">
+            <summary>
+            Flag to indicate showing the diagnostic window
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.LastProfileUpdate">
+            <summary>
+            Last profile update
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.UseReflectionBasedAssemblyAccessor">
+            <summary>
+            If this property is true a reflection based accessor will be used
+            to determine the assmebly name and verison, otherwise a System.Diagnostics
+            based access will be used
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleConfiguration.ReferenceAssembly">
+            <summary>
+            The reference assembly name
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress">
+            <summary>
+            Interface for UI element that shows the progress bar
+            and a method to install and relaunch the appliction
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.ShowDialog">
+            <summary>
+            Show the UI and waits
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.OnClientDownloadProgressChanged(System.Object,System.Net.DownloadProgressChangedEventArgs)">
+            <summary>
+            Called when the download progress changes
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">used to resolve the progress of the download. Also contains the total size of the download</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.OnClientDownloadFileCompleted(System.Object,System.ComponentModel.AsyncCompletedEventArgs)">
+            <summary>
+            Event called when the download of the binary is complete
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.InstallAndRelaunch">
+            <summary>
+            event to fire when the form asks the application to be relaunched
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.TempFileName">
+            <summary>
+            Gets or sets the temporary file name where the new items are downloaded
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Interfaces.INetSparkleDownloadProgress.IsDownloadDSAValid">
+            <summary>
+            Gets or sets a flag indicating if the downloaded file matches its listed
+            DSA hash.
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor">
+            <summary>
+            A diagnostic accessor
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="assemblyName">the assembly name</param>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyTitle">
+            <summary>
+            Gets the Title
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyVersion">
+            <summary>
+            Gets the version
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyDescription">
+            <summary>
+            Gets the description
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyProduct">
+            <summary>
+            gets the product
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyCopyright">
+            <summary>
+            Gets the copyright
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyDiagnosticsAccessor.AssemblyCompany">
+            <summary>
+            Gets the company
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleAppCast">
+            <summary>
+            An app-cast 
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAppCast.#ctor(System.String,AppLimit.NetSparkle.NetSparkleConfiguration)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="castUrl">the URL of the appcast file</param>
+            <param name="config">the current configuration</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAppCast.GetLatestVersion">
+            <summary>
+            Gets the latest version
+            </summary>
+            <returns>the AppCast item corresponding to the latest version</returns>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleRegistryConfiguration">
+            <summary>
+            This class handles all registry values which are used from sparkle to handle 
+            update intervalls. All values are stored in HKCU\Software\Vendor\AppName which 
+            will be read ot from the assembly information. All values are of the REG_SZ 
+            type, no matter what their "logical" type is. The following options are
+            available:
+            
+            CheckForUpdate  - Boolean    - Whether NetSparkle should check for updates
+            LastCheckTime   - time_t     - Time of last check
+            SkipThisVersion - String     - If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
+            DidRunOnce      - Boolean    - Check only one time when the app launched
+            </summary>    
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.#ctor(System.String)">
+            <summary>
+            The constructor reads out all configured values
+            </summary>        
+            <param name="referenceAssembly">the reference assembly name</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.#ctor(System.String,System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="referenceAssembly">the name of hte reference assembly</param>
+            <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.TouchProfileTime">
+            <summary>
+            Touches to profile time
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.TouchCheckTime">
+            <summary>
+            Touches the check time to now, should be used after a check directly
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.SetVersionToSkip(System.String)">
+            <summary>
+            This method allows to skip a specific version
+            </summary>
+            <param name="version">the version to skeip</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.Reload">
+            <summary>
+            Reloads the configuration object
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.BuildRegistryPath">
+            <summary>
+            This function build a valid registry path in dependecy to the 
+            assembly information
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.LoadValuesFromPath(System.String)">
+            <summary>
+            This method loads the values from registry
+            </summary>
+            <param name="regPath">the registry path</param>
+            <returns><c>true</c> if the items were loaded</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleRegistryConfiguration.SaveValuesToPath(System.String)">
+            <summary>
+            This method store the information into registry
+            </summary>
+            <param name="regPath">the registry path</param>
+            <returns><c>true</c> if the values were saved to the registry</returns>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleAssemblyAccessor">
+            <summary>
+            An assembly accessor
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.#ctor(System.String,System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="assemblyName">the assembly name</param>
+            <param name="isReflectionAccesorUsed"><c>true</c> if reflection is used to access the attributes.</param>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyCompany">
+            <summary>
+            Gets the company
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyCopyright">
+            <summary>
+            Gets the copyright
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyDescription">
+            <summary>
+            Gets the description
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyProduct">
+            <summary>
+            Gets the product
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyTitle">
+            <summary>
+            Gets the title
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyAccessor.AssemblyVersion">
+            <summary>
+            Gets the version
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleAppCastItem">
+            <summary>
+            Item from a Sparkle AppCast file
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAppCastItem.CompareTo(AppLimit.NetSparkle.NetSparkleAppCastItem)">
+            <summary>
+            Compares this instance to another
+            </summary>
+            <param name="other">the other instance</param>
+            <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.AppName">
+            <summary>
+            The application name
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.AppVersionInstalled">
+            <summary>
+            The installed version
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.Version">
+            <summary>
+            The available version
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.ReleaseNotesLink">
+            <summary>
+            The release notes linke
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.DownloadLink">
+            <summary>
+            The download link
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAppCastItem.DSASignature">
+            <summary>
+            The DSA signature
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor">
+            <summary>
+            Assembly reflection accessor
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="assemblyName">the assembly name</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.CreateAttribute(System.Reflection.CustomAttributeData)">
+            <summary>
+            This methods creates an attribute instance from the attribute data 
+            information
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyTitle">
+            <summary>
+            Gets the assembly title
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyVersion">
+            <summary>
+            Gets the version
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyDescription">
+            <summary>
+            Gets the description
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyProduct">
+            <summary>
+            Gets the product
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyCopyright">
+            <summary>
+            Gets the copyright
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleAssemblyReflectionAccessor.AssemblyCompany">
+            <summary>
+            Gets the company
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleDSAVerificator">
+            <summary>
+            Class to verify a DSA signature
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDSAVerificator.ExistsPublicKey(System.String)">
+            <summary>
+            Determines if a public key exists in this 
+            </summary>
+            <param name="publicKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDSAVerificator.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="publicKey">the public key</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDSAVerificator.VerifyDSASignature(System.String,System.String)">
+            <summary>
+            Verifies the DSA signature
+            </summary>
+            <param name="signature">expected signature</param>
+            <param name="binaryPath">the path to the binary</param>
+            <returns><c>true</c> if the signature matches the expected signature.</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDSAVerificator.TryGetFileResource(System.String,System.IO.Stream)">
+            <summary>
+            Gets a file resource
+            </summary>
+            <param name="publicKey">the public key</param>
+            <param name="data">the data stream</param>
+            <returns>the data stream</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDSAVerificator.TryGetResourceStream(System.String)">
+            <summary>
+            Get a resource stream
+            </summary>
+            <param name="publicKey">the public key</param>
+            <returns>a stream</returns>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleDownloadProgress">
+            <summary>
+            A progress bar
+            </summary>
+            <summary>
+            A progress bar
+            </summary>
+        </member>
+        <member name="F:AppLimit.NetSparkle.NetSparkleDownloadProgress.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.#ctor(AppLimit.NetSparkle.Sparkle,AppLimit.NetSparkle.NetSparkleAppCastItem,System.Drawing.Image,System.Drawing.Icon,System.Boolean)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="sparkle">the sparkle instance</param>
+            <param name="item"></param>
+            <param name="appIcon">application icon</param>
+            <param name="windowIcon">window icon</param>
+            <param name="Unattend"><c>true</c> if this is an unattended install</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.AppLimit#NetSparkle#Interfaces#INetSparkleDownloadProgress#ShowDialog">
+            <summary>
+            Show the UI and waits
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.OnClientDownloadFileCompleted(System.Object,System.ComponentModel.AsyncCompletedEventArgs)">
+            <summary>
+            Event called when the download of the binary is complete
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.UpdateDownloadValid">
+            <summary>
+            Updates the UI to indicate if the download is valid
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.OnClientDownloadProgressChanged(System.Object,System.Net.DownloadProgressChangedEventArgs)">
+            <summary>
+            Event called when the client download progress changes
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleDownloadProgress.OnInstallAndReLaunchClick(System.Object,System.EventArgs)">
+            <summary>
+            Event called when the "Install and relaunch" button is clicked
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="E:AppLimit.NetSparkle.NetSparkleDownloadProgress.InstallAndRelaunch">
+            <summary>
+            event to fire when the form asks the application to be relaunched
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleDownloadProgress.TempFileName">
+            <summary>
+            Gets or sets the temporary file name where the new items are downloaded
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleDownloadProgress.IsDownloadDSAValid">
+            <summary>
+            Gets or sets a flag indicating if the downloaded file matches its listed
+            DSA hash.
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleException">
+            <summary>
+            A NetSparkle exception
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="message">exception message</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="info">serialization info</param>
+            <param name="context">the context</param>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NetSparkleForm">
+            <summary>
+            The main form
+            </summary>
+            <summary>
+            The main form
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.Interfaces.INetSparkleForm">
+            <summary>
+            Interface for UI element that shows the release notes, 
+            and the skip, install, and later buttons
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Interfaces.INetSparkleForm.Show">
+            <summary>
+            Show the UI
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Interfaces.INetSparkleForm.HideReleaseNotes">
+            <summary>
+            Hides the release notes 
+            </summary>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Interfaces.INetSparkleForm.UserResponded">
+            <summary>
+            Event fired when the user has responded to the 
+            skip, later, install question.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Interfaces.INetSparkleForm.Result">
+            <summary>
+            Gets the result for skip, later, or install
+            </summary>
+            <value>Valid results are install = yes, skip = no, later = retry</value>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Interfaces.INetSparkleForm.CurrentItem">
+            <summary>
+            Gets or sets the current item being installed
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.#ctor(AppLimit.NetSparkle.NetSparkleAppCastItem,System.Drawing.Image,System.Drawing.Icon)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="item"></param>
+            <param name="appIcon"></param>
+            <param name="windowIcon"></param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.AppLimit#NetSparkle#Interfaces#INetSparkleForm#HideReleaseNotes">
+            <summary>
+            Hides the release notes
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.AppLimit#NetSparkle#Interfaces#INetSparkleForm#Show">
+            <summary>
+            Shows the dialog
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.RemoveReleaseNotesControls">
+            <summary>
+            Removes the release notes control
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.OnSkipButtonClick(System.Object,System.EventArgs)">
+            <summary>
+            Event called when the skip button is clicked
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.OnRemindClick(System.Object,System.EventArgs)">
+            <summary>
+            Event called when the "remind me later" button is clicked
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.OnUpdateButtonClick(System.Object,System.EventArgs)">
+            <summary>
+            Called when the "Update button" is clicked
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="F:AppLimit.NetSparkle.NetSparkleForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.NetSparkleForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="E:AppLimit.NetSparkle.NetSparkleForm.UserResponded">
+            <summary>
+            Event fired when the user has responded to the 
+            skip, later, install question.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleForm.AppLimit#NetSparkle#Interfaces#INetSparkleForm#CurrentItem">
+            <summary>
+            The current item being installed
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.NetSparkleForm.AppLimit#NetSparkle#Interfaces#INetSparkleForm#Result">
+            <summary>
+            The result of ShowDialog()
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.LoopStartedOperation">
+            <summary>
+            The operation has started
+            </summary>
+            <param name="sender">the sender</param>
+        </member>
+        <member name="T:AppLimit.NetSparkle.LoopFinishedOperation">
+            <summary>
+            The operation has ended
+            </summary>
+            <param name="sender">the sender</param>
+            <param name="UpdateRequired"><c>true</c> if an update is required</param>
+        </member>
+        <member name="T:AppLimit.NetSparkle.UpdateDetected">
+            <summary>
+            This delegate will be used when an update was detected to allow library 
+            consumer to add own user interface capabilities.    
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:AppLimit.NetSparkle.Sparkle">
+            <summary>
+            Class to communicate with a sparkle-based appcast
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.#ctor(System.String)">
+            <summary>
+            ctor which needs the appcast url
+            </summary>
+            <param name="appcastUrl">the URL for the appcast file</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.#ctor(System.String,System.String)">
+            <summary>
+            ctor which needs the appcast url and a referenceassembly
+            </summary>
+            <param name="appcastUrl">the URL for the appcast file</param>
+            <param name="referenceAssembly">the reference assembly</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            ctor which needs the appcast url and a referenceassembly
+            </summary>        
+            <param name="appcastUrl">the URL for the appcast file</param>
+            <param name="referenceAssembly">the reference assembly</param>
+            <param name="showDiagnostic">show the diagnostics window.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.StartLoop(System.Boolean)">
+            <summary>
+            The method starts a NetSparkle background loop
+            If NetSparkle is configured to check for updates on startup, proceeds to perform 
+            the check. You should only call this function when your app is initialized and 
+            shows its main window.        
+            </summary>        
+            <param name="doInitialCheck"></param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.StartLoop(System.Boolean,System.TimeSpan)">
+            <summary>
+            The method starts a NetSparkle background loop
+            If NetSparkle is configured to check for updates on startup, proceeds to perform 
+            the check. You should only call this function when your app is initialized and 
+            shows its main window.
+            </summary>
+            <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+            <param name="checkFrequency">the frequency between checks.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.StartLoop(System.Boolean,System.Boolean)">
+            <summary>
+            The method starts a NetSparkle background loop
+            If NetSparkle is configured to check for updates on startup, proceeds to perform 
+            the check. You should only call this function when your app is initialized and 
+            shows its main window.
+            </summary>
+            <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+            <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.StartLoop(System.Boolean,System.Boolean,System.TimeSpan)">
+            <summary>
+            The method starts a NetSparkle background loop
+            If NetSparkle is configured to check for updates on startup, proceeds to perform 
+            the check. You should only call this function when your app is initialized and 
+            shows its main window.
+            </summary>
+            <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
+            <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
+            <param name="checkFrequency">the frequency between checks.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.StopLoop">
+            <summary>
+            This method will stop the sparkle background loop and is called
+            through the disposable interface automatically
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.Dispose">
+            <summary>
+            Is called in the using context and will stop all background activities
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.UnregisterEvents">
+            <summary>
+            Unregisters events so that we don't have multiple items updating
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.UpdateSystemProfileInformation(AppLimit.NetSparkle.NetSparkleConfiguration)">
+            <summary>
+            This method updates the profile information which can be sended to the server if enabled    
+            </summary>
+            <param name="config">the configuration</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.ProfileDataThreadStart(System.Object)">
+            <summary>
+            Profile data thread
+            </summary>
+            <param name="obj">the configuration object</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.IsUpdateRequired(AppLimit.NetSparkle.NetSparkleConfiguration,AppLimit.NetSparkle.NetSparkleAppCastItem@)">
+            <summary>
+            This method checks if an update is required. During this process the appcast
+            will be downloaded and checked against the reference assembly. Ensure that
+            the calling process has access to the internet and read access to the 
+            reference assembly. This method is also called from the background loops.
+            </summary>
+            <param name="config">the configuration</param>
+            <param name="latestVersion">returns the latest version</param>
+            <returns><c>true</c> if an update is required</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.GetApplicationConfig">
+            <summary>
+            This method reads the local sparkle configuration for the given
+            reference assembly
+            </summary>
+            <returns>the configuration</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.ShowUpdateNeededUI(AppLimit.NetSparkle.NetSparkleAppCastItem)">
+            <summary>
+            This method shows the update ui and allows to perform the 
+            update process
+            </summary>
+            <param name="currentItem">the item to show the UI for</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.ReportDiagnosticMessage(System.String)">
+            <summary>
+            This method reports a message in the diagnostic window
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.InitDownloadAndInstallProcess(AppLimit.NetSparkle.NetSparkleAppCastItem)">
+            <summary>
+            Starts the download process
+            </summary>
+            <param name="item">the appcast item to download</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.RunDownloadedInstaller">
+            <summary>
+            Runs the downloaded installer
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.Exit(System.Int32)">
+            <summary>
+            Attempts to exit the application
+            </summary>
+            <param name="returnCode">the return code.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.RemoteCertificateValidation(System.Object,System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509Chain,System.Net.Security.SslPolicyErrors)">
+            <summary>
+            Determine if the remote X509 certificate is validate
+            </summary>
+            <param name="sender">the web request</param>
+            <param name="certificate">the certificate</param>
+            <param name="chain">the chain</param>
+            <param name="sslPolicyErrors">how to handle policy errors</param>
+            <returns><c>true</c> if the cert is valid</returns>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.CheckForUpdates(System.Boolean)">
+            <summary>
+            Does a one-off check for updates
+            </summary>
+            <param name="isUserInterfaceShown"><c>true</c> if the user interface is to be shown.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.Update(AppLimit.NetSparkle.NetSparkleAppCastItem)">
+            <summary>
+            Updates from appcast
+            </summary>
+            <param name="currentItem">the current (top-most) item in the app-cast</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.CancelInstall">
+            <summary>
+            Cancels the install
+            </summary>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.OnUserWindowUserResponded(System.Object,System.EventArgs)">
+            <summary>
+            Called when the user responds to the "skip, later, install" question.
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.OnProgressWindowInstallAndRelaunch(System.Object,System.EventArgs)">
+            <summary>
+            Called when the progress bar fires the update event
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">not used.</param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.OnWorkerDoWork(System.Object,System.ComponentModel.DoWorkEventArgs)">
+            <summary>
+            This method will be executed as worker thread
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.OnWorkerProgressChanged(System.Object,System.ComponentModel.ProgressChangedEventArgs)">
+            <summary>
+            This method will be notified
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:AppLimit.NetSparkle.Sparkle.OnWebDownloadClientDownloadFileCompleted(System.Object,System.ComponentModel.AsyncCompletedEventArgs)">
+            <summary>
+            Called when the installer is downloaded
+            </summary>
+            <param name="sender">not used.</param>
+            <param name="e">used to determine if the download was successful.</param>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Sparkle.ApplicationExitRequested">
+            <summary>
+            Event to fire if this instance needs to exit the appliction.
+            </summary>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Sparkle.CheckLoopStarted">
+            <summary>
+            This event will be raised when a check loop will be started
+            </summary>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Sparkle.CheckLoopFinished">
+            <summary>
+            This event will be raised when a check loop is finished
+            </summary>
+        </member>
+        <member name="E:AppLimit.NetSparkle.Sparkle.UpdateDetected">
+            <summary>
+            This event can be used to override the standard user interface
+            process when an update is detected
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.EnableSystemProfiling">
+            <summary>
+            Enables system profiling against a profile server
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.HideReleaseNotes">
+            <summary>
+            Hides the release notes view when an update was found. This 
+            mode is switched on automatically when no sparkle:releaseNotesLink
+            tag was found in the app cast         
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.SystemProfileUrl">
+            <summary>
+            Contains the profile url for System profiling
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.ApplicationIcon">
+            <summary>
+            This property holds an optional application icon
+            which will be displayed in the software update dialog. The icon has
+            to be 48x48 pixels.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.ApplicationWindowIcon">
+            <summary>
+            This property returns an optional application icon 
+            which will displayed in the windows as self
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.ShowDiagnosticWindow">
+            <summary>
+            This property enables a diagnostic window for debug reasons
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.EnableSilentMode">
+            <summary>
+            This property enables the silent mode, this means 
+            the application will be updated without user interaction
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.IsUpdateLoopRunning">
+            <summary>
+            This property returns true when the upadete loop is running
+            and files when the loop is not running
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.TrustEverySSLConnection">
+            <summary>
+            This property defines if we trust every ssl connection also when 
+            this connection has not a valid cert
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.UserWindow">
+            <summary>
+            The user interface window that shows the release notes and
+            asks the user to skip, later or update
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.ProgressWindow">
+            <summary>
+            The user interface window that shows a download progress bar,
+            and then asks to install and relaunch the application
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.Configuration">
+            <summary>
+            The configuration.
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.Sparkle.AppcastUrl">
+            <summary>
+            Gets or sets the app cast URL
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.NextUpdateAction">
+            <summary>
+            Everytime when netsparkle detects an update the 
+            consumer can decide what should happen as next with the help 
+            of the UpdateDatected event
+            </summary>
+        </member>
+        <member name="F:AppLimit.NetSparkle.NextUpdateAction.ShowStandardUserInterface">
+            <summary>
+            Show the user interface
+            </summary>
+        </member>
+        <member name="F:AppLimit.NetSparkle.NextUpdateAction.PerformUpdateUnattended">
+            <summary>
+            Perform an unattended install
+            </summary>
+        </member>
+        <member name="F:AppLimit.NetSparkle.NextUpdateAction.ProhibitUpdate">
+            <summary>
+            Prohibit the update
+            </summary>
+        </member>
+        <member name="T:AppLimit.NetSparkle.UpdateDetectedEventArgs">
+            <summary>
+            Contains all information for the update detected event
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.UpdateDetectedEventArgs.NextAction">
+            <summary>
+            The next action
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.UpdateDetectedEventArgs.ApplicationConfig">
+            <summary>
+            The application configuration
+            </summary>
+        </member>
+        <member name="P:AppLimit.NetSparkle.UpdateDetectedEventArgs.LatestVersion">
+            <summary>
+            The latest available version
+            </summary>
+        </member>
+    </members>
+</doc>
