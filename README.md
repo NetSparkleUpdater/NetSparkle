@@ -23,11 +23,11 @@ NetSparkle is MIT-Licensed [Mit License]
 
 ## Dependencies
 
-- [NLog] (included in lib/, you may want to update). 
  
-## Differences with [CodePlex]
+## History
+8 March 2013 John Hatton: Goals: Redesign to be less obtrusive, both for the user and the client application. Initial goals are to remove dependency on NLog, then provide greater separation between the logic/download vs. the Sparkle-provided UI.
 
-I forked NetSparkle because I had some requirements for a client program that weren't easily met by the standard version.
+3 Jan 2012 Jim Graham: forked NetSparkle to GitHub because I had some requirements for a client program that weren't easily met by the standard version.
 
  - This version allows for a custom UI instead of the two Windows Forms dialog
  - Allows for one-time check for updates instead of running on a loop
@@ -43,5 +43,4 @@ An incomplete list of other projects that might be more suitable for you:
 
 [CodePlex]: http://netsparkle.codeplex.com
 [Mit License]: http://netsparkle.codeplex.com/license
-[NLog]: http://nlog-project.org/
 [Sparkle Dot Net]: https://github.com/iKenndac/SparkleDotNET

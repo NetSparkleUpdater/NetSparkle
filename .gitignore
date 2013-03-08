@@ -2,5 +2,7 @@
 *.exe
 *.dll
 *.obj
+*.pdb
+AppLimit.NetSparkle.Net40.XML
 bin/
 obj/
