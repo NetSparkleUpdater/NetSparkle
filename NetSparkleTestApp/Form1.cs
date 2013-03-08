@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using AppLimit.NetSparkle;
 
@@ -12,7 +14,8 @@ namespace NetSparkleTestApp
         {
             InitializeComponent();
 
-            _sparkle = new Sparkle("https://update.applimit.com/netsparkle/versioninfo.xml")
+            _sparkle = new Sparkle("file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml")
+            //_sparkle = new Sparkle("https://update.applimit.com/netsparkle/versioninfo.xml")
             {
                 ShowDiagnosticWindow = true,
                 TrustEverySSLConnection = true,
@@ -26,6 +29,19 @@ namespace NetSparkleTestApp
 
             _sparkle.StartLoop(true);
         }
+
+
+        public static string DirectoryOfTheApplicationExecutable
+        {
+            get
+            {
+                string path;
+                path = new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath;
+                path = Uri.UnescapeDataString(path);
+                return Directory.GetParent(path).FullName;
+            }
+        }
+
 
         void _sparkle_updateDetected(object sender, UpdateDetectedEventArgs e)
         {
