@@ -1,0 +1,41 @@
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
+using AppLimit.NetSparkle;
+
+namespace SampleApplication
+{
+    public partial class Form1 : Form
+    {
+        private Sparkle _sparkleUpdateDetector;
+
+        public Form1()
+        {
+            InitializeComponent();
+
+            var appcastUrl = "file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml";
+            _sparkleUpdateDetector = new Sparkle(appcastUrl)
+                                         {
+                                             ApplicationWindowIcon = this.Icon
+                                         };
+        }
+
+
+        public static string DirectoryOfTheApplicationExecutable
+        {
+            get
+            { 
+                string path;
+                path = new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath;
+                path = Uri.UnescapeDataString(path);
+                return Directory.GetParent(path).FullName;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            _sparkleUpdateDetector.CheckForUpdates(false);
+        }
+    }
+}

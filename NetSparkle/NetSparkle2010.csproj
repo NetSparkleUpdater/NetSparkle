@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>Debug\lib\net40-full\AppLimit.NetSparkle.Net40.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -149,6 +150,12 @@
       <DependentUpon>NetSparkleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NetSparkleRegistryConfiguration.cs" />
+    <Compile Include="ToastNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToastNotifier.designer.cs">
+      <DependentUpon>ToastNotifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -228,6 +235,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NetSparkleForm.zh-TW.resx">
       <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToastNotifier.resx">
+      <DependentUpon>ToastNotifier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

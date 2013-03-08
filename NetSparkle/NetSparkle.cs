@@ -125,6 +125,11 @@ namespace AppLimit.NetSparkle
                 Debug.WriteLine("Checking the following file: " + _AppReferenceAssembly);
             }
 
+            if(CheckOnFirstApplicationIdle)
+            {
+                Application.Idle += OnFirstApplicationIdle;
+            }
+
             // adjust the delegates
             _worker.WorkerReportsProgress = true;
             _worker.DoWork += new DoWorkEventHandler(OnWorkerDoWork);
@@ -137,6 +142,12 @@ namespace AppLimit.NetSparkle
             // set the url
             _AppCastUrl = appcastUrl;
             Debug.WriteLine("Using the following url: " + _AppCastUrl);            
+        }
+
+        void OnFirstApplicationIdle(object sender, EventArgs e)
+        {
+            Application.Idle -= OnFirstApplicationIdle;
+            CheckForUpdates(false);
         }
 
         #region Properties
@@ -169,11 +180,6 @@ namespace AppLimit.NetSparkle
         /// which will displayed in the windows as self
         /// </summary>
         public Icon ApplicationWindowIcon { get; set; }
-
-        /// <summary>
-        /// This property enables a diagnostic window for debug reasons
-        /// </summary>
-        public bool ShowDiagnosticWindow { get; set; }
 
         /// <summary>
         /// This property enables the silent mode, this means 
@@ -224,6 +230,22 @@ namespace AppLimit.NetSparkle
             get { return _AppCastUrl; }
             set { _AppCastUrl = value; }
         }
+
+        /// <summary>
+        /// If true (the default), the app will check once, after the app settles down.
+        /// </summary>
+        public bool CheckOnFirstApplicationIdle = true;
+
+
+        /// <summary>
+        /// If True, when there's a new version, the a small notification will appear and then fade. If
+        /// the user clicks on it, then the full update window will appear. If false, then you just go
+        /// straight to the update window. Use this if you application has updates really frequently
+        /// and you don't want to bug your users.
+        /// </summary>
+        public bool UseNotificationToast =true;
+
+        
         #endregion
 
         /// <summary>
@@ -494,6 +516,28 @@ namespace AppLimit.NetSparkle
         /// <param name="currentItem">the item to show the UI for</param>
         public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem)
         {
+            if (UseNotificationToast)
+            {
+                var toast = new ToastNotifier();
+                toast.Tag = currentItem;
+                toast.Image.Image = ApplicationWindowIcon.ToBitmap();
+                toast.Click += OnToastClick;
+                toast.Show("New Version Available", "more information",5);
+            }
+            else
+            {
+                ShowUpdateNeededUIInner(currentItem);
+            }
+        }
+
+        void OnToastClick(object sender, EventArgs e)
+        {
+            ShowUpdateNeededUIInner((NetSparkleAppCastItem)((Control)sender).Tag);
+        }
+
+
+        private void ShowUpdateNeededUIInner(NetSparkleAppCastItem currentItem)
+        {   
             if (this.UserWindow == null)
             {
                 // create the form
@@ -694,10 +738,18 @@ namespace AppLimit.NetSparkle
                 // show the update window
                 ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + latestVersion.Version);
 
-                // send notification if needed
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
+
+                // if the client wants to intercept, send an event
                 if (UpdateDetected != null)
+                {
                     UpdateDetected(this, ev);
+                }
+                //otherwise just go forward with the UI notficiation
+                else
+                {
+                    ShowUpdateNeededUI(latestVersion);
+                }
 
                 // check results
                 if (isUserInterfaceShown)
@@ -884,7 +936,7 @@ namespace AppLimit.NetSparkle
                     case NextUpdateAction.ShowStandardUserInterface:
                     default:
                         {
-                            ReportDiagnosticMessage("Standard UI update whished from consumer");
+                            ReportDiagnosticMessage("Showing Standard Update UI");
                             _worker.ReportProgress(1, latestVersion);
                             break;
                         }
@@ -1004,5 +1056,6 @@ namespace AppLimit.NetSparkle
                 this.ProgressWindow.OnClientDownloadFileCompleted(sender, e);
             }
         }
+     
     }
 }

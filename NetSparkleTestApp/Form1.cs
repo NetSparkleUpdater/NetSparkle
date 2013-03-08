@@ -8,7 +8,7 @@ namespace NetSparkleTestApp
 {
     public partial class Form1 : Form
     {
-        private Sparkle _sparkle;
+        private readonly Sparkle _sparkle;
 
         public Form1()
         {
@@ -17,13 +17,12 @@ namespace NetSparkleTestApp
             _sparkle = new Sparkle("file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml")
             //_sparkle = new Sparkle("https://update.applimit.com/netsparkle/versioninfo.xml")
             {
-                ShowDiagnosticWindow = true,
                 TrustEverySSLConnection = true,
                 //EnableSystemProfiling = true,
                 //SystemProfileUrl = new Uri("http://update.applimit.com/netsparkle/stat/profileInfo.php")
             };
 
-            _sparkle.UpdateDetected += new UpdateDetected(_sparkle_updateDetected);
+            //_sparkle.UpdateDetected += new UpdateDetected(_sparkle_updateDetected);
             //_sparkle.EnableSilentMode = true;
             //_sparkle.HideReleaseNotes = true;
 

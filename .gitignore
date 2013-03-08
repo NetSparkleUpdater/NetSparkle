@@ -6,3 +6,5 @@
 AppLimit.NetSparkle.Net40.XML
 bin/
 obj/
+_ReSharper*/
+*.ncrunchsolution
