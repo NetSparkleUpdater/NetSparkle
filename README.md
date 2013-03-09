@@ -1,6 +1,6 @@
 ## Description
 
-Simple .net update checker & installer downloader. Based on NetSparkle [CodePlex], which is based on Sparkle for the Mac. You provide, somewhere on the net, an xml file that advertises latest version. You also provide release notes. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
+Simple .net update checker & installer downloader. You provide, somewhere on the net, an rss xml file that advertises latest version. You also provide release notes. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
 
 ## Basic Usage
 
@@ -19,13 +19,6 @@ If you want your own UI, just subscribe to this event, and no UI will be shown:
 
     _sparkleApplicationUpdater.UpdateDetected+=new UpdateDetected(MyCustomUpdateHandler);
 
-
-## More about the original CodePlex project
-From the [CodePlex] page:
-
-NetSparkle is an easy-to-use software update framework for .NET developers on Windows, MAC or Linux. It was inspired by the Sparkle (http://bit.ly/HWyJd) project for Cocoa developers and the WinSparkle (http://bit.ly/cj5kP5) project (a Win32 port).
-
-
 ## License
 
 NetSparkle is [Mit Licensed]
@@ -38,7 +31,7 @@ NetSparkle is [Mit Licensed]
 
  
 ## History
-8 March 2013 John Hatton: Goals:
+8 March 2013 John Hatton: Talking to Jim Graham, forked with these goals:
 
  - Reduce/remove the current "loop" background orientation. Most apps just want to check on launch.
  - Remove dependency on NLog
@@ -53,12 +46,18 @@ NetSparkle is [Mit Licensed]
  - Refactored the diagnostic to use [NLog] instead of a custom filestream
  - Refactored exiting the application to fire an event for shutdown instead of `Environment.Exit`
 
-## Other Projects
+October 2010 dei79 created SVN repository on [CodePlex]:
 
-An incomplete list of other projects that might be more suitable for you:
+NetSparkle is an easy-to-use software update framework for .NET developers on Windows, MAC or Linux. It was inspired by the Sparkle (http://bit.ly/HWyJd) project for Cocoa developers and the WinSparkle (http://bit.ly/cj5kP5) project (a Win32 port).
+
+## Other Options
+
+An incomplete list of other .net projects related to updating:
  
  - [Sparkle Dot Net]
+ - [NAppUpdate]
 
 [CodePlex]: http://netsparkle.codeplex.com
 [Mit Licensed]: http://netsparkle.codeplex.com/license
 [Sparkle Dot Net]: https://github.com/iKenndac/SparkleDotNET
+[NAppUpdate]: https://github.com/synhershko/NAppUpdate
