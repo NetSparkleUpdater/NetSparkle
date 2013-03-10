@@ -2,7 +2,7 @@
 using System.Net;
 using System;
 
-namespace AppLimit.NetSparkle.Interfaces
+namespace NetSparkle.Interfaces
 {
     /// <summary>
     /// Interface for UI element that shows the progress bar

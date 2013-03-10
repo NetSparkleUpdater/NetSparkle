@@ -6,7 +6,7 @@ using System.IO;
 using System.Xml;
 using System.Net;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// An app-cast 

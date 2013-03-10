@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// Everytime when netsparkle detects an update the 

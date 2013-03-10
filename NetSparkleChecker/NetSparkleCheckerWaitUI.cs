@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using AppLimit.NetSparkle;
+using NetSparkle;
 
 namespace NetSparkleChecker
 {

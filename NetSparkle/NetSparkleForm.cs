@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using AppLimit.NetSparkle.Interfaces;
+using NetSparkle.Interfaces;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// The main form

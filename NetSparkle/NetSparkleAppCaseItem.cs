@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// Item from a Sparkle AppCast file

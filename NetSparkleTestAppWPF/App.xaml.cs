@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace NetSparkleTestAppWPF
+namespace NetSparkle.TestAppWPF
 {
     /// <summary>
     /// Interaction logic for App.xaml

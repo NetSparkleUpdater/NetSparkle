@@ -8,8 +8,8 @@
     <ProjectGuid>{BBE308BB-4096-4E7B-A458-85172F47C497}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetSparkleTestAppWPF</RootNamespace>
-    <AssemblyName>NetSparkleTestAppWPF</AssemblyName>
+    <RootNamespace>NetSparkle.TestAppWPF</RootNamespace>
+    <AssemblyName>NetSparkle.TestAppWPF</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

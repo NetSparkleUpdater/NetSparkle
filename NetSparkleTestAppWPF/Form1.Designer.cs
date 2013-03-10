@@ -1,4 +1,4 @@
-﻿namespace NetSparkleTestAppWPF
+﻿namespace NetSparkle.TestAppWPF
 {
     partial class Form1
     {

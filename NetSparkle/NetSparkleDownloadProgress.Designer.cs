@@ -1,4 +1,4 @@
-﻿namespace AppLimit.NetSparkle
+﻿namespace NetSparkle
 {
     /// <summary>
     /// A progress bar
@@ -81,7 +81,7 @@
             resources.ApplyResources(this.imgAppIcon, "imgAppIcon");
             this.imgAppIcon.BackgroundImage = null;
             this.imgAppIcon.Font = null;
-            this.imgAppIcon.Image = global::AppLimit.NetSparkle.Properties.Resources.software_update_available1;
+            this.imgAppIcon.Image = global::NetSparkle.Properties.Resources.software_update_available1;
             this.imgAppIcon.ImageLocation = null;
             this.imgAppIcon.Name = "imgAppIcon";
             this.imgAppIcon.TabStop = false;

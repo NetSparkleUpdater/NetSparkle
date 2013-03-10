@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace NetSparkleDSAHelper
+namespace NetSparkle.DSAHelper
 {
     class Program
     {
@@ -123,7 +123,7 @@ namespace NetSparkleDSAHelper
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
 
-                            AppLimit.NetSparkle.NetSparkleDSAVerificator dsaVerif = new AppLimit.NetSparkle.NetSparkleDSAVerificator(pubKey);
+                            NetSparkle.NetSparkleDSAVerificator dsaVerif = new NetSparkle.NetSparkleDSAVerificator(pubKey);
                             if (dsaVerif.VerifyDSASignature(sign, binary))
                                 Console.WriteLine("Binary " + binary + " is valid");
                             else
@@ -146,21 +146,21 @@ namespace NetSparkleDSAHelper
         {
             ShowHeadLine();
 
-            Console.WriteLine("NetSparkleDSAHelper.exe /genkey_pair");
+            Console.WriteLine("NetSparkle.DSAHelper.exe /genkey_pair");
             Console.WriteLine("");
             Console.WriteLine("Generates a public and a private DSA key pair which is stored in the current");
             Console.WriteLine("working directory. The private is stored in the file NetSparkle_DSA.priv");
             Console.WriteLine("The public key will be stored in a file named NetSparkle_DSA.pub. Add the");
             Console.WriteLine("public key file as resource to your application.");
             Console.WriteLine("");
-            Console.WriteLine("NetSparkleDSAHelper.exe /sign_update {YourPackage.msi} {NetSparkle_DSA.priv}");
+            Console.WriteLine("NetSparkle.DSAHelper.exe /sign_update {YourPackage.msi} {NetSparkle_DSA.priv}");
             Console.WriteLine("");
             Console.WriteLine("Allows to sign an existing update package unattended. YourPackage.msi has to be");
             Console.WriteLine("a valid path to the package binary as self (mostly Windows Installer packages).");
             Console.WriteLine("The NetSparkle_DSA.priv has to be a path to the generated DAS private key,");
             Console.WriteLine("which has to be used for signing.");
             Console.WriteLine("");
-            Console.WriteLine("NetSparkleDSAHelper.exe /verify_update {YourPackage.msi} {NetSparkle_DSA.pub} \"{Base64SignatureString}\"");
+            Console.WriteLine("NetSparkle.DSAHelper.exe /verify_update {YourPackage.msi} {NetSparkle_DSA.pub} \"{Base64SignatureString}\"");
             Console.WriteLine("");
             
         }

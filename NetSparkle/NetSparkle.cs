@@ -6,12 +6,12 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
-using AppLimit.NetSparkle.Interfaces;
+using NetSparkle.Interfaces;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// The operation has started

@@ -1,4 +1,4 @@
-﻿namespace AppLimit.NetSparkle
+﻿namespace NetSparkle
 {
 	partial class ToastNotifier
 	{

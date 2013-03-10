@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NetSparkle")]
 [assembly: AssemblyDescription("NetSparkle is an auto update framework for .NET developers")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Dirk Eisenberg")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NetSparkle")]
-[assembly: AssemblyCopyright("Copyright © Dirk Eisenberg 2010")]
+[assembly: AssemblyCopyright("Portions Copyright © Dirk Eisenberg 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

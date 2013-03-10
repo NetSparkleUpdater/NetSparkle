@@ -8,8 +8,8 @@
     <ProjectGuid>{B4D6FCB0-1217-4AFA-A2A5-4BA5482876C0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetSparkleDSAHelper</RootNamespace>
-    <AssemblyName>NetSparkleDSAHelper</AssemblyName>
+    <RootNamespace>NetSparkle.DSAHelper</RootNamespace>
+    <AssemblyName>NetSparkle.DSAHelper</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

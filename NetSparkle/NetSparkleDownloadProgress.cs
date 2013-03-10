@@ -11,9 +11,9 @@ using System.Net;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
-using AppLimit.NetSparkle.Interfaces;
+using NetSparkle.Interfaces;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// A progress bar

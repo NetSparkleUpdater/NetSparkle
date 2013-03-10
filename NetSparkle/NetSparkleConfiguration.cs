@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// Abstract class to handle 

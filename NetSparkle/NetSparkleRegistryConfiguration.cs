@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// This class handles all registry values which are used from sparkle to handle 

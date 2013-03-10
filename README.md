@@ -6,7 +6,9 @@ Simple .net update checker & installer downloader. You provide, somewhere on the
 
     _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml")
     {
-        ApplicationWindowIcon = this.Icon
+        ApplicationWindowIcon = this.Icon,
+		CheckOnFirstApplicationIdle = true,
+		UseNotificationToast =true		
     };
 
 There are several (too many) other options, but this will give you a reasonable default. On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, a little "toast" box will slide up in the corner of the screen, announcing the new version. If the user clicks on it, then a larger dialog box will open, showing your release notes, again, from a server somewhere. The user can then ignore the update, ask to be reminded later, or download it now.
@@ -31,10 +33,10 @@ NetSparkle is [Mit Licensed]
 
  
 ## History
-8 March 2013 John Hatton: Talking to Jim Graham, forked with these goals:
+8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 
  - Reduce/remove the current "loop" background orientation. Most apps just want to check on launch.
- - Remove dependency on NLog
+ - Remove dependency on NLog, in fact just removed the whole separate diagnostic window. Now just uses Debug.Writeline().
  - Provide greater separation between the logic/download vs. the Sparkle-provided UI
  - Make UI less obtrusive, fitting with apps that are updated frequent (like, daily)
 
@@ -44,7 +46,7 @@ NetSparkle is [Mit Licensed]
  - Allows for one-time check for updates instead of running on a loop
  - Allows for custom configuration objects instead of reading/writing to the registry
  - Refactored the diagnostic to use [NLog] instead of a custom filestream
- - Refactored exiting the application to fire an event for shutdown instead of `Environment.Exit`
+ - Refactored existing the application to fire an event for shutdown instead of `Environment.Exit`
 
 October 2010 dei79 created SVN repository on [CodePlex]:
 

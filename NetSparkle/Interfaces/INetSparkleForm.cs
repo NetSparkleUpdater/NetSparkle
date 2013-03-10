@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AppLimit.NetSparkle.Interfaces
+namespace NetSparkle.Interfaces
 {
     /// <summary>
     /// Interface for UI element that shows the release notes, 

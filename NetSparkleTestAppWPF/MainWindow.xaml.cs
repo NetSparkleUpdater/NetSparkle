@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using AppLimit.NetSparkle;
 
-namespace NetSparkleTestAppWPF
+
+namespace NetSparkle.TestAppWPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -17,7 +17,7 @@ namespace NetSparkleTestAppWPF
             // remove the netsparkle key from registry 
             try
             {
-                Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree("Software\\Microsoft\\NetSparkleTestAppWPF");
+                Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree("Software\\Microsoft\\NetSparkle.TestAppWPF");
             }
             catch { }
 

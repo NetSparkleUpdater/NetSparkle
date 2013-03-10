@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using AppLimit.NetSparkle;
+using NetSparkle;
 
-namespace NetSparkleTestAppWPF
+namespace NetSparkle.TestAppWPF
 {
     public partial class Form1 : Form
     {

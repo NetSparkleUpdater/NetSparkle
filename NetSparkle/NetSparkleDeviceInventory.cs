@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Management;
 using System.Threading;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     internal class NetSparkleDeviceInventory
     {

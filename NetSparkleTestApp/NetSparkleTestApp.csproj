@@ -8,8 +8,8 @@
     <ProjectGuid>{5D5F4532-9CA6-4380-818D-A8FAC21450D1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetSparkleTestApp</RootNamespace>
-    <AssemblyName>NetSparkleTestApp</AssemblyName>
+    <RootNamespace>NetSparkle.TestApp</RootNamespace>
+    <AssemblyName>NetSparkle.TestApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -73,6 +73,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

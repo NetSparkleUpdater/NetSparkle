@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace AppLimit.NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// Class to verify a DSA signature
