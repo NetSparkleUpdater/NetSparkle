@@ -68,7 +68,7 @@ namespace NetSparkle
 
         private EventWaitHandle _exitHandle;
         private EventWaitHandle _loopingHandle;
-       
+        private Icon _applicationIcon;       
         private TimeSpan _CheckFrequency;
 
         private string _downloadTempFileName;
@@ -79,27 +79,21 @@ namespace NetSparkle
         /// ctor which needs the appcast url
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        public Sparkle(String appcastUrl)
-            : this(appcastUrl, null)
-        { }
-
-        /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
-        /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="referenceAssembly">the reference assembly</param>
-        public Sparkle(String appcastUrl, String referenceAssembly)
-            : this(appcastUrl, referenceAssembly, false)
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        public Sparkle(String appcastUrl, Icon applicationIcon)
+            : this(appcastUrl, applicationIcon, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="referenceAssembly">the reference assembly</param>
-        /// <param name="showDiagnostic">show the diagnostics window.</param>
-        public Sparkle(String appcastUrl, String referenceAssembly, bool showDiagnostic)
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
+        public Sparkle(String appcastUrl,Icon applicationIcon, String referenceAssembly)
         {
+            _applicationIcon = applicationIcon;
+
             // preconfige ssl trust
             TrustEverySSLConnection = false;
 
@@ -110,13 +104,7 @@ namespace NetSparkle
             // also in WPF applications
             System.Windows.Forms.Application.EnableVisualStyles();
 
-            // reset vars
-            ApplicationIcon = null;
             _AppReferenceAssembly = null;            
-
-            // set var
-//            this.ShowDiagnosticWindow = showDiagnostic;
-//            _diagnostic = new NetSparkleDiagnostic(showDiagnostic);
 
             // set the reference assembly
             if (referenceAssembly != null)
@@ -125,10 +113,6 @@ namespace NetSparkle
                 Debug.WriteLine("Checking the following file: " + _AppReferenceAssembly);
             }
 
-            if(CheckOnFirstApplicationIdle)
-            {
-                Application.Idle += OnFirstApplicationIdle;
-            }
 
             // adjust the delegates
             _worker.WorkerReportsProgress = true;
@@ -144,11 +128,20 @@ namespace NetSparkle
             Debug.WriteLine("Using the following url: " + _AppCastUrl);            
         }
 
-        void OnFirstApplicationIdle(object sender, EventArgs e)
+        /// <summary>
+        /// The app will check once, after the app settles down.
+        /// </summary>
+        public void CheckOnFirstApplicationIdle()
+        {
+                Application.Idle += OnFirstApplicationIdle;
+        }
+
+        private void OnFirstApplicationIdle(object sender, EventArgs e)
         {
             Application.Idle -= OnFirstApplicationIdle;
             CheckForUpdates(false);
         }
+
 
         #region Properties
         /// <summary>
@@ -167,19 +160,6 @@ namespace NetSparkle
         /// Contains the profile url for System profiling
         /// </summary>
         public Uri SystemProfileUrl { get; private set; }
-
-        /// <summary>
-        /// This property holds an optional application icon
-        /// which will be displayed in the software update dialog. The icon has
-        /// to be 48x48 pixels.
-        /// </summary>
-        public Image ApplicationIcon { get; set; }
-
-        /// <summary>
-        /// This property returns an optional application icon 
-        /// which will displayed in the windows as self
-        /// </summary>
-        public Icon ApplicationWindowIcon { get; set; }
 
         /// <summary>
         /// This property enables the silent mode, this means 
@@ -230,11 +210,6 @@ namespace NetSparkle
             get { return _AppCastUrl; }
             set { _AppCastUrl = value; }
         }
-
-        /// <summary>
-        /// If true (the default), the app will check once, after the app settles down.
-        /// </summary>
-        public bool CheckOnFirstApplicationIdle = true;
 
 
         /// <summary>
@@ -520,7 +495,7 @@ namespace NetSparkle
             {
                 var toast = new ToastNotifier();
                 toast.Tag = currentItem;
-                toast.Image.Image = ApplicationWindowIcon.ToBitmap();
+                toast.Image.Image = _applicationIcon.ToBitmap();
                 toast.Click += OnToastClick;
                 toast.Show("New Version Available", "more information",5);
             }
@@ -541,7 +516,7 @@ namespace NetSparkle
             if (this.UserWindow == null)
             {
                 // create the form
-                this.UserWindow = new NetSparkleForm(currentItem, ApplicationIcon, ApplicationWindowIcon);
+                this.UserWindow = new NetSparkleForm(currentItem, _applicationIcon);
             }
             this.UserWindow.CurrentItem = currentItem;
             if (this.HideReleaseNotes)
@@ -577,7 +552,7 @@ namespace NetSparkle
             _downloadTempFileName = Environment.ExpandEnvironmentVariables("%temp%\\" + fileName);
             if (this.ProgressWindow == null)
             {
-                this.ProgressWindow = new NetSparkleDownloadProgress(this, item, ApplicationIcon, ApplicationWindowIcon, EnableSilentMode);
+                this.ProgressWindow = new NetSparkleDownloadProgress(this, item, _applicationIcon, EnableSilentMode);
             }
             else
             {

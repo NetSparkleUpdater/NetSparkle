@@ -36,18 +36,14 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sparkle">the sparkle instance</param>
         /// <param name="item"></param>
-        /// <param name="appIcon">application icon</param>
-        /// <param name="windowIcon">window icon</param>
+        /// <param name="applicationIcon">Your application Icon</param>
         /// <param name="Unattend"><c>true</c> if this is an unattended install</param>
-        public NetSparkleDownloadProgress(Sparkle sparkle, NetSparkleAppCastItem item, Image appIcon, Icon windowIcon, Boolean Unattend)
+        public NetSparkleDownloadProgress(Sparkle sparkle, NetSparkleAppCastItem item, Icon applicationIcon, Boolean Unattend)
         {
             InitializeComponent();
 
-            if (appIcon != null)
-                imgAppIcon.Image = appIcon;
-
-            if (windowIcon != null)
-                Icon = windowIcon;
+            imgAppIcon.Image = applicationIcon.ToBitmap();
+            Icon = applicationIcon;
 
             // store the item
             _sparkle = sparkle;

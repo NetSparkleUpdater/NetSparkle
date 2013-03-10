@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
@@ -43,7 +44,7 @@ namespace NetSparkleChecker
                 try
                 {                    
                     // show the form
-                    NetSparkleCheckerWaitUI frmWait = new NetSparkleCheckerWaitUI();
+                    NetSparkleCheckerWaitUI frmWait = new NetSparkleCheckerWaitUI(SystemIcons.Application);
                     Application.Run(frmWait);
 
                     // check for update

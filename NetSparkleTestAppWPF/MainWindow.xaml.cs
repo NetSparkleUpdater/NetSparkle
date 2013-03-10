@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Drawing;
+using System.Windows;
 
 
 namespace NetSparkle.TestAppWPF
@@ -21,7 +22,7 @@ namespace NetSparkle.TestAppWPF
             }
             catch { }
 
-            _sparkle = new Sparkle("http://update.applimit.com/netsparkle/versioninfo.xml"); //, "NetSparkleTestApp.exe");
+            _sparkle = new Sparkle("http://update.applimit.com/netsparkle/versioninfo.xml", SystemIcons.Application); //, "NetSparkleTestApp.exe");
             _sparkle.StartLoop(true, true);
         }
 

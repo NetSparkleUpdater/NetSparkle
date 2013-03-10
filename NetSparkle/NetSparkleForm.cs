@@ -22,9 +22,8 @@ namespace NetSparkle
         /// Constructor
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="appIcon"></param>
-        /// <param name="windowIcon"></param>
-        public NetSparkleForm(NetSparkleAppCastItem item, Image appIcon, Icon windowIcon)
+        /// <param name="applicationIcon"></param>
+        public NetSparkleForm(NetSparkleAppCastItem item, Icon applicationIcon)
         {            
             InitializeComponent();
             
@@ -38,6 +37,7 @@ namespace NetSparkle
             { }
             
             _currentItem = item;
+           
 
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
@@ -46,13 +46,10 @@ namespace NetSparkle
             if (item.ReleaseNotesLink != null && item.ReleaseNotesLink.Length > 0 )
                 NetSparkleBrowser.Navigate(item.ReleaseNotesLink);
             else            
-                RemoveReleaseNotesControls();            
+                RemoveReleaseNotesControls();
 
-            if (appIcon != null)
-                imgAppIcon.Image = appIcon;
-
-            if (windowIcon != null)
-                Icon = windowIcon;
+            imgAppIcon.Image = applicationIcon.ToBitmap();
+            Icon = applicationIcon;
 
             this.TopMost = true;
         }

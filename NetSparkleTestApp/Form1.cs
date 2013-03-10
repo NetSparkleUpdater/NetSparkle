@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -14,7 +15,7 @@ namespace NetSparkleTestApp
         {
             InitializeComponent();
 
-            _sparkle = new Sparkle("file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml")
+            _sparkle = new Sparkle("file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml", SystemIcons.Application)
             //_sparkle = new Sparkle("https://update.applimit.com/netsparkle/versioninfo.xml")
             {
                 TrustEverySSLConnection = true,

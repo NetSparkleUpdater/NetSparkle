@@ -12,7 +12,7 @@ namespace NetSparkle.TestAppWPF
 {
     public partial class Form1 : Form
     {
-        private Sparkle _sparkle = new Sparkle("http://update.applimit.com/netsparkle/versioninfo.xml"); 
+        private Sparkle _sparkle = new Sparkle("http://update.applimit.com/netsparkle/versioninfo.xml", SystemIcons.Application); 
 
         public Form1()
         {

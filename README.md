@@ -4,14 +4,13 @@ Simple .net update checker & installer downloader. You provide, somewhere on the
 
 ## Basic Usage
 
-    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml")
+    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml",this.Icon)
     {
-        ApplicationWindowIcon = this.Icon,
-		CheckOnFirstApplicationIdle = true,
 		UseNotificationToast =true		
     };
+	_sparkleApplicationUpdater.CheckOnFirstApplicationIdle();
 
-There are several (too many) other options, but this will give you a reasonable default. On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, a little "toast" box will slide up in the corner of the screen, announcing the new version. If the user clicks on it, then a larger dialog box will open, showing your release notes, again, from a server somewhere. The user can then ignore the update, ask to be reminded later, or download it now.
+On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, a little "toast" box will slide up in the corner of the screen, announcing the new version. If the user clicks on it, then a larger dialog box will open, showing your release notes, again, from a server somewhere. The user can then ignore the update, ask to be reminded later, or download it now.
 
 If you want to add a manual update, do
 
@@ -29,9 +28,6 @@ NetSparkle is [Mit Licensed]
 
 - Visual Studio 2010 
 
-## Dependencies
-
- 
 ## History
 8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 

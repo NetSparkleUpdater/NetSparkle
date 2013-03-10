@@ -18,7 +18,7 @@ namespace NetSparkleChecker
 
         public Boolean SparkleRequestedUpdate = false;
         
-        public NetSparkleCheckerWaitUI()
+        public NetSparkleCheckerWaitUI(Icon icon)
         {
             // init ui
             InitializeComponent();
@@ -26,25 +26,15 @@ namespace NetSparkleChecker
             // get cmdline args
             String[] args = Environment.GetCommandLineArgs();
 
-#if DEBUG
-            // enable dialog
-            Boolean bShowDiagnosticWindow = true;
-#else
-            // disable dialog
-            Boolean bShowDiagnosticWindow = false;
-#endif
             // init sparkle
-            _sparkle = new Sparkle(args[2], args[1], bShowDiagnosticWindow);
+            _sparkle = new Sparkle(args[2], icon, args[1]);
             
             // set labels
             lblRefFileName.Text = args[1];
             lblRefUrl.Text = args[2];
 
-            if (_sparkle.ApplicationIcon != null)
-                imgAppIcon.Image = _sparkle.ApplicationIcon;
-
-            if (_sparkle.ApplicationWindowIcon != null)
-                Icon = _sparkle.ApplicationWindowIcon;            
+            imgAppIcon.Image = icon.ToBitmap();
+            Icon = icon;            
 
             bckWorker.RunWorkerAsync();
         }

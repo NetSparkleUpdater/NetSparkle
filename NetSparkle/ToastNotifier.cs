@@ -90,6 +90,7 @@ namespace NetSparkle
         {
             DialogResult = DialogResult.Yes;
             Close();
+            this.OnClick(null);
         }
 
         /// <summary>

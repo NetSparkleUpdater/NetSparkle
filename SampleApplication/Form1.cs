@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -15,10 +16,8 @@ namespace SampleApplication
             InitializeComponent();
 
             var appcastUrl = "file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml";
-            _sparkleUpdateDetector = new Sparkle(appcastUrl)
-                                         {
-                                             ApplicationWindowIcon = this.Icon
-                                         };
+            _sparkleUpdateDetector = new Sparkle(appcastUrl, SystemIcons.Application);
+            _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
         }
 
 
