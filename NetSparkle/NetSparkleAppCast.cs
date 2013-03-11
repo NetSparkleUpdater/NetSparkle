@@ -42,7 +42,7 @@ namespace NetSparkle
         {
             NetSparkleAppCastItem latestVersion = null;
 
-            if (_castUrl.StartsWith("file://"))
+            if (_castUrl.StartsWith("file://")) //handy for testing
             {
                 var path = _castUrl.Replace("file://", "");
                 using (var reader = XmlReader.Create(path))
@@ -90,8 +90,7 @@ namespace NetSparkle
                             }
                         case releaseNotesLinkNode:
                             {
-                                currentItem.ReleaseNotesLink = reader.ReadString();
-                                currentItem.ReleaseNotesLink = currentItem.ReleaseNotesLink.Trim('\n');
+                                currentItem.ReleaseNotesLink = reader.ReadString().Trim();
                                 break;
                             }
                         case enclosureNode:

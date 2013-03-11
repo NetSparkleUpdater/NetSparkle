@@ -8,7 +8,7 @@
          <item>
             <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
 						<sparkle:releaseNotesLink>
-							http://you.com/app/2.0.html
+							file://../../../Extras/SampleReleaseNotes.md
 						</sparkle:releaseNotesLink>
             <pubDate>Wed, 09 Jan 2006 19:20:11 +0000</pubDate>
             <enclosure url="http://you.com/app/Your Great App 2.0.zip" sparkle:version="2.0" length="1623481" type="application/octet-stream" sparkle:dsaSignature="BAFJW4B6B1K1JyW30nbkBwainOzrN6EQuAh" />

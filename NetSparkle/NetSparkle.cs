@@ -139,7 +139,7 @@ namespace NetSparkle
         private void OnFirstApplicationIdle(object sender, EventArgs e)
         {
             Application.Idle -= OnFirstApplicationIdle;
-            CheckForUpdates(false);
+            CheckForUpdates(true);
         }
 
 
@@ -210,16 +210,6 @@ namespace NetSparkle
             get { return _AppCastUrl; }
             set { _AppCastUrl = value; }
         }
-
-
-        /// <summary>
-        /// If True, when there's a new version, the a small notification will appear and then fade. If
-        /// the user clicks on it, then the full update window will appear. If false, then you just go
-        /// straight to the update window. Use this if you application has updates really frequently
-        /// and you don't want to bug your users.
-        /// </summary>
-        public bool UseNotificationToast =true;
-
         
         #endregion
 
@@ -412,7 +402,7 @@ namespace NetSparkle
         /// <param name="config">the configuration</param>
         /// <param name="latestVersion">returns the latest version</param>
         /// <returns><c>true</c> if an update is required</returns>
-        public bool IsUpdateRequired(NetSparkleConfiguration config, out NetSparkleAppCastItem latestVersion)
+        public UpdateStatus GetUpdateStatus(NetSparkleConfiguration config, out NetSparkleAppCastItem latestVersion)
         {
             // report
             ReportDiagnosticMessage("Downloading and checking appcast");
@@ -437,7 +427,7 @@ namespace NetSparkle
             if (latestVersion == null)
             {
                 ReportDiagnosticMessage("No version information in app cast found");
-                return false;
+                return UpdateStatus.CouldNotDetermine;
             }
             else
             {
@@ -452,7 +442,7 @@ namespace NetSparkle
             if (latestVersion.Version.Equals(config.SkipThisVersion))
             {
                 ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
-                return false;
+                return UpdateStatus.UserSkipped;
             }
 
             // check if the version will be the same then the installed version
@@ -462,11 +452,11 @@ namespace NetSparkle
             if (v2 <= v1)
             {
                 ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
-                return false;
+                return UpdateStatus.UpdateNotAvailable;
             }
 
             // ok we need an update
-            return true;
+            return UpdateStatus.UpdateAvailable;
         }
 
         /// <summary>
@@ -489,14 +479,15 @@ namespace NetSparkle
         /// update process
         /// </summary>
         /// <param name="currentItem">the item to show the UI for</param>
-        public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem)
+        /// <param name="useNotificationToast"> </param>
+        public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem, bool useNotificationToast)
         {
-            if (UseNotificationToast)
+            if (useNotificationToast)
             {
                 var toast = new ToastNotifier();
                 toast.Tag = currentItem;
                 toast.Image.Image = _applicationIcon.ToBitmap();
-                toast.Click += OnToastClick;
+                toast.ToastClicked += OnToastClick;
                 toast.Show("New Version Available", "more information",5);
             }
             else
@@ -697,10 +688,54 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Check for updates, using interaction appropriate for if the user just said "check for updates"
+        /// </summary>
+        public UpdateStatus CheckForUpdatesAtUserRequest()
+        {
+            Cursor.Current  = Cursors.WaitCursor;
+            var updateAvailable = CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            Cursor.Current = Cursors.Default;
+            
+            switch(updateAvailable)
+            {
+                case UpdateStatus.UpdateAvailable:
+                    break;
+                case UpdateStatus.UpdateNotAvailable:
+                      MessageBox.Show("Your current version is up to date.");
+                      break;
+                case UpdateStatus.UserSkipped:
+                      MessageBox.Show("Your have elected to skip this version.");//review: I'm not crystal clear on this one
+                      break;
+                case UpdateStatus.CouldNotDetermine:
+                    MessageBox.Show("Sorry, either you aren't connected to the internet, or our server is having a problem.");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return updateAvailable;// in this case, we've already shown UI talking about the new version
+        }
+
+        /// <summary>
+        /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite
+        /// </summary>
+        public UpdateStatus CheckForUpdatesQuietly()
+        {
+            return CheckForUpdates(true);
+        }
+
+        /// <summary>
+        /// The states of availability
+        /// </summary>
+        /// <paramater>UpdateAvailable</paramater>
+#pragma warning disable 1591
+        public enum UpdateStatus { UpdateAvailable, UpdateNotAvailable, UserSkipped, CouldNotDetermine }
+#pragma warning restore 1591
+
+        /// <summary>
         /// Does a one-off check for updates
         /// </summary>
-        /// <param name="isUserInterfaceShown"><c>true</c> if the user interface is to be shown.</param>
-        public bool CheckForUpdates(bool isUserInterfaceShown)
+        /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
+        private UpdateStatus CheckForUpdates(bool useNotificationToast)
         {
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
@@ -708,44 +743,50 @@ namespace NetSparkle
 
             // check if update is required
             NetSparkleAppCastItem latestVersion = null;
-            if (IsUpdateRequired(config, out latestVersion))
+            var updateStatus = GetUpdateStatus(config, out latestVersion);
+            if(updateStatus == UpdateStatus.UpdateAvailable)
             {
-                // show the update window
-                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + latestVersion.Version);
+                    // show the update window
+                    ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
+                                            latestVersion.Version);
 
-                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs() { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
+                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs()
+                                                     {
+                                                         NextAction = NextUpdateAction.ShowStandardUserInterface,
+                                                         ApplicationConfig = config,
+                                                         LatestVersion = latestVersion
+                                                     };
 
-                // if the client wants to intercept, send an event
-                if (UpdateDetected != null)
-                {
-                    UpdateDetected(this, ev);
-                }
-                //otherwise just go forward with the UI notficiation
-                else
-                {
-                    ShowUpdateNeededUI(latestVersion);
-                }
-
-                // check results
-                if (isUserInterfaceShown)
-                {
-                    switch (ev.NextAction)
+                    // if the client wants to intercept, send an event
+                    if (UpdateDetected != null)
                     {
-                        case NextUpdateAction.PerformUpdateUnattended:
-                            EnableSilentMode = true;
-                            Update(latestVersion);
-                            break;
-                        case NextUpdateAction.ProhibitUpdate:
-                            break;
-                        case NextUpdateAction.ShowStandardUserInterface:
-                        default:
-                            Update(latestVersion);
-                            break;
+                        UpdateDetected(this, ev);
                     }
-                }
-                return true;
+                        //otherwise just go forward with the UI notficiation
+                    else
+                    {
+                        ShowUpdateNeededUI(latestVersion, useNotificationToast);
+                    }
+
+//                // check results
+//                if (isUserInterfaceShown)
+//                {
+//                    switch (ev.NextAction)
+//                    {
+//                        case NextUpdateAction.PerformUpdateUnattended:
+//                            EnableSilentMode = true;
+//                            Update(latestVersion);
+//                            break;
+//                        case NextUpdateAction.ProhibitUpdate:
+//                            break;
+//                        case NextUpdateAction.ShowStandardUserInterface:
+//                        default:
+//                            Update(latestVersion);
+//                            break;
+//                    }
+//                }
             }
-            return false;
+            return updateStatus;
         }
 
         /// <summary>
@@ -763,7 +804,7 @@ namespace NetSparkle
                 }
                 else
                 {
-                    ShowUpdateNeededUI(currentItem);
+                    ShowUpdateNeededUI(currentItem, true);
                 }
             }
         }
@@ -881,7 +922,7 @@ namespace NetSparkle
 
                 // check if update is required
                 NetSparkleAppCastItem latestVersion = null;
-                bUpdateRequired = IsUpdateRequired(config, out latestVersion);
+                bUpdateRequired = UpdateStatus.UpdateAvailable == GetUpdateStatus(config, out latestVersion);
                 if (!bUpdateRequired)
                     goto WaitSection;
 
@@ -1007,17 +1048,24 @@ namespace NetSparkle
                     if (!File.Exists(absolutePath))
                         throw new FileNotFoundException();
 
-                    // get the assembly reference from which we start the update progress
-                    // only from this trusted assembly the public key can be used
-                    Assembly refassembly = System.Reflection.Assembly.GetEntryAssembly();
-                    if (refassembly != null)
+                    if (this.UserWindow.CurrentItem.DSASignature == null)
                     {
-                        // Check if we found the public key in our entry assembly
-                        if (NetSparkleDSAVerificator.ExistsPublicKey("NetSparkle_DSA.pub"))
+                        isDSAOk = true;// the programmer never specified one, on the running version of this app
+                    }
+                    else
+                    {
+                        // get the assembly reference from which we start the update progress
+                        // only from this trusted assembly the public key can be used
+                        Assembly refassembly = System.Reflection.Assembly.GetEntryAssembly();
+                        if (refassembly != null)
                         {
-                            // check the DSA Code and modify the back color            
-                            NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
-                            isDSAOk = dsaVerifier.VerifyDSASignature(this.UserWindow.CurrentItem.DSASignature, _downloadTempFileName);
+                            // Check if we found the public key in our entry assembly
+                            if (NetSparkleDSAVerificator.ExistsPublicKey("NetSparkle_DSA.pub"))
+                            {
+                                // check the DSA Code and modify the back color            
+                                NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
+                                isDSAOk = dsaVerifier.VerifyDSASignature(this.UserWindow.CurrentItem.DSASignature, _downloadTempFileName);
+                            }
                         }
                     }
                 }

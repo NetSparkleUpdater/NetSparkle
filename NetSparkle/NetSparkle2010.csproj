@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>Debug\lib\net40-full\NetSparkle.Net40.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>BasicCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -126,6 +126,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Interfaces\INetSparkleDownloadProgress.cs" />
     <Compile Include="Interfaces\INetSparkleForm.cs" />
+    <Compile Include="MarkdownSharp.cs" />
     <Compile Include="NetSparkleAssemblyReflectionAccessor.cs" />
     <Compile Include="Interfaces\INetSparkleAssemblyAccessor.cs" />
     <Compile Include="NetSparkle.cs" />
@@ -150,6 +151,7 @@
       <DependentUpon>NetSparkleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NetSparkleRegistryConfiguration.cs" />
+    <Compile Include="TempFile.cs" />
     <Compile Include="ToastNotifier.cs">
       <SubType>Form</SubType>
     </Compile>
