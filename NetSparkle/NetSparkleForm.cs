@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Net;
 using System.Windows.Forms;
+using System.Xml;
 using NetSparkle.Interfaces;
 
 namespace NetSparkle
@@ -32,6 +37,7 @@ namespace NetSparkle
             {
                 NetSparkleBrowser.AllowWebBrowserDrop = false;
                 NetSparkleBrowser.AllowNavigation = false;
+                NetSparkleBrowser.Navigated += new WebBrowserNavigatedEventHandler(NetSparkleBrowser_Navigated);
             }
             catch (Exception)
             { }
@@ -44,7 +50,29 @@ namespace NetSparkle
             lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", item.AppVersionInstalled);
 
             if (item.ReleaseNotesLink != null && item.ReleaseNotesLink.Length > 0 )
-                NetSparkleBrowser.Navigate(item.ReleaseNotesLink);
+            {
+
+                if (new List<string>(new[]{".md",".mkdn",".mkd",".markdown"}).Contains(Path.GetExtension(item.ReleaseNotesLink).ToLower()))
+                {
+                    try
+                    {
+                        ShowMarkdownReleaseNotes(item);
+                    }
+                    catch (Exception)
+                    {
+#if DEBUG
+                        throw;
+#else
+                        NetSparkleBrowser.Navigate(item.ReleaseNotesLink); //just show it raw
+#endif
+                    }
+                    
+                }
+                else
+                {
+                    NetSparkleBrowser.Navigate(item.ReleaseNotesLink);
+                }
+            }
             else            
                 RemoveReleaseNotesControls();
 
@@ -52,6 +80,41 @@ namespace NetSparkle
             Icon = applicationIcon;
 
             this.TopMost = true;
+        }
+
+        private void ShowMarkdownReleaseNotes(NetSparkleAppCastItem item)
+        {
+            string contents;
+            if (item.ReleaseNotesLink.StartsWith("file://")) //handy for testing
+            {
+                contents = File.ReadAllText(item.ReleaseNotesLink.Replace("file://", ""));
+            }
+            else
+            {
+                using (var webClient = new WebClient())
+                {
+                    contents = webClient.DownloadString(item.ReleaseNotesLink);
+                }
+            }
+            var md = new MarkdownSharp.Markdown();
+            var htmlTempFile = TempFile.WithExtension("htm"); //enhance: will leek a file to temp
+            File.WriteAllText(htmlTempFile.Path, md.Transform(contents));
+            NetSparkleBrowser.Navigate(htmlTempFile.Path);
+        }
+
+        void NetSparkleBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            if(!e.Url.OriginalString.StartsWith("http"))
+            {
+                try
+                {
+                    File.Delete(e.Url.OriginalString);
+                }
+                catch (Exception error)
+                {
+                    Debug.Fail(error.Message);
+                }
+            }
         }
 
         /// <summary>

@@ -16,6 +16,13 @@ namespace NetSparkle
 		private int startPosY;
 
         /// <summary>
+        /// The user clicked on the toast popup
+        /// </summary>
+        public event EventHandler ToastClicked;
+
+
+
+        /// <summary>
         /// constructor
         /// </summary>
 		public ToastNotifier()
@@ -90,7 +97,8 @@ namespace NetSparkle
         {
             DialogResult = DialogResult.Yes;
             Close();
-            this.OnClick(null);
+            EventHandler handler = ToastClicked;
+            if (handler != null) handler(this, e);
         }
 
         /// <summary>
@@ -109,7 +117,7 @@ namespace NetSparkle
 
         private void callToAction_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            this.OnClick(null);
+            this.ToastNotifier_Click(null, null);
         }
 	}
 }

@@ -4,25 +4,22 @@ Simple .net update checker & installer downloader. You provide, somewhere on the
 
 ## Basic Usage
 
-    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml",this.Icon)
-    {
-		UseNotificationToast =true		
-    };
+    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml",this.Icon);
 	_sparkleApplicationUpdater.CheckOnFirstApplicationIdle();
 
 On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, a little "toast" box will slide up in the corner of the screen, announcing the new version. If the user clicks on it, then a larger dialog box will open, showing your release notes, again, from a server somewhere. The user can then ignore the update, ask to be reminded later, or download it now.
 
-If you want to add a manual update, do
+If you want to add a manual update in the background, do
 
-    _sparkleApplicationUpdater.CheckForUpdates();
+    _sparkleApplicationUpdater.CheckForUpdatesQuietly();
 
-If you want your own UI, just subscribe to this event, and no UI will be shown:
+If you want have a menu item for the user to check for updates, use
 
-    _sparkleApplicationUpdater.UpdateDetected+=new UpdateDetected(MyCustomUpdateHandler);
+    _sparkleApplicationUpdater.CheckForUpdatesAtUserRequest();
 
 ## License
 
-NetSparkle is [Mit Licensed]
+NetSparkle is [MIT Licensed]
 
 ## Requirements
 
@@ -31,10 +28,11 @@ NetSparkle is [Mit Licensed]
 ## History
 8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 
- - Reduce/remove the current "loop" background orientation. Most apps just want to check on launch.
+ - Reduce (maybe remove) the current "loop" background orientation. Most apps just want to check on launch.
  - Remove dependency on NLog, in fact just removed the whole separate diagnostic window. Now just uses Debug.Writeline().
  - Provide greater separation between the logic/download vs. the Sparkle-provided UI
  - Make UI less obtrusive, fitting with apps that are updated frequent (like, daily)
+ - Enable Markdown for release notes, in addition to the existing html
 
 3 Jan 2012 Jim Graham: forked NetSparkle to GitHub because I had some requirements for a client program that weren't easily met by the standard version.
 
@@ -56,6 +54,6 @@ An incomplete list of other .net projects related to updating:
  - [NAppUpdate]
 
 [CodePlex]: http://netsparkle.codeplex.com
-[Mit Licensed]: http://netsparkle.codeplex.com/license
+[MIT Licensed]: http://netsparkle.codeplex.com/license
 [Sparkle Dot Net]: https://github.com/iKenndac/SparkleDotNET
 [NAppUpdate]: https://github.com/synhershko/NAppUpdate

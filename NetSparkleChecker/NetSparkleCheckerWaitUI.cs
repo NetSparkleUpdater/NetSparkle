@@ -41,7 +41,7 @@ namespace NetSparkleChecker
 
         public void ShowUpdateUI()
         {
-            _sparkle.ShowUpdateNeededUI(LatesVersion);
+            _sparkle.ShowUpdateNeededUI(LatesVersion, false);
         }
 
         private void bckWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -51,7 +51,7 @@ namespace NetSparkleChecker
 
             // check for updats
             NetSparkleAppCastItem latestVersion = null;
-            Boolean bUpdateRequired = _sparkle.IsUpdateRequired(config, out latestVersion);
+            Boolean bUpdateRequired = Sparkle.UpdateStatus.UpdateAvailable == _sparkle.GetUpdateStatus(config, out latestVersion);
                                 
             // save the result
             SparkleRequestedUpdate = bUpdateRequired;

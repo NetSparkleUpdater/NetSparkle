@@ -34,7 +34,12 @@ namespace SampleApplication
 
         private void button1_Click(object sender, EventArgs e)
         {
-            _sparkleUpdateDetector.CheckForUpdates(false);
+            _sparkleUpdateDetector.CheckForUpdatesQuietly();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            _sparkleUpdateDetector.CheckForUpdatesAtUserRequest();
         }
     }
 }

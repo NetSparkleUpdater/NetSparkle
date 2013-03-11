@@ -80,7 +80,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(226, 58);
+            this.ClientSize = new System.Drawing.Size(222, 54);
             this.ControlBox = false;
             this.Controls.Add(this._callToAction);
             this.Controls.Add(this.Image);
@@ -92,6 +92,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.Click += new System.EventHandler(this.ToastNotifier_Click);
             ((System.ComponentModel.ISupportInitialize)(this.Image)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
