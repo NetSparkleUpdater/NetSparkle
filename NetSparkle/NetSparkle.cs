@@ -39,9 +39,9 @@ namespace NetSparkle
     public class Sparkle : IDisposable
     {
         /// <summary>
-        /// Event to fire if this instance needs to exit the appliction.
+        /// Subscribe to this to get a chance to shut down gracefully before quiting
         /// </summary>
-        public event EventHandler ApplicationExitRequested;
+        public event CancelEventHandler AboutToExitForInstallerRun;
 
         /// <summary>
         /// This event will be raised when a check loop will be started
@@ -600,7 +600,6 @@ namespace NetSparkle
             else
             {
                 MessageBox.Show("Updater not supported, please execute " + _downloadTempFileName + " manually", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Exit(-1);
                 return;
             }
 
@@ -625,22 +624,24 @@ namespace NetSparkle
             process.Start();
 
             // quit the app
-            Exit(0);
+            Environment.Exit(0);
         }
 
         /// <summary>
-        /// Attempts to exit the application
+        /// Apps may need, for example, to let user save their work
         /// </summary>
-        /// <param name="returnCode">the return code.</param>
-        private void Exit( int returnCode)
+        /// <returns>true if it's ok</returns>
+        private bool AskApplicationToSafelyCloseUp()
         {
-            if (ApplicationExitRequested != null)
+            if (AboutToExitForInstallerRun != null)
             {
-                ApplicationExitRequested(this, new EventArgs());
+                var args = new CancelEventArgs();
+                AboutToExitForInstallerRun(this, args);
+                return !args.Cancel;
             }
             else
             {
-                Environment.Exit(returnCode);
+                return true;
             }
         }
 
@@ -847,7 +848,8 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
-            RunDownloadedInstaller();
+            if(AskApplicationToSafelyCloseUp())
+                RunDownloadedInstaller();
         }
 
         /// <summary>
@@ -1050,7 +1052,10 @@ namespace NetSparkle
 
                     if (this.UserWindow.CurrentItem.DSASignature == null)
                     {
-                        isDSAOk = true;// the programmer never specified one, on the running version of this app
+                        isDSAOk = true;// REVIEW. The correct logic, seems to me, is that if the existing, running version of the app
+                                       //had no DSA, and the appcast didn't specify one, then it's ok that the one we've just 
+                                       //downloaded doesn't either. This may be just checking that the appcast didn't specify one. Is 
+                                        //that really enough? If someone can change what gets downloaded, can't they also change the appcast?
                     }
                     else
                     {

@@ -16,6 +16,7 @@ namespace NetSparkle
     public partial class NetSparkleForm : Form, INetSparkleForm
     {
         NetSparkleAppCastItem _currentItem;
+        private TempFile _htmlTempFile;
 
         /// <summary>
         /// Event fired when the user has responded to the 
@@ -37,7 +38,6 @@ namespace NetSparkle
             {
                 NetSparkleBrowser.AllowWebBrowserDrop = false;
                 NetSparkleBrowser.AllowNavigation = false;
-                NetSparkleBrowser.Navigated += new WebBrowserNavigatedEventHandler(NetSparkleBrowser_Navigated);
             }
             catch (Exception)
             { }
@@ -82,6 +82,21 @@ namespace NetSparkle
             this.TopMost = true;
         }
 
+        /// <summary>
+        /// </summary>
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                _htmlTempFile.Dispose();//will try to delete it
+            }
+            catch
+            {
+                //not worth complaining about, just leaks to temp folder
+            }
+            base.OnClosing(e);
+        }
+
         private void ShowMarkdownReleaseNotes(NetSparkleAppCastItem item)
         {
             string contents;
@@ -97,25 +112,12 @@ namespace NetSparkle
                 }
             }
             var md = new MarkdownSharp.Markdown();
-            var htmlTempFile = TempFile.WithExtension("htm"); //enhance: will leek a file to temp
-            File.WriteAllText(htmlTempFile.Path, md.Transform(contents));
-            NetSparkleBrowser.Navigate(htmlTempFile.Path);
+            _htmlTempFile = TempFile.WithExtension("htm");
+            File.WriteAllText(_htmlTempFile.Path, md.Transform(contents));
+            NetSparkleBrowser.Navigate(_htmlTempFile.Path);
         }
 
-        void NetSparkleBrowser_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            if(!e.Url.OriginalString.StartsWith("http"))
-            {
-                try
-                {
-                    File.Delete(e.Url.OriginalString);
-                }
-                catch (Exception error)
-                {
-                    Debug.Fail(error.Message);
-                }
-            }
-        }
+     
 
         /// <summary>
         /// The current item being installed
