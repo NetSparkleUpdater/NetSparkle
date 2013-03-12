@@ -17,22 +17,30 @@ If you want have a menu item for the user to check for updates, use
 
     _sparkleApplicationUpdater.CheckForUpdatesAtUserRequest();
 
+If you have files that need saving, subscribe to the AboutToExitForInstallerRun event:
+
+    _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
+    {
+    	// ask the user to save, whatever else is needed to close down gracefully   
+    });  
+
 ## License
 
 NetSparkle is [MIT Licensed]
 
 ## Requirements
 
-- Visual Studio 2010 
+- .net 4.0
 
 ## History
 8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 
  - Reduce (maybe remove) the current "loop" background orientation. Most apps just want to check on launch.
  - Remove dependency on NLog, in fact just removed the whole separate diagnostic window. Now just uses Debug.Writeline().
- - Provide greater separation between the logic/download vs. the Sparkle-provided UI
+ - Make UI use application icon based on a single icon input, rather than requiring a separate Image input
  - Make UI less obtrusive, fitting with apps that are updated frequent (like, daily)
  - Enable Markdown for release notes, in addition to the existing html
+ - Made the application shutdown event cancellable
 
 3 Jan 2012 Jim Graham: forked NetSparkle to GitHub because I had some requirements for a client program that weren't easily met by the standard version.
 
