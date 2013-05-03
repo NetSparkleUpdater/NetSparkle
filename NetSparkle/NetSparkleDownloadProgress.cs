@@ -101,6 +101,13 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         public void OnClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+			if (e.Error != null)
+			{
+				MessageBox.Show("Sorry, there was a problem attempting to download the update" + System.Environment.NewLine + System.Environment.NewLine + e.Error.Message);
+				DialogResult = DialogResult.Abort;
+				Close();
+				return;
+			}
             if (!e.Cancelled && e.Error == null )
             {
                 progressDownload.Visible = false;
