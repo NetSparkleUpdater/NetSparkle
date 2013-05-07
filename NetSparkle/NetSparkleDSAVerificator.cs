@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -109,7 +110,17 @@ namespace NetSparkle
             Stream data = null;
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-                var resourceName = asm.GetManifestResourceNames().FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
+                string[] resources;
+                try
+                {
+                    resources = asm.GetManifestResourceNames();
+                }
+                catch (NotSupportedException)
+                {
+                    Debug.WriteLine("Skipped assembly {0}", asm.FullName);
+                    continue;
+                }
+                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
                 if (!string.IsNullOrEmpty(resourceName))
                 {
                   data = asm.GetManifestResourceStream(resourceName);
