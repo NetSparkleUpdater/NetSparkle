@@ -112,13 +112,37 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="software-update-available1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ArtWork\software-update-available.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText" xml:space="preserve">
+    <value>Updater not supported, please execute {0} manually</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage" xml:space="preserve">
+    <value>Your current version is up to date.</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ErrorTitle" xml:space="preserve">
+    <value>Software update error</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_MessageTitle" xml:space="preserve">
+    <value>Software update message</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage" xml:space="preserve">
+    <value>Your have elected to skip this version.</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage" xml:space="preserve">
+    <value>Sorry, either you aren't connected to the internet, or our server is having a problem.</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ToastCallToAction" xml:space="preserve">
+    <value>more information</value>
+  </data>
+  <data name="DefaultNetSparkleUIFactory_ToastMessage" xml:space="preserve">
+    <value>New Version Available</value>
   </data>
 </root>

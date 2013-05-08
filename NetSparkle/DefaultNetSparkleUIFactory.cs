@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
+using NetSparkle.Properties;
 
 namespace NetSparkle
 {
@@ -48,7 +49,8 @@ namespace NetSparkle
         /// <param name="downloadFileName"></param>
         public void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
-            MessageBox.Show("Updater not supported, please execute " + downloadFileName + " manually", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName), Resources.DefaultNetSparkleUIFactory_ErrorTitle, 
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -56,7 +58,7 @@ namespace NetSparkle
         /// </summary>
         public void ShowVersionIsUpToDate()
         {
-            MessageBox.Show("Your current version is up to date.");
+            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);
         }
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace NetSparkle
         /// </summary>
         public void ShowVersionIsSkippedByUserRequest()
         {
-            MessageBox.Show("Your have elected to skip this version.");//review: I'm not crystal clear on this one
+            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);//review: I'm not crystal clear on this one
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace NetSparkle
         /// <param name="appcastUrl"></param>
         public void ShowCannotDownloadAppcast(string appcastUrl)
         {
-            MessageBox.Show("Sorry, either you aren't connected to the internet, or our server is having a problem.");
+            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage, Resources.DefaultNetSparkleUIFactory_ErrorTitle);
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace NetSparkle
                         }
                 };
             toast.ToastClicked += clickHandler;
-            toast.Show("New Version Available", "more information", 5);
+            toast.Show(Resources.DefaultNetSparkleUIFactory_ToastMessage, Resources.DefaultNetSparkleUIFactory_ToastCallToAction, 5);
         }
     }
 }

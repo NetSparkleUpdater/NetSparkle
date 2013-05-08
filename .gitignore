@@ -9,11 +9,10 @@ obj/
 _ReSharper*/
 *.ncrunchsolution
 /nuget/core/content
-
 /nuget/core/lib
-
 /nuget/core/tools
 /nuget/tools/content
 /nuget/tools/lib
 /nuget/tools/tools
 *.nupkg
+*.DotSettings.user
