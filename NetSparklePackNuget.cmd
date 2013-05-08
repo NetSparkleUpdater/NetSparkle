@@ -1,37 +1,56 @@
 @echo off
 
 echo Cleanup NuGet environment
-rmdir /S /Q Nuget\lib
-rmdir /S /Q Nuget\content
-rmdir /S /Q Nuget\tools
+rmdir /S /Q Nuget\core\lib
+rmdir /S /Q Nuget\core\content
+rmdir /S /Q Nuget\core\tools
+del \q Nuget\core\*.nupkg
+rmdir /S /Q Nuget\tools\lib
+rmdir /S /Q Nuget\tools\content
+rmdir /S /Q Nuget\tools\tools
+del \q Nuget\tools\*.nupkg
 
-echo Create NuGet tree
-mkdir Nuget\lib
-mkdir Nuget\content
-mkdir Nuget\content\Extras
-mkdir Nuget\tools
+echo Create NuGet tree for core
+mkdir Nuget\core\lib
+mkdir Nuget\core\content
+mkdir Nuget\core\tools
 
-echo Copy Buildoutput to Nuget dir
-xcopy /s /q NetSparkle\Release\lib\net40-full\* Nuget\lib\net40-full\
-del /q Nuget\lib\*.pdb
-xcopy /s /q NetSparkleChecker\bin\Release\* Nuget\content\
-xcopy /s /q NetSparkleDSAHelper\bin\Release Nuget\content\
-xcopy /s /q NetSparkle\trunk\Extras\* Nuget\content\Extras\
-del /q Nuget\content\*.config
-del /q Nuget\content\*.pdb
-del /q Nuget\content\*.manifest
-del /q Nuget\content\*.dll
-del /q Nuget\content\*.vshost.*
+echo Create NuGet tree for tools
+mkdir Nuget\tools\lib
+mkdir Nuget\tools\content
+mkdir Nuget\tools\content\Extras
+mkdir Nuget\tools\tools
 
+echo Copy Core Buildoutput to Nuget dir
+xcopy /s /q NetSparkle\Release\lib\net40-full\* Nuget\core\lib\net40-full\
+del /q Nuget\core\lib\net40-full\*.pdb
+
+echo Copy Tools Buildoutput to Nuget dir
+xcopy /s /q /y NetSparkleChecker\bin\Release\* Nuget\tools\tools\
+xcopy /s /q /y NetSparkleDSAHelper\bin\Release Nuget\tools\tools\
+xcopy /s /q /y Extras\* Nuget\tools\content\Extras\
+del /q Nuget\tools\tools\*.config
+del /q Nuget\tools\tools\*.pdb
+del /q Nuget\tools\tools\*.xml
+del /q Nuget\tools\tools\*.manifest
+del /q Nuget\tools\tools\*.vshost.*
 
 echo Moving to release directory
-cd Nuget\Content
+cd Nuget
 
-echo Packing nuget package
-..\nuget pack ..\NetSparkle.nuspec -Version %1
+echo Packing core nuget package
+cd core
+..\nuget pack NetSparkle.nuspec -Version %1
+cd ..
+
+echo Packing tools nuget package
+cd tools
+..\nuget pack NetSparkle.Tools.nuspec -Version %1
+cd ..
 
 echo Pushing nuget package 
-..\nuget Push AppLimit.NetSparkle.%1.nupkg
+rem nuget Push core\NetSparkle.%1.nupkg
+rem nuget Push tools\NetSparkle.Tools.%1.nupkg
 
 echo Leaving directories
-cd ..\..
+cd ..
