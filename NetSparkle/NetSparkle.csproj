@@ -8,8 +8,8 @@
     <ProjectGuid>{74635A21-2BAD-4522-AB95-E3E5703CD301}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AppLimit.NetSparkle</RootNamespace>
-    <AssemblyName>AppLimit.NetSparkle</AssemblyName>
+    <RootNamespace>NetSparkle</RootNamespace>
+    <AssemblyName>NetSparkle</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
