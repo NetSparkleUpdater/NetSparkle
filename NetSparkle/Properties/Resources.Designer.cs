@@ -88,6 +88,17 @@ namespace NetSparkle.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry, there was a problem attempting to download the update
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string DefaultNetSparkleUIFactory_ShowDownloadErrorMessage {
+            get {
+                return ResourceManager.GetString("DefaultNetSparkleUIFactory_ShowDownloadErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Updater not supported, please execute {0} manually.
         /// </summary>
         internal static string DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText {

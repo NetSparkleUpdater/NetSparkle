@@ -145,4 +145,9 @@
   <data name="DefaultNetSparkleUIFactory_ToastMessage" xml:space="preserve">
     <value>New Version Available</value>
   </data>
+  <data name="DefaultNetSparkleUIFactory_ShowDownloadErrorMessage" xml:space="preserve">
+    <value>Sorry, there was a problem attempting to download the update
+
+{0}</value>
+  </data>
 </root>

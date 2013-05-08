@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Xml;
 using System.Net;
@@ -13,8 +10,8 @@ namespace NetSparkle
     /// </summary>
     public class NetSparkleAppCast
     {
-        private NetSparkleConfiguration _config;
-        private String _castUrl;
+        private readonly NetSparkleConfiguration _config;
+        private readonly String _castUrl;
 
         private const String itemNode = "item";
         private const String enclosureNode = "enclosure";
@@ -53,7 +50,7 @@ namespace NetSparkle
             else
             {
                 // build a http web request stream
-                WebRequest request = HttpWebRequest.Create(_castUrl);
+                WebRequest request = WebRequest.Create(_castUrl);
                 request.UseDefaultCredentials = true;
 
                 // request the cast and build the stream

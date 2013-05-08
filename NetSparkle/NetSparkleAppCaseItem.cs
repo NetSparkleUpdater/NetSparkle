@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NetSparkle
 {
@@ -43,7 +40,7 @@ namespace NetSparkle
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
         public int CompareTo(NetSparkleAppCastItem other)
         {
-            Version v1 = new Version(this.Version);
+            Version v1 = new Version(Version);
             Version v2 = new Version(other.Version);
 
             return v1.CompareTo(v2);            

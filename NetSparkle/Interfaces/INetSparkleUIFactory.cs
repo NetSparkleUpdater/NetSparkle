@@ -58,5 +58,12 @@ namespace NetSparkle.Interfaces
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
         void ShowToast(NetSparkleAppCastItem item, Icon applicationIcon, EventHandler clickHandler);
+
+        /// <summary>
+        /// Show message on download error
+        /// </summary>
+        /// <param name="message">Error message from exception</param>
+        /// <param name="appCastUrl"></param>
+        void ShowDownloadErrorMessage(string message, string appCastUrl);
     }
 }

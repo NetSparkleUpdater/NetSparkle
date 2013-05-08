@@ -97,5 +97,15 @@ namespace NetSparkle
             toast.ToastClicked += clickHandler;
             toast.Show(Resources.DefaultNetSparkleUIFactory_ToastMessage, Resources.DefaultNetSparkleUIFactory_ToastCallToAction, 5);
         }
+
+        /// <summary>
+        /// Show message on download error
+        /// </summary>
+        /// <param name="message">Error message from exception</param>
+        /// <param name="appCastUrl"></param>
+        public void ShowDownloadErrorMessage(string message, string appCastUrl)
+        {
+            MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowDownloadErrorMessage, message), Resources.DefaultNetSparkleUIFactory_ErrorTitle);
+        }
     }
 }

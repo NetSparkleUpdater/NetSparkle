@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
-using System.Xml;
 using NetSparkle.Interfaces;
 
 namespace NetSparkle
@@ -39,8 +38,10 @@ namespace NetSparkle
                 NetSparkleBrowser.AllowWebBrowserDrop = false;
                 NetSparkleBrowser.AllowNavigation = false;
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error in browser init: " + ex.Message);
+            }
             
             _currentItem = item;
            
@@ -49,7 +50,7 @@ namespace NetSparkle
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
             lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", item.AppVersionInstalled);
 
-            if (item.ReleaseNotesLink != null && item.ReleaseNotesLink.Length > 0 )
+            if (!string.IsNullOrEmpty(item.ReleaseNotesLink))
             {
 
                 if (new List<string>(new[]{".md",".mkdn",".mkd",".markdown"}).Contains(Path.GetExtension(item.ReleaseNotesLink).ToLower()))
@@ -79,7 +80,7 @@ namespace NetSparkle
             imgAppIcon.Image = applicationIcon.ToBitmap();
             Icon = applicationIcon;
 
-            this.TopMost = true;
+            TopMost = true;
         }
 
         /// <summary>
@@ -133,7 +134,7 @@ namespace NetSparkle
         /// </summary>
         DialogResult INetSparkleForm.Result
         {
-            get { return this.DialogResult; }
+            get { return DialogResult; }
         }
 
         /// <summary>
@@ -149,7 +150,7 @@ namespace NetSparkle
         /// </summary>
         void INetSparkleForm.Show()
         {
-            base.ShowDialog();
+            ShowDialog();
             if (UserResponded != null)
             {
                 UserResponded(this, new EventArgs());
@@ -165,7 +166,7 @@ namespace NetSparkle
                 return;
 
             // calc new size
-            Size newSize = new Size(this.Size.Width, this.Size.Height - label3.Height - panel1.Height);
+            Size newSize = new Size(Size.Width, Size.Height - label3.Height - panel1.Height);
 
             // remove the no more needed controls            
             label3.Parent.Controls.Remove(label3);
@@ -176,7 +177,7 @@ namespace NetSparkle
             /*this.MinimumSize = newSize;
             this.Size = this.MinimumSize;
             this.MaximumSize = this.MinimumSize;*/
-            this.Size = newSize;
+            Size = newSize;
         }
 
         /// <summary>
@@ -187,7 +188,7 @@ namespace NetSparkle
         private void OnSkipButtonClick(object sender, EventArgs e)
         {
             // set the dialog result to no
-            this.DialogResult = DialogResult.No;
+            DialogResult = DialogResult.No;
 
             // close the windows
             Close();
@@ -201,7 +202,7 @@ namespace NetSparkle
         private void OnRemindClick(object sender, EventArgs e)
         {
             // set the dialog result ot retry
-            this.DialogResult = DialogResult.Retry;
+            DialogResult = DialogResult.Retry;
 
             // close the window
             Close();
