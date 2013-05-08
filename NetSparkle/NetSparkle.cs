@@ -22,8 +22,8 @@ namespace NetSparkle
     /// The operation has ended
     /// </summary>
     /// <param name="sender">the sender</param>
-    /// <param name="UpdateRequired"><c>true</c> if an update is required</param>
-    public delegate void LoopFinishedOperation(Object sender, Boolean UpdateRequired);
+    /// <param name="updateRequired"><c>true</c> if an update is required</param>
+    public delegate void LoopFinishedOperation(Object sender, Boolean updateRequired);
 
     /// <summary>
     /// This delegate will be used when an update was detected to allow library 
@@ -90,9 +90,21 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
-        public Sparkle(String appcastUrl,Icon applicationIcon, String referenceAssembly)
+        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly) : this(appcastUrl, applicationIcon, referenceAssembly, new DefaultNetSparkleUIFactory())
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url and a referenceassembly
+        /// </summary>        
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
+        /// <param name="factory">UI factory to use</param>
+        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly, INetSparkleUIFactory factory)
         {
             _applicationIcon = applicationIcon;
+
+            UIFactory = factory;
 
             // preconfige ssl trust
             TrustEverySSLConnection = false;
@@ -100,9 +112,8 @@ namespace NetSparkle
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
 
-            // enable visual style to ensure that we have XP style or higher
-            // also in WPF applications
-            System.Windows.Forms.Application.EnableVisualStyles();
+            // init UI
+            UIFactory.Init();
 
             _AppReferenceAssembly = null;            
 
@@ -112,7 +123,6 @@ namespace NetSparkle
                 _AppReferenceAssembly = referenceAssembly;
                 Debug.WriteLine("Checking the following file: " + _AppReferenceAssembly);
             }
-
 
             // adjust the delegates
             _worker.WorkerReportsProgress = true;
@@ -184,6 +194,11 @@ namespace NetSparkle
         /// this connection has not a valid cert
         /// </summary>
         public bool TrustEverySSLConnection { get; set; }
+
+        /// <summary>
+        /// Factory for creating UI form like progress window etc.
+        /// </summary>
+        public INetSparkleUIFactory UIFactory { get; set; }
 
         /// <summary>
         /// The user interface window that shows the release notes and
@@ -429,10 +444,7 @@ namespace NetSparkle
                 ReportDiagnosticMessage("No version information in app cast found");
                 return UpdateStatus.CouldNotDetermine;
             }
-            else
-            {
-                ReportDiagnosticMessage("Lastest version on the server is " + latestVersion.Version);
-            }
+            ReportDiagnosticMessage("Lastest version on the server is " + latestVersion.Version);
 
             // set the last check time
             ReportDiagnosticMessage("Touch the last check timestamp");
@@ -484,11 +496,7 @@ namespace NetSparkle
         {
             if (useNotificationToast)
             {
-                var toast = new ToastNotifier();
-                toast.Tag = currentItem;
-                toast.Image.Image = _applicationIcon.ToBitmap();
-                toast.ToastClicked += OnToastClick;
-                toast.Show("New Version Available", "more information",5);
+                UIFactory.ShowToast(currentItem, _applicationIcon, OnToastClick);
             }
             else
             {
@@ -503,21 +511,23 @@ namespace NetSparkle
 
 
         private void ShowUpdateNeededUIInner(NetSparkleAppCastItem currentItem)
-        {   
-            if (this.UserWindow == null)
+        {
+            if (UserWindow == null)
             {
                 // create the form
-                this.UserWindow = new NetSparkleForm(currentItem, _applicationIcon);
+                UserWindow = UIFactory.CreateSparkleForm(currentItem, _applicationIcon);
             }
-            this.UserWindow.CurrentItem = currentItem;
-            if (this.HideReleaseNotes)
+
+            UserWindow.CurrentItem = currentItem;
+            if (HideReleaseNotes)
             {
-                this.UserWindow.HideReleaseNotes();
+                UserWindow.HideReleaseNotes();
             }
+
             // clear if already set.
-            this.UserWindow.UserResponded -= new EventHandler(OnUserWindowUserResponded);
-            this.UserWindow.UserResponded += new EventHandler(OnUserWindowUserResponded);
-            this.UserWindow.Show();
+            UserWindow.UserResponded -= OnUserWindowUserResponded;
+            UserWindow.UserResponded += OnUserWindowUserResponded;
+            UserWindow.Show();
         }
 
         /// <summary>
@@ -526,7 +536,7 @@ namespace NetSparkle
         /// <param name="message"></param>
         public void ReportDiagnosticMessage(String message)
         {
-            Debug.WriteLine("netsparkle: "+message);
+            Debug.WriteLine("netsparkle: " + message);
         }
 
         /// <summary>
@@ -543,14 +553,13 @@ namespace NetSparkle
             _downloadTempFileName = Environment.ExpandEnvironmentVariables("%temp%\\" + fileName);
             if (this.ProgressWindow == null)
             {
-                this.ProgressWindow = new NetSparkleDownloadProgress(this, item, _applicationIcon, EnableSilentMode);
+                ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
             }
             else
             {
                 this.ProgressWindow.InstallAndRelaunch -= new EventHandler(OnProgressWindowInstallAndRelaunch);
             }
 
-            this.ProgressWindow.TempFileName = _downloadTempFileName;
             this.ProgressWindow.InstallAndRelaunch += new EventHandler(OnProgressWindowInstallAndRelaunch);
             
             // set up the download client
@@ -587,19 +596,20 @@ namespace NetSparkle
             string installerCMD;
 
             // get the file type
-            if (Path.GetExtension(_downloadTempFileName).Equals(".exe", StringComparison.CurrentCultureIgnoreCase))
+            string installerExt = Path.GetExtension(_downloadTempFileName);
+            if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // build the command line 
                 installerCMD = _downloadTempFileName;
             }
-            else if (Path.GetExtension(_downloadTempFileName).Equals(".msi", StringComparison.CurrentCultureIgnoreCase))
+            else if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // buid the command line
                 installerCMD = "msiexec /i \"" + _downloadTempFileName + "\"";
             }
             else
             {
-                MessageBox.Show("Updater not supported, please execute " + _downloadTempFileName + " manually", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIFactory.ShowUnknownInstallerFormatMessage(_downloadTempFileName);
                 return;
             }
 
@@ -702,13 +712,13 @@ namespace NetSparkle
                 case UpdateStatus.UpdateAvailable:
                     break;
                 case UpdateStatus.UpdateNotAvailable:
-                      MessageBox.Show("Your current version is up to date.");
-                      break;
+                    UIFactory.ShowVersionIsUpToDate();
+                    break;
                 case UpdateStatus.UserSkipped:
-                      MessageBox.Show("Your have elected to skip this version.");//review: I'm not crystal clear on this one
-                      break;
+                    UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
+                    break;
                 case UpdateStatus.CouldNotDetermine:
-                    MessageBox.Show("Sorry, either you aren't connected to the internet, or our server is having a problem.");
+                    UIFactory.ShowCannotDownloadAppcast(_AppCastUrl);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -743,15 +753,15 @@ namespace NetSparkle
             UpdateSystemProfileInformation(config);
 
             // check if update is required
-            NetSparkleAppCastItem latestVersion = null;
+            NetSparkleAppCastItem latestVersion;
             var updateStatus = GetUpdateStatus(config, out latestVersion);
-            if(updateStatus == UpdateStatus.UpdateAvailable)
+            if (updateStatus == UpdateStatus.UpdateAvailable)
             {
                     // show the update window
                     ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
                                             latestVersion.Version);
 
-                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs()
+                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
                                                      {
                                                          NextAction = NextUpdateAction.ShowStandardUserInterface,
                                                          ApplicationConfig = config,
@@ -1034,10 +1044,18 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         void OnWebDownloadClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            if (e.Error != null)
+            {
+                MessageBox.Show("Sorry, there was a problem attempting to download the update" + Environment.NewLine + Environment.NewLine + e.Error.Message);
+                ProgressWindow.ForceClose();
+                return;
+            }
+
+            // test the item for DSA signature
+            bool isDSAOk = false;
             if (!e.Cancelled && e.Error == null)
             {
-                // test the item for DSA signature
-                bool isDSAOk = false;
+                ReportDiagnosticMessage("Finished downloading file to: " + _downloadTempFileName);
 
                 // report
                 ReportDiagnosticMessage("Performing DSA check");
@@ -1061,7 +1079,7 @@ namespace NetSparkle
                     {
                         // get the assembly reference from which we start the update progress
                         // only from this trusted assembly the public key can be used
-                        Assembly refassembly = System.Reflection.Assembly.GetEntryAssembly();
+                        Assembly refassembly = Assembly.GetEntryAssembly();
                         if (refassembly != null)
                         {
                             // Check if we found the public key in our entry assembly
@@ -1074,14 +1092,16 @@ namespace NetSparkle
                         }
                     }
                 }
-                if (this.ProgressWindow != null)
-                {
-                    this.ProgressWindow.IsDownloadDSAValid = isDSAOk;
-                }
             }
-            if (this.ProgressWindow != null)
+
+            if (EnableSilentMode)
             {
-                this.ProgressWindow.OnClientDownloadFileCompleted(sender, e);
+                OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+            }
+
+            if (ProgressWindow != null)
+            {
+                ProgressWindow.ChangeDownloadState(isDSAOk);
             }
         }
      

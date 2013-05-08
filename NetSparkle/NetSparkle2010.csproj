@@ -123,9 +123,11 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DefaultNetSparkleUIFactory.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Interfaces\INetSparkleDownloadProgress.cs" />
     <Compile Include="Interfaces\INetSparkleForm.cs" />
+    <Compile Include="Interfaces\INetSparkleUIFactory.cs" />
     <Compile Include="MarkdownSharp.cs" />
     <Compile Include="NetSparkleAssemblyReflectionAccessor.cs" />
     <Compile Include="Interfaces\INetSparkleAssemblyAccessor.cs" />

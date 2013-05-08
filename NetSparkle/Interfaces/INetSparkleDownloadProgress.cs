@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Net;
+﻿using System.Net;
 using System;
 
 namespace NetSparkle.Interfaces
@@ -16,17 +15,6 @@ namespace NetSparkle.Interfaces
         event EventHandler InstallAndRelaunch;
 
         /// <summary>
-        /// Gets or sets the temporary file name where the new items are downloaded
-        /// </summary>
-        string TempFileName { get; set; }
-
-        /// <summary>
-        /// Gets or sets a flag indicating if the downloaded file matches its listed
-        /// DSA hash.
-        /// </summary>
-        bool IsDownloadDSAValid { get; set; }
-
-        /// <summary>
         /// Show the UI and waits
         /// </summary>
         void ShowDialog();
@@ -39,10 +27,14 @@ namespace NetSparkle.Interfaces
         void OnClientDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e);
 
         /// <summary>
-        /// Event called when the download of the binary is complete
+        /// Force window close
         /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">not used.</param>
-        void OnClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e);
+        void ForceClose();
+
+        /// <summary>
+        /// Update UI to show file is downloaded and signature check result
+        /// </summary>
+        /// <param name="signatureValid"></param>
+        void ChangeDownloadState(bool signatureValid);
     }
 }
