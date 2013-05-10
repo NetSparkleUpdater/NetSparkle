@@ -581,6 +581,28 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Return installer runner command. May throw InvalidDataException
+        /// </summary>
+        /// <param name="downloadFileName"></param>
+        /// <returns></returns>
+        protected virtual string GetInstallerCommand(string downloadFileName)
+        {
+            // get the file type
+            string installerExt = Path.GetExtension(downloadFileName);
+            if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            {
+                // build the command line 
+                return downloadFileName;
+            }
+            if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            {
+                // buid the command line
+                return "msiexec /i \"" + downloadFileName + "\"";
+            }
+            throw new InvalidDataException("Unknown installer format");
+        }
+
+        /// <summary>
         /// Runs the downloaded installer
         /// </summary>
         private void RunDownloadedInstaller()
@@ -592,20 +614,11 @@ namespace NetSparkle
             // generate the batch file path
             string cmd = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
             string installerCmd;
-
-            // get the file type
-            string installerExt = Path.GetExtension(_downloadTempFileName);
-            if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            try
             {
-                // build the command line 
-                installerCmd = _downloadTempFileName;
+                installerCmd = GetInstallerCommand(_downloadTempFileName);
             }
-            else if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
-            {
-                // buid the command line
-                installerCmd = "msiexec /i \"" + _downloadTempFileName + "\"";
-            }
-            else
+            catch (InvalidDataException)
             {
                 UIFactory.ShowUnknownInstallerFormatMessage(_downloadTempFileName);
                 return;
@@ -654,19 +667,6 @@ namespace NetSparkle
             }
             return true;
         }
-
-//        /// <summary>
-//        /// Shows the diagnostics window
-//        /// </summary>
-//        private void ShowDiagnosticWindowIfNeeded()
-//        {
-//            bool isShown = false;
-//            if (this.Configuration != null)
-//            {
-//                isShown = this.Configuration.ShowDiagnosticWindow;
-//            }
-//            _diagnostic.ShowDiagnosticWindowIfNeeded(isShown));
-//        }
 
         /// <summary>
         /// Determine if the remote X509 certificate is validate
@@ -754,45 +754,27 @@ namespace NetSparkle
             var updateStatus = GetUpdateStatus(config, out latestVersion);
             if (updateStatus == UpdateStatus.UpdateAvailable)
             {
-                    // show the update window
-                    ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
-                                            latestVersion.Version);
+                // show the update window
+                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
+                                        latestVersion.Version);
 
-                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
-                                                     {
-                                                         NextAction = NextUpdateAction.ShowStandardUserInterface,
-                                                         ApplicationConfig = config,
-                                                         LatestVersion = latestVersion
-                                                     };
+                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
+                                                    {
+                                                        NextAction = NextUpdateAction.ShowStandardUserInterface,
+                                                        ApplicationConfig = config,
+                                                        LatestVersion = latestVersion
+                                                    };
 
-                    // if the client wants to intercept, send an event
-                    if (UpdateDetected != null)
-                    {
-                        UpdateDetected(this, ev);
-                    }
-                        //otherwise just go forward with the UI notficiation
-                    else
-                    {
-                        ShowUpdateNeededUI(latestVersion, useNotificationToast);
-                    }
-
-//                // check results
-//                if (isUserInterfaceShown)
-//                {
-//                    switch (ev.NextAction)
-//                    {
-//                        case NextUpdateAction.PerformUpdateUnattended:
-//                            EnableSilentMode = true;
-//                            Update(latestVersion);
-//                            break;
-//                        case NextUpdateAction.ProhibitUpdate:
-//                            break;
-//                        case NextUpdateAction.ShowStandardUserInterface:
-//                        default:
-//                            Update(latestVersion);
-//                            break;
-//                    }
-//                }
+                // if the client wants to intercept, send an event
+                if (UpdateDetected != null)
+                {
+                    UpdateDetected(this, ev);
+                }
+                    //otherwise just go forward with the UI notficiation
+                else
+                {
+                    ShowUpdateNeededUI(latestVersion, useNotificationToast);
+                }
             }
             return updateStatus;
         }
@@ -833,7 +815,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        void OnUserWindowUserResponded(object sender, EventArgs e)
+        private void OnUserWindowUserResponded(object sender, EventArgs e)
         {
             if (UserWindow.Result == DialogResult.No)
             {
@@ -853,7 +835,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
+        private void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
             if(AskApplicationToSafelyCloseUp())
                 RunDownloadedInstaller();
@@ -864,7 +846,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void OnWorkerDoWork(object sender, DoWorkEventArgs e)
+        private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // store the did run once feature
             bool goIntoLoop = true;
@@ -1035,7 +1017,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">used to determine if the download was successful.</param>
-        void OnWebDownloadClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void OnWebDownloadClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             if (e.Error != null)
             {

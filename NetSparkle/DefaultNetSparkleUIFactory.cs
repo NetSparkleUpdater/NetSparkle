@@ -17,7 +17,7 @@ namespace NetSparkle
         /// <param name="currentItem">App cast item to show</param>
         /// <param name="applicationIcon">Icon</param>
         /// <returns></returns>
-        public INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem currentItem, Icon applicationIcon)
+        public virtual INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem currentItem, Icon applicationIcon)
         {
             return new NetSparkleForm(currentItem, applicationIcon);
         }
@@ -28,7 +28,7 @@ namespace NetSparkle
         /// <param name="item">Appcast item to download</param>
         /// <param name="applicationIcon">Application icon to use</param>
         /// <returns></returns>
-        public INetSparkleDownloadProgress CreateProgressWindow(NetSparkleAppCastItem item, Icon applicationIcon)
+        public virtual INetSparkleDownloadProgress CreateProgressWindow(NetSparkleAppCastItem item, Icon applicationIcon)
         {
             return new NetSparkleDownloadProgress(item, applicationIcon);
         }
@@ -36,7 +36,7 @@ namespace NetSparkle
         /// <summary>
         /// Initialize UI. Called when Sparkle is constructed.
         /// </summary>
-        public void Init()
+        public virtual void Init()
         {
             // enable visual style to ensure that we have XP style or higher
             // also in WPF applications
@@ -47,7 +47,7 @@ namespace NetSparkle
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
         /// <param name="downloadFileName"></param>
-        public void ShowUnknownInstallerFormatMessage(string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName), Resources.DefaultNetSparkleUIFactory_ErrorTitle, 
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -56,7 +56,7 @@ namespace NetSparkle
         /// <summary>
         /// Show user that current installed version is up-to-date
         /// </summary>
-        public void ShowVersionIsUpToDate()
+        public virtual void ShowVersionIsUpToDate()
         {
             MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);
         }
@@ -64,7 +64,7 @@ namespace NetSparkle
         /// <summary>
         /// Show message that latest update was skipped by user
         /// </summary>
-        public void ShowVersionIsSkippedByUserRequest()
+        public virtual void ShowVersionIsSkippedByUserRequest()
         {
             MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);//review: I'm not crystal clear on this one
         }
@@ -73,7 +73,7 @@ namespace NetSparkle
         /// Show message that appcast is not available
         /// </summary>
         /// <param name="appcastUrl"></param>
-        public void ShowCannotDownloadAppcast(string appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(string appcastUrl)
         {
             MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage, Resources.DefaultNetSparkleUIFactory_ErrorTitle);
         }
@@ -84,7 +84,7 @@ namespace NetSparkle
         /// <param name="item">Appcast item</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        public void ShowToast(NetSparkleAppCastItem item, Icon applicationIcon, EventHandler clickHandler)
+        public virtual void ShowToast(NetSparkleAppCastItem item, Icon applicationIcon, EventHandler clickHandler)
         {
             var toast = new ToastNotifier
                 {
@@ -103,7 +103,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="message">Error message from exception</param>
         /// <param name="appCastUrl"></param>
-        public void ShowDownloadErrorMessage(string message, string appCastUrl)
+        public virtual void ShowDownloadErrorMessage(string message, string appCastUrl)
         {
             MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowDownloadErrorMessage, message), Resources.DefaultNetSparkleUIFactory_ErrorTitle);
         }
