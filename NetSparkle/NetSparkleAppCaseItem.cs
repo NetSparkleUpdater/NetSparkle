@@ -31,6 +31,10 @@ namespace NetSparkle
         /// The DSA signature
         /// </summary>
         public string DSASignature { get; set; }
+        /// <summary>
+        /// Date item was published
+        /// </summary>
+        public DateTime PublicationDate { get; set; }
 
         #region IComparable<NetSparkleAppCastItem> Members
         /// <summary>
@@ -43,9 +47,9 @@ namespace NetSparkle
             Version v1 = new Version(Version);
             Version v2 = new Version(other.Version);
 
-            return v1.CompareTo(v2);            
+            return v1.CompareTo(v2);
         }
 
         #endregion
-    }    
+    }
 }

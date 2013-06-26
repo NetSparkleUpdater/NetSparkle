@@ -14,12 +14,12 @@ namespace NetSparkle
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
-        /// <param name="currentItem">App cast item to show</param>
+        /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
         /// <returns></returns>
-        public virtual INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem currentItem, Icon applicationIcon)
+        public virtual INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem[] updates, Icon applicationIcon)
         {
-            return new NetSparkleForm(currentItem, applicationIcon);
+            return new NetSparkleForm(updates, applicationIcon);
         }
 
         /// <summary>
@@ -81,20 +81,19 @@ namespace NetSparkle
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
-        /// <param name="item">Appcast item</param>
+        /// <param name="updates">Appcast updates</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        public virtual void ShowToast(NetSparkleAppCastItem item, Icon applicationIcon, EventHandler clickHandler)
+        public virtual void ShowToast(NetSparkleAppCastItem[] updates, Icon applicationIcon, Action<NetSparkleAppCastItem[]> clickHandler)
         {
             var toast = new ToastNotifier
                 {
-                    Tag = item, 
                     Image =
                         {
                             Image = applicationIcon.ToBitmap()
                         }
                 };
-            toast.ToastClicked += clickHandler;
+            toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak
             toast.Show(Resources.DefaultNetSparkleUIFactory_ToastMessage, Resources.DefaultNetSparkleUIFactory_ToastCallToAction, 5);
         }
 

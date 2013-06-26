@@ -11,10 +11,10 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
-        /// <param name="currentItem">App cast item to show</param>
+        /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
         /// <returns></returns>
-        INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem currentItem, Icon applicationIcon);
+        INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem[] updates, Icon applicationIcon);
 
         /// <summary>
         /// Create download progress window
@@ -54,10 +54,10 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
-        /// <param name="item">Appcast item</param>
+        /// <param name="updates">Appcast updates</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        void ShowToast(NetSparkleAppCastItem item, Icon applicationIcon, EventHandler clickHandler);
+        void ShowToast(NetSparkleAppCastItem[] updates, Icon applicationIcon, Action<NetSparkleAppCastItem[]> clickHandler);
 
         /// <summary>
         /// Show message on download error

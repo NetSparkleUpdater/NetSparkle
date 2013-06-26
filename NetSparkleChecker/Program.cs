@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-
-using NetSparkle;
 
 namespace NetSparkleChecker
 {
@@ -30,39 +26,37 @@ namespace NetSparkleChecker
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else            
+
+            // check parameter
+            if (!File.Exists(args[1]))
             {
-                // check parameter
-                if (!File.Exists(args[1]))
-                {
-                    MessageBox.Show("Couldn't find the application executable (" + Path.GetFullPath(args[1]) + ")",
-                                    "NetSparkle Update Checker - Missing File",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                MessageBox.Show("Couldn't find the application executable (" + Path.GetFullPath(args[1]) + ")",
+                                "NetSparkle Update Checker - Missing File",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-                try
-                {                    
-                    // show the form
-                    NetSparkleCheckerWaitUI frmWait = new NetSparkleCheckerWaitUI(SystemIcons.Application);
-                    Application.Run(frmWait);
+            try
+            {                    
+                // show the form
+                NetSparkleCheckerWaitUI frmWait = new NetSparkleCheckerWaitUI(SystemIcons.Application);
+                Application.Run(frmWait);
 
-                    // check for update
-                    if (frmWait.SparkleRequestedUpdate)
-                    {
-                        frmWait.ShowUpdateUI();
-                    }
-                    else
-                    {
-                        SoftwareUpToDate ok = new SoftwareUpToDate();
-                        ok.ShowDialog();
-                    }
-                }
-                catch (Exception e)
+                // check for update
+                if (frmWait.SparkleRequestedUpdate)
                 {
-                    MessageBox.Show(e.Message, "Unhandled exception");
+                    frmWait.ShowUpdateUI();
                 }
-            }            
+                else
+                {
+                    SoftwareUpToDate ok = new SoftwareUpToDate();
+                    ok.ShowDialog();
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Unhandled exception");
+            }
         }                   
     }
 }

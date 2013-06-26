@@ -59,7 +59,7 @@ namespace NetSparkle
         /// </summary>
         public event UpdateDetected UpdateDetected;
 
-        private BackgroundWorker _worker = new BackgroundWorker();
+        private BackgroundWorker _worker;
         private String _appCastUrl;
         private readonly String _appReferenceAssembly;
 
@@ -123,8 +123,9 @@ namespace NetSparkle
                 Debug.WriteLine("Checking the following file: " + _appReferenceAssembly);
             }
 
+            // TODO: change BackgroundWorker to Task
             // adjust the delegates
-            _worker.WorkerReportsProgress = true;
+            _worker = new BackgroundWorker {WorkerReportsProgress = true};
             _worker.DoWork += OnWorkerDoWork;
             _worker.ProgressChanged += OnWorkerProgressChanged;
 
@@ -414,20 +415,21 @@ namespace NetSparkle
         /// reference assembly. This method is also called from the background loops.
         /// </summary>
         /// <param name="config">the configuration</param>
-        /// <param name="latestVersion">returns the latest version</param>
+        /// <param name="updates">list of available updates sorted decreasing</param>
         /// <returns><c>true</c> if an update is required</returns>
-        public UpdateStatus GetUpdateStatus(NetSparkleConfiguration config, out NetSparkleAppCastItem latestVersion)
+        public UpdateStatus GetUpdateStatus(NetSparkleConfiguration config, out NetSparkleAppCastItem[] updates)
         {
             // report
             ReportDiagnosticMessage("Downloading and checking appcast");
 
             // init the appcast
             NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, config);
+            cast.Read();
 
             // check if any updates are available
             try
             {
-                latestVersion = cast.GetLatestVersion();
+                updates = cast.GetUpdates();
             }
             catch (Exception e)
             {
@@ -435,35 +437,32 @@ namespace NetSparkle
                 ReportDiagnosticMessage("Error during app cast download: " + e.Message);
 
                 // just null the version info
-                latestVersion = null;
+                updates = null;
             }
 
-            if (latestVersion == null)
+            if (updates == null)
             {
                 ReportDiagnosticMessage("No version information in app cast found");
                 return UpdateStatus.CouldNotDetermine;
             }
-            ReportDiagnosticMessage("Lastest version on the server is " + latestVersion.Version);
 
             // set the last check time
             ReportDiagnosticMessage("Touch the last check timestamp");
             config.TouchCheckTime();
 
-            // check if the available update has to be skipped
-            if (latestVersion.Version.Equals(config.SkipThisVersion))
-            {
-                ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
-                return UpdateStatus.UserSkipped;
-            }
-
             // check if the version will be the same then the installed version
-            Version v1 = new Version(config.InstalledVersion);
-            Version v2 = new Version(latestVersion.Version);
-
-            if (v2 <= v1)
+            if (updates.Length == 0)
             {
                 ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
                 return UpdateStatus.UpdateNotAvailable;
+            }
+            ReportDiagnosticMessage("Lastest version on the server is " + updates[0].Version);
+
+            // check if the available update has to be skipped
+            if (updates[0].Version.Equals(config.SkipThisVersion))
+            {
+                ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
+                return UpdateStatus.UserSkipped;
             }
 
             // ok we need an update
@@ -489,42 +488,42 @@ namespace NetSparkle
         /// This method shows the update ui and allows to perform the 
         /// update process
         /// </summary>
-        /// <param name="currentItem">the item to show the UI for</param>
+        /// <param name="updates">updates to show UI for</param>
         /// <param name="useNotificationToast"> </param>
-        public void ShowUpdateNeededUI(NetSparkleAppCastItem currentItem, bool useNotificationToast)
+        public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates, bool useNotificationToast)
         {
             if (useNotificationToast)
             {
-                UIFactory.ShowToast(currentItem, _applicationIcon, OnToastClick);
+                UIFactory.ShowToast(updates, _applicationIcon, OnToastClick);
             }
             else
             {
-                ShowUpdateNeededUIInner(currentItem);
+                ShowUpdateNeededUIInner(updates);
             }
         }
 
-        void OnToastClick(object sender, EventArgs e)
+        private void OnToastClick(NetSparkleAppCastItem[] updates)
         {
-            ShowUpdateNeededUIInner((NetSparkleAppCastItem)((Control)sender).Tag);
+            ShowUpdateNeededUIInner(updates);
         }
 
-
-        private void ShowUpdateNeededUIInner(NetSparkleAppCastItem currentItem)
+        private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
         {
-            if (UserWindow == null)
+            if (UserWindow != null)
             {
-                // create the form
-                UserWindow = UIFactory.CreateSparkleForm(currentItem, _applicationIcon);
+                // remove old user window
+                UserWindow.UserResponded -= OnUserWindowUserResponded;
             }
 
-            UserWindow.CurrentItem = currentItem;
+            // create the form
+            UserWindow = UIFactory.CreateSparkleForm(updates, _applicationIcon);
+
             if (HideReleaseNotes)
             {
                 UserWindow.HideReleaseNotes();
             }
 
             // clear if already set.
-            UserWindow.UserResponded -= OnUserWindowUserResponded;
             UserWindow.UserResponded += OnUserWindowUserResponded;
             UserWindow.Show();
         }
@@ -750,19 +749,19 @@ namespace NetSparkle
             UpdateSystemProfileInformation(config);
 
             // check if update is required
-            NetSparkleAppCastItem latestVersion;
-            var updateStatus = GetUpdateStatus(config, out latestVersion);
+            NetSparkleAppCastItem[] updates;
+            var updateStatus = GetUpdateStatus(config, out updates);
             if (updateStatus == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
                 ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
-                                        latestVersion.Version);
+                                        updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
                                                     {
                                                         NextAction = NextUpdateAction.ShowStandardUserInterface,
                                                         ApplicationConfig = config,
-                                                        LatestVersion = latestVersion
+                                                        LatestVersion = updates[0]
                                                     };
 
                 // if the client wants to intercept, send an event
@@ -773,7 +772,7 @@ namespace NetSparkle
                     //otherwise just go forward with the UI notficiation
                 else
                 {
-                    ShowUpdateNeededUI(latestVersion, useNotificationToast);
+                    ShowUpdateNeededUI(updates, useNotificationToast);
                 }
             }
             return updateStatus;
@@ -782,20 +781,20 @@ namespace NetSparkle
         /// <summary>
         /// Updates from appcast
         /// </summary>
-        /// <param name="currentItem">the current (top-most) item in the app-cast</param>
-        private void Update(NetSparkleAppCastItem currentItem)
+        /// <param name="updates">updates to be installed</param>
+        private void Update(NetSparkleAppCastItem[] updates)
         {
-            if (currentItem != null)
+            if (updates == null)
+                return;
+
+            // show the update ui
+            if (EnableSilentMode)
             {
-                // show the update ui
-                if (EnableSilentMode)
-                {
-                    InitDownloadAndInstallProcess(currentItem);
-                }
-                else
-                {
-                    ShowUpdateNeededUI(currentItem, true);
-                }
+                InitDownloadAndInstallProcess(updates[0]); // install only latest
+            }
+            else
+            {
+                ShowUpdateNeededUI(updates, true);
             }
         }
 
@@ -837,8 +836,10 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
-            if(AskApplicationToSafelyCloseUp())
+            if (AskApplicationToSafelyCloseUp())
+            {
                 RunDownloadedInstaller();
+            }
         }
 
         /// <summary>
@@ -912,16 +913,16 @@ namespace NetSparkle
                 UpdateSystemProfileInformation(config);
 
                 // check if update is required
-                NetSparkleAppCastItem latestVersion = null;
-                bUpdateRequired = UpdateStatus.UpdateAvailable == GetUpdateStatus(config, out latestVersion);
+                NetSparkleAppCastItem[] updates;
+                bUpdateRequired = GetUpdateStatus(config, out updates) == UpdateStatus.UpdateAvailable;
                 if (!bUpdateRequired)
                     goto WaitSection;
 
                 // show the update window
-                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + latestVersion.Version);
+                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + updates[0].Version);
 
                 // send notification if needed
-                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = latestVersion };
+                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
                 if (UpdateDetected != null)
                     UpdateDetected(this, ev);
 
@@ -932,7 +933,7 @@ namespace NetSparkle
                         {
                             ReportDiagnosticMessage("Unattended update whished from consumer");
                             EnableSilentMode = true;
-                            _worker.ReportProgress(1, latestVersion);
+                            _worker.ReportProgress(1, updates);
                             break;
                         }
                     case NextUpdateAction.ProhibitUpdate:
@@ -943,7 +944,7 @@ namespace NetSparkle
                     default:
                         {
                             ReportDiagnosticMessage("Showing Standard Update UI");
-                            _worker.ReportProgress(1, latestVersion);
+                            _worker.ReportProgress(1, updates);
                             break;
                         }
                 }
@@ -1004,7 +1005,7 @@ namespace NetSparkle
             switch (e.ProgressPercentage)
             {
                 case 1:
-                    Update(e.UserState as NetSparkleAppCastItem);
+                    Update(e.UserState as NetSparkleAppCastItem[]);
                     break;
                 case 0:
                     ReportDiagnosticMessage(e.UserState.ToString());

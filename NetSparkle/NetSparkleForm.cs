@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
 
@@ -14,8 +15,9 @@ namespace NetSparkle
     /// </summary>
     public partial class NetSparkleForm : Form, INetSparkleForm
     {
-        NetSparkleAppCastItem _currentItem;
-        private TempFile _htmlTempFile;
+        private static readonly HashSet<string> MarkDownExtension = new HashSet<string> { ".md", ".mkdn", ".mkd", ".markdown" };
+
+        private readonly NetSparkleAppCastItem[] _updates;
 
         /// <summary>
         /// Event fired when the user has responded to the 
@@ -24,14 +26,23 @@ namespace NetSparkle
         public event EventHandler UserResponded;
 
         /// <summary>
+        /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
+        /// </summary>
+        public string SeparatorTemplate { get; set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="items">List of updates to show</param>
         /// <param name="applicationIcon"></param>
-        public NetSparkleForm(NetSparkleAppCastItem item, Icon applicationIcon)
-        {            
+        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon)
+        {
+            _updates = items;
+
+            SeparatorTemplate = "<div style=\"border: 1px black dashed; padding: 5px; margin-bottom: 5px; margin-top: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div>";
+
             InitializeComponent();
-            
+
             // init ui 
             try
             {
@@ -42,40 +53,31 @@ namespace NetSparkle
             {
                 Debug.WriteLine("Error in browser init: " + ex.Message);
             }
-            
-            _currentItem = item;
-           
+
+            NetSparkleAppCastItem item = items[0];
 
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
             lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", item.AppVersionInstalled);
 
-            if (!string.IsNullOrEmpty(item.ReleaseNotesLink))
+            if (items.Length == 0)
             {
-
-                if (new List<string>(new[]{".md",".mkdn",".mkd",".markdown"}).Contains(Path.GetExtension(item.ReleaseNotesLink).ToLower()))
-                {
-                    try
-                    {
-                        ShowMarkdownReleaseNotes(item);
-                    }
-                    catch (Exception)
-                    {
-#if DEBUG
-                        throw;
-#else
-                        NetSparkleBrowser.Navigate(item.ReleaseNotesLink); //just show it raw
-#endif
-                    }
-                    
-                }
-                else
-                {
-                    NetSparkleBrowser.Navigate(item.ReleaseNotesLink);
-                }
-            }
-            else            
                 RemoveReleaseNotesControls();
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'></head><body>");
+                foreach (NetSparkleAppCastItem castItem in items)
+                {
+                    sb.Append(string.Format(SeparatorTemplate, castItem.Version,
+                                            castItem.PublicationDate.ToString("dd MMM yyyy")));
+                    sb.Append(GetReleaseNotes(castItem));
+                }
+                sb.Append("</body>");
+
+                string releaseNotes = sb.ToString();
+                NetSparkleBrowser.DocumentText = releaseNotes;
+            }
 
             imgAppIcon.Image = applicationIcon.ToBitmap();
             Icon = applicationIcon;
@@ -83,50 +85,58 @@ namespace NetSparkle
             TopMost = true;
         }
 
-        /// <summary>
-        /// </summary>
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        private string GetReleaseNotes(NetSparkleAppCastItem item)
+        {
+            if (string.IsNullOrEmpty(item.ReleaseNotesLink))
+            {
+                return null;
+            }
+
+            string notes = DownloadReleaseNotes(item.ReleaseNotesLink);
+            if (string.IsNullOrEmpty(notes))
+            {
+                return null;
+            }
+
+            var extension = Path.GetExtension(item.ReleaseNotesLink);
+            if (extension != null && MarkDownExtension.Contains(extension.ToLower()))
+            {
+                try
+                {
+                    var md = new MarkdownSharp.Markdown();
+                    notes = md.Transform(notes);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error parsing MarkDown syntax: " + ex.Message);
+                }
+            }
+            return notes;
+        }
+
+        private string DownloadReleaseNotes(string link)
         {
             try
             {
-                _htmlTempFile.Dispose();//will try to delete it
-            }
-            catch
-            {
-                //not worth complaining about, just leaks to temp folder
-            }
-            base.OnClosing(e);
-        }
-
-        private void ShowMarkdownReleaseNotes(NetSparkleAppCastItem item)
-        {
-            string contents;
-            if (item.ReleaseNotesLink.StartsWith("file://")) //handy for testing
-            {
-                contents = File.ReadAllText(item.ReleaseNotesLink.Replace("file://", ""));
-            }
-            else
-            {
                 using (var webClient = new WebClient())
                 {
-                    contents = webClient.DownloadString(item.ReleaseNotesLink);
+                    webClient.Encoding = Encoding.UTF8;
+                    return webClient.DownloadString(link);
                 }
             }
-            var md = new MarkdownSharp.Markdown();
-            _htmlTempFile = TempFile.WithExtension("htm");
-            File.WriteAllText(_htmlTempFile.Path, md.Transform(contents));
-            NetSparkleBrowser.Navigate(_htmlTempFile.Path);
+            catch (WebException ex)
+            {
+                Debug.WriteLine("Cannot download release notes from " + link + " because " + ex.Message);
+                return "";
+            }
         }
-
-     
 
         /// <summary>
         /// The current item being installed
         /// </summary>
         NetSparkleAppCastItem INetSparkleForm.CurrentItem
         {
-            get { return _currentItem; }
-            set { _currentItem = value; }
+            get { return _updates[0]; }
         }
 
         /// <summary>

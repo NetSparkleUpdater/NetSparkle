@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Net;
 
@@ -10,15 +13,17 @@ namespace NetSparkle
     /// </summary>
     public class NetSparkleAppCast
     {
+        private const string ItemNode = "item";
+        private const string EnclosureNode = "enclosure";
+        private const string ReleaseNotesLinkNode = "sparkle:releaseNotesLink";
+        private const string VersionAttribute = "sparkle:version";
+        private const string DasSignature = "sparkle:dsaSignature";
+        private const string UrlAttribute = "url";
+        private const string PubDateNode = "pubDate";
+
         private readonly NetSparkleConfiguration _config;
         private readonly String _castUrl;
-
-        private const String itemNode = "item";
-        private const String enclosureNode = "enclosure";
-        private const String releaseNotesLinkNode = "sparkle:releaseNotesLink";
-        private const String versionAttribute = "sparkle:version";
-        private const String dasSignature = "sparkle:dsaSignature";
-        private const String urlAttribute = "url";
+        private readonly List<NetSparkleAppCastItem> _items; 
 
         /// <summary>
         /// Constructor
@@ -29,22 +34,21 @@ namespace NetSparkle
         {
             _config = config;
             _castUrl = castUrl;
+
+            _items = new List<NetSparkleAppCastItem>();
         }
 
         /// <summary>
-        /// Gets the latest version
+        /// Download castUrl resource and parse it
         /// </summary>
-        /// <returns>the AppCast item corresponding to the latest version</returns>
-        public NetSparkleAppCastItem GetLatestVersion()
+        public void Read()
         {
-            NetSparkleAppCastItem latestVersion = null;
-
             if (_castUrl.StartsWith("file://")) //handy for testing
             {
                 var path = _castUrl.Replace("file://", "");
                 using (var reader = XmlReader.Create(path))
                 {
-                    latestVersion = ReadAppCast(reader, latestVersion);
+                    Parse(reader);
                 }
             }
             else
@@ -52,25 +56,27 @@ namespace NetSparkle
                 // build a http web request stream
                 WebRequest request = WebRequest.Create(_castUrl);
                 request.UseDefaultCredentials = true;
+                // TODO: disable ssl check if _config.TrustEverySSL
 
                 // request the cast and build the stream
                 WebResponse response = request.GetResponse();
                 using (Stream inputstream = response.GetResponseStream())
                 {
+                    if (inputstream == null)
+                    {
+                        Debug.WriteLine("Cannot read response from URL " + _castUrl);
+                        return;
+                    }
                     using (XmlTextReader reader = new XmlTextReader(inputstream))
                     {
-                        latestVersion = ReadAppCast(reader, latestVersion);
+                        Parse(reader);
                     }
                 }
             }
-
-            latestVersion.AppName = _config.ApplicationName;
-            latestVersion.AppVersionInstalled = _config.InstalledVersion;
-            return latestVersion;
+            
         }
 
-        private static NetSparkleAppCastItem ReadAppCast(XmlReader reader,
-                                                         NetSparkleAppCastItem latestVersion)
+        private void Parse(XmlReader reader)
         {
             NetSparkleAppCastItem currentItem = null;
 
@@ -80,44 +86,63 @@ namespace NetSparkle
                 {
                     switch (reader.Name)
                     {
-                        case itemNode:
-                            {
-                                currentItem = new NetSparkleAppCastItem();
-                                break;
-                            }
-                        case releaseNotesLinkNode:
+                        case ItemNode:
+                            currentItem = new NetSparkleAppCastItem();
+                            break;
+                        case ReleaseNotesLinkNode:
+                            if (currentItem != null)
                             {
                                 currentItem.ReleaseNotesLink = reader.ReadString().Trim();
-                                break;
                             }
-                        case enclosureNode:
+                            break;
+                        case EnclosureNode:
+                            if (currentItem != null)
                             {
-                                currentItem.Version = reader.GetAttribute(versionAttribute);
-                                currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
-                                currentItem.DSASignature = reader.GetAttribute(dasSignature);
-
-                                break;
+                                currentItem.Version = reader.GetAttribute(VersionAttribute);
+                                currentItem.DownloadLink = reader.GetAttribute(UrlAttribute);
+                                currentItem.DSASignature = reader.GetAttribute(DasSignature);
                             }
+                            break;
+                        case PubDateNode:
+                            if (currentItem != null)
+                            {
+                                string dt = reader.ReadString().Trim();
+                                try
+                                {
+                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:MM:ss zz", System.Globalization.CultureInfo.InvariantCulture);
+                                }
+                                catch (FormatException ex)
+                                {
+                                    Debug.WriteLine("Cannot parse item datetime " + dt + " with message " + ex.Message);
+                                }
+                            }
+                            break;
                     }
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
                 {
                     switch (reader.Name)
                     {
-                        case itemNode:
-                            {
-                                if (latestVersion == null)
-                                    latestVersion = currentItem;
-                                else if (currentItem.CompareTo(latestVersion) > 0)
-                                {
-                                    latestVersion = currentItem;
-                                }
-                                break;
-                            }
+                        case ItemNode:
+                            _items.Add(currentItem);
+                            break;
                     }
                 }
             }
-            return latestVersion;
+
+            // sort versions reserve order
+            _items.Sort((item1, item2) => -1*item1.CompareTo(item2));
+        }
+
+        /// <summary>
+        /// Returns sorted list of updates between current and latest. Installed is not included.
+        /// </summary>
+        /// <returns></returns>
+        public NetSparkleAppCastItem[] GetUpdates()
+        {
+            Version installed = new Version(_config.InstalledVersion);
+
+            return _items.Where(item => new Version(item.Version).CompareTo(installed) > 0).ToArray();
         }
     }
 }

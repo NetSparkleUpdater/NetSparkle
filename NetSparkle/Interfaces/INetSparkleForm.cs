@@ -34,6 +34,6 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Gets or sets the current item being installed
         /// </summary>
-        NetSparkleAppCastItem CurrentItem { get; set; }
+        NetSparkleAppCastItem CurrentItem { get; }
     }
 }
