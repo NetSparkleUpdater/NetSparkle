@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Net;
+using System.Xml;
 
 namespace NetSparkle
 {
@@ -23,7 +23,7 @@ namespace NetSparkle
 
         private readonly NetSparkleConfiguration _config;
         private readonly String _castUrl;
-        private readonly List<NetSparkleAppCastItem> _items; 
+        private readonly List<NetSparkleAppCastItem> _items;
 
         /// <summary>
         /// Constructor
@@ -73,7 +73,7 @@ namespace NetSparkle
                     }
                 }
             }
-            
+
         }
 
         private void Parse(XmlReader reader)
@@ -109,7 +109,7 @@ namespace NetSparkle
                                 string dt = reader.ReadString().Trim();
                                 try
                                 {
-                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zz", System.Globalization.CultureInfo.InvariantCulture);
+                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture);
                                 }
                                 catch (FormatException ex)
                                 {
@@ -131,7 +131,7 @@ namespace NetSparkle
             }
 
             // sort versions reserve order
-            _items.Sort((item1, item2) => -1*item1.CompareTo(item2));
+            _items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         }
 
         /// <summary>
