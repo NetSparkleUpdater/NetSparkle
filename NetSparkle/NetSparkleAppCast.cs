@@ -109,7 +109,7 @@ namespace NetSparkle
                                 string dt = reader.ReadString().Trim();
                                 try
                                 {
-                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:MM:ss zz", System.Globalization.CultureInfo.InvariantCulture);
+                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zz", System.Globalization.CultureInfo.InvariantCulture);
                                 }
                                 catch (FormatException ex)
                                 {
