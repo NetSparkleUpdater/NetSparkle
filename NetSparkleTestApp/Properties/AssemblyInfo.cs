@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NetSparkleTestApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("NetSparkle Company")]
 [assembly: AssemblyProduct("NetSparkleTestApp")]
 [assembly: AssemblyCopyright("Copyright © Dirk Eisenberg 2010")]
 [assembly: AssemblyTrademark("")]

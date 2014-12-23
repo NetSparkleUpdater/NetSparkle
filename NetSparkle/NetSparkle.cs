@@ -288,7 +288,7 @@ namespace NetSparkle
             _forceInitialCheck = forceInitialCheck;
             _checkFrequency = checkFrequency;
 
-           ReportDiagnosticMessage("Starting background worker");
+            ReportDiagnosticMessage("Starting background worker");
 
             // start the work
             _worker.RunWorkerAsync();
@@ -548,7 +548,7 @@ namespace NetSparkle
             string fileName = segments[segments.Length - 1];
 
             // get temp path
-            _downloadTempFileName = Environment.ExpandEnvironmentVariables("%temp%\\" + fileName);
+            _downloadTempFileName = Path.Combine(Path.GetTempPath(), fileName);
             if (ProgressWindow == null)
             {
                 ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);

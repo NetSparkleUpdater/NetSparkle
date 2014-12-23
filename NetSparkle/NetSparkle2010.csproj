@@ -250,7 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ArtWork\software-update-available.png" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
