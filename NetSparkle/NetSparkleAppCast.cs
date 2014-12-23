@@ -13,13 +13,13 @@ namespace NetSparkle
     /// </summary>
     public class NetSparkleAppCast
     {
-        private const string ItemNode = "item";
-        private const string EnclosureNode = "enclosure";
-        private const string ReleaseNotesLinkNode = "sparkle:releaseNotesLink";
-        private const string VersionAttribute = "sparkle:version";
-        private const string DasSignature = "sparkle:dsaSignature";
-        private const string UrlAttribute = "url";
-        private const string PubDateNode = "pubDate";
+        private const string itemNode = "item";
+        private const string enclosureNode = "enclosure";
+        private const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
+        private const string versionAttribute = "sparkle:version";
+        private const string dsaSignature = "sparkle:dsaSignature";
+        private const string urlAttribute = "url";
+        private const string pubDateNode = "pubDate";
 
         private readonly NetSparkleConfiguration _config;
         private readonly String _castUrl;
@@ -87,28 +87,28 @@ namespace NetSparkle
                 {
                     switch (reader.Name)
                     {
-                        case ItemNode:
+                        case itemNode:
                             currentItem = new NetSparkleAppCastItem()
                             {
                                 AppVersionInstalled = _config.InstalledVersion,
                                 AppName = _config.ApplicationName
                             };
                             break;
-                        case ReleaseNotesLinkNode:
+                        case releaseNotesLinkNode:
                             if (currentItem != null)
                             {
                                 currentItem.ReleaseNotesLink = reader.ReadString().Trim();
                             }
                             break;
-                        case EnclosureNode:
+                        case enclosureNode:
                             if (currentItem != null)
                             {
-                                currentItem.Version = reader.GetAttribute(VersionAttribute);
-                                currentItem.DownloadLink = reader.GetAttribute(UrlAttribute);
-                                currentItem.DSASignature = reader.GetAttribute(DasSignature);
+                                currentItem.Version = reader.GetAttribute(versionAttribute);
+                                currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
+                                currentItem.DSASignature = reader.GetAttribute(dsaSignature);
                             }
                             break;
-                        case PubDateNode:
+                        case pubDateNode:
                             if (currentItem != null)
                             {
                                 string dt = reader.ReadString().Trim();
@@ -128,7 +128,7 @@ namespace NetSparkle
                 {
                     switch (reader.Name)
                     {
-                        case ItemNode:
+                        case itemNode:
                             _items.Add(currentItem);
                             break;
                     }

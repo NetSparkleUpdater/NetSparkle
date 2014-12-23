@@ -453,7 +453,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                // show the exeception message 
+                // show the exception message 
                 ReportDiagnosticMessage("Error during app cast download: " + e.Message);
 
                 // just null the version info
@@ -476,7 +476,7 @@ namespace NetSparkle
                 ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
                 return UpdateStatus.UpdateNotAvailable;
             }
-            ReportDiagnosticMessage("Lastest version on the server is " + updates[0].Version);
+            ReportDiagnosticMessage("Latest version on the server is " + updates[0].Version);
 
             // check if the available update has to be skipped
             if (updates[0].Version.Equals(config.SkipThisVersion))
@@ -620,6 +620,12 @@ namespace NetSparkle
                 // buid the command line
                 return "msiexec /i \"" + downloadFileName + "\"";
             }
+            if (".msp".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            {
+                // build the command line
+                return "msiexec /p \"" + downloadFileName + "\"";
+            }
+
             throw new InvalidDataException("Unknown installer format");
         }
 
