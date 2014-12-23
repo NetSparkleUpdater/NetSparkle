@@ -4,10 +4,10 @@ Simple .net update checker & installer downloader. You provide, somewhere on the
 
 ## Basic Usage
 
-    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml",this.Icon);
+    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml", this.Icon);
 	_sparkleApplicationUpdater.CheckOnFirstApplicationIdle();
 
-On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, a little "toast" box will slide up in the corner of the screen, announcing the new version. If the user clicks on it, then a larger dialog box will open, showing your release notes, again, from a server somewhere. The user can then ignore the update, ask to be reminded later, or download it now.
+On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, the user will be notified with a little "toast" box if enabled, otherwise with the update dialog containing your release notes (if defined). The user can then ignore the update, ask to be reminded later, or download it now.
 
 If you want to add a manual update in the background, do
 
@@ -30,9 +30,19 @@ NetSparkle is [MIT Licensed]
 
 ## Requirements
 
-- .net 4.0
+- .NET 4.0
 
 ## History
+23 December 2014 Bluewalk: Since the development seems very quiet, I have forked this project and started adding fixes from other forks into this fork. Also I started to add improvements to the library as well including:
+
+ - Cleaning up the project files
+ - Set proxy to use default credentials if available (jimgraham)
+ - Prettied up the release notes overview
+ - Fixed not showing the installed version and app name in the Softare Update window
+ - Added option to make the toast optional
+ - Added option to use the NetSparkle icon if wanted
+ - Stopped using .NET 4 Client profile
+
 8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 
  - Reduce (maybe remove) the current "loop" background orientation. Most apps just want to check on launch.
