@@ -56,6 +56,7 @@ namespace NetSparkle
                 // build a http web request stream
                 WebRequest request = WebRequest.Create(_castUrl);
                 request.UseDefaultCredentials = true;
+                request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                 // TODO: disable ssl check if _config.TrustEverySSL
 
                 // request the cast and build the stream

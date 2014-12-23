@@ -120,7 +120,9 @@ namespace NetSparkle
             {
                 using (var webClient = new WebClient())
                 {
+                    webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     webClient.Encoding = Encoding.UTF8;
+
                     return webClient.DownloadString(link);
                 }
             }

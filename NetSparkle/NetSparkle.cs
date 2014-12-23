@@ -393,6 +393,8 @@ namespace NetSparkle
                     if (request != null)
                     {
                         request.UseDefaultCredentials = true;
+                        request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+
                         using (WebResponse response = request.GetResponse())
                         {
                             // close the response 
@@ -569,7 +571,10 @@ namespace NetSparkle
                 _webDownloadClient = null;
             }
 
-            _webDownloadClient = new WebClient {UseDefaultCredentials = true};
+            _webDownloadClient = new WebClient {
+                UseDefaultCredentials = true,
+                Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
+            };
             _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnClientDownloadProgressChanged;
             _webDownloadClient.DownloadFileCompleted += OnWebDownloadClientDownloadFileCompleted;
 
