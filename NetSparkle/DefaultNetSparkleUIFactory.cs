@@ -90,7 +90,7 @@ namespace NetSparkle
                 {
                     Image =
                         {
-                            Image = applicationIcon.ToBitmap()
+                            Image = applicationIcon != null ? applicationIcon.ToBitmap() : Resources.software_update_available1
                         }
                 };
             toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak

@@ -40,7 +40,7 @@
             // 
             this._message.AutoSize = true;
             this._message.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._message.Location = new System.Drawing.Point(50, 9);
+            this._message.Location = new System.Drawing.Point(71, 9);
             this._message.MaximumSize = new System.Drawing.Size(190, 0);
             this._message.Name = "_message";
             this._message.Size = new System.Drawing.Size(122, 20);
@@ -50,9 +50,11 @@
             // 
             // Image
             // 
-            this.Image.Location = new System.Drawing.Point(6, 9);
+            this.Image.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Image.Location = new System.Drawing.Point(0, 0);
             this.Image.Name = "Image";
-            this.Image.Size = new System.Drawing.Size(39, 43);
+            this.Image.Size = new System.Drawing.Size(64, 64);
+            this.Image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.Image.TabIndex = 3;
             this.Image.TabStop = false;
             this.Image.Click += new System.EventHandler(this.ToastNotifier_Click);
@@ -66,7 +68,7 @@
             // _callToAction
             // 
             this._callToAction.AutoSize = true;
-            this._callToAction.Location = new System.Drawing.Point(51, 39);
+            this._callToAction.Location = new System.Drawing.Point(72, 39);
             this._callToAction.Name = "_callToAction";
             this._callToAction.Size = new System.Drawing.Size(55, 13);
             this._callToAction.TabIndex = 4;
@@ -80,7 +82,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(222, 54);
+            this.ClientSize = new System.Drawing.Size(244, 64);
             this.ControlBox = false;
             this.Controls.Add(this._callToAction);
             this.Controls.Add(this.Image);

@@ -30,13 +30,13 @@ namespace NetSparkle
         /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
         public string SeparatorTemplate { get; set; }
-
+        
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="items">List of updates to show</param>
         /// <param name="applicationIcon"></param>
-        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon)
+        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon = null)
         {
             _updates = items;
 
@@ -83,8 +83,11 @@ namespace NetSparkle
                 NetSparkleBrowser.DocumentText = releaseNotes;
             }
 
-            imgAppIcon.Image = applicationIcon.ToBitmap();
-            Icon = applicationIcon;
+            if (applicationIcon != null)
+            {
+                imgAppIcon.Image = applicationIcon.ToBitmap();
+                Icon = applicationIcon;
+            }
 
             TopMost = true;
         }

@@ -37,7 +37,7 @@ namespace NetSparkleChecker
 
         public void ShowUpdateUI()
         {
-            _sparkle.ShowUpdateNeededUI(_updates, false);
+            _sparkle.ShowUpdateNeededUI(_updates);
         }
 
         private void bckWorker_DoWork(object sender, DoWorkEventArgs e)

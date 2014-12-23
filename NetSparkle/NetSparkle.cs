@@ -70,9 +70,18 @@ namespace NetSparkle
         private readonly EventWaitHandle _loopingHandle;
         private readonly Icon _applicationIcon;       
         private TimeSpan _checkFrequency;
+        private Boolean _useNotificationToast;
 
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
+
+        /// <summary>
+        /// ctor which needs the appcast url
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        public Sparkle(String appcastUrl)
+            : this(appcastUrl, null, null)
+        { }
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -224,6 +233,15 @@ namespace NetSparkle
         {
             get { return _appCastUrl; }
             set { _appCastUrl = value; }
+        }
+
+        /// <summary>
+        /// Specifies if you want to use the notification toast
+        /// </summary>
+        public Boolean UseNotificationToast
+        {
+            get { return _useNotificationToast; }
+            set { _useNotificationToast = value; }
         }
         
         #endregion
@@ -491,10 +509,9 @@ namespace NetSparkle
         /// update process
         /// </summary>
         /// <param name="updates">updates to show UI for</param>
-        /// <param name="useNotificationToast"> </param>
-        public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates, bool useNotificationToast)
+        public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates)
         {
-            if (useNotificationToast)
+            if (_useNotificationToast)
             {
                 UIFactory.ShowToast(updates, _applicationIcon, OnToastClick);
             }
@@ -777,7 +794,7 @@ namespace NetSparkle
                     //otherwise just go forward with the UI notficiation
                 else
                 {
-                    ShowUpdateNeededUI(updates, useNotificationToast);
+                    ShowUpdateNeededUI(updates);
                 }
             }
             return updateStatus;
@@ -799,7 +816,7 @@ namespace NetSparkle
             }
             else
             {
-                ShowUpdateNeededUI(updates, true);
+                ShowUpdateNeededUI(updates);
             }
         }
 
