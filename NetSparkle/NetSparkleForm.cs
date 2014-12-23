@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -39,7 +40,7 @@ namespace NetSparkle
         {
             _updates = items;
 
-            SeparatorTemplate = "<div style=\"border: 1px black dashed; padding: 5px; margin-bottom: 5px; margin-top: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div>";
+            SeparatorTemplate = "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
 
             InitializeComponent();
 
@@ -66,12 +67,15 @@ namespace NetSparkle
             }
             else
             {
+                NetSparkleAppCastItem latestVersion = _updates.OrderByDescending(p => p.Version).FirstOrDefault();
+
                 StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'></head><body>");
                 foreach (NetSparkleAppCastItem castItem in items)
                 {
                     sb.Append(string.Format(SeparatorTemplate, castItem.Version,
-                                            castItem.PublicationDate.ToString("dd MMM yyyy")));
-                    sb.Append(GetReleaseNotes(castItem));
+                                            castItem.PublicationDate.ToString("dd MMM yyyy"),
+                                            GetReleaseNotes(castItem),
+                                            latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
                 }
                 sb.Append("</body>");
 
