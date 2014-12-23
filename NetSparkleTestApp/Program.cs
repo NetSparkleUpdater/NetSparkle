@@ -15,7 +15,7 @@ namespace NetSparkleTestApp
             // remove the netsparkle key from registry 
             try
             {
-                Registry.CurrentUser.DeleteSubKeyTree("Software\\Microsoft\\NetSparkleTestApp");
+                Registry.CurrentUser.DeleteSubKeyTree("Software\\NetSparkle Company\\NetSparkleTestApp");
             }
             catch { }
 
