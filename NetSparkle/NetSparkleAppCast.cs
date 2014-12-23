@@ -88,7 +88,11 @@ namespace NetSparkle
                     switch (reader.Name)
                     {
                         case ItemNode:
-                            currentItem = new NetSparkleAppCastItem();
+                            currentItem = new NetSparkleAppCastItem()
+                            {
+                                AppVersionInstalled = _config.InstalledVersion,
+                                AppName = _config.ApplicationName
+                            };
                             break;
                         case ReleaseNotesLinkNode:
                             if (currentItem != null)
