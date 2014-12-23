@@ -42,6 +42,8 @@ NetSparkle is [MIT Licensed]
  - Added option to make the toast optional
  - Added option to use the NetSparkle icon if wanted
  - Stopped using .NET 4 Client profile
+ - Added options RelaunchAfterUpdate (which defines if the app needs to be relaunced after update) and CustomInstallerArguments which allows you to add arguments to the update command line (as per https://github.com/hatton/NetSparkle/commit/2dbaa197633b2624b765ff86b3a619501200580d)
+ - Added support for Windows installer patches (MSP)
 
 8 March 2013 John Hatton: Looking for something with a different approach, but found a good start in NetSparkle. Forked with these goals:
 
