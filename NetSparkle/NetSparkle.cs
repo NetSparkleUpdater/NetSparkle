@@ -74,6 +74,7 @@ namespace NetSparkle
 
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
+        private Process _installerProcess;
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -141,7 +142,7 @@ namespace NetSparkle
             // build the wait handle
             _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
             _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-
+            
             // set the url
             _appCastUrl = appcastUrl;
             Debug.WriteLine("Using the following url: " + _appCastUrl);            
@@ -665,7 +666,7 @@ namespace NetSparkle
             }
 
             // generate the batch file                
-            ReportDiagnosticMessage("Generating MSI batch in " + Path.GetFullPath(cmd));
+            ReportDiagnosticMessage("Generating batch in " + Path.GetFullPath(cmd));
 
             using (StreamWriter write = new StreamWriter(cmd))
             {
@@ -681,9 +682,9 @@ namespace NetSparkle
 
             // report
             ReportDiagnosticMessage("Going to execute batch: " + cmd);
-
-            // start the installer helper
-            Process process = new Process
+            
+            // init the installer helper
+            _installerProcess = new Process
                 {
                     StartInfo =
                         {
@@ -691,7 +692,9 @@ namespace NetSparkle
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
-            process.Start();
+
+            // listen for application exit events
+            Application.ApplicationExit += OnWindowsFormsApplicationExit;
 
             // quit the app
             Environment.Exit(0);
@@ -1123,6 +1126,20 @@ namespace NetSparkle
             if (ProgressWindow != null)
             {
                 ProgressWindow.ChangeDownloadState(isDSAOk);
+            }
+        }
+
+        /// <summary>
+        /// Called when a Windows forms application exits. Starts the installer.
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">not used.</param>
+        private void OnWindowsFormsApplicationExit(object sender, EventArgs e)
+        {
+            Application.ApplicationExit -= OnWindowsFormsApplicationExit;
+            if (_installerProcess != null)
+            {
+                _installerProcess.Start();
             }
         }
      
