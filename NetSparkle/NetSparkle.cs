@@ -187,6 +187,16 @@ namespace NetSparkle
         public bool EnableSilentMode { get; set; }
 
         /// <summary>
+        /// Defines if the application needs to be relaunced after executing the downloaded installer
+        /// </summary>
+        public bool RelaunchAfterUpdate { get; set; }
+
+        /// <summary>
+        /// Run the downloaded installer with these arguments
+        /// </summary>
+        public String CustomInstallerArguments { get; set; }
+
+        /// <summary>
         /// This property returns true when the upadete loop is running
         /// and files when the loop is not running
         /// </summary>
@@ -644,6 +654,9 @@ namespace NetSparkle
             try
             {
                 installerCmd = GetInstallerCommand(_downloadTempFileName);
+
+                if (!String.IsNullOrEmpty(CustomInstallerArguments))
+                    installerCmd += " " + CustomInstallerArguments;
             }
             catch (InvalidDataException)
             {
@@ -657,8 +670,12 @@ namespace NetSparkle
             using (StreamWriter write = new StreamWriter(cmd))
             {
                 write.WriteLine(installerCmd);
-                write.WriteLine("cd " + workingDir);
-                write.WriteLine(cmdLine);
+
+                if (RelaunchAfterUpdate)
+                {
+                    write.WriteLine("cd " + workingDir);
+                    write.WriteLine(cmdLine);
+                }
                 write.Close();
             }
 
