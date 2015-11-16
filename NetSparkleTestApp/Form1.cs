@@ -23,7 +23,7 @@ namespace NetSparkleTestApp
                 //SystemProfileUrl = new Uri("http://update.applimit.com/netsparkle/stat/profileInfo.php")
             };
 
-            //_sparkle.UpdateDetected += new UpdateDetected(_sparkle_updateDetected);
+            _sparkle.UpdateDetected += new UpdateDetected(_sparkle_updateDetected);
             //_sparkle.EnableSilentMode = true;
             //_sparkle.HideReleaseNotes = true;
 

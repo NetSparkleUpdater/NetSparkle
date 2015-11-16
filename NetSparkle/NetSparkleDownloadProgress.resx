@@ -125,11 +125,14 @@
   <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9.75pt, style=Bold</value>
   </data>
+  <data name="lblHeader.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
     <value>66, 12</value>
   </data>
   <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
+    <value>294, 24</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
@@ -148,13 +151,16 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblHeader.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="progressDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
+  <data name="progressDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>69, 37</value>
+    <value>70, 56</value>
   </data>
   <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
     <value>287, 23</value>
@@ -172,10 +178,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressDownload.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
+  </data>
+  <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>131, 37</value>
+    <value>132, 56</value>
   </data>
   <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 23</value>
@@ -196,13 +205,16 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnInstallAndReLaunch.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="lblSecurityHint.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt, style=Bold</value>
   </data>
+  <data name="lblSecurityHint.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="lblSecurityHint.Location" type="System.Drawing.Point, System.Drawing">
-    <value>66, 63</value>
+    <value>70, 82</value>
   </data>
   <data name="lblSecurityHint.Size" type="System.Drawing.Size, System.Drawing">
     <value>290, 34</value>
@@ -226,7 +238,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblSecurityHint.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -253,7 +265,46 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
+  </data>
+  <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9.75pt, style=Bold</value>
+  </data>
+  <data name="downloadProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>66, 33</value>
+  </data>
+  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>290, 0</value>
+  </data>
+  <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 17</value>
+  </data>
+  <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="downloadProgressLbl.Text" xml:space="preserve">
+    <value>(0 MB / 10 MB)</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
+    <value>downloadProgressLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -261,8 +312,11 @@
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>
+  <data name="$this.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>368, 99</value>
+    <value>368, 118</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

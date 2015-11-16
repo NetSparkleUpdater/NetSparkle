@@ -28,8 +28,9 @@ namespace NetSparkle.TestAppWPF
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            _sparkle.StopLoop();
-            Close();
+            _sparkle.CheckForUpdatesAtUserRequest();
+           // _sparkle.StopLoop();
+          //  Close();
         }
     }
 }

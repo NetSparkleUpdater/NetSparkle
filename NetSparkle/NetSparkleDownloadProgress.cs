@@ -31,6 +31,7 @@ namespace NetSparkle
             // init ui
             btnInstallAndReLaunch.Visible = false;
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName + " " + item.Version);
+            downloadProgressLbl.Text = "";
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;
             progressDownload.Step = 1;
@@ -81,6 +82,30 @@ namespace NetSparkle
                 BackColor = Color.Tomato;
             }
         }
+
+        private string numBytesToUserReadableString(long numBytes)
+        {
+            if (numBytes > 1024)
+            {
+                double numBytesDecimal = numBytes;
+                // Put in KB
+                numBytesDecimal /= 1024;
+                if (numBytesDecimal > 1024)
+                {
+                    // Put in MB
+                    numBytesDecimal /= 1024;
+                    if (numBytesDecimal > 1024)
+                    {
+                        // Put in GB
+                        numBytesDecimal /= 1024;
+                        return Math.Round(numBytesDecimal, 2).ToString() + " GB";
+                    }
+                    return Math.Round(numBytesDecimal, 2).ToString() + " MB";
+                }
+                return Math.Round(numBytesDecimal, 2).ToString() + " KB";
+            }
+            return numBytes.ToString();
+        }
                
         /// <summary>
         /// Event called when the client download progress changes
@@ -89,7 +114,12 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         public void OnClientDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            progressDownload.Value = e.ProgressPercentage;            
+            progressDownload.Value = e.ProgressPercentage;
+            long bytesReceived = e.BytesReceived;
+            long bytesTotal = e.TotalBytesToReceive;
+            //Console.WriteLine("{0} / {1}", bytesReceived, bytesTotal);
+            downloadProgressLbl.Text = " (" + numBytesToUserReadableString(bytesReceived) + " / " + 
+                numBytesToUserReadableString(bytesTotal) + ")";
         }
 
         /// <summary>
@@ -103,6 +133,11 @@ namespace NetSparkle
             {
                 InstallAndRelaunch(this, new EventArgs());
             }
+        }
+
+        private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

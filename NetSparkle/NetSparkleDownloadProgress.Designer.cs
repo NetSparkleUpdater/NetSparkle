@@ -37,6 +37,7 @@
             this.btnInstallAndReLaunch = new System.Windows.Forms.Button();
             this.lblSecurityHint = new System.Windows.Forms.Label();
             this.imgAppIcon = new System.Windows.Forms.PictureBox();
+            this.downloadProgressLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,11 +70,17 @@
             this.imgAppIcon.Name = "imgAppIcon";
             this.imgAppIcon.TabStop = false;
             // 
+            // downloadProgressLbl
+            // 
+            resources.ApplyResources(this.downloadProgressLbl, "downloadProgressLbl");
+            this.downloadProgressLbl.Name = "downloadProgressLbl";
+            // 
             // NetSparkleDownloadProgress
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.downloadProgressLbl);
             this.Controls.Add(this.lblSecurityHint);
             this.Controls.Add(this.btnInstallAndReLaunch);
             this.Controls.Add(this.progressDownload);
@@ -82,6 +89,7 @@
             this.Name = "NetSparkleDownloadProgress";
             this.ShowInTaskbar = false;
             this.TopMost = true;
+            this.Load += new System.EventHandler(this.NetSparkleDownloadProgress_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -95,7 +103,6 @@
         private System.Windows.Forms.Button btnInstallAndReLaunch;
         private System.Windows.Forms.Label lblSecurityHint;
         private System.Windows.Forms.PictureBox imgAppIcon;
-
-
+        private System.Windows.Forms.Label downloadProgressLbl;
     }
 }

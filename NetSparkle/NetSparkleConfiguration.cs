@@ -80,8 +80,7 @@ namespace NetSparkle
         {
             // set the value
             this.UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
-
-            // save the referecne assembly
+            // save the reference assembly
             this.ReferenceAssembly = referenceAssembly;
 
             // set default values
@@ -99,6 +98,7 @@ namespace NetSparkle
                 this.CheckForUpdate = false;
                 throw;
             }
+
         }
 
         /// <summary>

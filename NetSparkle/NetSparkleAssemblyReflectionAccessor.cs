@@ -38,7 +38,11 @@ namespace NetSparkle
 
             // read the attributes            
             foreach (CustomAttributeData data in _assembly.GetCustomAttributesData())
-                _assemblyAttributes.Add(CreateAttribute(data));
+            {
+                Attribute a = CreateAttribute(data);
+                if (a != null)
+                    _assemblyAttributes.Add(a);
+            }
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
                 throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + _assembly.FullName);                                    
@@ -52,30 +56,37 @@ namespace NetSparkle
         /// <returns></returns>
         private Attribute CreateAttribute(CustomAttributeData data)
         {
-            var arguments = from arg in data.ConstructorArguments
-                            select arg.Value;
-
-            var attribute = data.Constructor.Invoke(arguments.ToArray())
-              as Attribute;
-
-            foreach (var namedArgument in data.NamedArguments)
+            try
             {
-                var propertyInfo = namedArgument.MemberInfo as PropertyInfo;
-                if (propertyInfo != null)
+                var arguments = from arg in data.ConstructorArguments
+                                select arg.Value;
+
+                var attribute = data.Constructor.Invoke(arguments.ToArray())
+                  as Attribute;
+
+                foreach (var namedArgument in data.NamedArguments)
                 {
-                    propertyInfo.SetValue(attribute, namedArgument.TypedValue.Value, null);
-                }
-                else
-                {
-                    var fieldInfo = namedArgument.MemberInfo as FieldInfo;
-                    if (fieldInfo != null)
+                    var propertyInfo = namedArgument.MemberInfo as PropertyInfo;
+                    if (propertyInfo != null)
                     {
-                        fieldInfo.SetValue(attribute, namedArgument.TypedValue.Value);
+                        propertyInfo.SetValue(attribute, namedArgument.TypedValue.Value, null);
+                    }
+                    else
+                    {
+                        var fieldInfo = namedArgument.MemberInfo as FieldInfo;
+                        if (fieldInfo != null)
+                        {
+                            fieldInfo.SetValue(attribute, namedArgument.TypedValue.Value);
+                        }
                     }
                 }
-            }
 
-            return attribute;
+                return attribute;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private Attribute FindAttribute(Type AttributeType)

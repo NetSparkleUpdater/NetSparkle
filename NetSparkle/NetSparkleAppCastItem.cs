@@ -44,9 +44,12 @@ namespace NetSparkle
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
         public int CompareTo(NetSparkleAppCastItem other)
         {
+            if (!Version.Contains(".") || !other.Version.Contains("."))
+            {
+                return 0;
+            }
             Version v1 = new Version(Version);
             Version v2 = new Version(other.Version);
-
             return v1.CompareTo(v2);
         }
 

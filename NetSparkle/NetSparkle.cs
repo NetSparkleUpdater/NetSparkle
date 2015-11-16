@@ -624,7 +624,7 @@ namespace NetSparkle
             if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // build the command line 
-                return downloadFileName;
+                return "\"" + downloadFileName + "\"";
             }
             if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -692,7 +692,7 @@ namespace NetSparkle
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
-
+            _installerProcess.Start();
             // listen for application exit events
             Application.ApplicationExit += OnWindowsFormsApplicationExit;
 

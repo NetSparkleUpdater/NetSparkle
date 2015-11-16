@@ -15,7 +15,7 @@ namespace SampleApplication
         {
             InitializeComponent();
 
-            var appcastUrl = "file://" + DirectoryOfTheApplicationExecutable + "../../../../Extras/Sample Appcast.xml";
+            var appcastUrl = "file://" + DirectoryOfTheApplicationExecutable + "../../../Extras/Sample Appcast.xml";
             _sparkleUpdateDetector = new Sparkle(appcastUrl, SystemIcons.Application);
             _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
         }

@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("NetSparkle.TestAppWPF")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("None")]
 [assembly: AssemblyProduct("NetSparkle.TestAppWPF")]
 [assembly: AssemblyCopyright("Portions Copyright © Dirk Eisenberg 2010")]
 [assembly: AssemblyTrademark("")]
