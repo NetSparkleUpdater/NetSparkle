@@ -145,7 +145,8 @@ namespace NetSparkle
             
             // set the url
             _appCastUrl = appcastUrl;
-            Debug.WriteLine("Using the following url: " + _appCastUrl);            
+            Debug.WriteLine("Using the following url: " + _appCastUrl);
+            RunningFromWPF = false;
         }
 
         /// <summary>
@@ -186,6 +187,13 @@ namespace NetSparkle
         /// the application will be updated without user interaction
         /// </summary>
         public bool EnableSilentMode { get; set; }
+
+        /// <summary>
+        /// Because of bugs with detecting that the application is closed, setting this to true
+        /// offers a quick bug-fix workaround for starting the _installerProcess when updating
+        /// a WPF application
+        /// </summary>
+        public bool RunningFromWPF { get; set; }
 
         /// <summary>
         /// Defines if the application needs to be relaunced after executing the downloaded installer
@@ -692,12 +700,14 @@ namespace NetSparkle
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
-            _installerProcess.Start();
+
+            if (RunningFromWPF == true)
+                _installerProcess.Start();
+
             // listen for application exit events
             Application.ApplicationExit += OnWindowsFormsApplicationExit;
-
             // quit the app
-            Environment.Exit(0);
+            Application.Exit();
         }
 
         /// <summary>
