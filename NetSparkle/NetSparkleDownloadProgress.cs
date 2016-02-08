@@ -81,6 +81,11 @@ namespace NetSparkle
                 lblSecurityHint.Visible = true;
                 BackColor = Color.Tomato;
             }
+            else
+            {
+                lblSecurityHint.Visible = false;
+                BackColor = Color.FromArgb(240, 240, 240);
+            }
         }
 
         private string numBytesToUserReadableString(long numBytes)
@@ -136,6 +141,11 @@ namespace NetSparkle
         }
 
         private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblSecurityHint_Click(object sender, EventArgs e)
         {
 
         }

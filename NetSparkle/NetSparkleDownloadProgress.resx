@@ -223,7 +223,7 @@
     <value>11</value>
   </data>
   <data name="lblSecurityHint.Text" xml:space="preserve">
-    <value>The update was affected by not verified changes, it could be unsafe to install it!</value>
+    <value>The update was not able to be verified. It could be unsafe to install!</value>
   </data>
   <data name="lblSecurityHint.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>

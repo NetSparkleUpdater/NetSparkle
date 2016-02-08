@@ -62,6 +62,7 @@
             // 
             resources.ApplyResources(this.lblSecurityHint, "lblSecurityHint");
             this.lblSecurityHint.Name = "lblSecurityHint";
+            this.lblSecurityHint.Click += new System.EventHandler(this.lblSecurityHint_Click);
             // 
             // imgAppIcon
             // 
