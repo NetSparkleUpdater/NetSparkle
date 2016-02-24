@@ -824,7 +824,8 @@ namespace NetSparkle
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
         private UpdateStatus CheckForUpdates(bool useNotificationToast)
         {
-            UpdateCheckStarted(this);
+            if (UpdateCheckStarted != null)
+                UpdateCheckStarted(this);
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
             UpdateSystemProfileInformation(config);
@@ -856,7 +857,8 @@ namespace NetSparkle
                     ShowUpdateNeededUI(updates);
                 }
             }
-            UpdateCheckFinished(this, updateStatus);
+            if (UpdateCheckFinished != null)
+                UpdateCheckFinished(this, updateStatus);
             return updateStatus;
         }
 
