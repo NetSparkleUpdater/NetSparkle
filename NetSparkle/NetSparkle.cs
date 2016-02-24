@@ -14,6 +14,14 @@ using System.Reflection;
 namespace NetSparkle
 {
     /// <summary>
+    /// The states of availability
+    /// </summary>
+    /// <paramater>UpdateAvailable</paramater>
+#pragma warning disable 1591
+    public enum UpdateStatus { UpdateAvailable, UpdateNotAvailable, UserSkipped, CouldNotDetermine }
+#pragma warning restore 1591
+
+    /// <summary>
     /// The operation has started
     /// </summary>
     /// <param name="sender">the sender</param>
@@ -32,6 +40,19 @@ namespace NetSparkle
     /// <param name="sender"></param>
     /// <param name="e"></param>
     public delegate void UpdateDetected(Object sender, UpdateDetectedEventArgs e);
+
+    /// <summary>
+    /// Update check has started.
+    /// </summary>
+    /// <param name="sender">Sparkle updater that is checking for an update.</param>
+    public delegate void UpdateCheckStarted(Object sender);
+
+    /// <summary>
+    /// Update check has finished.
+    /// </summary>
+    /// <param name="sender">Sparkle updater that finished checking for an update.</param>
+    /// <param name="status">Update status</param>
+    public delegate void UpdateCheckFinished(Object sender, UpdateStatus status);
 
     /// <summary>
     /// Class to communicate with a sparkle-based appcast
@@ -58,6 +79,15 @@ namespace NetSparkle
         /// process when an update is detected
         /// </summary>
         public event UpdateDetected UpdateDetected;
+
+        /// <summary>
+        /// Called when update check has just started
+        /// </summary>
+        public event UpdateCheckStarted UpdateCheckStarted;
+        /// <summary>
+        /// Called when update check is all done. May or may not have called UpdateDetected in the middle.
+        /// </summary>
+        public event UpdateCheckFinished UpdateCheckFinished;
 
         private BackgroundWorker _worker;
         private String _appCastUrl;
@@ -789,19 +819,12 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// The states of availability
-        /// </summary>
-        /// <paramater>UpdateAvailable</paramater>
-#pragma warning disable 1591
-        public enum UpdateStatus { UpdateAvailable, UpdateNotAvailable, UserSkipped, CouldNotDetermine }
-#pragma warning restore 1591
-
-        /// <summary>
         /// Does a one-off check for updates
         /// </summary>
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
         private UpdateStatus CheckForUpdates(bool useNotificationToast)
         {
+            UpdateCheckStarted(this);
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
             UpdateSystemProfileInformation(config);
@@ -833,6 +856,7 @@ namespace NetSparkle
                     ShowUpdateNeededUI(updates);
                 }
             }
+            UpdateCheckFinished(this, updateStatus);
             return updateStatus;
         }
 
