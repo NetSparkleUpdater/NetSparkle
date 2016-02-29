@@ -30,7 +30,7 @@ namespace NetSparkle
         /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
         public string SeparatorTemplate { get; set; }
-        
+
         /// <summary>
         /// Constructor
         /// </summary>

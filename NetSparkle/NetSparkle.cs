@@ -403,6 +403,8 @@ namespace NetSparkle
             ReportDiagnosticMessage("Starting background worker");
 
             // start the work
+            //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            //_taskWorker.Start(scheduler);
             _taskWorker.Start();
             //_worker.RunWorkerAsync();
         }
@@ -625,6 +627,7 @@ namespace NetSparkle
 
         private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
         {
+            
             if (UserWindow != null)
             {
                 // remove old user window
@@ -632,16 +635,33 @@ namespace NetSparkle
             }
 
             // create the form
-            UserWindow = UIFactory.CreateSparkleForm(updates, _applicationIcon);
+            Console.WriteLine(" SDLFJSDF {0}", Thread.CurrentThread.GetApartmentState());
+            //Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
 
-            if (HideReleaseNotes)
+           // var tcs = new TaskCompletionSource<T>();
+            Thread thread = new Thread(() =>
             {
-                UserWindow.HideReleaseNotes();
-            }
+                try
+                {
+                    UserWindow = UIFactory.CreateSparkleForm(updates, _applicationIcon);
 
-            // clear if already set.
-            UserWindow.UserResponded += OnUserWindowUserResponded;
-            UserWindow.Show();
+                    if (HideReleaseNotes)
+                    {
+                        UserWindow.HideReleaseNotes();
+                    }
+
+                    // clear if already set.
+                    UserWindow.UserResponded += OnUserWindowUserResponded;
+                    UserWindow.Show();
+                }
+                catch (Exception e)
+                {
+                    ReportDiagnosticMessage("Error showing sparkle form: " + e.Message);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+
         }
 
         /// <summary>
