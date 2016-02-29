@@ -856,12 +856,14 @@ namespace NetSparkle
         public async Task<UpdateStatus> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current  = Cursors.WaitCursor;
-            var updateAvailable = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            SparkleUpdate updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            UpdateStatus updateAvailable = updateData.Status;
             Cursor.Current = Cursors.Default;
             
             switch(updateAvailable)
             {
                 case UpdateStatus.UpdateAvailable:
+                    ShowUpdateNeededUIInner(updateData.Updates);
                     break;
                 case UpdateStatus.UpdateNotAvailable:
                     UIFactory.ShowVersionIsUpToDate();
@@ -883,14 +885,15 @@ namespace NetSparkle
         /// </summary>
         public async Task<UpdateStatus> CheckForUpdatesQuietly()
         {
-            return await CheckForUpdates(true);
+            SparkleUpdate updateData = await CheckForUpdates(true);
+            return updateData.Status;
         }
 
         /// <summary>
         /// Does a one-off check for updates
         /// </summary>
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
-        private async Task<UpdateStatus> CheckForUpdates(bool useNotificationToast)
+        private async Task<SparkleUpdate> CheckForUpdates(bool useNotificationToast)
         {
             if (UpdateCheckStarted != null)
                 UpdateCheckStarted(this);
@@ -927,7 +930,7 @@ namespace NetSparkle
             }
             if (UpdateCheckFinished != null)
                 UpdateCheckFinished(this, updateStatus.Status);
-            return updateStatus.Status;
+            return updateStatus;
         }
 
         /// <summary>
