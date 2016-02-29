@@ -10,6 +10,7 @@ using NetSparkle.Interfaces;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace NetSparkle
 {
@@ -20,6 +21,40 @@ namespace NetSparkle
 #pragma warning disable 1591
     public enum UpdateStatus { UpdateAvailable, UpdateNotAvailable, UserSkipped, CouldNotDetermine }
 #pragma warning restore 1591
+
+    /// <summary>
+    /// A simple class to hold information on potential updates to a software product.
+    /// </summary>
+    public class SparkleUpdate
+    {
+        /// <summary>
+        /// Update availability.
+        /// </summary>
+        public UpdateStatus Status { get; set; }
+        /// <summary>
+        /// Any available updates for the product.
+        /// </summary>
+        public NetSparkleAppCastItem[] Updates { get; set; }
+        /// <summary>
+        /// Constructor for SparkleUpdate when there are some updates available.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="updates"></param>
+        public SparkleUpdate(UpdateStatus status, NetSparkleAppCastItem[] updates)
+        {
+            Status = status;
+            Updates = updates;
+        }
+        /// <summary>
+        /// Constructor for SparkleUpdate for when there aren't any updates available. Updates are automatically set to null.
+        /// </summary>
+        /// <param name="status"></param>
+        public SparkleUpdate(UpdateStatus status)
+        {
+            Status = status;
+            Updates = null;
+        }
+    }
 
     /// <summary>
     /// The operation has started
@@ -89,7 +124,10 @@ namespace NetSparkle
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
 
-        private BackgroundWorker _worker;
+        //private BackgroundWorker _worker;
+        private Task _taskWorker;
+        private CancellationToken _cancelToken;
+        private CancellationTokenSource _cancelTokenSource;
         private String _appCastUrl;
         private readonly String _appReferenceAssembly;
 
@@ -165,9 +203,16 @@ namespace NetSparkle
 
             // TODO: change BackgroundWorker to Task
             // adjust the delegates
-            _worker = new BackgroundWorker {WorkerReportsProgress = true};
+            _taskWorker = new Task(() =>
+            {
+                OnWorkerDoWork(null, null);
+            });
+            _cancelTokenSource = new CancellationTokenSource();
+            _cancelToken = _cancelTokenSource.Token;
+
+            /*_worker = new BackgroundWorker {WorkerReportsProgress = true};
             _worker.DoWork += OnWorkerDoWork;
-            _worker.ProgressChanged += OnWorkerProgressChanged;
+            _worker.ProgressChanged += OnWorkerProgressChanged;*/
 
             // build the wait handle
             _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
@@ -187,10 +232,10 @@ namespace NetSparkle
             Application.Idle += OnFirstApplicationIdle;
         }
 
-        private void OnFirstApplicationIdle(object sender, EventArgs e)
+        private async void OnFirstApplicationIdle(object sender, EventArgs e)
         {
             Application.Idle -= OnFirstApplicationIdle;
-            CheckForUpdates(true);
+            await CheckForUpdates(true);
         }
 
 
@@ -358,7 +403,8 @@ namespace NetSparkle
             ReportDiagnosticMessage("Starting background worker");
 
             // start the work
-            _worker.RunWorkerAsync();
+            _taskWorker.Start();
+            //_worker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -386,9 +432,10 @@ namespace NetSparkle
         private void UnregisterEvents()
         {
             ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
-            _worker.DoWork -= OnWorkerDoWork;
+            _cancelTokenSource.Cancel();
+           /* _worker.DoWork -= OnWorkerDoWork;
             _worker.ProgressChanged -= OnWorkerProgressChanged;
-            _worker = null;
+            _worker = null; */
 
             if (_webDownloadClient != null)
             {
@@ -480,39 +527,40 @@ namespace NetSparkle
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
         /// will be downloaded and checked against the reference assembly. Ensure that
-        /// the calling process has access to the internet and read access to the 
-        /// reference assembly. This method is also called from the background loops.
+        /// the calling process has read access to the reference assembly.
+        /// This method is also called from the background loops.
         /// </summary>
         /// <param name="config">the configuration</param>
-        /// <param name="updates">list of available updates sorted decreasing</param>
-        /// <returns><c>true</c> if an update is required</returns>
-        public UpdateStatus GetUpdateStatus(NetSparkleConfiguration config, out NetSparkleAppCastItem[] updates)
+        /// <returns>SparkleUpdate with information on whether there is an update available or not.</returns>
+        public async Task<SparkleUpdate> GetUpdateStatus(NetSparkleConfiguration config)
         {
+            NetSparkleAppCastItem[] updates = null;
             // report
             ReportDiagnosticMessage("Downloading and checking appcast");
 
             // init the appcast
             NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, config);
-            cast.Read();
-
             // check if any updates are available
             try
             {
-                updates = cast.GetUpdates();
+                var task = Task.Factory.StartNew(() =>
+                {
+                    if (cast.Read())
+                        updates = cast.GetUpdates();
+                });
+                await task;
             }
             catch (Exception e)
             {
-                // show the exception message 
-                ReportDiagnosticMessage("Error during app cast download: " + e.Message);
-
-                // just null the version info
+                ReportDiagnosticMessage("Couldn't read/parse the app cast: " + e.Message);
                 updates = null;
             }
+
 
             if (updates == null)
             {
                 ReportDiagnosticMessage("No version information in app cast found");
-                return UpdateStatus.CouldNotDetermine;
+                return new SparkleUpdate(UpdateStatus.CouldNotDetermine);
             }
 
             // set the last check time
@@ -523,7 +571,7 @@ namespace NetSparkle
             if (updates.Length == 0)
             {
                 ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
-                return UpdateStatus.UpdateNotAvailable;
+                return new SparkleUpdate(UpdateStatus.UpdateNotAvailable);
             }
             ReportDiagnosticMessage("Latest version on the server is " + updates[0].Version);
 
@@ -531,11 +579,11 @@ namespace NetSparkle
             if (updates[0].Version.Equals(config.SkipThisVersion))
             {
                 ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
-                return UpdateStatus.UserSkipped;
+                return new SparkleUpdate(UpdateStatus.UserSkipped);
             }
 
             // ok we need an update
-            return UpdateStatus.UpdateAvailable;
+            return new SparkleUpdate(UpdateStatus.UpdateAvailable, updates);
         }
 
         /// <summary>
@@ -785,10 +833,10 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for if the user just said "check for updates"
         /// </summary>
-        public UpdateStatus CheckForUpdatesAtUserRequest()
+        public async Task<UpdateStatus> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current  = Cursors.WaitCursor;
-            var updateAvailable = CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            var updateAvailable = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             Cursor.Current = Cursors.Default;
             
             switch(updateAvailable)
@@ -813,16 +861,16 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite
         /// </summary>
-        public UpdateStatus CheckForUpdatesQuietly()
+        public async Task<UpdateStatus> CheckForUpdatesQuietly()
         {
-            return CheckForUpdates(true);
+            return await CheckForUpdates(true);
         }
 
         /// <summary>
         /// Does a one-off check for updates
         /// </summary>
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
-        private UpdateStatus CheckForUpdates(bool useNotificationToast)
+        private async Task<UpdateStatus> CheckForUpdates(bool useNotificationToast)
         {
             if (UpdateCheckStarted != null)
                 UpdateCheckStarted(this);
@@ -831,9 +879,9 @@ namespace NetSparkle
             UpdateSystemProfileInformation(config);
 
             // check if update is required
-            NetSparkleAppCastItem[] updates;
-            var updateStatus = GetUpdateStatus(config, out updates);
-            if (updateStatus == UpdateStatus.UpdateAvailable)
+            SparkleUpdate updateStatus = await GetUpdateStatus(config);
+            NetSparkleAppCastItem[] updates = updateStatus.Updates;
+            if (updateStatus.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
                 ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
@@ -858,8 +906,8 @@ namespace NetSparkle
                 }
             }
             if (UpdateCheckFinished != null)
-                UpdateCheckFinished(this, updateStatus);
-            return updateStatus;
+                UpdateCheckFinished(this, updateStatus.Status);
+            return updateStatus.Status;
         }
 
         /// <summary>
@@ -931,7 +979,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnWorkerDoWork(object sender, DoWorkEventArgs e)
+        private async void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // store the did run once feature
             bool goIntoLoop = true;
@@ -942,6 +990,8 @@ namespace NetSparkle
             // start our lifecycles
             do
             {
+                if (_cancelToken.IsCancellationRequested)
+                    break;
                 // set state
                 Boolean bUpdateRequired = false;
 
@@ -997,8 +1047,13 @@ namespace NetSparkle
                 UpdateSystemProfileInformation(config);
 
                 // check if update is required
-                NetSparkleAppCastItem[] updates;
-                bUpdateRequired = GetUpdateStatus(config, out updates) == UpdateStatus.UpdateAvailable;
+                if (_cancelToken.IsCancellationRequested)
+                    break;
+                SparkleUpdate updateStatus = await GetUpdateStatus(config);
+                if (_cancelToken.IsCancellationRequested)
+                    break;
+                NetSparkleAppCastItem[] updates = updateStatus.Updates;
+                bUpdateRequired = updateStatus.Status == UpdateStatus.UpdateAvailable;
                 if (!bUpdateRequired)
                     goto WaitSection;
 
@@ -1017,7 +1072,8 @@ namespace NetSparkle
                         {
                             ReportDiagnosticMessage("Unattended update whished from consumer");
                             EnableSilentMode = true;
-                            _worker.ReportProgress(1, updates);
+                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                            //_worker.ReportProgress(1, updates);
                             break;
                         }
                     case NextUpdateAction.ProhibitUpdate:
@@ -1028,7 +1084,8 @@ namespace NetSparkle
                     default:
                         {
                             ReportDiagnosticMessage("Showing Standard Update UI");
-                            _worker.ReportProgress(1, updates);
+                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                            //_worker.ReportProgress(1, updates);
                             break;
                         }
                 }
@@ -1045,7 +1102,7 @@ namespace NetSparkle
                 ReportDiagnosticMessage(String.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
 
                 // wait for
-                if (!goIntoLoop)
+                if (!goIntoLoop || _cancelToken.IsCancellationRequested)
                     break;
 
                 // build the event array
@@ -1053,7 +1110,11 @@ namespace NetSparkle
                 handles[0] = _exitHandle;
 
                 // wait for any
+                if (_cancelToken.IsCancellationRequested)
+                    break;
                 int i = WaitHandle.WaitAny(handles, _checkFrequency);
+                if (_cancelToken.IsCancellationRequested)
+                    break;
                 if (WaitHandle.WaitTimeout == i)
                 {
                     ReportDiagnosticMessage(String.Format("{0} minutes are over", _checkFrequency.TotalMinutes));
@@ -1073,6 +1134,8 @@ namespace NetSparkle
                     ReportDiagnosticMessage("Got force update check signal");
                     checkTSP = false;
                 }
+                if (_cancelToken.IsCancellationRequested)
+                    break;
             } while (goIntoLoop);
 
             // reset the islooping handle

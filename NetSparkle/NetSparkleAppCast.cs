@@ -41,40 +41,48 @@ namespace NetSparkle
         /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
-        public void Read()
+        public bool Read()
         {
-            if (_castUrl.StartsWith("file://")) //handy for testing
+            try
             {
-                var path = _castUrl.Replace("file://", "");
-                using (var reader = XmlReader.Create(path))
+                if (_castUrl.StartsWith("file://")) //handy for testing
                 {
-                    Parse(reader);
-                }
-            }
-            else
-            {
-                // build a http web request stream
-                WebRequest request = WebRequest.Create(_castUrl);
-                request.UseDefaultCredentials = true;
-                request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                // TODO: disable ssl check if _config.TrustEverySSL
-
-                // request the cast and build the stream
-                WebResponse response = request.GetResponse();
-                using (Stream inputstream = response.GetResponseStream())
-                {
-                    if (inputstream == null)
-                    {
-                        Debug.WriteLine("Cannot read response from URL " + _castUrl);
-                        return;
-                    }
-                    using (XmlTextReader reader = new XmlTextReader(inputstream))
+                    var path = _castUrl.Replace("file://", "");
+                    using (var reader = XmlReader.Create(path))
                     {
                         Parse(reader);
                     }
                 }
-            }
+                else
+                {
+                    // build a http web request stream
+                    WebRequest request = WebRequest.Create(_castUrl);
+                    request.UseDefaultCredentials = true;
+                    request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    // TODO: disable ssl check if _config.TrustEverySSL
 
+                    // request the cast and build the stream
+                    WebResponse response = request.GetResponse();
+                    using (Stream inputstream = response.GetResponseStream())
+                    {
+                        if (inputstream == null)
+                        {
+                            Debug.WriteLine("Cannot read response from URL " + _castUrl);
+                            return false;
+                        }
+                        using (XmlTextReader reader = new XmlTextReader(inputstream))
+                        {
+                            Parse(reader);
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("netsparkle: error reading app cast {0}: {1} ", _castUrl, e.Message);
+                return false;
+            }
         }
 
         private void Parse(XmlReader reader)
