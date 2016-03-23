@@ -90,6 +90,12 @@ namespace NetSparkle
     public delegate void UpdateCheckFinished(Object sender, UpdateStatus status);
 
     /// <summary>
+    /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
+    /// knowing when the window needs to close
+    /// </summary>
+    public delegate void CloseWPFSoftware();
+
+    /// <summary>
     /// Class to communicate with a sparkle-based appcast
     /// </summary>
     public class Sparkle : IDisposable
@@ -114,6 +120,8 @@ namespace NetSparkle
         /// process when an update is detected
         /// </summary>
         public event UpdateDetected UpdateDetected;
+
+        public event CloseWPFSoftware CloseWPFWindow;
 
         /// <summary>
         /// Called when update check has just started
@@ -794,13 +802,21 @@ namespace NetSparkle
                         }
                 };
 
-            if (RunningFromWPF == true)
-                _installerProcess.Start();
-
             // listen for application exit events
             Application.ApplicationExit += OnWindowsFormsApplicationExit;
             // quit the app
-            Application.Exit();
+            if (RunningFromWPF == true)
+            {
+                _installerProcess.Start();
+                if (CloseWPFWindow != null)
+                    CloseWPFWindow();
+                Application.Exit();
+                //System.Windows.Application.Current.Shutdown();
+            }
+            else
+            {
+                Application.Exit();
+            }
         }
 
         /// <summary>
