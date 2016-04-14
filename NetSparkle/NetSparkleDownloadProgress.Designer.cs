@@ -89,7 +89,6 @@
             this.Controls.Add(this.imgAppIcon);
             this.Name = "NetSparkleDownloadProgress";
             this.ShowInTaskbar = false;
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.NetSparkleDownloadProgress_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
             this.ResumeLayout(false);
