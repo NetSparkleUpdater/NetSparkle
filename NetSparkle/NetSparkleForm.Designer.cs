@@ -114,9 +114,7 @@
             this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.imgAppIcon);
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "NetSparkleForm";
-            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();

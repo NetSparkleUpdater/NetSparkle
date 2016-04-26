@@ -89,7 +89,7 @@ namespace NetSparkle
                 Icon = applicationIcon;
             }
 
-            TopMost = true;
+            TopMost = false;
         }
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
