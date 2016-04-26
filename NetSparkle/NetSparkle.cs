@@ -96,6 +96,13 @@ namespace NetSparkle
     public delegate void CloseWPFSoftware();
 
     /// <summary>
+    /// Async version of CloseWPFSoftware().
+    /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
+    /// knowing when the window needs to close
+    /// </summary>
+    public delegate Task CloseWPFSoftwareAsync();
+
+    /// <summary>
     /// Class to communicate with a sparkle-based appcast
     /// </summary>
     public class Sparkle : IDisposable
@@ -121,7 +128,16 @@ namespace NetSparkle
         /// </summary>
         public event UpdateDetected UpdateDetected;
 
+        /// <summary>
+        /// Event called for closing a WPF window.
+        /// If CloseWPFWindowAsync is non-null, CloseWPFWindow is never called.
+        /// </summary>
         public event CloseWPFSoftware CloseWPFWindow;
+
+        /// <summary>
+        /// Event called for closing a WPF window asynchronously.
+        /// </summary>
+        public event CloseWPFSoftwareAsync CloseWPFWindowAsync;
 
         /// <summary>
         /// Called when update check has just started
@@ -752,7 +768,7 @@ namespace NetSparkle
         /// <summary>
         /// Runs the downloaded installer
         /// </summary>
-        private void RunDownloadedInstaller()
+        private async Task RunDownloadedInstaller()
         {
             // get the commandline 
             string cmdLine = Environment.CommandLine;
@@ -807,9 +823,17 @@ namespace NetSparkle
             // quit the app
             if (RunningFromWPF == true)
             {
+                if (CloseWPFWindowAsync != null)
+                {
+                    Console.WriteLine("Invoking WPF close window async");
+                    await CloseWPFWindowAsync.Invoke();
+                    Console.WriteLine("DONE Invoking WPF close window async");
+                }
+                else
+                {
+                    CloseWPFWindow?.Invoke();
+                }
                 _installerProcess.Start();
-                if (CloseWPFWindow != null)
-                    CloseWPFWindow();
                 Application.Exit();
                 //System.Windows.Application.Current.Shutdown();
             }
@@ -1001,11 +1025,11 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        private void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
+        private async void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
             if (AskApplicationToSafelyCloseUp())
             {
-                RunDownloadedInstaller();
+                await RunDownloadedInstaller();
             }
         }
 

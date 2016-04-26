@@ -134,10 +134,8 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
-            if (InstallAndRelaunch != null)
-            {
-                InstallAndRelaunch(this, new EventArgs());
-            }
+            InstallAndRelaunch?.Invoke(this, new EventArgs());
+            btnInstallAndReLaunch.Enabled = false; // so user can't click it more than 1x if the close window method is async
         }
 
         private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)

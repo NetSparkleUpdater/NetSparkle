@@ -89,6 +89,7 @@
             this.Controls.Add(this.imgAppIcon);
             this.MaximizeBox = false;
             this.Name = "NetSparkleDownloadProgress";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Load += new System.EventHandler(this.NetSparkleDownloadProgress_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
             this.ResumeLayout(false);
