@@ -136,6 +136,7 @@ namespace NetSparkle
         {
             InstallAndRelaunch?.Invoke(this, new EventArgs());
             btnInstallAndReLaunch.Enabled = false; // so user can't click it more than 1x if the close window method is async
+            ControlBox = false;
         }
 
         private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)

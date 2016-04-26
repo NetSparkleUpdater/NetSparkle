@@ -825,9 +825,7 @@ namespace NetSparkle
             {
                 if (CloseWPFWindowAsync != null)
                 {
-                    Console.WriteLine("Invoking WPF close window async");
                     await CloseWPFWindowAsync.Invoke();
-                    Console.WriteLine("DONE Invoking WPF close window async");
                 }
                 else
                 {
