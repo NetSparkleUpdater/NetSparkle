@@ -11,6 +11,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NetSparkle
 {
@@ -836,13 +837,22 @@ namespace NetSparkle
             // quit the app
             if (RunningFromWPF == true)
             {
-                if (CloseWPFWindowAsync != null)
+                // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
+                // If you have better ideas on how to figure out if they've shut all other windows, let me know...
+                try
                 {
-                    await CloseWPFWindowAsync.Invoke();
+                    if (CloseWPFWindowAsync != null)
+                    {
+                        await CloseWPFWindowAsync.Invoke();
+                    }
+                    else if (CloseWPFWindow != null)
+                    {
+                        CloseWPFWindow.Invoke();
+                    }
                 }
-                else if (CloseWPFWindow != null)
+                catch (Exception e)
                 {
-                    CloseWPFWindow.Invoke();
+                    ReportDiagnosticMessage(e.Message);
                 }
                 _installerProcess.Start();
                 Application.Exit();
@@ -859,17 +869,26 @@ namespace NetSparkle
         /// <returns>true if it's ok</returns>
         private async Task<bool> AskApplicationToSafelyCloseUp()
         {
-            if (AboutToExitForInstallerRunAsync != null)
+            try
             {
-                var args = new CancelEventArgs();
-                await AboutToExitForInstallerRunAsync(this, args);
-                return !args.Cancel;
+                // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
+                // If you have better ideas on how to figure out if they've shut all other windows, let me know...
+                if (AboutToExitForInstallerRunAsync != null)
+                {
+                    var args = new CancelEventArgs();
+                    await AboutToExitForInstallerRunAsync(this, args);
+                    return !args.Cancel;
+                }
+                else if (AboutToExitForInstallerRun != null)
+                {
+                    var args = new CancelEventArgs();
+                    AboutToExitForInstallerRun(this, args);
+                    return !args.Cancel;
+                }
             }
-            else if (AboutToExitForInstallerRun != null)
+            catch (Exception e)
             {
-                var args = new CancelEventArgs();
-                AboutToExitForInstallerRun(this, args);
-                return !args.Cancel;
+                ReportDiagnosticMessage(e.Message);
             }
             return true;
         }
