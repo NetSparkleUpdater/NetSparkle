@@ -90,6 +90,14 @@ namespace NetSparkle
     public delegate void UpdateCheckFinished(Object sender, UpdateStatus status);
 
     /// <summary>
+    /// An asynchronous cancel event handler.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">A System.ComponentModel.CancelEventArgs that contains the event data.</param>
+    /// <returns></returns>
+    public delegate Task CancelEventHandlerAsync(object sender, CancelEventArgs e);
+
+    /// <summary>
     /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
     /// knowing when the window needs to close
     /// </summary>
@@ -111,6 +119,11 @@ namespace NetSparkle
         /// Subscribe to this to get a chance to shut down gracefully before quiting
         /// </summary>
         public event CancelEventHandler AboutToExitForInstallerRun;
+
+        /// <summary>
+        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitin
+        /// </summary>
+        public event CancelEventHandlerAsync AboutToExitForInstallerRunAsync;
 
         /// <summary>
         /// This event will be raised when a check loop will be started
@@ -827,13 +840,12 @@ namespace NetSparkle
                 {
                     await CloseWPFWindowAsync.Invoke();
                 }
-                else
+                else if (CloseWPFWindow != null)
                 {
-                    CloseWPFWindow?.Invoke();
+                    CloseWPFWindow.Invoke();
                 }
                 _installerProcess.Start();
                 Application.Exit();
-                //System.Windows.Application.Current.Shutdown();
             }
             else
             {
@@ -845,9 +857,15 @@ namespace NetSparkle
         /// Apps may need, for example, to let user save their work
         /// </summary>
         /// <returns>true if it's ok</returns>
-        private bool AskApplicationToSafelyCloseUp()
+        private async Task<bool> AskApplicationToSafelyCloseUp()
         {
-            if (AboutToExitForInstallerRun != null)
+            if (AboutToExitForInstallerRunAsync != null)
+            {
+                var args = new CancelEventArgs();
+                await AboutToExitForInstallerRunAsync(this, args);
+                return !args.Cancel;
+            }
+            else if (AboutToExitForInstallerRun != null)
             {
                 var args = new CancelEventArgs();
                 AboutToExitForInstallerRun(this, args);
@@ -884,7 +902,8 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Check for updates, using interaction appropriate for if the user just said "check for updates"
+        /// Check for updates, using interaction appropriate for if the user just said "check for updates".
+        /// If status is 'UpdateAvailable', does not show toast (TODO: FIXME: FIX).
         /// </summary>
         public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
         {
@@ -896,6 +915,8 @@ namespace NetSparkle
             switch(updateAvailable)
             {
                 case UpdateStatus.UpdateAvailable:
+                    // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
+                    // TODO: Fix!
                     //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
                     //ShowUpdateNeededUIInner(updateData.Updates);
                     break;
@@ -1025,9 +1046,14 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private async void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
-            if (AskApplicationToSafelyCloseUp())
+            ProgressWindow.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
+            if (await AskApplicationToSafelyCloseUp())
             {
                 await RunDownloadedInstaller();
+            }
+            else
+            {
+                ProgressWindow.SetDownloadAndInstallButtonEnabled(true);
             }
         }
 
