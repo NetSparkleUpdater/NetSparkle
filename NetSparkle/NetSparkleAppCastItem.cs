@@ -24,6 +24,10 @@ namespace NetSparkle
         /// </summary>
         public string ReleaseNotesLink { get; set; }
         /// <summary>
+        /// The embedded description
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// The download link
         /// </summary>
         public string DownloadLink { get; set; }

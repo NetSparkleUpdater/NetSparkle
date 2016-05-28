@@ -94,6 +94,11 @@ namespace NetSparkle
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
         {
+            if (!string.IsNullOrEmpty(item.Description))
+            {
+                return item.Description;
+            }
+
             if (string.IsNullOrEmpty(item.ReleaseNotesLink))
             {
                 return null;

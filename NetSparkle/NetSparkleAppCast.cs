@@ -16,6 +16,7 @@ namespace NetSparkle
         private const string itemNode = "item";
         private const string enclosureNode = "enclosure";
         private const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
+        private const string descriptionNode = "description";
         private const string versionAttribute = "sparkle:version";
         private const string dsaSignature = "sparkle:dsaSignature";
         private const string urlAttribute = "url";
@@ -106,6 +107,12 @@ namespace NetSparkle
                             if (currentItem != null)
                             {
                                 currentItem.ReleaseNotesLink = reader.ReadString().Trim();
+                            }
+                            break;
+                        case descriptionNode:
+                            if (currentItem != null)
+                            {
+                                currentItem.Description = reader.ReadString().Trim();
                             }
                             break;
                         case enclosureNode:
