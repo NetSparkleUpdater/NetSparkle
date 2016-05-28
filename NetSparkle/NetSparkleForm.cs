@@ -29,18 +29,25 @@ namespace NetSparkle
         /// <summary>
         /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
-        public string SeparatorTemplate { get; set; }
+        // Useless. Because the form initialize this value it selfes and directlly generates the release notes html. So
+        // there is no chance to override the default. Also there isn't any chance to access from the interface
+        private string SeparatorTemplate { get; set; }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="items">List of updates to show</param>
-        /// <param name="applicationIcon"></param>
-        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon = null)
+        /// <param name="applicationIcon">The icon</param>
+        /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
+        /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
+        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon = null, string separatorTemplate = "", string headAddition = "")
         {
             _updates = items;
 
-            SeparatorTemplate = "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
+            SeparatorTemplate = 
+                !string.IsNullOrEmpty(separatorTemplate) ? 
+                separatorTemplate :
+                "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
 
             InitializeComponent();
 
@@ -69,10 +76,11 @@ namespace NetSparkle
             {
                 NetSparkleAppCastItem latestVersion = _updates.OrderByDescending(p => p.Version).FirstOrDefault();
 
-                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'></head><body>");
+                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>");
                 foreach (NetSparkleAppCastItem castItem in items)
                 {
-                    sb.Append(string.Format(SeparatorTemplate, castItem.Version,
+                    sb.Append(string.Format(SeparatorTemplate, 
+                                            castItem.Version,
                                             castItem.PublicationDate.ToString("dd MMM yyyy"),
                                             GetReleaseNotes(castItem),
                                             latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
