@@ -35,5 +35,10 @@ namespace NetSparkle.Interfaces
         /// Gets or sets the current item being installed
         /// </summary>
         NetSparkleAppCastItem CurrentItem { get; }
+
+        /// <summary>
+        /// Brings the form to the front of all windows
+        /// </summary>
+        void BringToFront();
     }
 }

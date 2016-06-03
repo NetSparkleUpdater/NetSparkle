@@ -176,6 +176,11 @@ namespace NetSparkle
             }
         }
 
+        void INetSparkleForm.BringToFront()
+        {
+            BringToFront();
+        }
+
         /// <summary>
         /// Removes the release notes control
         /// </summary>
