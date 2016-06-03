@@ -46,7 +46,7 @@ namespace NetSparkleChecker
             NetSparkleConfiguration config = _sparkle.GetApplicationConfig();
 
             // check for updats
-            NetSparkleAppCastItem[] newUpdates;
+            //NetSparkleAppCastItem[] newUpdates;
             SparkleUpdateInfo updateInfo = await _sparkle.GetUpdateStatus(config);
             Boolean bUpdateRequired = UpdateStatus.UpdateAvailable == updateInfo.Status;
                                 

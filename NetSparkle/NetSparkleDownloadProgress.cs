@@ -16,6 +16,8 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
+        private bool _isSignatureValid;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -57,7 +59,7 @@ namespace NetSparkle
         {
             progressDownload.Visible = false;
             btnInstallAndReLaunch.Visible = true;
-
+            _isSignatureValid = signatureValid;
             UpdateDownloadValid(signatureValid);
         }
 
@@ -122,7 +124,6 @@ namespace NetSparkle
             progressDownload.Value = e.ProgressPercentage;
             long bytesReceived = e.BytesReceived;
             long bytesTotal = e.TotalBytesToReceive;
-            //Console.WriteLine("{0} / {1}", bytesReceived, bytesTotal);
             downloadProgressLbl.Text = " (" + numBytesToUserReadableString(bytesReceived) + " / " + 
                 numBytesToUserReadableString(bytesTotal) + ")";
         }
@@ -135,8 +136,8 @@ namespace NetSparkle
         private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
             InstallAndRelaunch?.Invoke(this, new EventArgs());
-            btnInstallAndReLaunch.Enabled = false; // so user can't click it more than 1x if the close window method is async
-            ControlBox = false;
+            if (_isSignatureValid)
+                ControlBox = false;
         }
 
         private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)
@@ -147,6 +148,11 @@ namespace NetSparkle
         private void lblSecurityHint_Click(object sender, EventArgs e)
         {
 
+        }
+
+        public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
+        {
+            btnInstallAndReLaunch.Enabled = shouldBeEnabled;
         }
     }
 }

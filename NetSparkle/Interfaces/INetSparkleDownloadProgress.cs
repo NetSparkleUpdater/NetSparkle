@@ -15,6 +15,13 @@ namespace NetSparkle.Interfaces
         event EventHandler InstallAndRelaunch;
 
         /// <summary>
+        /// Enable or disable the download and install button (such as when your "Can I gracefully close the window?" function is async and you don't
+        /// want your user to click the button multiple times)
+        /// </summary>
+        /// <param name="shouldBeEnabled">True if the button should be enabled; false otherwise</param>
+        void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled);
+
+        /// <summary>
         /// Show the UI and waits
         /// </summary>
         void ShowDialog();
