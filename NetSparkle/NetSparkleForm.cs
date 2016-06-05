@@ -33,6 +33,15 @@ namespace NetSparkle
         // there is no chance to override the default. Also there isn't any chance to access from the interface
         private string SeparatorTemplate { get; set; }
 
+        private string getVersion(Version version)
+        {
+            if (version.Build != 0)
+                return version.ToString();
+            if (version.Revision != 0)
+                return version.ToString(3);
+            return version.ToString(2);
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -66,7 +75,7 @@ namespace NetSparkle
 
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
-            lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", item.AppVersionInstalled);
+            lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", getVersion(new Version(item.AppVersionInstalled)));
 
             if (items.Length == 0)
             {
