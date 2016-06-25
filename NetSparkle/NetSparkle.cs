@@ -927,16 +927,12 @@ namespace NetSparkle
             {
                 // verify if we talk about our app cast dll 
                 HttpWebRequest req = sender as HttpWebRequest;
-                if (req == null)
-                    return cert2 != null && cert2.Verify();
-
-                // if so just return our trust 
-                if (req.RequestUri.Equals(new Uri(_appCastUrl)))
+                if (req != null && req.RequestUri.Equals(new Uri(_appCastUrl)))
                     return true;
-                return cert2 != null && cert2.Verify();
             }
+
             // check our cert                 
-            return cert2 != null && cert2.Verify();
+            return sslPolicyErrors == SslPolicyErrors.None && cert2 != null && cert2.Verify();
         }
 
         /// <summary>
