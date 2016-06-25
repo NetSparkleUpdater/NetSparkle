@@ -16,8 +16,6 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
-        private bool _isSignatureValid;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -37,10 +35,6 @@ namespace NetSparkle
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;
             progressDownload.Step = 1;
-
-            // show the right 
-            Size = new Size(Size.Width, 107);
-            lblSecurityHint.Visible = false;
         }
 
         /// <summary>
@@ -55,12 +49,11 @@ namespace NetSparkle
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
         /// <param name="signatureValid"></param>
-        public void ChangeDownloadState(bool signatureValid)
+        public void ChangeDownloadState()
         {
             progressDownload.Visible = false;
+            downloadProgressLbl.Visible = false;
             btnInstallAndReLaunch.Visible = true;
-            _isSignatureValid = signatureValid;
-            UpdateDownloadValid(signatureValid);
         }
 
         /// <summary>
@@ -70,24 +63,6 @@ namespace NetSparkle
         {
             DialogResult = DialogResult.Abort;
             Close();
-        }
-
-        /// <summary>
-        /// Updates the UI to indicate if the download is valid
-        /// </summary>
-        private void UpdateDownloadValid(bool signatureValid)
-        {
-            if (!signatureValid)
-            {
-                Size = new Size(Size.Width, 137);
-                lblSecurityHint.Visible = true;
-                BackColor = Color.Tomato;
-            }
-            else
-            {
-                lblSecurityHint.Visible = false;
-                BackColor = Color.FromArgb(240, 240, 240);
-            }
         }
 
         private string numBytesToUserReadableString(long numBytes)
@@ -136,18 +111,6 @@ namespace NetSparkle
         private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
             InstallAndRelaunch?.Invoke(this, new EventArgs());
-            if (_isSignatureValid)
-                ControlBox = false;
-        }
-
-        private void NetSparkleDownloadProgress_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lblSecurityHint_Click(object sender, EventArgs e)
-        {
-
         }
 
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)

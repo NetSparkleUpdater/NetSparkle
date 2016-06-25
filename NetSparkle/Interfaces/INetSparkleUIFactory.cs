@@ -14,7 +14,7 @@ namespace NetSparkle.Interfaces
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
         /// <returns></returns>
-        INetSparkleForm CreateSparkleForm(NetSparkleAppCastItem[] updates, Icon applicationIcon);
+        INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon);
 
         /// <summary>
         /// Create download progress window

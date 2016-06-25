@@ -23,7 +23,7 @@ namespace NetSparkleChecker
             String[] args = Environment.GetCommandLineArgs();
 
             // init sparkle
-            _sparkle = new Sparkle(args[2], icon, args[1]);
+            _sparkle = new Sparkle(args[2], icon, SecurityMode.UseIfPossible, null, args[1]);
             
             // set labels
             lblRefFileName.Text = args[1];

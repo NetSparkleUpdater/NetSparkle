@@ -18,6 +18,7 @@ namespace NetSparkle
     {
         private static readonly HashSet<string> MarkDownExtension = new HashSet<string> { ".md", ".mkdn", ".mkd", ".markdown" };
 
+        private readonly Sparkle _sparkle;
         private readonly NetSparkleAppCastItem[] _updates;
 
         /// <summary>
@@ -49,8 +50,9 @@ namespace NetSparkle
         /// <param name="applicationIcon">The icon</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
-        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon = null, string separatorTemplate = "", string headAddition = "")
+        public NetSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] items, Icon applicationIcon = null, string separatorTemplate = "", string headAddition = "")
         {
+            _sparkle = sparkle;
             _updates = items;
 
             SeparatorTemplate = 
@@ -102,7 +104,7 @@ namespace NetSparkle
 
             if (applicationIcon != null)
             {
-                imgAppIcon.Image = applicationIcon.ToBitmap();
+                imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
                 Icon = applicationIcon;
             }
 
@@ -111,22 +113,33 @@ namespace NetSparkle
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
         {
+            // at first try to use embedded description
             if (!string.IsNullOrEmpty(item.Description))
             {
                 return item.Description;
             }
 
+            // no embedded so try to get external
             if (string.IsNullOrEmpty(item.ReleaseNotesLink))
             {
                 return null;
             }
 
+            // download release note
             string notes = DownloadReleaseNotes(item.ReleaseNotesLink);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;
             }
 
+            // check dsa of release notes
+            if (!string.IsNullOrEmpty(item.ReleaseNotesDSASignature))
+            {
+                if (_sparkle.DSAVerificator.VerifyDSASignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                    return null;
+            }
+
+            // process release notes
             var extension = Path.GetExtension(item.ReleaseNotesLink);
             if (extension != null && MarkDownExtension.Contains(extension.ToLower()))
             {

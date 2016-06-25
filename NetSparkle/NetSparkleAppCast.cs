@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Xml;
 
 namespace NetSparkle
@@ -22,6 +23,7 @@ namespace NetSparkle
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
 
+        private readonly Sparkle _sparkle;
         private readonly NetSparkleConfiguration _config;
         private readonly String _castUrl;
         private readonly List<NetSparkleAppCastItem> _items;
@@ -31,8 +33,9 @@ namespace NetSparkle
         /// </summary>
         /// <param name="castUrl">the URL of the appcast file</param>
         /// <param name="config">the current configuration</param>
-        public NetSparkleAppCast(string castUrl, NetSparkleConfiguration config)
+        public NetSparkleAppCast(string castUrl, Sparkle sparkle, NetSparkleConfiguration config)
         {
+            _sparkle = sparkle;
             _config = config;
             _castUrl = castUrl;
 
@@ -46,43 +49,75 @@ namespace NetSparkle
         {
             try
             {
-                if (_castUrl.StartsWith("file://")) //handy for testing
+                var inputstream = GetContent(_castUrl);
+                var signaturestream = GetContent(_castUrl + ".dsa");
+                var signature = string.Empty;
+                if (signaturestream != null)
                 {
-                    var path = _castUrl.Replace("file://", "");
-                    using (var reader = XmlReader.Create(path))
+                    using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
                     {
-                        Parse(reader);
+                        signature = reader.ReadToEnd().Trim();
                     }
                 }
-                else
-                {
-                    // build a http web request stream
-                    WebRequest request = WebRequest.Create(_castUrl);
-                    request.UseDefaultCredentials = true;
-                    request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    // TODO: disable ssl check if _config.TrustEverySSL
-
-                    // request the cast and build the stream
-                    WebResponse response = request.GetResponse();
-                    using (Stream inputstream = response.GetResponseStream())
-                    {
-                        if (inputstream == null)
-                        {
-                            Debug.WriteLine("Cannot read response from URL " + _castUrl);
-                            return false;
-                        }
-                        using (XmlTextReader reader = new XmlTextReader(inputstream))
-                        {
-                            Parse(reader);
-                        }
-                    }
-                }
-                return true;
+                return ReadStream(inputstream, signature);
             }
             catch (Exception e)
             {
                 Debug.WriteLine("netsparkle: error reading app cast {0}: {1} ", _castUrl, e.Message);
                 return false;
+            }
+        }
+
+        private Stream GetContent(string url)
+        {
+            if (url.StartsWith("file://")) //handy for testing
+            {
+                var path = url.Replace("file://", "");
+                if (File.Exists(path))
+                    return new FileStream(path, FileMode.Open, FileAccess.Read);
+                else
+                    return null;
+            }
+            else
+            {
+                // build a http web request stream
+                WebRequest request = WebRequest.Create(url);
+                request.UseDefaultCredentials = true;
+                request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                // TODO: disable ssl check if _config.TrustEverySSL
+
+                // request the cast and build the stream
+                WebResponse response = request.GetResponse();
+                return response.GetResponseStream();
+            }
+        }
+
+        private bool ReadStream(Stream inputstream, String signature)
+        {
+            if (inputstream == null)
+            {
+                Debug.WriteLine("netsparkle: Cannot read response from URL " + _castUrl);
+                return false;
+            }
+
+            // inputstream needs to be copied. WebResponse can't ne positionized back
+            var memorystream = new MemoryStream();
+            inputstream.CopyTo(memorystream);
+            memorystream.Position = 0;
+
+            // checking signature
+            if (_sparkle.DSAVerificator.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
+            {
+                Debug.WriteLine("netsparkle: Signature check of appcast failed");
+                return false;
+            }
+            memorystream.Position = 0;
+
+            // parse xml
+            using (XmlTextReader reader = new XmlTextReader(memorystream))
+            {
+                Parse(reader);
+                return true;
             }
         }
 
@@ -106,6 +141,7 @@ namespace NetSparkle
                         case releaseNotesLinkNode:
                             if (currentItem != null)
                             {
+                                currentItem.ReleaseNotesDSASignature = reader.GetAttribute(dsaSignature);
                                 currentItem.ReleaseNotesLink = reader.ReadString().Trim();
                             }
                             break;
@@ -120,7 +156,7 @@ namespace NetSparkle
                             {
                                 currentItem.Version = reader.GetAttribute(versionAttribute);
                                 currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
-                                currentItem.DSASignature = reader.GetAttribute(dsaSignature);
+                                currentItem.DownloadDSASignature = reader.GetAttribute(dsaSignature);
                             }
                             break;
                         case pubDateNode:
@@ -133,7 +169,7 @@ namespace NetSparkle
                                 }
                                 catch (FormatException ex)
                                 {
-                                    Debug.WriteLine("Cannot parse item datetime " + dt + " with message " + ex.Message);
+                                    Debug.WriteLine("netsparkle: Cannot parse item datetime " + dt + " with message " + ex.Message);
                                 }
                             }
                             break;

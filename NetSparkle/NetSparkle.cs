@@ -187,7 +187,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
         public Sparkle(String appcastUrl)
-            : this(appcastUrl, null, null)
+            : this(appcastUrl, null)
         { }
 
         /// <summary>
@@ -196,7 +196,17 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         public Sparkle(String appcastUrl, Icon applicationIcon)
-            : this(appcastUrl, applicationIcon, null)
+            : this(appcastUrl, applicationIcon, SecurityMode.Strict, null)
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="dsaPublicKey">The dsa public key to verfiy the sigatures.</param>
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey)
+            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
 
         /// <summary>
@@ -205,7 +215,8 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly) : this(appcastUrl, applicationIcon, referenceAssembly, new DefaultNetSparkleUIFactory())
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly) 
+            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultNetSparkleUIFactory())
         { }
 
         /// <summary>
@@ -215,11 +226,14 @@ namespace NetSparkle
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         /// <param name="factory">UI factory to use</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly, INetSparkleUIFactory factory)
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly, INetSparkleUIFactory factory)
         {
             _applicationIcon = applicationIcon;
 
             UIFactory = factory;
+
+            // DSA Verificator
+            DSAVerificator = new NetSparkleDSAVerificator(securityMode, dsaPublicKey);
 
             // preconfige ssl trust
             TrustEverySSLConnection = false;
@@ -359,6 +373,11 @@ namespace NetSparkle
         public NetSparkleConfiguration Configuration { get; set; }
 
         /// <summary>
+        /// The DSA Verificator
+        /// </summary>
+        public NetSparkleDSAVerificator DSAVerificator { get; set; }
+
+        /// <summary>
         /// Gets or sets the app cast URL
         /// </summary>
         public string AppcastUrl
@@ -375,7 +394,7 @@ namespace NetSparkle
             get { return _useNotificationToast; }
             set { _useNotificationToast = value; }
         }
-        
+
         #endregion
 
         /// <summary>
@@ -579,7 +598,7 @@ namespace NetSparkle
             ReportDiagnosticMessage("Downloading and checking appcast");
 
             // init the appcast
-            NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, config);
+            NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, this, config);
             // check if any updates are available
             try
             {
@@ -677,7 +696,7 @@ namespace NetSparkle
             {
                 try
                 {
-                    UserWindow = UIFactory.CreateSparkleForm(updates, _applicationIcon);
+                    UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon);
 
                     if (HideReleaseNotes)
                     {
@@ -995,8 +1014,16 @@ namespace NetSparkle
                 if (UpdateDetected != null)
                 {
                     UpdateDetected(this, ev);
+                    // if the client wants the default UI then show them
+                    switch (ev.NextAction)
+                    {
+                        case NextUpdateAction.ShowStandardUserInterface:
+                            ReportDiagnosticMessage("Showing Standard Update UI");
+                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                            break;
+                    }
                 }
-                    //otherwise just go forward with the UI notficiation
+                //otherwise just go forward with the UI notficiation
                 else
                 {
                     ShowUpdateNeededUI(updates);
@@ -1272,12 +1299,13 @@ namespace NetSparkle
             if (e.Error != null)
             {
                 UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
-                ProgressWindow.ForceClose();
+                if (ProgressWindow != null)
+                    ProgressWindow.ForceClose();
                 return;
             }
 
             // test the item for DSA signature
-            bool isDSAOk = false;
+            var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
                 ReportDiagnosticMessage("Finished downloading file to: " + _downloadTempFileName);
@@ -1293,30 +1321,19 @@ namespace NetSparkle
                     if (!File.Exists(absolutePath))
                         throw new FileNotFoundException();
 
-                    if (UserWindow.CurrentItem.DSASignature == null)
-                    {
-                        isDSAOk = true;// REVIEW. The correct logic, seems to me, is that if the existing, running version of the app
-                                       //had no DSA, and the appcast didn't specify one, then it's ok that the one we've just 
-                                       //downloaded doesn't either. This may be just checking that the appcast didn't specify one. Is 
-                                        //that really enough? If someone can change what gets downloaded, can't they also change the appcast?
-                    }
-                    else
-                    {
-                        // get the assembly reference from which we start the update progress
-                        // only from this trusted assembly the public key can be used
-                        Assembly refassembly = Assembly.GetEntryAssembly();
-                        if (refassembly != null)
-                        {
-                            // Check if we found the public key in our entry assembly
-                            if (NetSparkleDSAVerificator.ExistsPublicKey("NetSparkle_DSA.pub"))
-                            {
-                                // check the DSA Code and modify the back color            
-                                NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
-                                isDSAOk = dsaVerifier.VerifyDSASignature(UserWindow.CurrentItem.DSASignature, _downloadTempFileName);
-                            }
-                        }
-                    }
+                    // check the DSA signature
+                    validationRes = DSAVerificator.VerifyDSASignatureFile(UserWindow.CurrentItem.DownloadDSASignature, _downloadTempFileName);
                 }
+            }
+
+            // signature of file isn't valid so exit with error
+            if (validationRes == ValidationResult.Invalid)
+            {
+                ReportDiagnosticMessage("Invallid signature of file: " + _downloadTempFileName);
+                UIFactory.ShowDownloadErrorMessage("Invallid signature of file", _appCastUrl);
+                if (ProgressWindow != null)
+                    ProgressWindow.ForceClose();
+                return;
             }
 
             if (EnableSilentMode)
@@ -1326,7 +1343,7 @@ namespace NetSparkle
 
             if (ProgressWindow != null)
             {
-                ProgressWindow.ChangeDownloadState(isDSAOk);
+                ProgressWindow.ChangeDownloadState();
             }
         }
 

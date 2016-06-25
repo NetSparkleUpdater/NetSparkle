@@ -41,7 +41,6 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
-        /// <param name="signatureValid"></param>
-        void ChangeDownloadState(bool signatureValid);
+        void ChangeDownloadState();
     }
 }

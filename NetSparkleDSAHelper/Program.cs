@@ -117,17 +117,25 @@ namespace NetSparkle.DSAHelper
 
                             // get parameter
                             String binary = args[1];
-                            String pubKey = args[2];
+                            String pubKeyFile = args[2];
                             String sign = args[3];
 
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
 
-                            NetSparkle.NetSparkleDSAVerificator dsaVerif = new NetSparkle.NetSparkleDSAVerificator(pubKey);
-                            if (dsaVerif.VerifyDSASignature(sign, binary))
-                                Console.WriteLine("Binary " + binary + " is valid");
-                            else
-                                Console.WriteLine("Binary " + binary + " is NOT valid");
+                            NetSparkle.NetSparkleDSAVerificator dsaVerif = new NetSparkle.NetSparkleDSAVerificator(SecurityMode.UseIfPossible, null, pubKeyFile);
+                            switch (dsaVerif.VerifyDSASignatureFile(sign, binary))
+                            {
+                                case ValidationResult.Valid:
+                                    Console.WriteLine("Binary " + binary + " is valid");
+                                    break;
+                                case ValidationResult.Invalid:
+                                    Console.WriteLine("Binary " + binary + " is NOT valid");
+                                    break;
+                                case ValidationResult.Unchecked:
+                                    Console.WriteLine("Binary " + binary + " could not be checked");
+                                    break;
+                            }
                         }
                         break;
                     default: 
