@@ -661,6 +661,16 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Converts an relative url to an absolute url based on the 
+        /// </summary>
+        /// <param name="url">relative or absolute url</param>
+        /// <returns>the absolute url</returns>
+        public Uri GetAbsoluteUrl(string url)
+        {
+            return new Uri(new Uri(_appCastUrl), url);
+        }
+
+        /// <summary>
         /// This method shows the update ui and allows to perform the 
         /// update process
         /// </summary>
@@ -764,8 +774,7 @@ namespace NetSparkle
             _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnClientDownloadProgressChanged;
             _webDownloadClient.DownloadFileCompleted += OnWebDownloadClientDownloadFileCompleted;
 
-            Uri url = new Uri(item.DownloadLink);
-            _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+            _webDownloadClient.DownloadFileAsync(GetAbsoluteUrl(item.DownloadLink), _downloadTempFileName);
 
             ProgressWindow.ShowDialog();
         }

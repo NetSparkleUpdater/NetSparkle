@@ -165,7 +165,7 @@ namespace NetSparkle
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     webClient.Encoding = Encoding.UTF8;
 
-                    return webClient.DownloadString(link);
+                    return webClient.DownloadString(_sparkle.GetAbsoluteUrl(link));
                 }
             }
             catch (WebException ex)
