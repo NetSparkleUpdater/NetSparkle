@@ -197,8 +197,18 @@ namespace NetSparkle
         public NetSparkleAppCastItem[] GetUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
+            var signatureNeeded = _sparkle.DSAVerificator.SignatureNeeded();
 
-            return _items.Where(item => new Version(item.Version).CompareTo(installed) > 0).ToArray();
+            return _items.Where((item) => {
+                // filter smaler versions
+                if (new Version(item.Version).CompareTo(installed) <= 0)
+                    return false;
+                // filter versions without signature if we need signatures. But accept version without downloads.
+                if (signatureNeeded && string.IsNullOrEmpty(item.DownloadDSASignature) && !string.IsNullOrEmpty(item.DownloadLink))
+                    return false;
+                // accept everthing else
+                return true;
+            }).ToArray();
         }
     }
 }

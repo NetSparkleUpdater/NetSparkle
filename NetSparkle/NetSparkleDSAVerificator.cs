@@ -71,7 +71,6 @@ namespace NetSparkle
         /// <returns><c>Boolean</c>  </returns>
         public Boolean PublicKeyExists()
         {
-
             if (_provider == null)
                 return false;
             else
@@ -118,6 +117,30 @@ namespace NetSparkle
                 {
                     _provider = null;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Returns if we need an signature
+        /// </summary>
+        /// <returns><c>Boolean</c>  </returns>
+        public Boolean SignatureNeeded()
+        {
+            switch (_securityMode)
+            {
+                case SecurityMode.UseIfPossible:
+                    // if we have an dsa key we need an signatur
+                    return PublicKeyExists();
+
+                case SecurityMode.Strict:
+                    // we allways need an signature
+                    return true;
+
+                case SecurityMode.Unsafe:
+                    return false;
+
+                default:
+                    throw new Exception("Unknow security mode");
             }
         }
 
