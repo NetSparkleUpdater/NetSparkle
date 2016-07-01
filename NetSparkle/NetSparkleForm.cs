@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace NetSparkle
 {
@@ -116,7 +117,18 @@ namespace NetSparkle
             // at first try to use embedded description
             if (!string.IsNullOrEmpty(item.Description))
             {
-                return item.Description;
+                // check for markdown
+                Regex containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
+                if (containsHtmlRegex.IsMatch(item.Description))
+                {
+                    return item.Description;
+                }
+                else
+                {
+                    var md = new MarkdownSharp.Markdown();
+                    var temp = md.Transform(item.Description);
+                    return temp;
+                }
             }
 
             // no embedded so try to get external
