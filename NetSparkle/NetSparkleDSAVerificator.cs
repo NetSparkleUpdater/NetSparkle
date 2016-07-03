@@ -140,7 +140,7 @@ namespace NetSparkle
                     return false;
 
                 default:
-                    throw new Exception("Unknow security mode");
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -181,6 +181,9 @@ namespace NetSparkle
                         return false;
                     }
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             return true;
         }
