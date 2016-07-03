@@ -166,6 +166,7 @@ namespace NetSparkle
         private Task _taskWorker;
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
+        private SynchronizationContext _syncContext;
         private String _appCastUrl;
         private readonly String _appReferenceAssembly;
 
@@ -234,6 +235,13 @@ namespace NetSparkle
 
             // DSA Verificator
             DSAVerificator = new NetSparkleDSAVerificator(securityMode, dsaPublicKey);
+
+            // Syncronisation Context
+            _syncContext = SynchronizationContext.Current;
+            if (_syncContext == null)
+            {
+                _syncContext = new SynchronizationContext();
+            }
 
             // preconfige ssl trust
             TrustEverySSLConnection = false;
@@ -394,6 +402,8 @@ namespace NetSparkle
             get { return _useNotificationToast; }
             set { _useNotificationToast = value; }
         }
+
+        public Boolean UseSyncronizedForms { get; set; }
 
         #endregion
 
@@ -694,11 +704,13 @@ namespace NetSparkle
 
         private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
         {
-            
             if (UserWindow != null)
             {
-                // remove old user window
-                UserWindow.UserResponded -= OnUserWindowUserResponded;
+                _syncContext.Send((state) =>
+                {
+                    // remove old user window
+                    UserWindow.UserResponded -= OnUserWindowUserResponded;
+                }, null);
             }
 
             // create the form
@@ -706,17 +718,31 @@ namespace NetSparkle
             {
                 try
                 {
-                    UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon);
-
-                    if (HideReleaseNotes)
+                    // define action
+                    Action<object> showSparkleUI = (state) =>
                     {
-                        UserWindow.HideReleaseNotes();
-                    }
+                        UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon);
 
-                    // clear if already set.
-                    UserWindow.UserResponded += OnUserWindowUserResponded;
-                    UserWindow.Show();
-                }
+                        if (HideReleaseNotes)
+                        {
+                            UserWindow.HideReleaseNotes();
+                        }
+
+                        // clear if already set.
+                        UserWindow.UserResponded += OnUserWindowUserResponded;
+                        UserWindow.Show();
+                    };
+
+                    // call action
+                    if (UseSyncronizedForms)
+                    {
+                        _syncContext.Send((state) => showSparkleUI(state), null);
+                    }
+                    else
+                    {
+                        showSparkleUI(null);
+                    }
+                }  
                 catch (Exception e)
                 {
                     ReportDiagnosticMessage("Error showing sparkle form: " + e.Message);
@@ -954,27 +980,41 @@ namespace NetSparkle
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             UpdateStatus updateAvailable = updateData.Status;
             Cursor.Current = Cursors.Default;
-            
-            switch(updateAvailable)
+
+            Action<object> UIAction = (state) =>
             {
-                case UpdateStatus.UpdateAvailable:
-                    // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
-                    // TODO: Fix!
-                    //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
-                    //ShowUpdateNeededUIInner(updateData.Updates);
-                    break;
-                case UpdateStatus.UpdateNotAvailable:
-                    UIFactory.ShowVersionIsUpToDate();
-                    break;
-                case UpdateStatus.UserSkipped:
-                    UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
-                    break;
-                case UpdateStatus.CouldNotDetermine:
-                    UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                switch (updateAvailable)
+                {
+                    case UpdateStatus.UpdateAvailable:
+                        // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
+                        // TODO: Fix!
+                        //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
+                        //ShowUpdateNeededUIInner(updateData.Updates);
+                        break;
+                    case UpdateStatus.UpdateNotAvailable:
+                        UIFactory.ShowVersionIsUpToDate();
+                        break;
+                    case UpdateStatus.UserSkipped:
+                        UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
+                        break;
+                    case UpdateStatus.CouldNotDetermine:
+                        UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            };
+
+            if (UseSyncronizedForms)
+            {
+                _syncContext.Send((state) => UIAction(state), null);
             }
+            else
+            {
+                UIAction(null);
+            }
+
+
             return updateData;// in this case, we've already shown UI talking about the new version
         }
 
