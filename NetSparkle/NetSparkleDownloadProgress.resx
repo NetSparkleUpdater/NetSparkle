@@ -151,7 +151,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblHeader.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="progressDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -178,7 +178,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressDownload.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -205,7 +205,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnInstallAndReLaunch.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -232,13 +232,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
-  </data>
-  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9.75pt</value>
@@ -247,19 +244,19 @@
     <value>NoControl</value>
   </data>
   <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>67, 42</value>
-  </data>
-  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>290, 0</value>
+    <value>71, 42</value>
   </data>
   <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 17</value>
+    <value>286, 21</value>
   </data>
   <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
   </data>
   <data name="downloadProgressLbl.Text" xml:space="preserve">
     <value>(0 MB / 10 MB)</value>
+  </data>
+  <data name="downloadProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopRight</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
     <value>downloadProgressLbl</value>
@@ -271,7 +268,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>4</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
