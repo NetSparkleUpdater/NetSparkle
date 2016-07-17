@@ -42,6 +42,24 @@ namespace NetSparkle
             _items = new List<NetSparkleAppCastItem>();
         }
 
+
+        private string TryReadSignature()
+        {
+            try
+            {
+                var signaturestream = _sparkle.GetWebContentStream(_castUrl + ".dsa");
+                var signature = string.Empty;
+                using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
+                {
+                    return reader.ReadToEnd().Trim();
+                }
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
@@ -49,46 +67,14 @@ namespace NetSparkle
         {
             try
             {
-                var inputstream = GetContent(_castUrl);
-                var signaturestream = GetContent(_castUrl + ".dsa");
-                var signature = string.Empty;
-                if (signaturestream != null)
-                {
-                    using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
-                    {
-                        signature = reader.ReadToEnd().Trim();
-                    }
-                }
+                var inputstream = _sparkle.GetWebContentStream(_castUrl);
+                var signature = TryReadSignature();
                 return ReadStream(inputstream, signature);
             }
             catch (Exception e)
             {
                 Debug.WriteLine("netsparkle: error reading app cast {0}: {1} ", _castUrl, e.Message);
                 return false;
-            }
-        }
-
-        private Stream GetContent(string url)
-        {
-            if (url.StartsWith("file://")) //handy for testing
-            {
-                var path = url.Replace("file://", "");
-                if (File.Exists(path))
-                    return new FileStream(path, FileMode.Open, FileAccess.Read);
-                else
-                    return null;
-            }
-            else
-            {
-                // build a http web request stream
-                WebRequest request = WebRequest.Create(url);
-                request.UseDefaultCredentials = true;
-                request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                // TODO: disable ssl check if _config.TrustEverySSL
-
-                // request the cast and build the stream
-                WebResponse response = request.GetResponse();
-                return response.GetResponseStream();
             }
         }
 

@@ -37,6 +37,7 @@
             this.btnInstallAndReLaunch = new System.Windows.Forms.Button();
             this.imgAppIcon = new System.Windows.Forms.PictureBox();
             this.downloadProgressLbl = new System.Windows.Forms.Label();
+            this.buttonCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,13 +70,21 @@
             resources.ApplyResources(this.downloadProgressLbl, "downloadProgressLbl");
             this.downloadProgressLbl.Name = "downloadProgressLbl";
             // 
+            // buttonCancel
+            // 
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            // 
             // NetSparkleDownloadProgress
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.downloadProgressLbl);
+            this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.btnInstallAndReLaunch);
+            this.Controls.Add(this.downloadProgressLbl);
             this.Controls.Add(this.progressDownload);
             this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.imgAppIcon);
@@ -95,5 +104,6 @@
         private System.Windows.Forms.Button btnInstallAndReLaunch;
         private System.Windows.Forms.PictureBox imgAppIcon;
         private System.Windows.Forms.Label downloadProgressLbl;
+        private System.Windows.Forms.Button buttonCancel;
     }
 }

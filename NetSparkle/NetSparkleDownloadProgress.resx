@@ -151,7 +151,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblHeader.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="progressDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -160,10 +160,10 @@
     <value>NoControl</value>
   </data>
   <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>71, 66</value>
+    <value>12, 79</value>
   </data>
   <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>282, 23</value>
+    <value>344, 23</value>
   </data>
   <data name="progressDownload.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -178,13 +178,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressDownload.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>102, 53</value>
+    <value>98, 79</value>
   </data>
   <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
     <value>173, 23</value>
@@ -205,7 +205,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnInstallAndReLaunch.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -232,7 +232,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -244,10 +244,10 @@
     <value>NoControl</value>
   </data>
   <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>71, 42</value>
+    <value>70, 54</value>
   </data>
   <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>286, 21</value>
+    <value>289, 18</value>
   </data>
   <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -268,7 +268,34 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>2</value>
+  </data>
+  <data name="buttonCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 112</value>
+  </data>
+  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 23</value>
+  </data>
+  <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="buttonCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Name" xml:space="preserve">
+    <value>buttonCancel</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -280,7 +307,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>368, 104</value>
+    <value>368, 146</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -466,9 +493,6 @@
         AAD///gD//8AAP//+Af//wAA///8D///AAD///wP//8AAP///h///wAA////P///AAD///////8AAP//
         /////wAA
 </value>
-  </data>
-  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>384, 157</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

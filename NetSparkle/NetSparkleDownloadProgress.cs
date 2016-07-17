@@ -52,6 +52,7 @@ namespace NetSparkle
         public void ChangeDownloadState()
         {
             progressDownload.Visible = false;
+            buttonCancel.Visible = false;
             downloadProgressLbl.Visible = false;
             btnInstallAndReLaunch.Visible = true;
         }
@@ -80,11 +81,11 @@ namespace NetSparkle
                     {
                         // Put in GB
                         numBytesDecimal /= 1024;
-                        return Math.Round(numBytesDecimal, 2).ToString() + " GB";
+                        return Math.Round(numBytesDecimal, 1).ToString() + " GB";
                     }
-                    return Math.Round(numBytesDecimal, 2).ToString() + " MB";
+                    return Math.Round(numBytesDecimal, 1).ToString() + " MB";
                 }
-                return Math.Round(numBytesDecimal, 2).ToString() + " KB";
+                return Math.Round(numBytesDecimal, 0).ToString() + " KB";
             }
             return numBytes.ToString();
         }
@@ -94,13 +95,13 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        public void OnClientDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        public bool OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
-            progressDownload.Value = e.ProgressPercentage;
-            long bytesReceived = e.BytesReceived;
-            long bytesTotal = e.TotalBytesToReceive;
+            progressDownload.Value = percentage;
             downloadProgressLbl.Text = " (" + numBytesToUserReadableString(bytesReceived) + " / " + 
-                numBytesToUserReadableString(bytesTotal) + ")";
+                numBytesToUserReadableString(totalBytesToReceive) + ")";
+            
+            return this.Visible;
         }
 
         /// <summary>
@@ -116,6 +117,11 @@ namespace NetSparkle
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
         {
             btnInstallAndReLaunch.Enabled = shouldBeEnabled;
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
