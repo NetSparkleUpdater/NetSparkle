@@ -19,6 +19,8 @@ namespace NetSparkle
     public class NetSparkleRegistryConfiguration : NetSparkleConfiguration
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        private string _registryPath;
+
         /// <summary>
         /// The constructor reads out all configured values
         /// </summary>        
@@ -32,8 +34,20 @@ namespace NetSparkle
         /// </summary>
         /// <param name="referenceAssembly">the name of hte reference assembly</param>
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
-        public NetSparkleRegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed) : base(referenceAssembly, isReflectionBasedAssemblyAccessorUsed)
+        public NetSparkleRegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
+            : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
+        { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="referenceAssembly">the name of hte reference assembly</param>
+        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        /// <param name="registryPath"><c>true</c> if reflection is used to access the assembly.</param>
+        public NetSparkleRegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed, string registryPath)
+            : base(referenceAssembly, isReflectionBasedAssemblyAccessorUsed)
         {
+            _registryPath = registryPath;
             try
             {
                 // build the reg path
@@ -95,12 +109,19 @@ namespace NetSparkle
         /// <returns></returns>
         private String BuildRegistryPath()
         {
-            NetSparkleAssemblyAccessor accessor = new NetSparkleAssemblyAccessor(ReferenceAssembly, UseReflectionBasedAssemblyAccessor);
+            if (!string.IsNullOrEmpty(_registryPath))
+            {
+                return _registryPath;
+            }
+            else
+            {
+                NetSparkleAssemblyAccessor accessor = new NetSparkleAssemblyAccessor(ReferenceAssembly, UseReflectionBasedAssemblyAccessor);
 
-            if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
-                throw new NetSparkleException("STOP: Sparkle is missing the company or productname tag in " + ReferenceAssembly);
+                if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
+                    throw new NetSparkleException("STOP: Sparkle is missing the company or productname tag in " + ReferenceAssembly);
 
-            return "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
+                return "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
+            }
         }
 
         private string ConvertDateToString(DateTime dt)
