@@ -34,6 +34,7 @@ If you have files that need saving, subscribe to the AboutToExitForInstallerRun 
 [TODO -- this section]
 
 By default, you need 2 DSA signatures (DSA Strict mode):
+
 1. One in the enclosure section for your download file (sparkle:dsaSignature="...")
 2. Another on your web server to secure the actual app cast file. **This file must be located at [CastURL].dsa** -- in other words, if your download URL for the app cast is http://someurl.com/awesome-software.xml, you need a valid DSA signature for that file stored at http://someurl.com/awesome-software.xml.dsa .
 
