@@ -81,20 +81,23 @@ namespace NetSparkle
                     {
                         // Put in GB
                         numBytesDecimal /= 1024;
-                        return Math.Round(numBytesDecimal, 1).ToString() + " GB";
+                        return numBytesDecimal.ToString("F2") + " GB";
                     }
-                    return Math.Round(numBytesDecimal, 1).ToString() + " MB";
+                    return numBytesDecimal.ToString("F2") + " MB";
                 }
-                return Math.Round(numBytesDecimal, 0).ToString() + " KB";
+                return numBytesDecimal.ToString("F2") + " KB";
             }
             return numBytes.ToString();
         }
-               
+
         /// <summary>
         /// Event called when the client download progress changes
         /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">not used.</param>
+        /// <param name="sender"></param>
+        /// <param name="bytesReceived"></param>
+        /// <param name="totalBytesToReceive"></param>
+        /// <param name="percentage"></param>
+        /// <returns></returns>
         public bool OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
             progressDownload.Value = percentage;

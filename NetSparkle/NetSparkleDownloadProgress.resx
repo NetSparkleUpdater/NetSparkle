@@ -163,7 +163,7 @@
     <value>NoControl</value>
   </data>
   <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>24, 131</value>
+    <value>24, 123</value>
   </data>
   <data name="progressDownload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -190,7 +190,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>196, 131</value>
+    <value>196, 123</value>
   </data>
   <data name="btnInstallAndReLaunch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -250,19 +250,19 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9.75pt</value>
+    <value>Segoe UI, 10.125pt, style=Bold</value>
   </data>
   <data name="downloadProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 83</value>
+    <value>85, 75</value>
   </data>
   <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 0, 6, 0</value>
   </data>
   <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>578, 35</value>
+    <value>633, 35</value>
   </data>
   <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -271,7 +271,7 @@
     <value>(0 MB / 10 MB)</value>
   </data>
   <data name="downloadProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
     <value>downloadProgressLbl</value>
@@ -289,7 +289,7 @@
     <value>NoControl</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>258, 194</value>
+    <value>258, 186</value>
   </data>
   <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -511,9 +511,6 @@
         AAD///gD//8AAP//+Af//wAA///8D///AAD///wP//8AAP///h///wAA////P///AAD///////8AAP//
         /////wAA
 </value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
