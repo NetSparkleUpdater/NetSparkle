@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace NetSparkle
 {
@@ -18,6 +19,7 @@ namespace NetSparkle
     {
         private static readonly HashSet<string> MarkDownExtension = new HashSet<string> { ".md", ".mkdn", ".mkd", ".markdown" };
 
+        private readonly Sparkle _sparkle;
         private readonly NetSparkleAppCastItem[] _updates;
 
         /// <summary>
@@ -29,18 +31,35 @@ namespace NetSparkle
         /// <summary>
         /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
-        public string SeparatorTemplate { get; set; }
+        // Useless. Because the form initialize this value it selfes and directlly generates the release notes html. So
+        // there is no chance to override the default. Also there isn't any chance to access from the interface
+        private string SeparatorTemplate { get; set; }
+
+        private string getVersion(Version version)
+        {
+            if (version.Build != 0)
+                return version.ToString();
+            if (version.Revision != 0)
+                return version.ToString(3);
+            return version.ToString(2);
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="items">List of updates to show</param>
-        /// <param name="applicationIcon"></param>
-        public NetSparkleForm(NetSparkleAppCastItem[] items, Icon applicationIcon = null)
+        /// <param name="applicationIcon">The icon</param>
+        /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
+        /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
+        public NetSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] items, Icon applicationIcon = null, string separatorTemplate = "", string headAddition = "")
         {
+            _sparkle = sparkle;
             _updates = items;
 
-            SeparatorTemplate = "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
+            SeparatorTemplate = 
+                !string.IsNullOrEmpty(separatorTemplate) ? 
+                separatorTemplate :
+                "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
 
             InitializeComponent();
 
@@ -59,7 +78,7 @@ namespace NetSparkle
 
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
-            lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", item.AppVersionInstalled);
+            lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", getVersion(new Version(item.AppVersionInstalled)));
 
             if (items.Length == 0)
             {
@@ -69,10 +88,11 @@ namespace NetSparkle
             {
                 NetSparkleAppCastItem latestVersion = _updates.OrderByDescending(p => p.Version).FirstOrDefault();
 
-                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'></head><body>");
+                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>");
                 foreach (NetSparkleAppCastItem castItem in items)
                 {
-                    sb.Append(string.Format(SeparatorTemplate, castItem.Version,
+                    sb.Append(string.Format(SeparatorTemplate, 
+                                            castItem.Version,
                                             castItem.PublicationDate.ToString("dd MMM yyyy"),
                                             GetReleaseNotes(castItem),
                                             latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
@@ -85,7 +105,7 @@ namespace NetSparkle
 
             if (applicationIcon != null)
             {
-                imgAppIcon.Image = applicationIcon.ToBitmap();
+                imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
                 Icon = applicationIcon;
             }
 
@@ -94,17 +114,44 @@ namespace NetSparkle
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
         {
+            // at first try to use embedded description
+            if (!string.IsNullOrEmpty(item.Description))
+            {
+                // check for markdown
+                Regex containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
+                if (containsHtmlRegex.IsMatch(item.Description))
+                {
+                    return item.Description;
+                }
+                else
+                {
+                    var md = new MarkdownSharp.Markdown();
+                    var temp = md.Transform(item.Description);
+                    return temp;
+                }
+            }
+
+            // no embedded so try to get external
             if (string.IsNullOrEmpty(item.ReleaseNotesLink))
             {
                 return null;
             }
 
+            // download release note
             string notes = DownloadReleaseNotes(item.ReleaseNotesLink);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;
             }
 
+            // check dsa of release notes
+            if (!string.IsNullOrEmpty(item.ReleaseNotesDSASignature))
+            {
+                if (_sparkle.DSAVerificator.VerifyDSASignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                    return null;
+            }
+
+            // process release notes
             var extension = Path.GetExtension(item.ReleaseNotesLink);
             if (extension != null && MarkDownExtension.Contains(extension.ToLower()))
             {
@@ -130,7 +177,7 @@ namespace NetSparkle
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     webClient.Encoding = Encoding.UTF8;
 
-                    return webClient.DownloadString(link);
+                    return webClient.DownloadString(_sparkle.GetAbsoluteUrl(link));
                 }
             }
             catch (WebException ex)

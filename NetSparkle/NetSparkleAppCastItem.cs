@@ -24,13 +24,21 @@ namespace NetSparkle
         /// </summary>
         public string ReleaseNotesLink { get; set; }
         /// <summary>
+        /// The DSA signature of the Release Notes file
+        /// </summary>
+        public string ReleaseNotesDSASignature { get; set; }
+        /// <summary>
+        /// The embedded description
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// The download link
         /// </summary>
         public string DownloadLink { get; set; }
         /// <summary>
-        /// The DSA signature
+        /// The DSA signature of the download file
         /// </summary>
-        public string DSASignature { get; set; }
+        public string DownloadDSASignature { get; set; }
         /// <summary>
         /// Date item was published
         /// </summary>

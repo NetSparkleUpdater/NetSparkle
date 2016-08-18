@@ -131,7 +131,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnInstallAndReLaunch.Text" xml:space="preserve">
-    <value>Install und Restart</value>
+    <value>Installieren und Neustarten</value>
   </data>
   <data name="lblSecurityHint.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>

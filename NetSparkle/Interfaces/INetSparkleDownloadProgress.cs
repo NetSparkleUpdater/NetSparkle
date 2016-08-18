@@ -31,7 +31,7 @@ namespace NetSparkle.Interfaces
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">used to resolve the progress of the download. Also contains the total size of the download</param>
-        void OnClientDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e);
+        bool OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage);
 
         /// <summary>
         /// Force window close
@@ -41,7 +41,6 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
-        /// <param name="signatureValid"></param>
-        void ChangeDownloadState(bool signatureValid);
+        void ChangeDownloadState();
     }
 }

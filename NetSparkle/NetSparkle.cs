@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace NetSparkle
 {
@@ -166,6 +167,7 @@ namespace NetSparkle
         private Task _taskWorker;
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
+        private SynchronizationContext _syncContext;
         private String _appCastUrl;
         private readonly String _appReferenceAssembly;
 
@@ -179,7 +181,6 @@ namespace NetSparkle
         private Boolean _useNotificationToast;
 
         private string _downloadTempFileName;
-        private WebClient _webDownloadClient;
         private Process _installerProcess;
 
         /// <summary>
@@ -187,7 +188,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
         public Sparkle(String appcastUrl)
-            : this(appcastUrl, null, null)
+            : this(appcastUrl, null)
         { }
 
         /// <summary>
@@ -196,7 +197,17 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         public Sparkle(String appcastUrl, Icon applicationIcon)
-            : this(appcastUrl, applicationIcon, null)
+            : this(appcastUrl, applicationIcon, SecurityMode.Strict, null)
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="dsaPublicKey">The dsa public key to verfiy the sigatures.</param>
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey)
+            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
 
         /// <summary>
@@ -205,7 +216,8 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly) : this(appcastUrl, applicationIcon, referenceAssembly, new DefaultNetSparkleUIFactory())
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly) 
+            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultNetSparkleUIFactory())
         { }
 
         /// <summary>
@@ -215,11 +227,21 @@ namespace NetSparkle
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         /// <param name="factory">UI factory to use</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, String referenceAssembly, INetSparkleUIFactory factory)
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly, INetSparkleUIFactory factory)
         {
             _applicationIcon = applicationIcon;
 
             UIFactory = factory;
+
+            // DSA Verificator
+            DSAVerificator = new NetSparkleDSAVerificator(securityMode, dsaPublicKey);
+
+            // Syncronisation Context
+            _syncContext = SynchronizationContext.Current;
+            if (_syncContext == null)
+            {
+                _syncContext = new SynchronizationContext();
+            }
 
             // preconfige ssl trust
             TrustEverySSLConnection = false;
@@ -359,6 +381,11 @@ namespace NetSparkle
         public NetSparkleConfiguration Configuration { get; set; }
 
         /// <summary>
+        /// The DSA Verificator
+        /// </summary>
+        public NetSparkleDSAVerificator DSAVerificator { get; set; }
+
+        /// <summary>
         /// Gets or sets the app cast URL
         /// </summary>
         public string AppcastUrl
@@ -375,7 +402,9 @@ namespace NetSparkle
             get { return _useNotificationToast; }
             set { _useNotificationToast = value; }
         }
-        
+
+        public Boolean UseSyncronizedForms { get; set; }
+
         #endregion
 
         /// <summary>
@@ -466,6 +495,50 @@ namespace NetSparkle
             UnregisterEvents();
         }
 
+
+        public WebResponse GetWebContentResponse(string Url)
+        {
+            WebRequest request = WebRequest.Create(Url);
+            if (request != null)
+            {
+                if (request is FileWebRequest)
+                {
+                    FileWebRequest fileRequest = request as FileWebRequest;
+                    if (fileRequest != null)
+                    {
+                        return request.GetResponse();
+                    }
+                }
+
+                if (request is HttpWebRequest)
+                {
+                    HttpWebRequest httpRequest = request as HttpWebRequest;
+                    httpRequest.UseDefaultCredentials = true;
+                    httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    if (TrustEverySSLConnection)
+                        httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+                    // request the cast and build the stream
+                    return httpRequest.GetResponse();
+                }
+            }
+            return null;
+        }
+
+        public Stream GetWebContentStream(string Url)
+        {
+            var response = GetWebContentResponse(Url);
+            if (response != null)
+            {
+                var ms = new MemoryStream();
+                response.GetResponseStream().CopyTo(ms);
+                response.Close();
+                ms.Position = 0;
+                return ms;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Unregisters events so that we don't have multiple items updating
         /// </summary>
@@ -477,15 +550,6 @@ namespace NetSparkle
             _worker.ProgressChanged -= OnWorkerProgressChanged;
             _worker = null; */
 
-            if (_webDownloadClient != null)
-            {
-                if (ProgressWindow != null)
-                {
-                    _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnClientDownloadProgressChanged;
-                }
-                _webDownloadClient.DownloadFileCompleted -= OnWebDownloadClientDownloadFileCompleted;
-                _webDownloadClient = null;
-            }
             if (UserWindow != null)
             {
                 UserWindow.UserResponded -= OnUserWindowUserResponded;
@@ -546,6 +610,7 @@ namespace NetSparkle
                     HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
                     if (request != null)
                     {
+                        //request.ServerCertificateValidationCallback += 
                         request.UseDefaultCredentials = true;
                         request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
 
@@ -579,7 +644,7 @@ namespace NetSparkle
             ReportDiagnosticMessage("Downloading and checking appcast");
 
             // init the appcast
-            NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, config);
+            NetSparkleAppCast cast = new NetSparkleAppCast(_appCastUrl, this, config);
             // check if any updates are available
             try
             {
@@ -642,6 +707,16 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Converts an relative url to an absolute url based on the 
+        /// </summary>
+        /// <param name="url">relative or absolute url</param>
+        /// <returns>the absolute url</returns>
+        public Uri GetAbsoluteUrl(string url)
+        {
+            return new Uri(new Uri(_appCastUrl), url);
+        }
+
+        /// <summary>
         /// This method shows the update ui and allows to perform the 
         /// update process
         /// </summary>
@@ -665,11 +740,13 @@ namespace NetSparkle
 
         private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
         {
-            
             if (UserWindow != null)
             {
-                // remove old user window
-                UserWindow.UserResponded -= OnUserWindowUserResponded;
+                _syncContext.Send((state) =>
+                {
+                    // remove old user window
+                    UserWindow.UserResponded -= OnUserWindowUserResponded;
+                }, null);
             }
 
             // create the form
@@ -677,18 +754,31 @@ namespace NetSparkle
             {
                 try
                 {
-                    UserWindow = UIFactory.CreateSparkleForm(updates, _applicationIcon);
-
-                    if (HideReleaseNotes)
+                    // define action
+                    Action<object> showSparkleUI = (state) =>
                     {
-                        UserWindow.HideReleaseNotes();
-                    }
+                        UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon);
 
-                    // clear if already set.
-                    UserWindow.UserResponded += OnUserWindowUserResponded;
-                    UserWindow.Show();
-                    UserWindow.BringToFront();
-                }
+                        if (HideReleaseNotes)
+                        {
+                            UserWindow.HideReleaseNotes();
+                        }
+
+                        // clear if already set.
+                        UserWindow.UserResponded += OnUserWindowUserResponded;
+                        UserWindow.Show();
+                    };
+
+                    // call action
+                    if (UseSyncronizedForms)
+                    {
+                        _syncContext.Send((state) => showSparkleUI(state), null);
+                    }
+                    else
+                    {
+                        showSparkleUI(null);
+                    }
+                }  
                 catch (Exception e)
                 {
                     ReportDiagnosticMessage("Error showing sparkle form: " + e.Message);
@@ -707,6 +797,52 @@ namespace NetSparkle
             Debug.WriteLine("netsparkle: " + message);
         }
 
+        public delegate bool DownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage);
+        public delegate void DownloadFinished(object sende, AsyncCompletedEventArgs e);
+
+        private async void DownloadFileAsync(Uri url, string filename, DownloadProgressChanged progress, DownloadFinished finished)
+        {
+            // not too small. after each filled buffer the UI will be updated.
+            const int BUFFER_SIZE = 65536;
+            try
+            {
+                var buffer = new byte[BUFFER_SIZE];
+
+                using (var response = GetWebContentResponse(url.ToString()))
+                {
+                    long bytesReceived = 0;
+                    long totalBytesToReceive = response.ContentLength;
+
+                    using (var inStream = response.GetResponseStream())
+                    using (var outStream = new FileStream(filename, FileMode.Create))
+                    {
+                        int bytesRead = 0;
+                        do
+                        {
+                            bytesRead = await inStream.ReadAsync(buffer, 0, BUFFER_SIZE);
+                            if (bytesRead != 0)
+                                await outStream.WriteAsync(buffer, 0, bytesRead);
+                            bytesReceived += bytesRead;
+
+                            if (!progress(this, bytesReceived, totalBytesToReceive, (int)(100 * bytesReceived / totalBytesToReceive)))
+                            {
+                                response.Close();
+                                finished(this, new AsyncCompletedEventArgs(null, true, null));
+                                return;
+                            }
+                        } while (bytesRead > 0);
+                    }
+
+                    response.Close();
+                    finished(this, new AsyncCompletedEventArgs(null, false, null));
+                }
+            }
+            catch (Exception e)
+            {
+                finished(this, new AsyncCompletedEventArgs(e, false, null));
+            }
+        }
+
         /// <summary>
         /// Starts the download process
         /// </summary>
@@ -719,35 +855,23 @@ namespace NetSparkle
 
             // get temp path
             _downloadTempFileName = Path.Combine(Path.GetTempPath(), fileName);
+            if (ProgressWindow != null)
+            {
+                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
+                ProgressWindow = null;
+            }
             if (ProgressWindow == null)
             {
                 ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
             }
-            else
-            {
-                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
-            }
-
             ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
-            
-            // set up the download client
-            // start async download
-            if (_webDownloadClient != null)
-            {
-                _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnClientDownloadProgressChanged;
-                _webDownloadClient.DownloadFileCompleted -= OnWebDownloadClientDownloadFileCompleted;
-                _webDownloadClient = null;
-            }
 
-            _webDownloadClient = new WebClient {
-                UseDefaultCredentials = true,
-                Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
-            };
-            _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnClientDownloadProgressChanged;
-            _webDownloadClient.DownloadFileCompleted += OnWebDownloadClientDownloadFileCompleted;
-
-            Uri url = new Uri(item.DownloadLink);
-            _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+            DownloadFileAsync(
+                GetAbsoluteUrl(item.DownloadLink),
+                _downloadTempFileName,
+                ProgressWindow.OnDownloadProgressChanged,
+                OnDownloadFinished
+                );
 
             ProgressWindow.ShowDialog();
         }
@@ -909,16 +1033,12 @@ namespace NetSparkle
             {
                 // verify if we talk about our app cast dll 
                 HttpWebRequest req = sender as HttpWebRequest;
-                if (req == null)
-                    return cert2 != null && cert2.Verify();
-
-                // if so just return our trust 
-                if (req.RequestUri.Equals(new Uri(_appCastUrl)))
+                if (req != null && req.RequestUri.Equals(new Uri(_appCastUrl)))
                     return true;
-                return cert2 != null && cert2.Verify();
             }
+
             // check our cert                 
-            return cert2 != null && cert2.Verify();
+            return sslPolicyErrors == SslPolicyErrors.None && cert2 != null && cert2.Verify();
         }
 
         /// <summary>
@@ -931,27 +1051,41 @@ namespace NetSparkle
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             UpdateStatus updateAvailable = updateData.Status;
             Cursor.Current = Cursors.Default;
-            
-            switch(updateAvailable)
+
+            Action<object> UIAction = (state) =>
             {
-                case UpdateStatus.UpdateAvailable:
-                    // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
-                    // TODO: Fix!
-                    //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
-                    //ShowUpdateNeededUIInner(updateData.Updates);
-                    break;
-                case UpdateStatus.UpdateNotAvailable:
-                    UIFactory.ShowVersionIsUpToDate();
-                    break;
-                case UpdateStatus.UserSkipped:
-                    UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
-                    break;
-                case UpdateStatus.CouldNotDetermine:
-                    UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                switch (updateAvailable)
+                {
+                    case UpdateStatus.UpdateAvailable:
+                        // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
+                        // TODO: Fix!
+                        //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
+                        //ShowUpdateNeededUIInner(updateData.Updates);
+                        break;
+                    case UpdateStatus.UpdateNotAvailable:
+                        UIFactory.ShowVersionIsUpToDate();
+                        break;
+                    case UpdateStatus.UserSkipped:
+                        UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
+                        break;
+                    case UpdateStatus.CouldNotDetermine:
+                        UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            };
+
+            if (UseSyncronizedForms)
+            {
+                _syncContext.Send((state) => UIAction(state), null);
             }
+            else
+            {
+                UIAction(null);
+            }
+
+
             return updateData;// in this case, we've already shown UI talking about the new version
         }
 
@@ -996,8 +1130,16 @@ namespace NetSparkle
                 if (UpdateDetected != null)
                 {
                     UpdateDetected(this, ev);
+                    // if the client wants the default UI then show them
+                    switch (ev.NextAction)
+                    {
+                        case NextUpdateAction.ShowStandardUserInterface:
+                            ReportDiagnosticMessage("Showing Standard Update UI");
+                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                            break;
+                    }
                 }
-                    //otherwise just go forward with the UI notficiation
+                //otherwise just go forward with the UI notficiation
                 else
                 {
                     ShowUpdateNeededUI(updates);
@@ -1033,10 +1175,10 @@ namespace NetSparkle
         /// </summary>
         public void CancelInstall()
         {
-            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
-            {
-                _webDownloadClient.CancelAsync();
-            }
+            //if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            //{
+            //    _webDownloadClient.CancelAsync();
+            //}
         }
 
         /// <summary>
@@ -1268,17 +1410,24 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">used to determine if the download was successful.</param>
-        private void OnWebDownloadClientDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
             if (e.Error != null)
             {
                 UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
-                ProgressWindow.ForceClose();
+                if (ProgressWindow != null)
+                    ProgressWindow.ForceClose();
+                return;
+            }
+
+            if (e.Cancelled)
+            {
+                UIFactory.ShowDownloadErrorMessage("Download cancelled", _appCastUrl);
                 return;
             }
 
             // test the item for DSA signature
-            bool isDSAOk = false;
+            var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
                 ReportDiagnosticMessage("Finished downloading file to: " + _downloadTempFileName);
@@ -1294,30 +1443,19 @@ namespace NetSparkle
                     if (!File.Exists(absolutePath))
                         throw new FileNotFoundException();
 
-                    if (UserWindow.CurrentItem.DSASignature == null)
-                    {
-                        isDSAOk = true;// REVIEW. The correct logic, seems to me, is that if the existing, running version of the app
-                                       //had no DSA, and the appcast didn't specify one, then it's ok that the one we've just 
-                                       //downloaded doesn't either. This may be just checking that the appcast didn't specify one. Is 
-                                        //that really enough? If someone can change what gets downloaded, can't they also change the appcast?
-                    }
-                    else
-                    {
-                        // get the assembly reference from which we start the update progress
-                        // only from this trusted assembly the public key can be used
-                        Assembly refassembly = Assembly.GetEntryAssembly();
-                        if (refassembly != null)
-                        {
-                            // Check if we found the public key in our entry assembly
-                            if (NetSparkleDSAVerificator.ExistsPublicKey("NetSparkle_DSA.pub"))
-                            {
-                                // check the DSA Code and modify the back color            
-                                NetSparkleDSAVerificator dsaVerifier = new NetSparkleDSAVerificator("NetSparkle_DSA.pub");
-                                isDSAOk = dsaVerifier.VerifyDSASignature(UserWindow.CurrentItem.DSASignature, _downloadTempFileName);
-                            }
-                        }
-                    }
+                    // check the DSA signature
+                    validationRes = DSAVerificator.VerifyDSASignatureFile(UserWindow.CurrentItem.DownloadDSASignature, _downloadTempFileName);
                 }
+            }
+
+            // signature of file isn't valid so exit with error
+            if (validationRes == ValidationResult.Invalid)
+            {
+                ReportDiagnosticMessage("Invalid signature of file: " + _downloadTempFileName);
+                UIFactory.ShowDownloadErrorMessage("Invalid signature of file", _appCastUrl);
+                if (ProgressWindow != null)
+                    ProgressWindow.ForceClose();
+                return;
             }
 
             if (EnableSilentMode)
@@ -1327,7 +1465,7 @@ namespace NetSparkle
 
             if (ProgressWindow != null)
             {
-                ProgressWindow.ChangeDownloadState(isDSAOk);
+                ProgressWindow.ChangeDownloadState();
             }
         }
 

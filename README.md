@@ -4,7 +4,12 @@ Simple .net update checker & installer downloader. You provide, somewhere on the
 
 ## Basic Usage
 
-    _sparkleApplicationUpdater = new Sparkle(@"http://example.com/appcast.xml", this.Icon);
+    _sparkleApplicationUpdater = new Sparkle(
+        @"http://example.com/appcast.xml", 
+        this.Icon, 
+        SecurityMode.Strict,
+        @"<DSAKeyValue>...</DSAKeyValue>",
+    );
 	_sparkleApplicationUpdater.CheckOnFirstApplicationIdle();
 
 On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, the user will be notified with a little "toast" box if enabled, otherwise with the update dialog containing your release notes (if defined). The user can then ignore the update, ask to be reminded later, or download it now.
@@ -30,9 +35,27 @@ NetSparkle is [MIT Licensed]
 
 ## Requirements
 
-- .NET 4.0
+- .NET 4.5
 
 ## History
+June 2016 Steffen Xonna: Forked the library to raise the secuity and change some handling for an better usability for the user.  
+
+ - Introduce an SecurityMode
+   - SecurityMode.Unsafe = Is nearly the same like before. If there isn't an Signature or an DSA Key the files will be accepted. If both is present the signature has to be valid. *i don't recommend this mode.* It has critical security issues.
+   - SecurityMode.UseIfPossible = If an local DSA key is available then an signature is neccessary. If both is present the signature has to be valid.
+   - SecurityMode.Strict = The default-mode. This mode enforce the avaibility of an local DSA Key. If none is available the updatefiles will be rejected. *I strongly recommend this mode.*
+ - Added support for DSA public key as parameter for sparkle.
+ - Added support for appcast sidecar file which contains the DSA signature. Depends on the same rules (SecurityMode) like all other files.
+ - Added support for DSA signatures of release note links. Depends on the same rules (SecurityMode) like all other files.
+ - Added support for embedded release note.
+ - Added support for relativ downloads and relativ external release notes.
+ - Added the possibility to show the form synchronized with the main form. I hope for better handling for the user. So no window in background or multiple windows will be shown.
+ - Added better handling of ssl connections (all downloads should use the same code and not 3 different)
+ - Added support for custom registry path of configuration
+ - Fix: don't accept ssl connections with policy errors.
+ - only show versions they match security mode (if signature is needed than only accept versions with signatures or without downloads)
+ - Fix: download don't stop if download windows will be closed
+
 23 December 2014 Bluewalk: Since the development seems very quiet, I have forked this project and started adding fixes from other forks into this fork. Also I started to add improvements to the library as well including:
 
  - Cleaning up the project files

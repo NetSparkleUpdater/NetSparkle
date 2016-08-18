@@ -10,26 +10,68 @@ using System.Security.Cryptography;
 namespace NetSparkle
 {
     /// <summary>
+    /// Controls the Mode in which situations which files has to be signed with the DSA private key.
+    /// If an DSA public key and an signature is preset they allways has to be valid.
+    /// </summary>
+    public enum SecurityMode
+    {
+        /// <summary>
+        /// All files (with or without signature) will be accepted. This was the default mode before.
+        /// I strongly don't recommend this mode. It can cause critical security issues.
+        /// </summary>
+        Unsafe = 1,
+
+        /// <summary>
+        /// If there is an DSA public key all files has to be signed. If there isn't any DSA public key
+        /// also files without an signature will be accepted. It's an mix between Unsafe and Strict and
+        /// can have some security issues if the DSA public key gets lost in the application.
+        /// </summary>
+        UseIfPossible = 2,
+
+        /// <summary>
+        /// Every file has to be signed. This means the DSA public key must exist. I recommend this mode
+        /// to enforce the use of secure update informations. This is the default mode.
+        /// </summary>
+        Strict = 3,
+    }
+
+    /// <summary>
+    /// Return value of the DSA verification check functions.
+    /// </summary>
+    public enum ValidationResult
+    {
+        /// <summary>
+        /// The DSA public key and signature exists and they are valid.
+        /// </summary>
+        Valid = 1,
+
+        /// <summary>
+        /// Depending on the SecirityMode at least one of DSA public key or the signature dosn't exist or
+        /// they exists but they are not valid. In this case the file will be rejected.
+        /// </summary>
+        Invalid = 2,
+
+        /// <summary>
+        /// There wasn't any DSA public key or signature and SecurityMode said this is okay.
+        /// </summary>
+        Unchecked = 3,
+    }
+
+    /// <summary>
     /// Class to verify a DSA signature
     /// </summary>
     public class NetSparkleDSAVerificator
     {
+        private SecurityMode _securityMode;
         private DSACryptoServiceProvider _provider;
 
         /// <summary>
-        /// Determines if a public key exists in this 
+        /// Determines if a public key exists
         /// </summary>
-        /// <param name="publicKey"></param>
-        /// <returns></returns>
-        public static Boolean ExistsPublicKey(String publicKey)
+        /// <returns><c>Boolean</c>  </returns>
+        public Boolean PublicKeyExists()
         {
-                // 1. try to load this from resource
-            Stream data = TryGetResourceStream(publicKey);
-            if (data == null )
-                data = TryGetFileResource(publicKey, data);
-
-            // 2. check the resource
-            if (data == null)
+            if (_provider == null)
                 return false;
             else
                 return true;
@@ -38,25 +80,136 @@ namespace NetSparkle
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="publicKey">the public key</param>
-        public NetSparkleDSAVerificator(String publicKey)
+        /// <param name="mode">The security mode of the validator. Control what parts has to be exist</param>
+        /// <param name="publicKey">the public key as string (will be prefered before the file)</param>
+        /// <param name="publicKeyFile">the public key file</param>
+        public NetSparkleDSAVerificator(SecurityMode mode, String publicKey = null, String publicKeyFile = "NetSparkle_DSA.pub")
         {
-            // 1. try to load this from resource
-            Stream data = TryGetResourceStream(publicKey);
-            if (data == null )
-                data = TryGetFileResource(publicKey, data);
+            _securityMode = mode;
 
-            // 2. check the resource
-            if ( data == null )
-                throw new Exception("Couldn't find public key for verification");
+            String key = publicKey;
 
-            // 3. read out the key value
-            using (StreamReader reader = new StreamReader(data))
+            if (string.IsNullOrEmpty(key))
             {
-                    String key = reader.ReadToEnd();
+                // TODO: Loading Ressources don't work
+                Stream data = TryGetResourceStream(publicKeyFile);
+                if (data == null)
+                    data = TryGetFileResource(publicKeyFile, data);
+
+
+                if (data != null)
+                {
+                    using (StreamReader reader = new StreamReader(data))
+                    {
+                        key = reader.ReadToEnd();
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(key))
+            {
+                try
+                {
                     _provider = new DSACryptoServiceProvider();
                     _provider.FromXmlString(key);
-            }            
+                }
+                catch
+                {
+                    _provider = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns if we need an signature
+        /// </summary>
+        /// <returns><c>Boolean</c>  </returns>
+        public Boolean SignatureNeeded()
+        {
+            switch (_securityMode)
+            {
+                case SecurityMode.UseIfPossible:
+                    // if we have an dsa key we need an signatur
+                    return PublicKeyExists();
+
+                case SecurityMode.Strict:
+                    // we allways need an signature
+                    return true;
+
+                case SecurityMode.Unsafe:
+                    return false;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private Boolean CheckSecurityMode(String signature, ref ValidationResult result)
+        {
+            switch (_securityMode)
+            {
+                case SecurityMode.UseIfPossible:
+                    // if we have an dsa key we accept only signatures
+                    if (PublicKeyExists() && string.IsNullOrEmpty(signature))
+                    {
+                        result = ValidationResult.Invalid;
+                        return false;
+                    }
+                    // if we don't have an dsa key we accept all.
+                    if (!PublicKeyExists())
+                    {
+                        result = ValidationResult.Unchecked;
+                        return false;
+                    }
+                    break;
+
+                case SecurityMode.Strict:
+                    // only accept if we have booth
+                    if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
+                    {
+                        result = ValidationResult.Invalid;
+                        return false;
+                    }
+                    break;
+                
+                case SecurityMode.Unsafe:
+                    // allways accept anything.
+                    // but exit with unchecked if we have an signature
+                    if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
+                    {
+                        result = ValidationResult.Unchecked;
+                        return false;
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Verifies the DSA signature
+        /// </summary>
+        /// <param name="signature">expected signature</param>
+        /// <param name="stream">the stream of the binary</param>
+        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
+        public ValidationResult VerifyDSASignature(String signature, Stream stream)
+        {
+            ValidationResult res = ValidationResult.Invalid;
+            if (!CheckSecurityMode(signature, ref res))
+                return res;
+
+            // convert signature
+            Byte[] bHash = Convert.FromBase64String(signature);
+
+            // read the data
+            byte[] bData = null;
+            bData = new Byte[stream.Length];
+            stream.Read(bData, 0, bData.Length);
+
+            // verify
+            return _provider.VerifyData(bData, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
         }
 
         /// <summary>
@@ -65,24 +218,33 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="binaryPath">the path to the binary</param>
         /// <returns><c>true</c> if the signature matches the expected signature.</returns>
-        public Boolean VerifyDSASignature(String signature, String binaryPath)
+        public ValidationResult VerifyDSASignatureFile(String signature, String binaryPath)
         {
-            if (_provider == null)
-                return false;
-
-            // convert signature
-            Byte[] bHash = Convert.FromBase64String(signature);
-
-            // read the data
-            byte[] bData = null;
+            var data = string.Empty;
             using (Stream inputStream = File.OpenRead(binaryPath))
             {
-                bData = new Byte[inputStream.Length];
-                inputStream.Read(bData, 0, bData.Length);
+                return VerifyDSASignature(signature, inputStream);
             }
-            
-            // verify
-            return _provider.VerifyData(bData, bHash);            
+        }
+
+        /// <summary>
+        /// Verifies the DSA signature of string data
+        /// </summary>
+        /// <param name="signature">expected signature</param>
+        /// <param name="data">the data</param>
+        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
+        public ValidationResult VerifyDSASignatureOfString(String signature, String data)
+        {
+            // creating stream from string
+            using (var stream = new MemoryStream())
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(data);
+                writer.Flush();
+                stream.Position = 0;
+
+                return VerifyDSASignature(signature, stream);
+            }
         }
 
         /// <summary>
