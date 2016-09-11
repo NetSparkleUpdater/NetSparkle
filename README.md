@@ -2,6 +2,21 @@
 
 Simple .net update checker & installer downloader. You provide, somewhere on the net, an rss xml file that advertises latest version. You also provide release notes. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
 
+## About This Fork
+
+This is a fork of NetSparkle, which has been forked by various people at various times. As of 2016-09-11, this is the "latest" fork. I, Deadpikle, am not actively working on or maintaining this repo outside of issues I experience using it for work, but I welcome any and all bug reports, pull requests, and other feature changes. In other words, I'm happy to help maintain the code so we don't have a million forks floating around. 
+
+I highly recommend checking out https://github.com/Squirrel/Squirrel.Windows, which is a more Chrome-like software updater. That repo is actively maintained.
+
+Some things TODO if you want to help:
+
+- Delete the downloaded installer once we're done? (Perhaps using START /wait?)
+- I'm pretty sure there's a bug where `SecurityMode.Strict` doesn't properly check the DSA on update files
+- Better WPF support. WPF app updates work right now, but this project has obviously been created for Forms instead. There's already been work to keep the UI separate from the actual updater, which is good, but better WPF support/documentation/etc. would be helpful.
+- Could we do something neat to tie this in with Squirrel.Windows? https://github.com/Squirrel/Squirrel.Windows
+- Clean up the code (this is needed quite a bit)
+- Update the example files and demo project
+
 ## Basic Usage
 
     _sparkleApplicationUpdater = new Sparkle(
@@ -47,7 +62,7 @@ NetSparkle is [MIT Licensed]
 - .NET 4.5
 
 ## History
-June 2016 Steffen Xonna: Forked the library to raise the secuity and change some handling for an better usability for the user.  
+June 2016 Steffen Xonna: Forked the library to raise the security and change some handling for an better usability for the user.  
 
  - Introduce an SecurityMode
    - SecurityMode.Unsafe = Is nearly the same like before. If there isn't an Signature or an DSA Key the files will be accepted. If both is present the signature has to be valid. *i don't recommend this mode.* It has critical security issues.
