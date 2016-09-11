@@ -181,6 +181,7 @@ namespace NetSparkle
         private Boolean _useNotificationToast;
 
         private string _downloadTempFileName;
+        private WebClient _webDownloadClient;
         private Process _installerProcess;
 
         /// <summary>
@@ -562,9 +563,19 @@ namespace NetSparkle
         {
             ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
             _cancelTokenSource.Cancel();
-           /* _worker.DoWork -= OnWorkerDoWork;
-            _worker.ProgressChanged -= OnWorkerProgressChanged;
-            _worker = null; */
+            /* _worker.DoWork -= OnWorkerDoWork;
+             _worker.ProgressChanged -= OnWorkerProgressChanged;
+             _worker = null; */
+
+            if (_webDownloadClient != null)
+            {
+                if (ProgressWindow != null)
+                {
+                    _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                }
+                _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
+                _webDownloadClient = null;
+            }
 
             if (UserWindow != null)
             {
@@ -620,7 +631,7 @@ namespace NetSparkle
                     inv.CollectInventory();
 
                     // build url
-                    String requestUrl = inv.BuildRequestUrl(SystemProfileUrl + "?");
+                    string requestUrl = inv.BuildRequestUrl(SystemProfileUrl + "?");
 
                     // perform the webrequest
                     HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
@@ -816,59 +827,13 @@ namespace NetSparkle
                 Console.WriteLine("netsparkle: " + message);
         }
 
-        public delegate bool DownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage);
-        public delegate void DownloadFinished(object sende, AsyncCompletedEventArgs e);
-
-        private async void DownloadFileAsync(Uri url, string filename, DownloadProgressChanged progress, DownloadFinished finished)
-        {
-            // not too small. after each filled buffer the UI will be updated.
-            const int BUFFER_SIZE = 65536;
-            try
-            {
-                var buffer = new byte[BUFFER_SIZE];
-
-                using (var response = GetWebContentResponse(url.ToString()))
-                {
-                    long bytesReceived = 0;
-                    long totalBytesToReceive = response.ContentLength;
-
-                    using (var inStream = response.GetResponseStream())
-                    using (var outStream = new FileStream(filename, FileMode.Create))
-                    {
-                        int bytesRead = 0;
-                        do
-                        {
-                            bytesRead = await inStream.ReadAsync(buffer, 0, BUFFER_SIZE);
-                            if (bytesRead != 0)
-                                await outStream.WriteAsync(buffer, 0, bytesRead);
-                            bytesReceived += bytesRead;
-
-                            if (!progress(this, bytesReceived, totalBytesToReceive, (int)(100 * bytesReceived / totalBytesToReceive)))
-                            {
-                                response.Close();
-                                finished(this, new AsyncCompletedEventArgs(null, true, null));
-                                return;
-                            }
-                        } while (bytesRead > 0);
-                    }
-
-                    response.Close();
-                    finished(this, new AsyncCompletedEventArgs(null, false, null));
-                }
-            }
-            catch (Exception e)
-            {
-                finished(this, new AsyncCompletedEventArgs(e, false, null));
-            }
-        }
-
         /// <summary>
         /// Starts the download process
         /// </summary>
         /// <param name="item">the appcast item to download</param>
         private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
         {
-            // get the filename of the download lin
+            // get the filename of the download link
             string[] segments = item.DownloadLink.Split('/');
             string fileName = segments[segments.Length - 1];
 
@@ -885,14 +850,27 @@ namespace NetSparkle
             }
             ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
 
-            DownloadFileAsync(
-                GetAbsoluteUrl(item.DownloadLink),
-                _downloadTempFileName,
-                ProgressWindow.OnDownloadProgressChanged,
-                OnDownloadFinished
-                );
+            if (_webDownloadClient != null)
+            {
+                _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
+                _webDownloadClient = null;
+            }
 
-            ProgressWindow.ShowDialog();
+            _webDownloadClient = new WebClient
+            {
+                UseDefaultCredentials = true,
+                Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
+            };
+            _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+            _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
+
+            Uri url = new Uri(item.DownloadLink);
+            _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+
+            DialogResult result = ProgressWindow.ShowDialog();
+            if (result == DialogResult.Abort || result == DialogResult.Cancel)
+                CancelFileDownload();
         }
 
         /// <summary>
@@ -1206,12 +1184,13 @@ namespace NetSparkle
         /// <summary>
         /// Cancels the install
         /// </summary>
-        public void CancelInstall()
+        public void CancelFileDownload()
         {
-            //if (_webDownloadClient != null && _webDownloadClient.IsBusy)
-            //{
-            //    _webDownloadClient.CancelAsync();
-            //}
+            ReportDiagnosticMessage("Canceling download...");
+            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            {
+                _webDownloadClient.CancelAsync();
+            }
         }
 
         /// <summary>
@@ -1339,8 +1318,7 @@ namespace NetSparkle
 
                 // send notification if needed
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
-                if (UpdateDetected != null)
-                    UpdateDetected(this, ev);
+                UpdateDetected?.Invoke(this, ev);
 
                 // check results
                 switch (ev.NextAction)
@@ -1372,8 +1350,7 @@ namespace NetSparkle
                 isInitialCheck = false;
 
                 // notify
-                if (CheckLoopFinished != null)
-                    CheckLoopFinished(this, bUpdateRequired);
+                CheckLoopFinished?.Invoke(this, bUpdateRequired);
 
                 // report wait statement
                 ReportDiagnosticMessage(String.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
@@ -1398,7 +1375,7 @@ namespace NetSparkle
                     continue;
                 }
 
-                // check the exit hadnle
+                // check the exit handle
                 if (i == 0)
                 {
                     ReportDiagnosticMessage("Got exit signal");

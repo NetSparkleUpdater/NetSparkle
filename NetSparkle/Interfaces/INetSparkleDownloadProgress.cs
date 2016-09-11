@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System;
+using System.Windows.Forms;
 
 namespace NetSparkle.Interfaces
 {
@@ -24,14 +25,14 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        void ShowDialog();
+        DialogResult ShowDialog();
 
         /// <summary>
         /// Called when the download progress changes
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">used to resolve the progress of the download. Also contains the total size of the download</param>
-        bool OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage);
+        void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e);
 
         /// <summary>
         /// Force window close

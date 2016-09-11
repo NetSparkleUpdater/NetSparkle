@@ -42,7 +42,6 @@ namespace NetSparkle
             _items = new List<NetSparkleAppCastItem>();
         }
 
-
         private string TryReadSignature()
         {
             try

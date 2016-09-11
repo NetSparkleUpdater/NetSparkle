@@ -16,6 +16,8 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
+        private bool _wasClosedDuringDownload;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -35,14 +37,23 @@ namespace NetSparkle
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;
             progressDownload.Step = 1;
+            _wasClosedDuringDownload = false;
+
+            FormClosing += NetSparkleDownloadProgress_FormClosing;
+        }
+
+        private void NetSparkleDownloadProgress_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            _wasClosedDuringDownload = true;
         }
 
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        void INetSparkleDownloadProgress.ShowDialog()
+        DialogResult INetSparkleDownloadProgress.ShowDialog()
         {
-            base.ShowDialog();
+            return base.ShowDialog();
         }
 
         /// <summary>
@@ -55,6 +66,7 @@ namespace NetSparkle
             buttonCancel.Visible = false;
             downloadProgressLbl.Visible = false;
             btnInstallAndReLaunch.Visible = true;
+            FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
 
         /// <summary>
@@ -64,6 +76,7 @@ namespace NetSparkle
         {
             DialogResult = DialogResult.Abort;
             Close();
+            _wasClosedDuringDownload = true;
         }
 
         private string numBytesToUserReadableString(long numBytes)
@@ -97,14 +110,21 @@ namespace NetSparkle
         /// <param name="bytesReceived"></param>
         /// <param name="totalBytesToReceive"></param>
         /// <param name="percentage"></param>
-        /// <returns></returns>
-        public bool OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
+        private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
             progressDownload.Value = percentage;
             downloadProgressLbl.Text = " (" + numBytesToUserReadableString(bytesReceived) + " / " + 
                 numBytesToUserReadableString(totalBytesToReceive) + ")";
-            
-            return this.Visible;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
         }
 
         /// <summary>
@@ -117,6 +137,10 @@ namespace NetSparkle
             InstallAndRelaunch?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="shouldBeEnabled"></param>
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
         {
             btnInstallAndReLaunch.Enabled = shouldBeEnabled;
@@ -124,6 +148,8 @@ namespace NetSparkle
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
+            _wasClosedDuringDownload = true;
             Close();
         }
     }
