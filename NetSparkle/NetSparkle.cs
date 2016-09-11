@@ -231,6 +231,8 @@ namespace NetSparkle
         {
             _applicationIcon = applicationIcon;
 
+            PrintDiagnosticToConsole = false;
+
             UIFactory = factory;
 
             // DSA Verificator
@@ -303,14 +305,14 @@ namespace NetSparkle
         /// <summary>
         /// Enables system profiling against a profile server
         /// </summary>
-        public Boolean EnableSystemProfiling { get; private set; }
+        public bool EnableSystemProfiling { get; private set; }
 
         /// <summary>
         /// Hides the release notes view when an update was found. This 
         /// mode is switched on automatically when no sparkle:releaseNotesLink
         /// tag was found in the app cast         
         /// </summary>
-        public Boolean HideReleaseNotes { get; private set; }
+        public bool HideReleaseNotes { get; private set; }
 
         /// <summary>
         /// Contains the profile url for System profiling
@@ -331,14 +333,19 @@ namespace NetSparkle
         public bool RunningFromWPF { get; set; }
 
         /// <summary>
-        /// Defines if the application needs to be relaunced after executing the downloaded installer
+        /// Defines if the application needs to be relaunched after executing the downloaded installer
         /// </summary>
         public bool RelaunchAfterUpdate { get; set; }
 
         /// <summary>
+        /// If true, prints diagnostic messages to Console.WriteLine rather than Debug.WriteLine
+        /// </summary>
+        public bool PrintDiagnosticToConsole { get; set; }
+
+        /// <summary>
         /// Run the downloaded installer with these arguments
         /// </summary>
-        public String CustomInstallerArguments { get; set; }
+        public string CustomInstallerArguments { get; set; }
 
         /// <summary>
         /// This property returns true when the upadete loop is running
@@ -495,7 +502,11 @@ namespace NetSparkle
             UnregisterEvents();
         }
 
-
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <returns></returns>
         public WebResponse GetWebContentResponse(string Url)
         {
             WebRequest request = WebRequest.Create(Url);
@@ -525,6 +536,11 @@ namespace NetSparkle
             return null;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <returns></returns>
         public Stream GetWebContentStream(string Url)
         {
             var response = GetWebContentResponse(Url);
@@ -792,9 +808,12 @@ namespace NetSparkle
         /// This method reports a message in the diagnostic window
         /// </summary>
         /// <param name="message"></param>
-        public void ReportDiagnosticMessage(String message)
+        public void ReportDiagnosticMessage(string message)
         {
-            Debug.WriteLine("netsparkle: " + message);
+            if (!PrintDiagnosticToConsole)
+                Debug.WriteLine("netsparkle: " + message);
+            else
+                Console.WriteLine("netsparkle: " + message);
         }
 
         public delegate bool DownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage);
@@ -934,6 +953,18 @@ namespace NetSparkle
 
             using (StreamWriter write = new StreamWriter(cmd))
             {
+                write.WriteLine("@echo off");
+                // We should wait until the host process has died before starting the installer.
+                // This way, any DLLs or other items can be replaced properly.
+                // Code from: http://stackoverflow.com/a/22559462/3938401
+                int processID = Process.GetCurrentProcess().Id;
+                write.WriteLine(":loop");
+                write.WriteLine("tasklist | find \"" + processID.ToString() + "\" > nul");
+                write.WriteLine("if not errorlevel 1 (");
+                write.WriteLine("ECHO Waiting for application to close...");
+                write.WriteLine("timeout /t 1 >nul");
+                write.WriteLine("goto :loop");
+                write.WriteLine(")");
                 write.WriteLine(installerCmd);
 
                 if (RelaunchAfterUpdate)
@@ -960,6 +991,8 @@ namespace NetSparkle
             // listen for application exit events
             Application.ApplicationExit += OnWindowsFormsApplicationExit;
             // quit the app
+            if (_exitHandle != null)
+                _exitHandle.Set(); // make SURE the loop exits!
             if (RunningFromWPF == true)
             {
                 // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
@@ -1238,11 +1271,10 @@ namespace NetSparkle
                 if (_cancelToken.IsCancellationRequested)
                     break;
                 // set state
-                Boolean bUpdateRequired = false;
+                bool bUpdateRequired = false;
 
                 // notify
-                if (CheckLoopStarted != null)
-                    CheckLoopStarted(this);
+                CheckLoopStarted?.Invoke(this);
 
                 // report status
                 if (doInitialCheck == false)
@@ -1260,7 +1292,7 @@ namespace NetSparkle
                 NetSparkleConfiguration config = GetApplicationConfig();
 
                 // calc CheckTasp
-                Boolean checkTSPInternal = checkTSP;
+                bool checkTSPInternal = checkTSP;
 
                 if (isInitialCheck && checkTSPInternal)
                     checkTSPInternal = !_forceInitialCheck;
