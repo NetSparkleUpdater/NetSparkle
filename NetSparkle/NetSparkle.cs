@@ -232,6 +232,8 @@ namespace NetSparkle
         {
             _applicationIcon = applicationIcon;
 
+            ExtraJsonData = "";
+
             PrintDiagnosticToConsole = false;
 
             UIFactory = factory;
@@ -405,13 +407,18 @@ namespace NetSparkle
         /// <summary>
         /// Specifies if you want to use the notification toast
         /// </summary>
-        public Boolean UseNotificationToast
+        public bool UseNotificationToast
         {
             get { return _useNotificationToast; }
             set { _useNotificationToast = value; }
         }
 
-        public Boolean UseSyncronizedForms { get; set; }
+        public bool UseSyncronizedForms { get; set; }
+
+        /// <summary>
+        /// If not "", sends extra JSON via POST to server with the web request for update information.
+        /// </summary>
+        public string ExtraJsonData { get; set; }
 
         #endregion
 
@@ -529,6 +536,20 @@ namespace NetSparkle
                     httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     if (TrustEverySSLConnection)
                         httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+                    // http://stackoverflow.com/a/10027534/3938401
+                    if (ExtraJsonData != null && ExtraJsonData != "")
+                    {
+                        httpRequest.ContentType = "application/json";
+                        httpRequest.Method = "POST";
+
+                        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+                        {
+                            streamWriter.Write(ExtraJsonData);
+                            streamWriter.Flush();
+                            streamWriter.Close();
+                        }
+                    }
 
                     // request the cast and build the stream
                     return httpRequest.GetResponse();
