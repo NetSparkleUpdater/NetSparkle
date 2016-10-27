@@ -124,7 +124,7 @@ namespace NetSparkle
         /// Returns if we need an signature
         /// </summary>
         /// <returns><c>Boolean</c>  </returns>
-        public Boolean SignatureNeeded()
+        public bool SignatureNeeded()
         {
             switch (_securityMode)
             {
@@ -133,7 +133,7 @@ namespace NetSparkle
                     return PublicKeyExists();
 
                 case SecurityMode.Strict:
-                    // we allways need an signature
+                    // we always need an signature
                     return true;
 
                 case SecurityMode.Unsafe:
