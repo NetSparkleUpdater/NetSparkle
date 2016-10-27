@@ -16,8 +16,6 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
-        private bool _wasClosedDuringDownload;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -37,7 +35,6 @@ namespace NetSparkle
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;
             progressDownload.Step = 1;
-            _wasClosedDuringDownload = false;
 
             FormClosing += NetSparkleDownloadProgress_FormClosing;
         }
@@ -45,7 +42,6 @@ namespace NetSparkle
         private void NetSparkleDownloadProgress_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult = DialogResult.Cancel;
-            _wasClosedDuringDownload = true;
         }
 
         /// <summary>
@@ -76,7 +72,6 @@ namespace NetSparkle
         {
             DialogResult = DialogResult.Abort;
             Close();
-            _wasClosedDuringDownload = true;
         }
 
         private string numBytesToUserReadableString(long numBytes)
@@ -149,7 +144,6 @@ namespace NetSparkle
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
-            _wasClosedDuringDownload = true;
             Close();
         }
     }

@@ -26,9 +26,9 @@ namespace NetSparkle.TestAppWPF
             _sparkle.StartLoop(true, true);
         }
 
-        private async void button1_Click(object sender, RoutedEventArgs e)
+        private void button1_Click(object sender, RoutedEventArgs e)
         {
-            await _sparkle.CheckForUpdatesAtUserRequest();
+            _sparkle.CheckForUpdatesAtUserRequest();
            // _sparkle.StopLoop();
           //  Close();
         }

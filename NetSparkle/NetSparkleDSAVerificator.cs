@@ -201,7 +201,7 @@ namespace NetSparkle
                 return res;
 
             // convert signature
-            Byte[] bHash = Convert.FromBase64String(signature);
+            byte[] bHash = Convert.FromBase64String(signature);
 
             // read the data
             byte[] bData = null;
