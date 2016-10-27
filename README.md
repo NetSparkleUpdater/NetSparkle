@@ -16,6 +16,7 @@ Some things TODO if you want to help:
 - Could we do something neat to tie this in with Squirrel.Windows? https://github.com/Squirrel/Squirrel.Windows
 - Clean up the code (this is needed quite a bit)
 - Update the example files and demo project (as of 2016-10-27, the NetSparkleTestAppWPF and SampleApplication projects work!)
+- Allow for a WPF window to show changelog/download progress/etc. instead of forcing the user to make their own and implement the UIFactory and INetSparkleDownloadProgress/INetSparkleForm/etc. interfaces.
 - Make demos more extensive to show off features
 
 ## Basic Usage
