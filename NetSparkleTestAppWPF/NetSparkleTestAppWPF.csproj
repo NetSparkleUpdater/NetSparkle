@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BBE308BB-4096-4E7B-A458-85172F47C497}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetSparkle.TestAppWPF</RootNamespace>
     <AssemblyName>NetSparkle.TestAppWPF</AssemblyName>
