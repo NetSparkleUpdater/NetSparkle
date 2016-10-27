@@ -1474,7 +1474,11 @@ namespace NetSparkle
                         throw new FileNotFoundException();
 
                     // check the DSA signature
-                    validationRes = DSAVerificator.VerifyDSASignatureFile(UserWindow.CurrentItem.DownloadDSASignature, _downloadTempFileName);
+                    string dsaSignature = UserWindow?.CurrentItem?.DownloadDSASignature;
+                    if (dsaSignature != null)
+                    {
+                        validationRes = DSAVerificator.VerifyDSASignatureFile(UserWindow.CurrentItem.DownloadDSASignature, _downloadTempFileName);
+                    }
                 }
             }
 
