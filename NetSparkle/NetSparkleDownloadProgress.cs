@@ -56,36 +56,29 @@ namespace NetSparkle
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
         /// <param name="signatureValid"></param>
-        public void ChangeDownloadState(bool isDownloadedFileValid)
+        public void FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             progressDownload.Visible = false;
             buttonCancel.Visible = false;
-            downloadProgressLbl.Visible = false;
-            btnInstallAndReLaunch.Visible = true;
-            UpdateDownloadValid(isDownloadedFileValid);
+            if (isDownloadedFileValid)
+            {
+                downloadProgressLbl.Visible = false;
+                btnInstallAndReLaunch.Visible = true;
+                BackColor = Color.FromArgb(240, 240, 240);
+            }
+            else
+            {
+                BackColor = Color.Tomato;
+                btnInstallAndReLaunch.Visible = false;
+            }
             FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
 
         public bool DisplayErrorMessage(string errorMessage)
         {
+            downloadProgressLbl.Visible = true;
             downloadProgressLbl.Text = errorMessage;
             return true;
-        }
-
-        /// <summary>
-        /// Updates the UI to indicate if the download is valid
-        /// </summary>
-        private void UpdateDownloadValid(bool signatureValid)
-        {
-            if (!signatureValid)
-            {
-                Size = new Size(Size.Width, 137);
-                BackColor = Color.Tomato;
-            }
-            else
-            {
-                BackColor = Color.FromArgb(240, 240, 240);
-            }
         }
 
         /// <summary>

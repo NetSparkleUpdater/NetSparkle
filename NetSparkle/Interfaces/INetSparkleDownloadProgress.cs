@@ -42,7 +42,7 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
-        void ChangeDownloadState(bool isDownloadedFileValid);
+        void FinishedDownloadingFile(bool isDownloadedFileValid);
 
         /// <summary>
         /// Show an error message in the download progress window if possible.
