@@ -60,16 +60,16 @@ namespace NetSparkle
         {
             progressDownload.Visible = false;
             buttonCancel.Visible = false;
+            downloadProgressLbl.Visible = false;
             if (isDownloadedFileValid)
             {
-                downloadProgressLbl.Visible = false;
                 btnInstallAndReLaunch.Visible = true;
                 BackColor = Color.FromArgb(240, 240, 240);
             }
             else
             {
-                BackColor = Color.Tomato;
                 btnInstallAndReLaunch.Visible = false;
+                BackColor = Color.Tomato;
             }
             FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
