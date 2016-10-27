@@ -16,3 +16,4 @@ _ReSharper*/
 /nuget/tools/tools
 *.nupkg
 *.DotSettings.user
+TestAppFiles/*.txt
