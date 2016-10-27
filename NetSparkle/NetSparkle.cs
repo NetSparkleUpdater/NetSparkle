@@ -1457,15 +1457,20 @@ namespace NetSparkle
         {
             if (e.Error != null)
             {
-                UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
-                if (ProgressWindow != null)
-                    ProgressWindow.ForceClose();
+                if (!ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                {
+                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
+                }
                 return;
             }
 
             if (e.Cancelled)
             {
-                UIFactory.ShowDownloadErrorMessage("Download cancelled", _appCastUrl);
+                string errorMessage = "Download cancelled";
+                if (!ProgressWindow.DisplayErrorMessage(errorMessage))
+                {
+                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                }
                 return;
             }
 
