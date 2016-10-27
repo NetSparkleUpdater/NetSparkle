@@ -77,6 +77,9 @@ namespace NetSparkle
         public bool DisplayErrorMessage(string errorMessage)
         {
             downloadProgressLbl.Visible = true;
+            progressDownload.Visible = false;
+            btnInstallAndReLaunch.Visible = false;
+            buttonCancel.Text = "Close";
             downloadProgressLbl.Text = errorMessage;
             return true;
         }

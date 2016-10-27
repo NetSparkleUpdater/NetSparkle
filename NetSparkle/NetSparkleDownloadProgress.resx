@@ -249,6 +249,9 @@
   <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
+  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 10.125pt, style=Bold</value>
   </data>
@@ -261,17 +264,17 @@
   <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 0, 6, 0</value>
   </data>
+  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>700, 200</value>
+  </data>
   <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>633, 35</value>
+    <value>211, 37</value>
   </data>
   <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
   </data>
   <data name="downloadProgressLbl.Text" xml:space="preserve">
     <value>(0 MB / 10 MB)</value>
-  </data>
-  <data name="downloadProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
     <value>downloadProgressLbl</value>
