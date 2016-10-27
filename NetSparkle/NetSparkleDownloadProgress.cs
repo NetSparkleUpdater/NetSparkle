@@ -65,6 +65,11 @@ namespace NetSparkle
             FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
 
+        public bool DisplayErrorMessage(string errorMessage)
+        {
+            return true;
+        }
+
         /// <summary>
         /// Force window close
         /// </summary>

@@ -1491,10 +1491,16 @@ namespace NetSparkle
                 ProgressWindow.ChangeDownloadState(isSignatureValid);
             }
             // signature of file isn't valid so exit with error
-            if (isSignatureValid)
+            if (!isSignatureValid)
             {
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
-                UIFactory.ShowDownloadErrorMessage("Downloaded file has invalid signature!", _appCastUrl);
+                string errorMessage = "Downloaded file has invalid signature!";
+                // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
+                if (!ProgressWindow.DisplayErrorMessage(errorMessage))
+                {
+                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                }
+                // Let the progress window handle closing itself.
             }
             else
             {

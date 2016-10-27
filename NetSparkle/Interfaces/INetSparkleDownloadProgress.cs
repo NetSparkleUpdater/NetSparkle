@@ -43,5 +43,12 @@ namespace NetSparkle.Interfaces
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
         void ChangeDownloadState(bool isDownloadedFileValid);
+
+        /// <summary>
+        /// Show an error message in the download progress window if possible.
+        /// </summary>
+        /// <param name="errorMessage">Error message to display</param>
+        /// <returns>True if message displayed; false otherwise</returns>
+        bool DisplayErrorMessage(string errorMessage);
     }
 }
