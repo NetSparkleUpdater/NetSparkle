@@ -45,6 +45,8 @@ If you have files that need saving, subscribe to the AboutToExitForInstallerRun 
     	// ask the user to save, whatever else is needed to close down gracefully   
     });  
 
+If you're using NetSparkle from WPF, make sure to set `RunningFromWPF` to `true`!
+
 ## App Cast
 
 [TODO -- this section]
