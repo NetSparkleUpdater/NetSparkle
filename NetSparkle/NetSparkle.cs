@@ -207,6 +207,16 @@ namespace NetSparkle
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="securityMode">Sparkle Security mode</param>
+        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode)
+            : this(appcastUrl, applicationIcon, securityMode, null)
+        { }
+
+        /// <summary>
+        /// ctor which needs the appcast url
+        /// </summary>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="dsaPublicKey">The dsa public key to verfiy the sigatures.</param>
         public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
