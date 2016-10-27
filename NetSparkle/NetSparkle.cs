@@ -1018,13 +1018,9 @@ namespace NetSparkle
                 {
                     ReportDiagnosticMessage(e.Message);
                 }
-                _installerProcess.Start();
-                Application.Exit();
             }
-            else
-            {
-                Application.Exit();
-            }
+            _installerProcess.Start();
+            Application.Exit();
         }
 
         /// <summary>

@@ -15,21 +15,9 @@ namespace SampleApplication
         {
             InitializeComponent();
 
-            var appcastUrl = "file://" + DirectoryOfTheApplicationExecutable + "../../../Extras/Sample Appcast.xml";
+            var appcastUrl = "https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml";
             _sparkleUpdateDetector = new Sparkle(appcastUrl, SystemIcons.Application);
             _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
-        }
-
-
-        public static string DirectoryOfTheApplicationExecutable
-        {
-            get
-            { 
-                string path;
-                path = new Uri(Assembly.GetExecutingAssembly().CodeBase).AbsolutePath;
-                path = Uri.UnescapeDataString(path);
-                return Directory.GetParent(path).FullName;
-            }
         }
 
         private void button1_Click(object sender, EventArgs e)
