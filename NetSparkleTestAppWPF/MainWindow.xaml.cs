@@ -24,15 +24,7 @@ namespace NetSparkle.TestAppWPF
 
             _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", SystemIcons.Application); //, "NetSparkleTestApp.exe");
             _sparkle.RunningFromWPF = true;
-            _sparkle.CloseWPFWindow += _sparkle_CloseWPFWindow;
             _sparkle.StartLoop(true, true);
-        }
-
-        private void _sparkle_CloseWPFWindow()
-        {
-            Dispatcher.Invoke(() => {
-                Application.Current.Shutdown();
-            });
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
