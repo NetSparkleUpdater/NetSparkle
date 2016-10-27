@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace NetSparkle
 {
@@ -1005,6 +1006,12 @@ namespace NetSparkle
                     else if (CloseWPFWindow != null)
                     {
                         CloseWPFWindow.Invoke();
+                    }
+                    else
+                    {
+                        System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                            System.Windows.Application.Current.Shutdown();
+                        });
                     }
                 }
                 catch (Exception e)
