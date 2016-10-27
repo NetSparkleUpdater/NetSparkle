@@ -1,10 +1,10 @@
 ## Description
 
-Simple .net update checker & installer downloader. You provide, somewhere on the net, an rss xml file that advertises latest version. You also provide release notes. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
+Simple .NET update checker & installer downloader. You provide, somewhere on the net, an rss xml file that advertises latest version. You also provide release notes. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
 
 ## About This Fork
 
-This is a fork of NetSparkle, which has been forked by various people at various times. As of 2016-09-11, this is the "latest" fork. I, Deadpikle, am not actively working on or maintaining this repo outside of issues I experience using it for work, but I welcome any and all bug reports, pull requests, and other feature changes. In other words, I'm happy to help maintain the code so we don't have a million forks floating around. 
+This is a fork of NetSparkle, which has been forked by various people at various times. As of 2016-10-27, this is the "latest" fork. I, Deadpikle, am not actively working on or maintaining this repo outside of issues I experience using it for work, but I welcome any and all bug reports, pull requests, and other feature changes. In other words, I'm happy to help maintain the code so we don't have a million forks floating around. 
 
 I highly recommend checking out https://github.com/Squirrel/Squirrel.Windows, which is a more Chrome-like software updater. That repo is actively maintained. You could also check out WinSparkle at https://github.com/vslavik/winsparkle, but there isn't a merged .NET binding yet.
 
@@ -15,7 +15,8 @@ Some things TODO if you want to help:
 - Better WPF support. WPF app updates work right now, but this project has obviously been created for Forms instead. There's already been work to keep the UI separate from the actual updater, which is good, but better WPF support/documentation/etc. would be helpful.
 - Could we do something neat to tie this in with Squirrel.Windows? https://github.com/Squirrel/Squirrel.Windows
 - Clean up the code (this is needed quite a bit)
-- Update the example files and demo project
+- Update the example files and demo project (as of 2016-10-27, the NetSparkleTestAppWPF and SampleApplication projects work!)
+- Make demos more extensive to show off features
 
 ## Basic Usage
 
@@ -72,7 +73,7 @@ June 2016 Steffen Xonna: Forked the library to raise the security and change som
  - Added support for appcast sidecar file which contains the DSA signature. Depends on the same rules (SecurityMode) like all other files.
  - Added support for DSA signatures of release note links. Depends on the same rules (SecurityMode) like all other files.
  - Added support for embedded release note.
- - Added support for relativ downloads and relativ external release notes.
+ - Added support for relative downloads and relative external release notes.
  - Added the possibility to show the form synchronized with the main form. I hope for better handling for the user. So no window in background or multiple windows will be shown.
  - Added better handling of ssl connections (all downloads should use the same code and not 3 different)
  - Added support for custom registry path of configuration
