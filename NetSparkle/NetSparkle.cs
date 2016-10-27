@@ -1485,24 +1485,23 @@ namespace NetSparkle
                 }
             }
 
-            // signature of file isn't valid so exit with error
-            if (validationRes == ValidationResult.Invalid)
-            {
-                ReportDiagnosticMessage("Invalid signature of file: " + _downloadTempFileName);
-                UIFactory.ShowDownloadErrorMessage("Invalid signature of file", _appCastUrl);
-                if (ProgressWindow != null)
-                    ProgressWindow.ForceClose();
-                return;
-            }
-
-            if (EnableSilentMode)
-            {
-                OnProgressWindowInstallAndRelaunch(this, new EventArgs());
-            }
-
+            bool isSignatureValid = validationRes == ValidationResult.Invalid;
             if (ProgressWindow != null)
             {
-                ProgressWindow.ChangeDownloadState();
+                ProgressWindow.ChangeDownloadState(isSignatureValid);
+            }
+            // signature of file isn't valid so exit with error
+            if (isSignatureValid)
+            {
+                ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
+                UIFactory.ShowDownloadErrorMessage("Downloaded file has invalid signature!", _appCastUrl);
+            }
+            else
+            {
+                if (EnableSilentMode)
+                {
+                    OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+                }
             }
         }
 

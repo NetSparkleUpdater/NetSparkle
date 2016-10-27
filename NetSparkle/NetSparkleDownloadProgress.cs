@@ -56,7 +56,7 @@ namespace NetSparkle
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
         /// <param name="signatureValid"></param>
-        public void ChangeDownloadState()
+        public void ChangeDownloadState(bool isDownloadedFileValid)
         {
             progressDownload.Visible = false;
             buttonCancel.Visible = false;
