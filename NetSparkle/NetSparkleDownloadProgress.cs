@@ -62,12 +62,30 @@ namespace NetSparkle
             buttonCancel.Visible = false;
             downloadProgressLbl.Visible = false;
             btnInstallAndReLaunch.Visible = true;
+            UpdateDownloadValid(isDownloadedFileValid);
             FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
 
         public bool DisplayErrorMessage(string errorMessage)
         {
+            downloadProgressLbl.Text = errorMessage;
             return true;
+        }
+
+        /// <summary>
+        /// Updates the UI to indicate if the download is valid
+        /// </summary>
+        private void UpdateDownloadValid(bool signatureValid)
+        {
+            if (!signatureValid)
+            {
+                Size = new Size(Size.Width, 137);
+                BackColor = Color.Tomato;
+            }
+            else
+            {
+                BackColor = Color.FromArgb(240, 240, 240);
+            }
         }
 
         /// <summary>

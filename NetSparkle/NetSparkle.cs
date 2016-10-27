@@ -1485,13 +1485,13 @@ namespace NetSparkle
                 }
             }
 
-            bool isSignatureValid = validationRes == ValidationResult.Invalid;
+            bool isSignatureInvalid = validationRes == ValidationResult.Invalid;
             if (ProgressWindow != null)
             {
-                ProgressWindow.ChangeDownloadState(isSignatureValid);
+                ProgressWindow.ChangeDownloadState(!isSignatureInvalid);
             }
             // signature of file isn't valid so exit with error
-            if (!isSignatureValid)
+            if (isSignatureInvalid)
             {
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
