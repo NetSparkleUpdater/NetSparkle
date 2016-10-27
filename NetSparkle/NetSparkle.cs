@@ -1491,7 +1491,6 @@ namespace NetSparkle
                 ProgressWindow.FinishedDownloadingFile(!isSignatureInvalid);
             }
             // signature of file isn't valid so exit with error
-            ProgressWindow.DisplayErrorMessage("HI MOM");
             if (isSignatureInvalid)
             {
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
