@@ -169,17 +169,17 @@ namespace NetSparkle
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
         private SynchronizationContext _syncContext;
-        private String _appCastUrl;
-        private readonly String _appReferenceAssembly;
+        private string _appCastUrl;
+        private readonly string _appReferenceAssembly;
 
-        private Boolean _doInitialCheck;
-        private Boolean _forceInitialCheck;
+        private bool _doInitialCheck;
+        private bool _forceInitialCheck;
 
         private readonly EventWaitHandle _exitHandle;
         private readonly EventWaitHandle _loopingHandle;
         private readonly Icon _applicationIcon;       
         private TimeSpan _checkFrequency;
-        private Boolean _useNotificationToast;
+        private bool _useNotificationToast;
 
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
@@ -1088,7 +1088,6 @@ namespace NetSparkle
 
         /// <summary>
         /// Check for updates, using interaction appropriate for if the user just said "check for updates".
-        /// If status is 'UpdateAvailable', does not show toast (TODO: FIXME: FIX).
         /// </summary>
         public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
         {
@@ -1102,16 +1101,14 @@ namespace NetSparkle
                 switch (updateAvailable)
                 {
                     case UpdateStatus.UpdateAvailable:
-                        // I commented this out at one point, and I think (IIRC) there was a bug with this feature with other work I did.
-                        // TODO: Fix!
-                        //UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
-                        //ShowUpdateNeededUIInner(updateData.Updates);
+                        if (_useNotificationToast)
+                            UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
                         break;
                     case UpdateStatus.UpdateNotAvailable:
                         UIFactory.ShowVersionIsUpToDate();
                         break;
                     case UpdateStatus.UserSkipped:
-                        UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version no
+                        UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
                         break;
                     case UpdateStatus.CouldNotDetermine:
                         UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
@@ -1184,14 +1181,13 @@ namespace NetSparkle
                             break;
                     }
                 }
-                //otherwise just go forward with the UI notficiation
                 else
                 {
+                    // otherwise just go forward with the UI notification
                     ShowUpdateNeededUI(updates);
                 }
             }
-            if (UpdateCheckFinished != null)
-                UpdateCheckFinished(this, updateStatus.Status);
+            UpdateCheckFinished?.Invoke(this, updateStatus.Status);
             return updateStatus;
         }
 
