@@ -4,12 +4,16 @@ Simple .NET update checker & installer downloader. You provide, somewhere on the
 
 ## About This Fork
 
-This is a fork of NetSparkle, which has been forked by various people at various times. As of 2016-10-27, this is the "latest" fork. I, Deadpikle, am not actively working on or maintaining this repo outside of issues I experience using it for work, but I welcome any and all bug reports, pull requests, and other feature changes. In other words, I'm happy to help maintain the code so we don't have a million forks floating around. 
+This is a fork of NetSparkle, which has been forked by various people at various times. As of 2017-01-16, this is the "latest" fork. I, Deadpikle, am not actively working on or maintaining this repo outside of issues or features I experience using it for work, but I welcome any and all bug reports, pull requests, and other feature changes. In other words, I'm happy to help maintain the code so we don't have a million forks floating around. 
 
 I highly recommend checking out https://github.com/Squirrel/Squirrel.Windows, which is a more Chrome-like software updater. That repo is actively maintained. You could also check out WinSparkle at https://github.com/vslavik/winsparkle, but there isn't a merged .NET binding yet.
 
+Honestly, this library needs a serious clean up and rewrite. Some of it is nice, such as the UIFactory separation to allow you to create your own UI, but some of the code is not so nice, 
+such as the lack of better WPF support/GUI and the code organization. Perhaps someone reading this readme would like to help?
+
 Some things TODO if you want to help:
 
+- Address some of the TODO in the code
 - Delete the downloaded installer once we're done? (Perhaps using START /wait?)
 - I'm pretty sure there's a bug where `SecurityMode.Strict` doesn't properly check the DSA on update files
 - Better WPF support. WPF app updates work right now, but this project has obviously been created for Forms instead. There's already been work to keep the UI separate from the actual updater, which is good, but better WPF support/documentation/etc. would be helpful.
