@@ -89,6 +89,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CheckingForUpdatesWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Software Update";
             ((System.ComponentModel.ISupportInitialize)(this.iconImage)).EndInit();
             this.ResumeLayout(false);

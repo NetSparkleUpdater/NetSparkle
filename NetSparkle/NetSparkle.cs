@@ -397,6 +397,12 @@ namespace NetSparkle
         public INetSparkleDownloadProgress ProgressWindow { get; set; }
 
         /// <summary>
+        /// The user interface window that shows the 'Checking for Updates...'
+        /// form. TODO: Make this an interface so user can config their own UI
+        /// </summary>
+        public CheckingForUpdatesWindow CheckingForUpdatesWindow { get; set; }
+
+        /// <summary>
         /// The configuration.
         /// </summary>
         public NetSparkleConfiguration Configuration { get; set; }
@@ -1099,11 +1105,11 @@ namespace NetSparkle
         /// </summary>
         public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
         {
-            Cursor.Current  = Cursors.WaitCursor;
-            //CheckingForUpdatesWindow checkingWindow = new CheckingForUpdatesWindow(_applicationIcon);
-            //checkingWindow.Show();
+            Cursor.Current = Cursors.WaitCursor;
+            CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
+            CheckingForUpdatesWindow.Show();
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
-            //checkingWindow.Hide();
+            CheckingForUpdatesWindow.Close();
             UpdateStatus updateAvailable = updateData.Status;
             Cursor.Current = Cursors.Default;
 
@@ -1157,6 +1163,10 @@ namespace NetSparkle
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
         private async Task<SparkleUpdateInfo> CheckForUpdates(bool useNotificationToast)
         {
+            // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
+            // 'Checking for Updates...' window is very disorienting
+            // TODO: how could we improve this?
+            await Task.Delay(250); 
             UpdateCheckStarted?.Invoke(this);
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
@@ -1252,6 +1262,8 @@ namespace NetSparkle
                 InitDownloadAndInstallProcess(UserWindow.CurrentItem);
             }
             UserWindow = null; // done using the window so don't hold onto reference
+            CheckingForUpdatesWindow?.Close();
+            CheckingForUpdatesWindow = null;
         }
 
         /// <summary>
