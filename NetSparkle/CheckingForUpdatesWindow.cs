@@ -47,8 +47,7 @@ namespace NetSparkle
             }
             else
             {
-                this.Invoke((MethodInvoker)delegate () { Close(); });
-               // Close();
+                Close();
             }
         }
     }
