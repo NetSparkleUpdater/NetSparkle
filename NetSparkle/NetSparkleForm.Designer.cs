@@ -116,6 +116,7 @@
             this.MaximizeBox = false;
             this.Name = "NetSparkleForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.Shown += new System.EventHandler(this.SparkleForm_Shown);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
             this.ResumeLayout(false);

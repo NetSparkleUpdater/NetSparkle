@@ -130,10 +130,13 @@
     <value>NoControl</value>
   </data>
   <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>66, 12</value>
+    <value>132, 23</value>
+  </data>
+  <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
   </data>
   <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 17</value>
+    <value>422, 36</value>
   </data>
   <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -163,10 +166,13 @@
     <value>NoControl</value>
   </data>
   <data name="lblInfoText.Location" type="System.Drawing.Point, System.Drawing">
-    <value>66, 39</value>
+    <value>132, 75</value>
+  </data>
+  <data name="lblInfoText.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
   </data>
   <data name="lblInfoText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>417, 38</value>
+    <value>834, 73</value>
   </data>
   <data name="lblInfoText.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -196,10 +202,13 @@
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>66, 77</value>
+    <value>132, 148</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>96, 17</value>
+    <value>186, 36</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -226,10 +235,13 @@
     <value>NoControl</value>
   </data>
   <data name="skipButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>69, 380</value>
+    <value>138, 731</value>
+  </data>
+  <data name="skipButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="skipButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+    <value>220, 44</value>
   </data>
   <data name="skipButton.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -256,10 +268,13 @@
     <value>NoControl</value>
   </data>
   <data name="buttonRemind.Location" type="System.Drawing.Point, System.Drawing">
-    <value>247, 380</value>
+    <value>494, 731</value>
+  </data>
+  <data name="buttonRemind.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="buttonRemind.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+    <value>220, 44</value>
   </data>
   <data name="buttonRemind.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -286,10 +301,13 @@
     <value>NoControl</value>
   </data>
   <data name="updateButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>363, 380</value>
+    <value>726, 731</value>
+  </data>
+  <data name="updateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="updateButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+    <value>220, 44</value>
   </data>
   <data name="updateButton.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -318,11 +336,14 @@
   <data name="NetSparkleBrowser.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="NetSparkleBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
   <data name="NetSparkleBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>20, 28</value>
+    <value>40, 54</value>
   </data>
   <data name="NetSparkleBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 273</value>
+    <value>800, 525</value>
   </data>
   <data name="NetSparkleBrowser.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -340,10 +361,13 @@
     <value>0</value>
   </data>
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>69, 97</value>
+    <value>138, 187</value>
+  </data>
+  <data name="panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>404, 277</value>
+    <value>804, 529</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -364,7 +388,10 @@
     <value>NoControl</value>
   </data>
   <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 12</value>
+    <value>24, 23</value>
+  </data>
+  <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 48</value>
@@ -391,10 +418,10 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>12, 25</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>495, 415</value>
+    <value>990, 798</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -581,8 +608,11 @@
         /////wAA
 </value>
   </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>450, 300</value>
+    <value>874, 511</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

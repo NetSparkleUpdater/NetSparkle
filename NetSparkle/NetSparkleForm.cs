@@ -21,6 +21,7 @@ namespace NetSparkle
 
         private readonly Sparkle _sparkle;
         private readonly NetSparkleAppCastItem[] _updates;
+        private Timer _ensureDialogShownTimer;
 
         /// <summary>
         /// Event fired when the user has responded to the 
@@ -108,8 +109,7 @@ namespace NetSparkle
                 imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
                 Icon = applicationIcon;
             }
-
-            TopMost = false;
+            EnsureDialogShown();
         }
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
@@ -296,6 +296,30 @@ namespace NetSparkle
 
             // close the dialog
             Close();
+        }
+
+        /// <summary>
+        /// This was the only way Deadpikle could guarantee that the 
+        /// update available window was shown above a main WPF MahApps window.
+        /// It's an ugly hack but...oh well. :\
+        /// </summary>
+        public void EnsureDialogShown()
+        {
+            _ensureDialogShownTimer = new Timer();
+            _ensureDialogShownTimer.Tick += new EventHandler(EnsureDialogeShown_tick);
+            _ensureDialogShownTimer.Interval = 250; // in miliseconds
+            _ensureDialogShownTimer.Start();
+        }
+
+        private void EnsureDialogeShown_tick(object sender, EventArgs e)
+        {
+            // http://stackoverflow.com/a/4831839/3938401 for activating/bringing to front code
+            Activate();
+            TopMost = true;  // important
+            TopMost = false; // important
+            Focus();         // important
+            _ensureDialogShownTimer.Enabled = false;
+            _ensureDialogShownTimer = null;
         }
     }
 }

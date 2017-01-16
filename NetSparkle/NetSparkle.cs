@@ -840,6 +840,7 @@ namespace NetSparkle
                         // clear if already set.
                         UserWindow.UserResponded += OnUserWindowUserResponded;
                         UserWindow.Show();
+                        UserWindow.BringToFront();
                     };
 
                     // call action
