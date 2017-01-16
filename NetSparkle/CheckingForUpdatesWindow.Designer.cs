@@ -32,8 +32,8 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.CheckingForUpdates = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.imgAppIcon = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
+            this.iconImage = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.iconImage)).BeginInit();
             this.SuspendLayout();
             // 
             // progressBar1
@@ -64,31 +64,33 @@
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // imgAppIcon
+            // iconImage
             // 
-            this.imgAppIcon.Image = global::NetSparkle.Properties.Resources.software_update_available1;
-            this.imgAppIcon.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.imgAppIcon.Location = new System.Drawing.Point(15, 32);
-            this.imgAppIcon.Margin = new System.Windows.Forms.Padding(6);
-            this.imgAppIcon.Name = "imgAppIcon";
-            this.imgAppIcon.Size = new System.Drawing.Size(48, 48);
-            this.imgAppIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.imgAppIcon.TabIndex = 7;
-            this.imgAppIcon.TabStop = false;
+            this.iconImage.Image = global::NetSparkle.Properties.Resources.software_update_available1;
+            this.iconImage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.iconImage.Location = new System.Drawing.Point(15, 32);
+            this.iconImage.Margin = new System.Windows.Forms.Padding(6);
+            this.iconImage.Name = "iconImage";
+            this.iconImage.Size = new System.Drawing.Size(48, 48);
+            this.iconImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.iconImage.TabIndex = 7;
+            this.iconImage.TabStop = false;
             // 
             // CheckingForUpdatesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(831, 244);
-            this.Controls.Add(this.imgAppIcon);
+            this.Controls.Add(this.iconImage);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.CheckingForUpdates);
             this.Controls.Add(this.progressBar1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CheckingForUpdatesWindow";
-            this.Text = "Updating...";
-            ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
+            this.Text = "Software Update";
+            ((System.ComponentModel.ISupportInitialize)(this.iconImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -99,6 +101,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label CheckingForUpdates;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.PictureBox imgAppIcon;
+        private System.Windows.Forms.PictureBox iconImage;
     }
 }

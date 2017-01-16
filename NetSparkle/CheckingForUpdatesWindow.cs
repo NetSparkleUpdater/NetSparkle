@@ -15,6 +15,18 @@ namespace NetSparkle
         public CheckingForUpdatesWindow()
         {
             InitializeComponent();
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+        }
+
+        public CheckingForUpdatesWindow(Icon applicationIcon = null)
+        {
+            InitializeComponent();
+            if (applicationIcon != null)
+            {
+                Icon = applicationIcon;
+                iconImage.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
+            }
+            FormBorderStyle = FormBorderStyle.FixedDialog;
         }
     }
 }

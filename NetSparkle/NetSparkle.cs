@@ -1092,7 +1092,7 @@ namespace NetSparkle
         public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current  = Cursors.WaitCursor;
-            CheckingForUpdatesWindow checkingWindow = new CheckingForUpdatesWindow();
+            CheckingForUpdatesWindow checkingWindow = new CheckingForUpdatesWindow(_applicationIcon);
             checkingWindow.Show();
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             //checkingWindow.Hide();
