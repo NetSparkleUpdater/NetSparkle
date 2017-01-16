@@ -28,5 +28,28 @@ namespace NetSparkle
             }
             FormBorderStyle = FormBorderStyle.FixedDialog;
         }
+
+        private void Cancel_Click(object sender, EventArgs e)
+        {
+            CloseForm();
+        }
+
+        private void Form_Closing(object sender, FormClosingEventArgs e)
+        {
+            CloseForm();
+        }
+
+        private void CloseForm()
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { Close(); });
+            }
+            else
+            {
+                this.Invoke((MethodInvoker)delegate () { Close(); });
+               // Close();
+            }
+        }
     }
 }

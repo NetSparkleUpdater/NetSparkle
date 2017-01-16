@@ -1107,45 +1107,57 @@ namespace NetSparkle
         {
             Cursor.Current = Cursors.WaitCursor;
             CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
+            CheckingForUpdatesWindow.FormClosed += CheckingForUpdatesWindow_FormClosed; // to detect canceling -- TODO: there's probably a better way...
             CheckingForUpdatesWindow.Show();
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
-            CheckingForUpdatesWindow.Close();
-            UpdateStatus updateAvailable = updateData.Status;
-            Cursor.Current = Cursors.Default;
-
-            Action<object> UIAction = (state) =>
+            if (CheckingForUpdatesWindow != null)
             {
-                switch (updateAvailable)
+                CheckingForUpdatesWindow?.Close();
+                UpdateStatus updateAvailable = updateData.Status;
+                Cursor.Current = Cursors.Default;
+
+                Action<object> UIAction = (state) =>
                 {
-                    case UpdateStatus.UpdateAvailable:
-                        if (_useNotificationToast)
-                            UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
-                        break;
-                    case UpdateStatus.UpdateNotAvailable:
-                        UIFactory.ShowVersionIsUpToDate();
-                        break;
-                    case UpdateStatus.UserSkipped:
-                        UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
-                        break;
-                    case UpdateStatus.CouldNotDetermine:
-                        UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            };
+                    switch (updateAvailable)
+                    {
+                        case UpdateStatus.UpdateAvailable:
+                            if (_useNotificationToast)
+                                UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
+                            break;
+                        case UpdateStatus.UpdateNotAvailable:
+                            UIFactory.ShowVersionIsUpToDate();
+                            break;
+                        case UpdateStatus.UserSkipped:
+                            UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
+                            break;
+                        case UpdateStatus.CouldNotDetermine:
+                            UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                };
 
-            if (UseSyncronizedForms)
-            {
-                _syncContext.Send((state) => UIAction(state), null);
+                if (UseSyncronizedForms)
+                {
+                    _syncContext.Send((state) => UIAction(state), null);
+                }
+                else
+                {
+                    UIAction(null);
+                }
             }
             else
             {
-                UIAction(null);
+                return null;
             }
 
-
             return updateData;// in this case, we've already shown UI talking about the new version
+        }
+
+        private void CheckingForUpdatesWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            CheckingForUpdatesWindow = null;
         }
 
         /// <summary>
@@ -1166,7 +1178,11 @@ namespace NetSparkle
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting
             // TODO: how could we improve this?
-            await Task.Delay(250); 
+            bool isUserManuallyCheckingForUpdates = CheckingForUpdatesWindow != null;
+            if (isUserManuallyCheckingForUpdates)
+            {
+                await Task.Delay(250);
+            }
             UpdateCheckStarted?.Invoke(this);
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
@@ -1204,7 +1220,10 @@ namespace NetSparkle
                 else
                 {
                     // otherwise just go forward with the UI notification
-                    ShowUpdateNeededUI(updates);
+                    if (isUserManuallyCheckingForUpdates && CheckingForUpdatesWindow != null)
+                    {
+                        ShowUpdateNeededUI(updates);
+                    }
                 }
             }
             UpdateCheckFinished?.Invoke(this, updateStatus.Status);
