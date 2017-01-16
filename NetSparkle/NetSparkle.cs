@@ -1109,8 +1109,10 @@ namespace NetSparkle
             CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
             CheckingForUpdatesWindow.FormClosed += CheckingForUpdatesWindow_FormClosed; // to detect canceling -- TODO: there's probably a better way...
             CheckingForUpdatesWindow.Show();
+            // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
+            // actually cancel the request using a BackgroundWorker or something
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
-            if (CheckingForUpdatesWindow != null)
+            if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window
             {
                 CheckingForUpdatesWindow?.Close();
                 UpdateStatus updateAvailable = updateData.Status;
