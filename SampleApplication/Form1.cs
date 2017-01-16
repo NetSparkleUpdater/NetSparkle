@@ -16,7 +16,10 @@ namespace SampleApplication
             InitializeComponent();
 
             var appcastUrl = "https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml";
-            _sparkleUpdateDetector = new Sparkle(appcastUrl, SystemIcons.Application);
+            // set icon in project properties!
+            string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
+            var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
+            _sparkleUpdateDetector = new Sparkle(appcastUrl, icon);
             _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
         }
 
