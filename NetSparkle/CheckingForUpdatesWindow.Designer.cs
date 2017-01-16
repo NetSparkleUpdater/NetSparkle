@@ -92,7 +92,6 @@
             this.Name = "CheckingForUpdatesWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Software Update";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Closing);
             ((System.ComponentModel.ISupportInitialize)(this.iconImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

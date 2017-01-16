@@ -34,11 +34,6 @@ namespace NetSparkle
             CloseForm();
         }
 
-        private void Form_Closing(object sender, FormClosingEventArgs e)
-        {
-            CloseForm();
-        }
-
         private void CloseForm()
         {
             if (InvokeRequired)
