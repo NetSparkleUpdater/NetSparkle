@@ -22,7 +22,10 @@ namespace NetSparkle.TestAppWPF
             }
             catch { }
 
-            _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", SystemIcons.Application); //, "NetSparkleTestApp.exe");
+            // set icon in project properties!
+            string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
+            var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
+            _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", icon); //, "NetSparkleTestApp.exe");
             _sparkle.RunningFromWPF = true;
             _sparkle.StartLoop(true, true);
         }
@@ -30,8 +33,6 @@ namespace NetSparkle.TestAppWPF
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             _sparkle.CheckForUpdatesAtUserRequest();
-           // _sparkle.StopLoop();
-          //  Close();
         }
     }
 }
