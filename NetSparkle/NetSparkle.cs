@@ -799,13 +799,21 @@ namespace NetSparkle
 
         private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
         {
+            // TODO: In the future, instead of remaking the window, just send the new data to the old window
             if (UserWindow != null)
             {
-                _syncContext.Send((state) =>
+                // close old window
+                if (UseSyncronizedForms)
                 {
-                    // remove old user window
-                    UserWindow.UserResponded -= OnUserWindowUserResponded;
-                }, null);
+                    _syncContext.Send((state) =>
+                    {
+                        UserWindow.Close();
+                    }, null);
+                }
+                else
+                {
+                    UserWindow.Close();
+                }
             }
 
             // create the form
@@ -1092,8 +1100,8 @@ namespace NetSparkle
         public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current  = Cursors.WaitCursor;
-            CheckingForUpdatesWindow checkingWindow = new CheckingForUpdatesWindow(_applicationIcon);
-            checkingWindow.Show();
+            //CheckingForUpdatesWindow checkingWindow = new CheckingForUpdatesWindow(_applicationIcon);
+            //checkingWindow.Show();
             SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             //checkingWindow.Hide();
             UpdateStatus updateAvailable = updateData.Status;
@@ -1149,8 +1157,7 @@ namespace NetSparkle
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
         private async Task<SparkleUpdateInfo> CheckForUpdates(bool useNotificationToast)
         {
-            if (UpdateCheckStarted != null)
-                UpdateCheckStarted(this);
+            UpdateCheckStarted?.Invoke(this);
             NetSparkleConfiguration config = GetApplicationConfig();
             // update profile information is needed
             UpdateSystemProfileInformation(config);
@@ -1244,6 +1251,7 @@ namespace NetSparkle
                 // download the binaries
                 InitDownloadAndInstallProcess(UserWindow.CurrentItem);
             }
+            UserWindow = null; // done using the window so don't hold onto reference
         }
 
         /// <summary>

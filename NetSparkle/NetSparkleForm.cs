@@ -228,6 +228,11 @@ namespace NetSparkle
             BringToFront();
         }
 
+        void INetSparkleForm.Close()
+        {
+            Close();
+        }
+
         /// <summary>
         /// Removes the release notes control
         /// </summary>

@@ -40,5 +40,10 @@ namespace NetSparkle.Interfaces
         /// Brings the form to the front of all windows
         /// </summary>
         void BringToFront();
+
+        /// <summary>
+        /// Close the form
+        /// </summary>
+        void Close();
     }
 }
