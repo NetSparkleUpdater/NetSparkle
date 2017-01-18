@@ -61,7 +61,7 @@ namespace NetSparkle.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Software update error.
+        ///   Looks up a localized string similar to Error!.
         /// </summary>
         internal static string DefaultNetSparkleUIFactory_ErrorTitle {
             get {
@@ -70,7 +70,7 @@ namespace NetSparkle.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Software update message.
+        ///   Looks up a localized string similar to Info.
         /// </summary>
         internal static string DefaultNetSparkleUIFactory_MessageTitle {
             get {
@@ -108,7 +108,7 @@ namespace NetSparkle.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your have elected to skip this version..
+        ///   Looks up a localized string similar to You have elected to skip this version..
         /// </summary>
         internal static string DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage {
             get {

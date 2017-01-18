@@ -47,35 +47,35 @@ namespace NetSparkle
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
         /// <param name="downloadFileName"></param>
-        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName, Icon applicationIcon = null)
         {
-            MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName), Resources.DefaultNetSparkleUIFactory_ErrorTitle, 
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            ShowMessage(Resources.DefaultNetSparkleUIFactory_MessageTitle, 
+                string.Format(Resources.DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName), applicationIcon);
         }
 
         /// <summary>
         /// Show user that current installed version is up-to-date
         /// </summary>
-        public virtual void ShowVersionIsUpToDate()
+        public virtual void ShowVersionIsUpToDate(Icon applicationIcon = null)
         {
-            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);
+            ShowMessage(Resources.DefaultNetSparkleUIFactory_MessageTitle, Resources.DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage, applicationIcon);
         }
 
         /// <summary>
         /// Show message that latest update was skipped by user
         /// </summary>
-        public virtual void ShowVersionIsSkippedByUserRequest()
+        public virtual void ShowVersionIsSkippedByUserRequest(Icon applicationIcon = null)
         {
-            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage, Resources.DefaultNetSparkleUIFactory_MessageTitle);//review: I'm not crystal clear on this one
+            ShowMessage(Resources.DefaultNetSparkleUIFactory_MessageTitle, Resources.DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage, applicationIcon);
         }
 
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
         /// <param name="appcastUrl"></param>
-        public virtual void ShowCannotDownloadAppcast(string appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(string appcastUrl, Icon applicationIcon = null)
         {
-            MessageBox.Show(Resources.DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage, Resources.DefaultNetSparkleUIFactory_ErrorTitle);
+            ShowMessage(Resources.DefaultNetSparkleUIFactory_ErrorTitle, Resources.DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage, applicationIcon);
         }
 
         /// <summary>
@@ -102,9 +102,16 @@ namespace NetSparkle
         /// </summary>
         /// <param name="message">Error message from exception</param>
         /// <param name="appCastUrl"></param>
-        public virtual void ShowDownloadErrorMessage(string message, string appCastUrl)
+        public virtual void ShowDownloadErrorMessage(string message, string appCastUrl, Icon applicationIcon = null)
         {
-            MessageBox.Show(string.Format(Resources.DefaultNetSparkleUIFactory_ShowDownloadErrorMessage, message), Resources.DefaultNetSparkleUIFactory_ErrorTitle);
+            ShowMessage(Resources.DefaultNetSparkleUIFactory_ErrorTitle, string.Format(Resources.DefaultNetSparkleUIFactory_ShowDownloadErrorMessage, message), applicationIcon);
+        }
+
+        private void ShowMessage(string title, string message, Icon applicationIcon = null)
+        {
+            var messageWindow = new MessageNotificationWindow(title, message, applicationIcon);
+            messageWindow.StartPosition = FormStartPosition.CenterScreen;
+            messageWindow.ShowDialog();
         }
     }
 }

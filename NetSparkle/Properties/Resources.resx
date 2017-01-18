@@ -128,13 +128,13 @@
     <value>Your current version is up to date.</value>
   </data>
   <data name="DefaultNetSparkleUIFactory_ErrorTitle" xml:space="preserve">
-    <value>Software update error</value>
+    <value>Error!</value>
   </data>
   <data name="DefaultNetSparkleUIFactory_MessageTitle" xml:space="preserve">
-    <value>Software update message</value>
+    <value>Info</value>
   </data>
   <data name="DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage" xml:space="preserve">
-    <value>Your have elected to skip this version.</value>
+    <value>You have elected to skip this version.</value>
   </data>
   <data name="DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage" xml:space="preserve">
     <value>Sorry, either you aren't connected to the internet, or our server is having a problem.</value>

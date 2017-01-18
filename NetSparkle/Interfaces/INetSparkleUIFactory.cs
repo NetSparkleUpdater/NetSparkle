@@ -33,23 +33,23 @@ namespace NetSparkle.Interfaces
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
         /// <param name="downloadFileName"></param>
-        void ShowUnknownInstallerFormatMessage(string downloadFileName);
+        void ShowUnknownInstallerFormatMessage(string downloadFileName, Icon applicationIcon = null);
 
         /// <summary>
         /// Show user that current installed version is up-to-date
         /// </summary>
-        void ShowVersionIsUpToDate();
+        void ShowVersionIsUpToDate(Icon applicationIcon = null);
 
         /// <summary>
         /// Show message that latest update was skipped by user
         /// </summary>
-        void ShowVersionIsSkippedByUserRequest();
+        void ShowVersionIsSkippedByUserRequest(Icon applicationIcon = null);
 
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
         /// <param name="appcastUrl"></param>
-        void ShowCannotDownloadAppcast(string appcastUrl);
+        void ShowCannotDownloadAppcast(string appcastUrl, Icon applicationIcon = null);
 
         /// <summary>
         /// Show 'toast' window to notify new version is available
@@ -64,6 +64,6 @@ namespace NetSparkle.Interfaces
         /// </summary>
         /// <param name="message">Error message from exception</param>
         /// <param name="appCastUrl"></param>
-        void ShowDownloadErrorMessage(string message, string appCastUrl);
+        void ShowDownloadErrorMessage(string message, string appCastUrl, Icon applicationIcon = null);
     }
 }
