@@ -968,7 +968,7 @@ namespace NetSparkle
             }
             catch (InvalidDataException)
             {
-                UIFactory.ShowUnknownInstallerFormatMessage(_downloadTempFileName);
+                UIFactory.ShowUnknownInstallerFormatMessage(_downloadTempFileName, _applicationIcon);
                 return;
             }
 
@@ -1127,13 +1127,13 @@ namespace NetSparkle
                                 UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
                             break;
                         case UpdateStatus.UpdateNotAvailable:
-                            UIFactory.ShowVersionIsUpToDate();
+                            UIFactory.ShowVersionIsUpToDate(_applicationIcon);
                             break;
                         case UpdateStatus.UserSkipped:
-                            UIFactory.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
+                            UIFactory.ShowVersionIsSkippedByUserRequest(_applicationIcon); // TODO: pass skipped version number
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory.ShowCannotDownloadAppcast(_appCastUrl);
+                            UIFactory.ShowCannotDownloadAppcast(_appCastUrl, _applicationIcon);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -1499,7 +1499,7 @@ namespace NetSparkle
             {
                 if (!ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
+                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
                 }
                 return;
             }
@@ -1509,7 +1509,7 @@ namespace NetSparkle
                 string errorMessage = "Download cancelled";
                 if (!ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
                 return;
             }
@@ -1553,7 +1553,7 @@ namespace NetSparkle
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (!ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
                 // Let the progress window handle closing itself.
             }
