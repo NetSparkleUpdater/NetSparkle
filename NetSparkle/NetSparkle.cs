@@ -918,7 +918,7 @@ namespace NetSparkle
                 ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
                 ProgressWindow = null;
             }
-            if (ProgressWindow == null)
+            if (ProgressWindow == null && !isDownloadingSilently())
             {
                 ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
             }
@@ -942,9 +942,21 @@ namespace NetSparkle
             Uri url = new Uri(item.DownloadLink);
             _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
 
-            DialogResult result = ProgressWindow.ShowDialog();
-            if (result == DialogResult.Abort || result == DialogResult.Cancel)
-                CancelFileDownload();
+            if (!isDownloadingSilently())
+            {
+                DialogResult result = ProgressWindow.ShowDialog();
+                if (result == DialogResult.Abort || result == DialogResult.Cancel)
+                    CancelFileDownload();
+            }
+        }
+
+        /// <summary>
+        /// True if the user has silent updates enabled; false otherwise.
+        /// </summary>
+        /// <returns></returns>
+        private bool isDownloadingSilently()
+        {
+            return EnableSilentMode || SilentMode != SilentModeTypes.NotSilent;
         }
 
         /// <summary>
@@ -1269,13 +1281,13 @@ namespace NetSparkle
             if (updates == null)
                 return;
 
-            // show the update ui
-            if (EnableSilentMode || SilentMode != SilentModeTypes.NotSilent)
+            if (isDownloadingSilently())
             {
                 InitDownloadAndInstallProcess(updates[0]); // install only latest
             }
             else
             {
+                // show the update ui
                 ShowUpdateNeededUI(updates);
             }
         }
@@ -1524,7 +1536,7 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
-            bool shouldShowUIItems = SilentMode == SilentModeTypes.NotSilent || !EnableSilentMode;
+            bool shouldShowUIItems = !isDownloadingSilently();
             if (e.Error != null)
             {
                 ReportDiagnosticMessage("Error on download finished: " + e.Error.Message);
