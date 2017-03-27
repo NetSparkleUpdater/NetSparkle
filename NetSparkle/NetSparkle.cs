@@ -298,6 +298,7 @@ namespace NetSparkle
             _appCastUrl = appcastUrl;
             Debug.WriteLine("Using the following url: " + _appCastUrl);
             RunningFromWPF = false;
+            SilentMode = SilentModeTypes.NotSilent;
         }
 
         /// <summary>
@@ -1269,7 +1270,7 @@ namespace NetSparkle
                 return;
 
             // show the update ui
-            if (EnableSilentMode)
+            if (EnableSilentMode || SilentMode != SilentModeTypes.NotSilent)
             {
                 InitDownloadAndInstallProcess(updates[0]); // install only latest
             }
@@ -1426,8 +1427,9 @@ namespace NetSparkle
                 {
                     case NextUpdateAction.PerformUpdateUnattended:
                         {
-                            ReportDiagnosticMessage("Unattended update whished from consumer");
+                            ReportDiagnosticMessage("Unattended update desired from consumer");
                             EnableSilentMode = true;
+                            SilentMode = SilentModeTypes.DownloadAndInstall;
                             OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                             //_worker.ReportProgress(1, updates);
                             break;
@@ -1522,9 +1524,11 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
+            bool shouldShowUIItems = SilentMode == SilentModeTypes.NotSilent || !EnableSilentMode;
             if (e.Error != null)
             {
-                if (!ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                ReportDiagnosticMessage("Error on download finished: " + e.Error.Message);
+                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
                     UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
                 }
@@ -1533,8 +1537,9 @@ namespace NetSparkle
 
             if (e.Cancelled)
             {
+                ReportDiagnosticMessage("Download was canceled");
                 string errorMessage = "Download cancelled";
-                if (!ProgressWindow.DisplayErrorMessage(errorMessage))
+                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
@@ -1554,9 +1559,11 @@ namespace NetSparkle
                 if (File.Exists(_downloadTempFileName))
                 {
                     // check if the file was downloaded successfully
-                    String absolutePath = Path.GetFullPath(_downloadTempFileName);
+                    string absolutePath = Path.GetFullPath(_downloadTempFileName);
                     if (!File.Exists(absolutePath))
+                    {
                         throw new FileNotFoundException();
+                    }
 
                     // check the DSA signature
                     string dsaSignature = UserWindow?.CurrentItem?.DownloadDSASignature;
@@ -1568,9 +1575,9 @@ namespace NetSparkle
             }
 
             bool isSignatureInvalid = validationRes == ValidationResult.Invalid;
-            if (ProgressWindow != null)
+            if (shouldShowUIItems)
             {
-                ProgressWindow.FinishedDownloadingFile(!isSignatureInvalid);
+                ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);
             }
             // signature of file isn't valid so exit with error
             if (isSignatureInvalid)
@@ -1578,7 +1585,7 @@ namespace NetSparkle
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
-                if (!ProgressWindow.DisplayErrorMessage(errorMessage))
+                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
@@ -1586,9 +1593,14 @@ namespace NetSparkle
             }
             else
             {
-                if (EnableSilentMode)
+                bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
+                if (shouldInstallAndRelaunch)
                 {
                     OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+                }
+                else if (SilentMode == SilentModeTypes.DownloadNoInstall)
+                {
+                    // TODO: Notify UI that there is an update available!
                 }
             }
         }
