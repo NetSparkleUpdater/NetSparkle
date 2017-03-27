@@ -337,7 +337,34 @@ namespace NetSparkle
         /// This property enables the silent mode, this means 
         /// the application will be updated without user interaction
         /// </summary>
+        [System.Obsolete("Please use SilentModeType instead.")]
         public bool EnableSilentMode { get; set; }
+
+        /// <summary>
+        /// Allows for updating the application with or without user interaction.
+        /// </summary>
+        public enum SilentModeTypes
+        {
+            /// <summary>
+            /// Shows the change log UI automatically (this is the default)
+            /// </summary>
+            NotSilent,
+            /// <summary>
+            /// Downloads the latest update file and changelog automatically, but does not
+            /// show any UI until asked to show UI.
+            /// </summary>
+            DownloadNoInstall,
+            /// <summary>
+            /// Downloads the latest update file and automatically runs it as an installer file.
+            /// </summary>
+            DownloadAndInstall,
+        }
+
+        /// <summary>
+        /// Set the silent mode type for Sparkle to use when there is a valid update for the 
+        /// software
+        /// </summary>
+        public SilentModeTypes SilentMode { get; set; }
 
         /// <summary>
         /// Because of bugs with detecting that the application is closed, setting this to true
