@@ -299,6 +299,7 @@ namespace NetSparkle
             Debug.WriteLine("Using the following url: " + _appCastUrl);
             RunningFromWPF = false;
             SilentMode = SilentModeTypes.NotSilent;
+            TmpDownloadFilePath = "";
         }
 
         /// <summary>
@@ -366,6 +367,12 @@ namespace NetSparkle
         /// software
         /// </summary>
         public SilentModeTypes SilentMode { get; set; }
+
+        /// <summary>
+        /// If set, downloads files to this path. If the folder doesn't already exist, creates
+        /// the folder. Note that this variable is a path, not a full file name.
+        /// </summary>
+        public string TmpDownloadFilePath { get; set; }
 
         /// <summary>
         /// Because of bugs with detecting that the application is closed, setting this to true
@@ -912,7 +919,14 @@ namespace NetSparkle
             string fileName = segments[segments.Length - 1];
 
             // get temp path
-            _downloadTempFileName = Path.Combine(Path.GetTempPath(), fileName);
+            TmpDownloadFilePath = TmpDownloadFilePath.Trim();
+            bool isTmpDownloadFilePathSet = TmpDownloadFilePath != null && TmpDownloadFilePath != "";
+            string tmpPath = isTmpDownloadFilePathSet ? TmpDownloadFilePath : Path.GetTempPath();
+            if (isTmpDownloadFilePathSet && !File.Exists(tmpPath))
+            {
+                Directory.CreateDirectory(tmpPath);
+            }
+            _downloadTempFileName = Path.Combine(tmpPath, fileName);
             if (ProgressWindow != null)
             {
                 ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
@@ -1612,7 +1626,7 @@ namespace NetSparkle
                 }
                 else if (SilentMode == SilentModeTypes.DownloadNoInstall)
                 {
-                    // TODO: Notify UI that there is an update available!
+                    // TODO: Notify Sparkle user that there is an update available but don't actively display it
                 }
             }
         }
