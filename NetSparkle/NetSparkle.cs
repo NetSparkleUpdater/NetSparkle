@@ -397,7 +397,7 @@ namespace NetSparkle
         public string CustomInstallerArguments { get; set; }
 
         /// <summary>
-        /// This property returns true when the upadete loop is running
+        /// This property returns true when the update loop is running
         /// and files when the loop is not running
         /// </summary>
         public bool IsUpdateLoopRunning
@@ -935,12 +935,15 @@ namespace NetSparkle
             if (ProgressWindow == null && !isDownloadingSilently())
             {
                 ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
+                ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
             }
-            ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
 
             if (_webDownloadClient != null)
             {
-                _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                if (ProgressWindow != null)
+                {
+                    _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                }
                 _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
                 _webDownloadClient = null;
             }
@@ -950,13 +953,16 @@ namespace NetSparkle
                 UseDefaultCredentials = true,
                 Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
             };
-            _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+            if (ProgressWindow != null)
+            {
+                _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+            }
             _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
             Uri url = new Uri(item.DownloadLink);
             _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
 
-            if (!isDownloadingSilently())
+            if (!isDownloadingSilently() && ProgressWindow != null)
             {
                 DialogResult result = ProgressWindow.ShowDialog();
                 if (result == DialogResult.Abort || result == DialogResult.Cancel)
