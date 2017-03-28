@@ -68,8 +68,8 @@ namespace NetSparkle
         /// <summary>
         /// Determines if a public key exists
         /// </summary>
-        /// <returns><c>Boolean</c>  </returns>
-        public Boolean PublicKeyExists()
+        /// <returns><c>bool</c>  </returns>
+        public bool PublicKeyExists()
         {
             if (_provider == null)
                 return false;
@@ -83,11 +83,11 @@ namespace NetSparkle
         /// <param name="mode">The security mode of the validator. Control what parts has to be exist</param>
         /// <param name="publicKey">the public key as string (will be prefered before the file)</param>
         /// <param name="publicKeyFile">the public key file</param>
-        public NetSparkleDSAVerificator(SecurityMode mode, String publicKey = null, String publicKeyFile = "NetSparkle_DSA.pub")
+        public NetSparkleDSAVerificator(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
         {
             _securityMode = mode;
 
-            String key = publicKey;
+            string key = publicKey;
 
             if (string.IsNullOrEmpty(key))
             {
@@ -123,13 +123,13 @@ namespace NetSparkle
         /// <summary>
         /// Returns if we need an signature
         /// </summary>
-        /// <returns><c>Boolean</c>  </returns>
+        /// <returns><c>bool</c>  </returns>
         public bool SignatureNeeded()
         {
             switch (_securityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have an dsa key we need an signatur
+                    // if we have an dsa key we need an signature
                     return PublicKeyExists();
 
                 case SecurityMode.Strict:
@@ -144,7 +144,7 @@ namespace NetSparkle
             }
         }
 
-        private Boolean CheckSecurityMode(String signature, ref ValidationResult result)
+        private bool CheckSecurityMode(string signature, ref ValidationResult result)
         {
             switch (_securityMode)
             {
@@ -194,7 +194,7 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="stream">the stream of the binary</param>
         /// <returns><c>true</c> if the signature matches the expected signature.</returns>
-        public ValidationResult VerifyDSASignature(String signature, Stream stream)
+        public ValidationResult VerifyDSASignature(string signature, Stream stream)
         {
             ValidationResult res = ValidationResult.Invalid;
             if (!CheckSecurityMode(signature, ref res))
@@ -218,7 +218,7 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="binaryPath">the path to the binary</param>
         /// <returns><c>true</c> if the signature matches the expected signature.</returns>
-        public ValidationResult VerifyDSASignatureFile(String signature, String binaryPath)
+        public ValidationResult VerifyDSASignatureFile(string signature, string binaryPath)
         {
             var data = string.Empty;
             using (Stream inputStream = File.OpenRead(binaryPath))
@@ -233,7 +233,7 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="data">the data</param>
         /// <returns><c>true</c> if the signature matches the expected signature.</returns>
-        public ValidationResult VerifyDSASignatureOfString(String signature, String data)
+        public ValidationResult VerifyDSASignatureOfstring(string signature, string data)
         {
             // creating stream from string
             using (var stream = new MemoryStream())
@@ -253,7 +253,7 @@ namespace NetSparkle
         /// <param name="publicKey">the public key</param>
         /// <param name="data">the data stream</param>
         /// <returns>the data stream</returns>
-        private static Stream TryGetFileResource(String publicKey, Stream data)
+        private static Stream TryGetFileResource(string publicKey, Stream data)
         {
             if (File.Exists(publicKey))
             {
@@ -267,7 +267,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="publicKey">the public key</param>
         /// <returns>a stream</returns>
-        private static Stream TryGetResourceStream(String publicKey)
+        private static Stream TryGetResourceStream(string publicKey)
         {
             Stream data = null;
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
@@ -285,9 +285,11 @@ namespace NetSparkle
                 var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
                 if (!string.IsNullOrEmpty(resourceName))
                 {
-                  data = asm.GetManifestResourceStream(resourceName);
-                  if (data != null)
-                    break;
+                    data = asm.GetManifestResourceStream(resourceName);
+                    if (data != null)
+                    {
+                        break;
+                    }
                 }
             }
             return data;
