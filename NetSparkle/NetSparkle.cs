@@ -944,7 +944,7 @@ namespace NetSparkle
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
                     initializeProgressWindow(item);
-                    ProgressWindow.FinishedDownloadingFile(true);
+                    ProgressWindow?.FinishedDownloadingFile(true);
                     OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
                     showProgressWindow(); // opens as a dialog, hence why we call OnDownloadFinished before showing the window
                 }
@@ -1002,6 +1002,9 @@ namespace NetSparkle
             }
         }
 
+        /// <summary>
+        /// Shows the progress window if not downloading silently.
+        /// </summary>
         private void showProgressWindow()
         {
             if (!isDownloadingSilently() && ProgressWindow != null)
@@ -1398,14 +1401,14 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private async void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
         {
-            ProgressWindow.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
+            ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
                 await RunDownloadedInstaller();
             }
             else
             {
-                ProgressWindow.SetDownloadAndInstallButtonEnabled(true);
+                ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
             }
         }
 
