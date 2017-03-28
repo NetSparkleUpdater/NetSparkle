@@ -233,7 +233,7 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="data">the data</param>
         /// <returns><c>true</c> if the signature matches the expected signature.</returns>
-        public ValidationResult VerifyDSASignatureOfstring(string signature, string data)
+        public ValidationResult VerifyDSASignatureOfString(string signature, string data)
         {
             // creating stream from string
             using (var stream = new MemoryStream())

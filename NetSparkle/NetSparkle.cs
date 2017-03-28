@@ -184,6 +184,7 @@ namespace NetSparkle
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
         private Process _installerProcess;
+        private NetSparkleAppCastItem _itemBeingDownloaded;
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -398,7 +399,7 @@ namespace NetSparkle
 
         /// <summary>
         /// This property returns true when the update loop is running
-        /// and files when the loop is not running
+        /// and false when the loop is not running
         /// </summary>
         public bool IsUpdateLoopRunning
         {
@@ -914,6 +915,8 @@ namespace NetSparkle
         /// <param name="item">the appcast item to download</param>
         private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
         {
+            ReportDiagnosticMessage("Preparing to download " + item.DownloadLink);
+            _itemBeingDownloaded = item;
             // get the filename of the download link
             string[] segments = item.DownloadLink.Split('/');
             string fileName = segments[segments.Length - 1];
@@ -927,46 +930,70 @@ namespace NetSparkle
                 Directory.CreateDirectory(tmpPath);
             }
             _downloadTempFileName = Path.Combine(tmpPath, fileName);
-            if (ProgressWindow != null)
+            // Make sure the file doesn't already exist on disk. If it's already downloaded and the
+            // DSA signature checks out, don't redownload the file!
+            bool needsToDownload = true;
+            if (File.Exists(_downloadTempFileName))
             {
-                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
-                ProgressWindow = null;
+                ValidationResult result = DSAVerificator.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
+                if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
+                {
+                    ReportDiagnosticMessage("File is already downloaded");
+                    // We already have the file! Don't redownload it!
+                    needsToDownload = false;
+                    OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
+                }
+                else
+                {
+                    // File is downloaded, but is corrupt or was stopped in the middle or something else happened.
+                    // Redownload it!
+                    ReportDiagnosticMessage("File is corrupt; deleting file and redownloading...");
+                    File.Delete(_downloadTempFileName);
+                }
             }
-            if (ProgressWindow == null && !isDownloadingSilently())
-            {
-                ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
-                ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
-            }
-
-            if (_webDownloadClient != null)
+            if (needsToDownload)
             {
                 if (ProgressWindow != null)
                 {
-                    _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                    ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
+                    ProgressWindow = null;
                 }
-                _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
-                _webDownloadClient = null;
-            }
+                if (ProgressWindow == null && !isDownloadingSilently())
+                {
+                    ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
+                    ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
+                }
 
-            _webDownloadClient = new WebClient
-            {
-                UseDefaultCredentials = true,
-                Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
-            };
-            if (ProgressWindow != null)
-            {
-                _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-            }
-            _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
+                if (_webDownloadClient != null)
+                {
+                    if (ProgressWindow != null)
+                    {
+                        _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                    }
+                    _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
+                    _webDownloadClient = null;
+                }
 
-            Uri url = new Uri(item.DownloadLink);
-            _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+                _webDownloadClient = new WebClient
+                {
+                    UseDefaultCredentials = true,
+                    Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
+                };
+                if (ProgressWindow != null)
+                {
+                    _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+                }
+                _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
-            if (!isDownloadingSilently() && ProgressWindow != null)
-            {
-                DialogResult result = ProgressWindow.ShowDialog();
-                if (result == DialogResult.Abort || result == DialogResult.Cancel)
-                    CancelFileDownload();
+                Uri url = new Uri(item.DownloadLink);
+                ReportDiagnosticMessage("Starting to download " + url + " to " + _downloadTempFileName);
+                _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+                if (!isDownloadingSilently() && ProgressWindow != null)
+                {
+                    DialogResult result = ProgressWindow.ShowDialog();
+                    if (result == DialogResult.Abort || result == DialogResult.Cancel)
+                        CancelFileDownload();
+                }
             }
         }
 
@@ -1556,11 +1583,12 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
+            // TODO: more delegate messages (especially for silent mode operations)
             bool shouldShowUIItems = !isDownloadingSilently();
             if (e.Error != null)
             {
                 ReportDiagnosticMessage("Error on download finished: " + e.Error.Message);
-                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
                     UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
                 }
@@ -1571,7 +1599,7 @@ namespace NetSparkle
             {
                 ReportDiagnosticMessage("Download was canceled");
                 string errorMessage = "Download cancelled";
-                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
@@ -1582,9 +1610,8 @@ namespace NetSparkle
             var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
-                ReportDiagnosticMessage("Finished downloading file to: " + _downloadTempFileName);
+                ReportDiagnosticMessage("Fully downloaded file exists at " + _downloadTempFileName);
 
-                // report
                 ReportDiagnosticMessage("Performing DSA check");
 
                 // get the assembly
@@ -1598,10 +1625,10 @@ namespace NetSparkle
                     }
 
                     // check the DSA signature
-                    string dsaSignature = UserWindow?.CurrentItem?.DownloadDSASignature;
+                    string dsaSignature = _itemBeingDownloaded?.DownloadDSASignature;
                     if (dsaSignature != null)
                     {
-                        validationRes = DSAVerificator.VerifyDSASignatureFile(UserWindow.CurrentItem.DownloadDSASignature, _downloadTempFileName);
+                        validationRes = DSAVerificator.VerifyDSASignatureFile(dsaSignature, _downloadTempFileName);
                     }
                 }
             }
@@ -1617,7 +1644,7 @@ namespace NetSparkle
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
-                if (shouldShowUIItems && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
@@ -1625,6 +1652,7 @@ namespace NetSparkle
             }
             else
             {
+                ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
                 bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
