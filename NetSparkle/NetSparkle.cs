@@ -359,6 +359,10 @@ namespace NetSparkle
             DownloadNoInstall,
             /// <summary>
             /// Downloads the latest update file and automatically runs it as an installer file.
+            /// WARNING: if you don't tell the user that the application is about to quit
+            /// to update/run an installer, this setting might be quite the shock to the user!
+            /// Make sure to implement AboutToExitForInstallerRun or AboutToExitForInstallerRunAsync
+            /// so that you can show your users what is about to happen.
             /// </summary>
             DownloadAndInstall,
         }
