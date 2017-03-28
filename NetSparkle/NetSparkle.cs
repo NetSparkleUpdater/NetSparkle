@@ -941,7 +941,12 @@ namespace NetSparkle
                     ReportDiagnosticMessage("File is already downloaded");
                     // We already have the file! Don't redownload it!
                     needsToDownload = false;
+                    // Still need to set up the ProgressWindow for non-silent downloads, though,
+                    // so that the user can actually perform the install
+                    initializeProgressWindow(item);
+                    ProgressWindow.FinishedDownloadingFile(true);
                     OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
+                    showProgressWindow(); // opens as a dialog, hence why we call OnDownloadFinished before showing the window
                 }
                 else
                 {
@@ -953,16 +958,7 @@ namespace NetSparkle
             }
             if (needsToDownload)
             {
-                if (ProgressWindow != null)
-                {
-                    ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
-                    ProgressWindow = null;
-                }
-                if (ProgressWindow == null && !isDownloadingSilently())
-                {
-                    ProgressWindow = UIFactory.CreateProgressWindow(item, _applicationIcon);
-                    ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
-                }
+                initializeProgressWindow(item);
 
                 if (_webDownloadClient != null)
                 {
@@ -988,11 +984,32 @@ namespace NetSparkle
                 Uri url = new Uri(item.DownloadLink);
                 ReportDiagnosticMessage("Starting to download " + url + " to " + _downloadTempFileName);
                 _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
-                if (!isDownloadingSilently() && ProgressWindow != null)
+                showProgressWindow();
+            }
+        }
+
+        private void initializeProgressWindow(NetSparkleAppCastItem castItem)
+        {
+            if (ProgressWindow != null)
+            {
+                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
+                ProgressWindow = null;
+            }
+            if (ProgressWindow == null && !isDownloadingSilently())
+            {
+                ProgressWindow = UIFactory.CreateProgressWindow(castItem, _applicationIcon);
+                ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
+            }
+        }
+
+        private void showProgressWindow()
+        {
+            if (!isDownloadingSilently() && ProgressWindow != null)
+            {
+                DialogResult result = ProgressWindow.ShowDialog();
+                if (result == DialogResult.Abort || result == DialogResult.Cancel)
                 {
-                    DialogResult result = ProgressWindow.ShowDialog();
-                    if (result == DialogResult.Abort || result == DialogResult.Cancel)
-                        CancelFileDownload();
+                    CancelFileDownload();
                 }
             }
         }
