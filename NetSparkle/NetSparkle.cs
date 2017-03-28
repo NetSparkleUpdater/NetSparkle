@@ -15,6 +15,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Threading;
 
+// TODO: resume downloads if the download didn't finish but the software was killed
+// instead of restarting the entire download
+
 namespace NetSparkle
 {
     /// <summary>
@@ -221,6 +224,7 @@ namespace NetSparkle
         private Process _installerProcess;
         private NetSparkleAppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
+        private SparkleUpdateInfo _latestDownloadedUpdateInfo;
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -235,7 +239,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon)
+        public Sparkle(string appcastUrl, Icon applicationIcon)
             : this(appcastUrl, applicationIcon, SecurityMode.Strict, null)
         { }
 
@@ -245,7 +249,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="securityMode">Sparkle Security mode</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode)
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode)
             : this(appcastUrl, applicationIcon, securityMode, null)
         { }
 
@@ -255,7 +259,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="dsaPublicKey">The dsa public key to verfiy the sigatures.</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey)
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
 
@@ -265,7 +269,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly) 
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultNetSparkleUIFactory())
         { }
 
@@ -276,10 +280,11 @@ namespace NetSparkle
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         /// <param name="factory">UI factory to use</param>
-        public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly, INetSparkleUIFactory factory)
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, INetSparkleUIFactory factory)
         {
             _applicationIcon = applicationIcon;
             ExtraJsonData = "";
+            _latestDownloadedUpdateInfo = null;
             PrintDiagnosticToConsole = false;
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
@@ -946,6 +951,8 @@ namespace NetSparkle
         /// <param name="item">the appcast item to download</param>
         private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
         {
+            // TODO: is this a good idea? What if it's a user initiated request,
+            // and they want to watch progress instead of it being a silent download?
             if (_webDownloadClient != null && _webDownloadClient.IsBusy)
             {
                 return; // file is already downloading, don't do anything!
@@ -1338,9 +1345,9 @@ namespace NetSparkle
             UpdateSystemProfileInformation(config);
 
             // check if update is required
-            SparkleUpdateInfo updateStatus = await GetUpdateStatus(config);
-            NetSparkleAppCastItem[] updates = updateStatus.Updates;
-            if (updateStatus.Status == UpdateStatus.UpdateAvailable)
+            _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
+            NetSparkleAppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
+            if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
                 ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
@@ -1375,8 +1382,8 @@ namespace NetSparkle
                     }
                 }
             }
-            UpdateCheckFinished?.Invoke(this, updateStatus.Status);
-            return updateStatus;
+            UpdateCheckFinished?.Invoke(this, _latestDownloadedUpdateInfo.Status);
+            return _latestDownloadedUpdateInfo;
         }
 
         /// <summary>
@@ -1526,11 +1533,11 @@ namespace NetSparkle
                 // check if update is required
                 if (_cancelToken.IsCancellationRequested)
                     break;
-                SparkleUpdateInfo updateStatus = await GetUpdateStatus(config);
+                _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
                 if (_cancelToken.IsCancellationRequested)
                     break;
-                NetSparkleAppCastItem[] updates = updateStatus.Updates;
-                bUpdateRequired = updateStatus.Status == UpdateStatus.UpdateAvailable;
+                NetSparkleAppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
+                bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
                 if (bUpdateRequired)
                 {
                     // show the update window
