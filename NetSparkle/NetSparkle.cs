@@ -860,14 +860,25 @@ namespace NetSparkle
         /// <param name="updates">updates to show UI for</param>
         public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates)
         {
-            if (_useNotificationToast)
+            if (updates != null)
             {
-                UIFactory.ShowToast(updates, _applicationIcon, OnToastClick);
+                if (_useNotificationToast)
+                {
+                    UIFactory.ShowToast(updates, _applicationIcon, OnToastClick);
+                }
+                else
+                {
+                    ShowUpdateNeededUIInner(updates);
+                }
             }
-            else
-            {
-                ShowUpdateNeededUIInner(updates);
-            }
+        }
+
+        /// <summary>
+        /// Show the update UI with the latest downloaded update information
+        /// </summary>
+        public void ShowUpdateNeededUI()
+        {
+            ShowUpdateNeededUI(_latestDownloadedUpdateInfo?.Updates);
         }
 
         private void OnToastClick(NetSparkleAppCastItem[] updates)
