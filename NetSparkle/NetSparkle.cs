@@ -101,6 +101,15 @@ namespace NetSparkle
     public delegate Task CancelEventHandlerAsync(object sender, CancelEventArgs e);
 
     /// <summary>
+    /// Handler for when a downloaded file is ready. Useful when using 
+    /// SilentModeTypes.DownloadNoInstall so you can let your user know when the downloaded
+    /// update is ready.
+    /// </summary>
+    /// <param name="item">App cast details of the downloaded item</param>
+    /// <param name="downloadPath">Path of the downloaded software in case you want to start it yourself</param>
+    public delegate void DownloadedFileReady(NetSparkleAppCastItem item, string downloadPath);
+
+    /// <summary>
     /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
     /// knowing when the window needs to close
     /// </summary>
@@ -119,12 +128,12 @@ namespace NetSparkle
     public class Sparkle : IDisposable
     {
         /// <summary>
-        /// Subscribe to this to get a chance to shut down gracefully before quiting
+        /// Subscribe to this to get a chance to shut down gracefully before quitting
         /// </summary>
         public event CancelEventHandler AboutToExitForInstallerRun;
 
         /// <summary>
-        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitin
+        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitting
         /// </summary>
         public event CancelEventHandlerAsync AboutToExitForInstallerRunAsync;
 
@@ -159,10 +168,18 @@ namespace NetSparkle
         /// Called when update check has just started
         /// </summary>
         public event UpdateCheckStarted UpdateCheckStarted;
+
         /// <summary>
         /// Called when update check is all done. May or may not have called UpdateDetected in the middle.
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
+
+        /// <summary>
+        /// Called when the downloaded file is fully downloaded and verified regardless of the value for
+        /// SilentMode. Note that if you are installing fully silently, this will be called before the
+        /// install file is executed, so don't manually initiate the file or anything.
+        /// </summary>
+        public event DownloadedFileReady DownloadedFileReady;
 
         //private BackgroundWorker _worker;
         private Task _taskWorker;
@@ -1677,14 +1694,11 @@ namespace NetSparkle
             else
             {
                 ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
+                DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
                     OnProgressWindowInstallAndRelaunch(this, new EventArgs());
-                }
-                else if (SilentMode == SilentModeTypes.DownloadNoInstall)
-                {
-                    // TODO: Notify Sparkle user that there is an update available but don't actively display it
                 }
             }
         }
