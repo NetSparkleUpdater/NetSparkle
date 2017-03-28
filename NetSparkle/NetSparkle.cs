@@ -17,6 +17,7 @@ using System.Windows.Threading;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
+// TODO: Refactor a bunch of events to an interface instead?
 
 namespace NetSparkle
 {
@@ -142,6 +143,11 @@ namespace NetSparkle
     public delegate Task CloseWPFSoftwareAsync();
 
     /// <summary>
+    /// A delegate for download events (start, finished, canceled).
+    /// </summary>
+    public delegate void DownloadEvent(string path);
+
+    /// <summary>
     /// Class to communicate with a sparkle-based appcast
     /// </summary>
     public class Sparkle : IDisposable
@@ -213,6 +219,23 @@ namespace NetSparkle
         /// Called when the user skips some version of the application.
         /// </summary>
         public event UserSkippedVersion UserSkippedVersion;
+
+        /// <summary>
+        /// Called when the download has just started
+        /// </summary>
+        public event DownloadEvent StartedDownloading;
+        /// <summary>
+        /// Called when the download has finished successfully
+        /// </summary>
+        public event DownloadEvent FinishedDownloading;
+        /// <summary>
+        /// Called when the download has been canceled
+        /// </summary>
+        public event DownloadEvent DownloadCanceled;
+        /// <summary>
+        /// Called when the download has downloaded but has an error other than corruption
+        /// </summary>
+        public event DownloadEvent DownloadError;
 
         //private BackgroundWorker _worker;
         private Task _taskWorker;
@@ -1054,6 +1077,7 @@ namespace NetSparkle
                 Uri url = new Uri(item.DownloadLink);
                 ReportDiagnosticMessage("Starting to download " + url + " to " + _downloadTempFileName);
                 _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+                StartedDownloading?.Invoke(_downloadTempFileName);
                 showProgressWindow();
             }
         }
@@ -1433,9 +1457,14 @@ namespace NetSparkle
         public void CancelFileDownload()
         {
             ReportDiagnosticMessage("Canceling download...");
+            DownloadCanceled?.Invoke(_downloadTempFileName);
             if (_webDownloadClient != null && _webDownloadClient.IsBusy)
             {
                 _webDownloadClient.CancelAsync();
+            }
+            if (File.Exists(_downloadTempFileName))
+            {
+                File.Delete(_downloadTempFileName);
             }
         }
 
@@ -1681,10 +1710,10 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
-            // TODO: more delegate messages (especially for silent mode operations)
             bool shouldShowUIItems = !isDownloadingSilently();
             if (e.Error != null)
             {
+                DownloadError?.Invoke(_downloadTempFileName);
                 ReportDiagnosticMessage("Error on download finished: " + e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
@@ -1695,6 +1724,7 @@ namespace NetSparkle
 
             if (e.Cancelled)
             {
+                DownloadCanceled?.Invoke(_downloadTempFileName);
                 ReportDiagnosticMessage("Download was canceled");
                 string errorMessage = "Download cancelled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
@@ -1751,6 +1781,7 @@ namespace NetSparkle
             }
             else
             {
+                FinishedDownloading?.Invoke(_downloadTempFileName);
                 ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
