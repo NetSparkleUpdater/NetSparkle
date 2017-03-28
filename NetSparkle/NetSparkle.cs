@@ -190,6 +190,15 @@ namespace NetSparkle
         /// </summary>
         public event DownloadedFileReady DownloadedFileReady;
 
+        /// <summary>
+        /// Called when the downloaded file is downloaded (or at least partially on disk) and the DSA
+        /// signature doesn't match. When this is called, Sparkle is not taking any further action to 
+        /// try to download the install file during this instance of the software. In order to make Sparkle 
+        /// try again, you must delete the file off disk yourself. Sparkle will try again after the software
+        /// is restarted.
+        /// </summary>
+        public event DownloadedFileIsCorrupt DownloadedFileIsCorrupt;
+
         //private BackgroundWorker _worker;
         private Task _taskWorker;
         private CancellationToken _cancelToken;
@@ -211,6 +220,7 @@ namespace NetSparkle
         private WebClient _webDownloadClient;
         private Process _installerProcess;
         private NetSparkleAppCastItem _itemBeingDownloaded;
+        private bool _hasAttemptedFileRedownload;
 
         /// <summary>
         /// ctor which needs the appcast url
@@ -269,34 +279,25 @@ namespace NetSparkle
         public Sparkle(String appcastUrl, Icon applicationIcon, SecurityMode securityMode, String dsaPublicKey, String referenceAssembly, INetSparkleUIFactory factory)
         {
             _applicationIcon = applicationIcon;
-
             ExtraJsonData = "";
-
             PrintDiagnosticToConsole = false;
-
+            _hasAttemptedFileRedownload = false;
             UIFactory = factory;
-
             // DSA Verificator
             DSAVerificator = new NetSparkleDSAVerificator(securityMode, dsaPublicKey);
-
             // Syncronisation Context
             _syncContext = SynchronizationContext.Current;
             if (_syncContext == null)
             {
                 _syncContext = new SynchronizationContext();
             }
-
             // preconfige ssl trust
             TrustEverySSLConnection = false;
-
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
-
             // init UI
             UIFactory.Init();
-
             _appReferenceAssembly = null;            
-
             // set the reference assembly
             if (referenceAssembly != null)
             {
@@ -978,12 +979,17 @@ namespace NetSparkle
                     OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
                     showProgressWindow(); // opens as a dialog, hence why we call OnDownloadFinished before showing the window
                 }
-                else
+                else if (!_hasAttemptedFileRedownload)
                 {
                     // File is downloaded, but is corrupt or was stopped in the middle or something else happened.
                     // Redownload it!
+                    _hasAttemptedFileRedownload = true;
                     ReportDiagnosticMessage("File is corrupt; deleting file and redownloading...");
                     File.Delete(_downloadTempFileName);
+                }
+                else
+                {
+                    DownloadedFileIsCorrupt?.Invoke(item, _downloadTempFileName);
                 }
             }
             if (needsToDownload)
@@ -1693,6 +1699,7 @@ namespace NetSparkle
             {
                 ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
+                DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
