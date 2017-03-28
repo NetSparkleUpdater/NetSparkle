@@ -946,6 +946,10 @@ namespace NetSparkle
         /// <param name="item">the appcast item to download</param>
         private void InitDownloadAndInstallProcess(NetSparkleAppCastItem item)
         {
+            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            {
+                return; // file is already downloading, don't do anything!
+            }
             ReportDiagnosticMessage("Preparing to download " + item.DownloadLink);
             _itemBeingDownloaded = item;
             // get the filename of the download link
