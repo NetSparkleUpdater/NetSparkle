@@ -1129,6 +1129,7 @@ namespace NetSparkle
         /// </summary>
         private async Task RunDownloadedInstaller()
         {
+            ReportDiagnosticMessage("Running downloaded installer");
             // get the commandline 
             string cmdLine = Environment.CommandLine;
             string workingDir = Environment.CurrentDirectory;
@@ -1188,9 +1189,6 @@ namespace NetSparkle
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
-
-            // listen for application exit events
-            Application.ApplicationExit += OnWindowsFormsApplicationExit;
             // quit the app
             if (_exitHandle != null)
                 _exitHandle.Set(); // make SURE the loop exits!
@@ -1458,8 +1456,16 @@ namespace NetSparkle
             }
             else if (UserWindow.Result == DialogResult.Yes)
             {
-                // download the binaries
-                InitDownloadAndInstallProcess(UserWindow.CurrentItem);
+                if (SilentMode == SilentModeTypes.DownloadNoInstall && File.Exists(_downloadTempFileName))
+                {
+                    // Binary should already be downloaded. Run it!
+                    OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+                }
+                else
+                {
+                    // download the binaries
+                    InitDownloadAndInstallProcess(UserWindow.CurrentItem);
+                }
             }
             UserWindow = null; // done using the window so don't hold onto reference
             CheckingForUpdatesWindow?.Close();
