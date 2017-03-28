@@ -122,6 +122,13 @@ namespace NetSparkle
     public delegate void DownloadedFileIsCorrupt(NetSparkleAppCastItem item, string downloadPath);
 
     /// <summary>
+    /// Delegate called when the user decides to skip a version of the application.
+    /// </summary>
+    /// <param name="item">Item that the user chose to skip</param>
+    /// <param name="downloadPath">Download path of the item so you can delete the download if you want</param>
+    public delegate void UserSkippedVersion(NetSparkleAppCastItem item, string downloadPath);
+
+    /// <summary>
     /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
     /// knowing when the window needs to close
     /// </summary>
@@ -201,6 +208,11 @@ namespace NetSparkle
         /// is restarted.
         /// </summary>
         public event DownloadedFileIsCorrupt DownloadedFileIsCorrupt;
+
+        /// <summary>
+        /// Called when the user skips some version of the application.
+        /// </summary>
+        public event UserSkippedVersion UserSkippedVersion;
 
         //private BackgroundWorker _worker;
         private Task _taskWorker;
@@ -858,7 +870,7 @@ namespace NetSparkle
         /// update process
         /// </summary>
         /// <param name="updates">updates to show UI for</param>
-        public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates)
+        public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates, bool isUpdateAlreadyDownloaded = false)
         {
             if (updates != null)
             {
@@ -868,7 +880,7 @@ namespace NetSparkle
                 }
                 else
                 {
-                    ShowUpdateNeededUIInner(updates);
+                    ShowUpdateNeededUIInner(updates, isUpdateAlreadyDownloaded);
                 }
             }
         }
@@ -876,9 +888,9 @@ namespace NetSparkle
         /// <summary>
         /// Show the update UI with the latest downloaded update information
         /// </summary>
-        public void ShowUpdateNeededUI()
+        public void ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded = false)
         {
-            ShowUpdateNeededUI(_latestDownloadedUpdateInfo?.Updates);
+            ShowUpdateNeededUI(_latestDownloadedUpdateInfo?.Updates, isUpdateAlreadyDownloaded);
         }
 
         private void OnToastClick(NetSparkleAppCastItem[] updates)
@@ -886,7 +898,7 @@ namespace NetSparkle
             ShowUpdateNeededUIInner(updates);
         }
 
-        private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates)
+        private void ShowUpdateNeededUIInner(NetSparkleAppCastItem[] updates, bool isUpdateAlreadyDownloaded = false)
         {
             // TODO: In the future, instead of remaking the window, just send the new data to the old window
             if (UserWindow != null)
@@ -913,7 +925,7 @@ namespace NetSparkle
                     // define action
                     Action<object> showSparkleUI = (state) =>
                     {
-                        UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon);
+                        UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon, isUpdateAlreadyDownloaded);
 
                         if (HideReleaseNotes)
                         {
@@ -1439,8 +1451,10 @@ namespace NetSparkle
             if (UserWindow.Result == DialogResult.No)
             {
                 // skip this version
+                // TODO: inform delegate so we can hide stuff in GUI if silent no install update method
                 NetSparkleConfiguration config = GetApplicationConfig();
                 config.SetVersionToSkip(UserWindow.CurrentItem.Version);
+                UserSkippedVersion?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
             }
             else if (UserWindow.Result == DialogResult.Yes)
             {

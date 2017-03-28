@@ -178,7 +178,7 @@
     <value>4</value>
   </data>
   <data name="lblInfoText.Text" xml:space="preserve">
-    <value>APP is now available (you have OLDVERSION). Would you like to download it now?</value>
+    <value>APP is now available (you have OLDVERSION). Would you like to [DOWNLOAD] it now?</value>
   </data>
   <data name="&gt;&gt;lblInfoText.Name" xml:space="preserve">
     <value>lblInfoText</value>
@@ -330,24 +330,6 @@
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="NetSparkleBrowser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="NetSparkleBrowser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="NetSparkleBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
-  </data>
-  <data name="NetSparkleBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>40, 54</value>
-  </data>
-  <data name="NetSparkleBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>800, 525</value>
-  </data>
-  <data name="NetSparkleBrowser.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
   <data name="&gt;&gt;NetSparkleBrowser.Name" xml:space="preserve">
     <value>NetSparkleBrowser</value>
   </data>
@@ -382,6 +364,36 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="NetSparkleBrowser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="NetSparkleBrowser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="NetSparkleBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
+  <data name="NetSparkleBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>40, 54</value>
+  </data>
+  <data name="NetSparkleBrowser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>800, 525</value>
+  </data>
+  <data name="NetSparkleBrowser.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;NetSparkleBrowser.Name" xml:space="preserve">
+    <value>NetSparkleBrowser</value>
+  </data>
+  <data name="&gt;&gt;NetSparkleBrowser.Type" xml:space="preserve">
+    <value>System.Windows.Forms.WebBrowser, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;NetSparkleBrowser.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;NetSparkleBrowser.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">

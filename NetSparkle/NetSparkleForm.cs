@@ -52,7 +52,8 @@ namespace NetSparkle
         /// <param name="applicationIcon">The icon</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
-        public NetSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] items, Icon applicationIcon = null, string separatorTemplate = "", string headAddition = "")
+        public NetSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
+            string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;
             _updates = items;
@@ -80,6 +81,7 @@ namespace NetSparkle
             lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
             lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
             lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", getVersion(new Version(item.AppVersionInstalled)));
+            lblInfoText.Text = lblInfoText.Text.Replace("[DOWNLOAD]", isUpdateAlreadyDownloaded ? "install" : "download");
 
             if (items.Length == 0)
             {
@@ -109,6 +111,15 @@ namespace NetSparkle
                 imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
                 Icon = applicationIcon;
             }
+
+            /*
+             * TODO: Allow for critical updates. if it's a critical update, disable skip/remind/close buttons!
+            if (isCriticalUpdate)
+            {
+                skipButton.Visible = false;
+                buttonRemind.Visible = false;
+            }
+            */
             EnsureDialogShown();
         }
 

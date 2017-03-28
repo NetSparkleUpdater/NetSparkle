@@ -17,9 +17,9 @@ namespace NetSparkle
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
         /// <returns></returns>
-        public virtual INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon)
+        public virtual INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
         {
-            return new NetSparkleForm(sparkle, updates, applicationIcon);
+            return new NetSparkleForm(sparkle, updates, applicationIcon, isUpdateAlreadyDownloaded);
         }
 
         /// <summary>

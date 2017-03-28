@@ -13,8 +13,10 @@ namespace NetSparkle.Interfaces
         /// </summary>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
+        /// <param name="isUpdateAlreadyDownloaded">If true, only show the install button and don't show the remind me later or skip update buttons.
+        /// Also, make sure any UI text doesn't imply that the user is about to download the file.</param>
         /// <returns></returns>
-        INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon);
+        INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
         /// Create download progress window
