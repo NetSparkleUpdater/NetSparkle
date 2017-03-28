@@ -110,6 +110,15 @@ namespace NetSparkle
     public delegate void DownloadedFileReady(NetSparkleAppCastItem item, string downloadPath);
 
     /// <summary>
+    /// Called when the file is fully downloaded, but the DSA can't be verified.
+    /// This could allow you to tell the user what happened if updates are silent.
+    /// Note that silent updates will not delete the corrupted file until the next download loop.
+    /// </summary>
+    /// <param name="item">App cast details of the downloaded item</param>
+    /// <param name="downloadPath">Path of the invalid software download</param>
+    public delegate void DownloadedFileIsCorrupt(NetSparkleAppCastItem item, string downloadPath);
+
+    /// <summary>
     /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
     /// knowing when the window needs to close
     /// </summary>
@@ -1512,40 +1521,40 @@ namespace NetSparkle
                     break;
                 NetSparkleAppCastItem[] updates = updateStatus.Updates;
                 bUpdateRequired = updateStatus.Status == UpdateStatus.UpdateAvailable;
-                if (!bUpdateRequired)
-                    goto WaitSection;
-
-                // show the update window
-                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + updates[0].Version);
-
-                // send notification if needed
-                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
-                UpdateDetected?.Invoke(this, ev);
-
-                // check results
-                switch (ev.NextAction)
+                if (bUpdateRequired)
                 {
-                    case NextUpdateAction.PerformUpdateUnattended:
-                        {
-                            ReportDiagnosticMessage("Unattended update desired from consumer");
-                            EnableSilentMode = true;
-                            SilentMode = SilentModeTypes.DownloadAndInstall;
-                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                            //_worker.ReportProgress(1, updates);
-                            break;
-                        }
-                    case NextUpdateAction.ProhibitUpdate:
-                        {
-                            ReportDiagnosticMessage("Update prohibited from consumer");
-                            break;
-                        }
-                    default:
-                        {
-                            ReportDiagnosticMessage("Showing Standard Update UI");
-                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                            //_worker.ReportProgress(1, updates);
-                            break;
-                        }
+                    // show the update window
+                    ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + updates[0].Version);
+
+                    // send notification if needed
+                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
+                    UpdateDetected?.Invoke(this, ev);
+
+                    // check results
+                    switch (ev.NextAction)
+                    {
+                        case NextUpdateAction.PerformUpdateUnattended:
+                            {
+                                ReportDiagnosticMessage("Unattended update desired from consumer");
+                                EnableSilentMode = true;
+                                SilentMode = SilentModeTypes.DownloadAndInstall;
+                                OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                //_worker.ReportProgress(1, updates);
+                                break;
+                            }
+                        case NextUpdateAction.ProhibitUpdate:
+                            {
+                                ReportDiagnosticMessage("Update prohibited from consumer");
+                                break;
+                            }
+                        default:
+                            {
+                                ReportDiagnosticMessage("Showing Standard Update UI");
+                                OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                //_worker.ReportProgress(1, updates);
+                                break;
+                            }
+                    }
                 }
 
             WaitSection:
