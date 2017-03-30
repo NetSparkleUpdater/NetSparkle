@@ -95,8 +95,10 @@ namespace NetSparkle
                 NetSparkleAppCastItem latestVersion = _updates.OrderByDescending(p => p.Version).FirstOrDefault();
 
                 StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>");
+                bool isUserMissingCriticalUpdate = false;
                 foreach (NetSparkleAppCastItem castItem in items)
                 {
+                    isUserMissingCriticalUpdate = isUserMissingCriticalUpdate | castItem.IsCriticalUpdate;
                     sb.Append(string.Format(SeparatorTemplate, 
                                             castItem.Version,
                                             castItem.PublicationDate.ToString("dd MMM yyyy"),
@@ -108,9 +110,9 @@ namespace NetSparkle
                 string releaseNotes = sb.ToString();
                 NetSparkleBrowser.DocumentText = releaseNotes;
 
-                buttonRemind.Enabled = latestVersion.IsCriticalUpdate == false;
-                skipButton.Enabled = latestVersion.IsCriticalUpdate == false;
-                //if (latestVersion.IsCriticalUpdate)
+                buttonRemind.Enabled = isUserMissingCriticalUpdate == false;
+                skipButton.Enabled = isUserMissingCriticalUpdate == false;
+                //if (isUserMissingCriticalUpdate)
                 //{
                 //    FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
                 //}
