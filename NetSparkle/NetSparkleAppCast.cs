@@ -123,7 +123,9 @@ namespace NetSparkle
                             currentItem = new NetSparkleAppCastItem()
                             {
                                 AppVersionInstalled = _config.InstalledVersion,
-                                AppName = _config.ApplicationName
+                                AppName = _config.ApplicationName,
+                                UpdateSize = 0,
+                                IsCriticalUpdate = false
                             };
                             break;
                         case releaseNotesLinkNode:
