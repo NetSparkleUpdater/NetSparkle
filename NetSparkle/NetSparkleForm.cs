@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
 
+// TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
+
 namespace NetSparkle
 {
     /// <summary>
@@ -61,7 +63,8 @@ namespace NetSparkle
             SeparatorTemplate = 
                 !string.IsNullOrEmpty(separatorTemplate) ? 
                 separatorTemplate :
-                "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
+                "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">" +
+                "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
 
             InitializeComponent();
 
@@ -104,6 +107,13 @@ namespace NetSparkle
 
                 string releaseNotes = sb.ToString();
                 NetSparkleBrowser.DocumentText = releaseNotes;
+
+                buttonRemind.Enabled = latestVersion.IsCriticalUpdate == false;
+                skipButton.Enabled = latestVersion.IsCriticalUpdate == false;
+                //if (latestVersion.IsCriticalUpdate)
+                //{
+                //    FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
+                //}
             }
 
             if (applicationIcon != null)
@@ -111,20 +121,17 @@ namespace NetSparkle
                 imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
                 Icon = applicationIcon;
             }
-
-            /*
-             * TODO: Allow for critical updates. if it's a critical update, disable skip/remind/close buttons!
-            if (isCriticalUpdate)
-            {
-                skipButton.Visible = false;
-                buttonRemind.Visible = false;
-            }
-            */
             EnsureDialogShown();
+        }
+
+        private void NetSparkleForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
         }
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
         {
+            string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
             if (!string.IsNullOrEmpty(item.Description))
             {
@@ -132,11 +139,19 @@ namespace NetSparkle
                 Regex containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
                 if (containsHtmlRegex.IsMatch(item.Description))
                 {
+                    if (item.IsCriticalUpdate)
+                    {
+                        item.Description = "<p>" + criticalUpdate + "</p>" + "<br>" + item.Description;
+                    }
                     return item.Description;
                 }
                 else
                 {
                     var md = new MarkdownSharp.Markdown();
+                    if (item.IsCriticalUpdate)
+                    {
+                        item.Description = "*" + criticalUpdate + "*" + "\n\n" + item.Description;
+                    }
                     var temp = md.Transform(item.Description);
                     return temp;
                 }
@@ -169,11 +184,15 @@ namespace NetSparkle
                 try
                 {
                     var md = new MarkdownSharp.Markdown();
+                    if (item.IsCriticalUpdate)
+                    {
+                        notes = "*" + criticalUpdate + "*" + "\n\n" + notes;
+                    }
                     notes = md.Transform(notes);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Error parsing MarkDown syntax: " + ex.Message);
+                    _sparkle.ReportDiagnosticMessage("Error parsing MarkDown syntax: " + ex.Message);
                 }
             }
             return notes;
@@ -193,7 +212,7 @@ namespace NetSparkle
             }
             catch (WebException ex)
             {
-                Debug.WriteLine("Cannot download release notes from " + link + " because " + ex.Message);
+                _sparkle.ReportDiagnosticMessage("Cannot download release notes from " + link + " because " + ex.Message);
                 return "";
             }
         }

@@ -43,6 +43,14 @@ namespace NetSparkle
         /// Date item was published
         /// </summary>
         public DateTime PublicationDate { get; set; }
+        /// <summary>
+        /// Whether the update was marked critical or not via sparkle:critical
+        /// </summary>
+        public bool IsCriticalUpdate { get; set; }
+        /// <summary>
+        /// Length of update set via sparkle:length
+        /// </summary>
+        public int UpdateSize { get; set; }
 
         #region IComparable<NetSparkleAppCastItem> Members
         /// <summary>

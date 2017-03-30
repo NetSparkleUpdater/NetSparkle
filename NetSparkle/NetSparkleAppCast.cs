@@ -20,6 +20,8 @@ namespace NetSparkle
         private const string descriptionNode = "description";
         private const string versionAttribute = "sparkle:version";
         private const string dsaSignature = "sparkle:dsaSignature";
+        private const string criticalAttribute = "sparkle:criticalUpdate";
+        private const string lengthAttribute = "length";
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
 
@@ -72,7 +74,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                Debug.WriteLine("netsparkle: error reading app cast {0}: {1} ", _castUrl, e.Message);
+                _sparkle.ReportDiagnosticMessage(string.Format("error reading app cast {0}: {1} ", _castUrl, e.Message));
                 return false;
             }
         }
@@ -81,7 +83,7 @@ namespace NetSparkle
         {
             if (inputstream == null)
             {
-                Debug.WriteLine("netsparkle: Cannot read response from URL " + _castUrl);
+                _sparkle.ReportDiagnosticMessage("Cannot read response from URL " + _castUrl);
                 return false;
             }
 
@@ -94,7 +96,7 @@ namespace NetSparkle
             var signatureNeeded = _sparkle.DSAVerificator.SignatureNeeded();
             if (signatureNeeded && _sparkle.DSAVerificator.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
             {
-                Debug.WriteLine("netsparkle: Signature check of appcast failed");
+                _sparkle.ReportDiagnosticMessage("Signature check of appcast failed");
                 return false;
             }
             memorystream.Position = 0;
@@ -121,7 +123,9 @@ namespace NetSparkle
                             currentItem = new NetSparkleAppCastItem()
                             {
                                 AppVersionInstalled = _config.InstalledVersion,
-                                AppName = _config.ApplicationName
+                                AppName = _config.ApplicationName,
+                                UpdateSize = 0,
+                                IsCriticalUpdate = false
                             };
                             break;
                         case releaseNotesLinkNode:
@@ -143,6 +147,26 @@ namespace NetSparkle
                                 currentItem.Version = reader.GetAttribute(versionAttribute);
                                 currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
                                 currentItem.DownloadDSASignature = reader.GetAttribute(dsaSignature);
+                                string length = reader.GetAttribute(lengthAttribute);
+                                if (length != null)
+                                {
+                                    int size = 0;
+                                    if (int.TryParse(length, out size))
+                                    {
+                                        currentItem.UpdateSize = size;
+                                    }
+                                    else
+                                    {
+                                        currentItem.UpdateSize = 0;
+                                    }
+                                }
+                                bool isCritical = false;
+                                string critical = reader.GetAttribute(criticalAttribute);
+                                if (critical != null && critical == "true" || critical == "1")
+                                {
+                                    isCritical = true;
+                                }
+                                currentItem.IsCriticalUpdate = isCritical;
                             }
                             break;
                         case pubDateNode:
@@ -155,7 +179,7 @@ namespace NetSparkle
                                 }
                                 catch (FormatException ex)
                                 {
-                                    Debug.WriteLine("netsparkle: Cannot parse item datetime " + dt + " with message " + ex.Message);
+                                    _sparkle.ReportDiagnosticMessage("Cannot parse item datetime " + dt + " with message " + ex.Message);
                                 }
                             }
                             break;
