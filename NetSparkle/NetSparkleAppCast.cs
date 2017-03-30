@@ -20,7 +20,7 @@ namespace NetSparkle
         private const string descriptionNode = "description";
         private const string versionAttribute = "sparkle:version";
         private const string dsaSignature = "sparkle:dsaSignature";
-        private const string criticalAttribute = "sparkle:critical";
+        private const string criticalAttribute = "sparkle:criticalUpdate";
         private const string lengthAttribute = "length";
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
