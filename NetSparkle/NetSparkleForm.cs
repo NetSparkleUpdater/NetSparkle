@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
 
+// TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
+
 namespace NetSparkle
 {
     /// <summary>
@@ -108,10 +110,10 @@ namespace NetSparkle
 
                 buttonRemind.Enabled = latestVersion.IsCriticalUpdate == false;
                 skipButton.Enabled = latestVersion.IsCriticalUpdate == false;
-                if (latestVersion.IsCriticalUpdate)
-                {
-                    //FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
-                }
+                //if (latestVersion.IsCriticalUpdate)
+                //{
+                //    FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
+                //}
             }
 
             if (applicationIcon != null)
@@ -182,7 +184,10 @@ namespace NetSparkle
                 try
                 {
                     var md = new MarkdownSharp.Markdown();
-                    notes = "*" + criticalUpdate + "*" + "\n\n" + notes;
+                    if (item.IsCriticalUpdate)
+                    {
+                        notes = "*" + criticalUpdate + "*" + "\n\n" + notes;
+                    }
                     notes = md.Transform(notes);
                 }
                 catch (Exception ex)
