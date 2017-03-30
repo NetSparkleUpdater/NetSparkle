@@ -106,11 +106,11 @@ namespace NetSparkle
                 string releaseNotes = sb.ToString();
                 NetSparkleBrowser.DocumentText = releaseNotes;
 
-                buttonRemind.Visible = latestVersion.IsCriticalUpdate == false;
-                skipButton.Visible = latestVersion.IsCriticalUpdate == false;
+                buttonRemind.Enabled = latestVersion.IsCriticalUpdate == false;
+                skipButton.Enabled = latestVersion.IsCriticalUpdate == false;
                 if (latestVersion.IsCriticalUpdate)
                 {
-                    FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
+                    //FormClosing += NetSparkleForm_FormClosing; // no closing a critical update!
                 }
             }
 
@@ -124,7 +124,7 @@ namespace NetSparkle
 
         private void NetSparkleForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //e.Cancel = true;
+            e.Cancel = true;
         }
 
         private string GetReleaseNotes(NetSparkleAppCastItem item)
