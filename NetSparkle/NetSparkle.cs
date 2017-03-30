@@ -544,6 +544,40 @@ namespace NetSparkle
         /// </summary>
         public string ExtraJsonData { get; set; }
 
+        /// <summary>
+        /// Returns the latest app cast items to the caller. Might be null.
+        /// </summary>
+        public NetSparkleAppCastItem[] LatestAppCastItems
+        {
+            get
+            {
+                return _latestDownloadedUpdateInfo?.Updates;
+            }
+        }
+
+        /// <summary>
+        /// Loops through all of the most recently grabbed app cast items
+        /// and see if any of them are marked as critical
+        /// </summary>
+        public bool UpdateMarkedCritical
+        {
+            get
+            {
+                NetSparkleAppCastItem[] items = LatestAppCastItems;
+                if (items != null)
+                {
+                    foreach (NetSparkleAppCastItem item in items)
+                    {
+                        if (item.IsCriticalUpdate)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
         #endregion
 
         /// <summary>
