@@ -173,7 +173,7 @@ namespace NetSparkle
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Error parsing MarkDown syntax: " + ex.Message);
+                    _sparkle.ReportDiagnosticMessage("Error parsing MarkDown syntax: " + ex.Message);
                 }
             }
             return notes;
@@ -193,7 +193,7 @@ namespace NetSparkle
             }
             catch (WebException ex)
             {
-                Debug.WriteLine("Cannot download release notes from " + link + " because " + ex.Message);
+                _sparkle.ReportDiagnosticMessage("Cannot download release notes from " + link + " because " + ex.Message);
                 return "";
             }
         }
