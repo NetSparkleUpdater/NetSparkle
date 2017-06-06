@@ -148,7 +148,7 @@ namespace NetSparkle.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap software_update_available1 {
             get {
-                object obj = ResourceManager.GetObject("software-update-available1", resourceCulture);
+                object obj = ResourceManager.GetObject("software_update_available1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
