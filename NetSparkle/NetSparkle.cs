@@ -469,6 +469,12 @@ namespace NetSparkle
         public string CustomInstallerArguments { get; set; }
 
         /// <summary>
+        /// Function that is called asynchronously to clean up old installers that have been
+        /// downloaded with SilentModeTypes.DownloadNoInstall or SilentModeTypes.DownloadAndInstall.
+        /// </summary>
+        public Action ClearOldInstallers { get; set; }
+
+        /// <summary>
         /// This property returns true when the update loop is running
         /// and false when the loop is not running
         /// </summary>
@@ -627,8 +633,12 @@ namespace NetSparkle
         /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
         /// <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
         /// <param name="checkFrequency">the frequency between checks.</param>
-        public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
+        public async void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
         {
+            if (ClearOldInstallers != null)
+            {
+                await Task.Run(ClearOldInstallers);
+            }
             // first set the event handle
             _loopingHandle.Set();
 
