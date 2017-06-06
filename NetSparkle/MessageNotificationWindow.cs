@@ -10,13 +10,25 @@ using System.Windows.Forms;
 
 namespace NetSparkle
 {
+    /// <summary>
+    /// An alert box
+    /// </summary>
     public partial class MessageNotificationWindow : Form
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MessageNotificationWindow()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="title">Window title</param>
+        /// <param name="message">Message</param>
+        /// <param name="applicationIcon">Your application Icon</param>
         public MessageNotificationWindow(string title, string message, Icon applicationIcon = null)
         {
             InitializeComponent();

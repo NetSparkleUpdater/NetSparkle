@@ -19,7 +19,7 @@ namespace NetSparkle
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">The appcast item to use</param>
         /// <param name="applicationIcon">Your application Icon</param>
         public NetSparkleDownloadProgress(NetSparkleAppCastItem item, Icon applicationIcon)
         {
@@ -55,7 +55,6 @@ namespace NetSparkle
         /// <summary>
         /// Update UI to show file is downloaded and signature check result
         /// </summary>
-        /// <param name="signatureValid"></param>
         public void FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             progressDownload.Visible = false;
@@ -74,6 +73,10 @@ namespace NetSparkle
             FormClosing -= NetSparkleDownloadProgress_FormClosing;
         }
 
+        /// <summary>
+        /// Display an error message
+        /// </summary>
+        /// <param name="errorMessage">The error message to display</param>
         public bool DisplayErrorMessage(string errorMessage)
         {
             downloadProgressLbl.Visible = true;
@@ -120,10 +123,6 @@ namespace NetSparkle
         /// <summary>
         /// Event called when the client download progress changes
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="bytesReceived"></param>
-        /// <param name="totalBytesToReceive"></param>
-        /// <param name="percentage"></param>
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
             progressDownload.Value = percentage;
@@ -134,8 +133,6 @@ namespace NetSparkle
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
@@ -154,7 +151,6 @@ namespace NetSparkle
         /// <summary>
         /// TODO
         /// </summary>
-        /// <param name="shouldBeEnabled"></param>
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
         {
             btnInstallAndReLaunch.Enabled = shouldBeEnabled;

@@ -34,6 +34,7 @@ namespace NetSparkle
         /// Constructor
         /// </summary>
         /// <param name="castUrl">the URL of the appcast file</param>
+        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="config">the current configuration</param>
         public NetSparkleAppCast(string castUrl, Sparkle sparkle, NetSparkleConfiguration config)
         {
@@ -203,7 +204,6 @@ namespace NetSparkle
         /// <summary>
         /// Returns sorted list of updates between current and latest. Installed is not included.
         /// </summary>
-        /// <returns></returns>
         public NetSparkleAppCastItem[] GetUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);

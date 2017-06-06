@@ -106,7 +106,6 @@ namespace NetSparkle
         /// This function build a valid registry path in dependecy to the 
         /// assembly information
         /// </summary>
-        /// <returns></returns>
         private String BuildRegistryPath()
         {
             if (!string.IsNullOrEmpty(_registryPath))
