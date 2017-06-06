@@ -407,7 +407,7 @@ namespace NetSparkle
         /// This property enables the silent mode, this means 
         /// the application will be updated without user interaction
         /// </summary>
-        [System.Obsolete("Please use SilentModeType instead.")]
+        [System.Obsolete("Please use SilentModeType instead.", false)]
         public bool EnableSilentMode { get; set; }
 
         /// <summary>
