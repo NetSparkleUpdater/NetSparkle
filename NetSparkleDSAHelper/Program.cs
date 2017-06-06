@@ -123,7 +123,7 @@ namespace NetSparkle.DSAHelper
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
 
-                            NetSparkle.NetSparkleDSAVerificator dsaVerif = new NetSparkle.NetSparkleDSAVerificator(SecurityMode.UseIfPossible, null, pubKeyFile);
+                            NetSparkle.DSAVerificator dsaVerif = new NetSparkle.DSAVerificator(SecurityMode.UseIfPossible, null, pubKeyFile);
                             switch (dsaVerif.VerifyDSASignatureFile(sign, binary))
                             {
                                 case ValidationResult.Valid:

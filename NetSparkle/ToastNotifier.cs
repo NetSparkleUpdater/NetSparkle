@@ -53,7 +53,6 @@ namespace NetSparkle
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="e"></param>
         protected override void OnLoad(EventArgs e)
         {
             // Move window out of screen
@@ -107,8 +106,8 @@ namespace NetSparkle
         /// <summary>
         /// Show the toast
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="callToAction">Text of the hyperlink </param>
+        /// <param name="message">Main message of the toast</param>
+        /// <param name="callToAction">Text of the hyperlink</param>
         /// <param name="seconds">How long to show before it goes back down</param>
         public void Show(string message, string callToAction, int seconds)
         {

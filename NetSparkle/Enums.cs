@@ -6,9 +6,9 @@ using System.Text;
 namespace NetSparkle
 {
     /// <summary>
-    /// Everytime when netsparkle detects an update the 
-    /// consumer can decide what should happen as next with the help 
-    /// of the UpdateDatected event
+    /// Everytime when NetSparkle detects an update the
+    /// consumer can decide what should happen as next with the help
+    /// of the <see cref="UpdateDetected"/> event
     /// </summary>
     public enum NextUpdateAction
     {
