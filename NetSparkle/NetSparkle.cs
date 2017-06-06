@@ -553,7 +553,7 @@ namespace NetSparkle
         /// <summary>
         /// WinForms only. If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
         /// </summary>
-        public bool UseSyncronizedForms { get; set; }
+        public bool ShowsUIOnMainThread { get; set; }
 
         /// <summary>
         /// If not "", sends extra JSON via POST to server with the web request for update information.
@@ -977,7 +977,7 @@ namespace NetSparkle
             if (UserWindow != null)
             {
                 // close old window
-                if (UseSyncronizedForms)
+                if (ShowsUIOnMainThread)
                 {
                     _syncContext.Send((state) =>
                     {
@@ -1011,7 +1011,7 @@ namespace NetSparkle
                     };
 
                     // call action
-                    if (UseSyncronizedForms)
+                    if (ShowsUIOnMainThread)
                     {
                         _syncContext.Send((state) => showSparkleUI(state), null);
                     }
@@ -1385,7 +1385,7 @@ namespace NetSparkle
                     }
                 };
 
-                if (UseSyncronizedForms)
+                if (ShowsUIOnMainThread)
                 {
                     _syncContext.Send((state) => UIAction(state), null);
                 }
