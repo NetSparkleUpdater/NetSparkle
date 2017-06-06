@@ -418,13 +418,6 @@ namespace NetSparkle
         public Uri SystemProfileUrl { get; private set; }
 
         /// <summary>
-        /// This property enables the silent mode, this means 
-        /// the application will be updated without user interaction
-        /// </summary>
-        [System.Obsolete("Please use SilentModeType instead.", false)]
-        public bool EnableSilentMode { get; set; }
-
-        /// <summary>
         /// Allows for updating the application with or without user interaction.
         /// </summary>
         public enum SilentModeTypes
@@ -1172,7 +1165,7 @@ namespace NetSparkle
         /// </summary>
         private bool isDownloadingSilently()
         {
-            return EnableSilentMode || SilentMode != SilentModeTypes.NotSilent;
+            return SilentMode != SilentModeTypes.NotSilent;
         }
 
         /// <summary>
@@ -1664,7 +1657,6 @@ namespace NetSparkle
                         case NextUpdateAction.PerformUpdateUnattended:
                             {
                                 ReportDiagnosticMessage("Unattended update desired from consumer");
-                                EnableSilentMode = true;
                                 SilentMode = SilentModeTypes.DownloadAndInstall;
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                                 //_worker.ReportProgress(1, updates);
@@ -1833,7 +1825,7 @@ namespace NetSparkle
                 FinishedDownloading?.Invoke(_downloadTempFileName);
                 ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
+                bool shouldInstallAndRelaunch = SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
                     OnProgressWindowInstallAndRelaunch(this, new EventArgs());
