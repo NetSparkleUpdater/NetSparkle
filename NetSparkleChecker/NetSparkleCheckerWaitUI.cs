@@ -10,7 +10,7 @@ namespace NetSparkleChecker
     public partial class NetSparkleCheckerWaitUI : Form
     {
         private readonly Sparkle _sparkle;
-        private NetSparkleAppCastItem[] _updates;
+        private AppCastItem[] _updates;
 
         public Boolean SparkleRequestedUpdate = false;
         
@@ -43,7 +43,7 @@ namespace NetSparkleChecker
         private async void bckWorker_DoWork(object sender, DoWorkEventArgs e)
         {            
             // get the config
-            NetSparkleConfiguration config = _sparkle.GetApplicationConfig();
+            Configuration config = _sparkle.GetApplicationConfig();
 
             // check for updats
             //NetSparkleAppCastItem[] newUpdates;
