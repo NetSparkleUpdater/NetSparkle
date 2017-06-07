@@ -136,11 +136,11 @@
     <Compile Include="CheckingForUpdatesWindow.Designer.cs">
       <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="DefaultNetSparkleUIFactory.cs" />
+    <Compile Include="DefaultUIFactory.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Interfaces\INetSparkleDownloadProgress.cs" />
-    <Compile Include="Interfaces\INetSparkleForm.cs" />
-    <Compile Include="Interfaces\INetSparkleUIFactory.cs" />
+    <Compile Include="Interfaces\IDownloadProgress.cs" />
+    <Compile Include="Interfaces\IUpdateAvailable.cs" />
+    <Compile Include="Interfaces\IUIFactory.cs" />
     <Compile Include="MarkdownSharp.cs" />
     <Compile Include="MessageNotificationWindow.cs">
       <SubType>Form</SubType>
@@ -148,30 +148,30 @@
     <Compile Include="MessageNotificationWindow.Designer.cs">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetSparkleAssemblyReflectionAccessor.cs" />
-    <Compile Include="Interfaces\INetSparkleAssemblyAccessor.cs" />
+    <Compile Include="AssemblyReflectionAccessor.cs" />
+    <Compile Include="Interfaces\IAssemblyAccessor.cs" />
     <Compile Include="NetSparkle.cs" />
-    <Compile Include="NetSparkleAppCastItem.cs" />
-    <Compile Include="NetSparkleAppCast.cs" />
-    <Compile Include="NetSparkleAssemblyAccessor.cs" />
-    <Compile Include="NetSparkleAssemblyDiagnosticsAccessor.cs" />
-    <Compile Include="NetSparkleConfiguration.cs" />
-    <Compile Include="NetSparkleDeviceInventory.cs" />
-    <Compile Include="NetSparkleDownloadProgress.cs">
+    <Compile Include="AppCastItem.cs" />
+    <Compile Include="AppCast.cs" />
+    <Compile Include="AssemblyAccessor.cs" />
+    <Compile Include="AssemblyDiagnosticsAccessor.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="DeviceInventory.cs" />
+    <Compile Include="DownloadProgressWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NetSparkleDownloadProgress.Designer.cs">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <Compile Include="DownloadProgressWindow.Designer.cs">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetSparkleDSAVerificator.cs" />
+    <Compile Include="DSAVerificator.cs" />
     <Compile Include="NetSparkleException.cs" />
-    <Compile Include="NetSparkleForm.cs">
+    <Compile Include="UpdateAvailableWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NetSparkleForm.Designer.cs">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <Compile Include="UpdateAvailableWindow.Designer.cs">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="NetSparkleRegistryConfiguration.cs" />
+    <Compile Include="RegistryConfiguration.cs" />
     <Compile Include="TempFile.cs" />
     <Compile Include="ToastNotifier.cs">
       <SubType>Form</SubType>
@@ -193,77 +193,77 @@
     <EmbeddedResource Include="MessageNotificationWindow.resx">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.bg.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.bg.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.de.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.de.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.es-MX.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.es-MX.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.fr.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.fr.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.it.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.it.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.lt.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.lt.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.nl.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.nl.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.pt-BR.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.pt-BR.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.ru.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.ru.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.zh-CN.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.zh-CN.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleDownloadProgress.zh-TW.resx">
-      <DependentUpon>NetSparkleDownloadProgress.cs</DependentUpon>
+    <EmbeddedResource Include="DownloadProgressWindow.zh-TW.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.bg.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.bg.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.de.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.de.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.es-MX.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.es-MX.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.fr.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.fr.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.it.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.it.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.lt.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.lt.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.nl.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.nl.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.pt-BR.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.pt-BR.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.ru.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.ru.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.zh-CN.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.zh-CN.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NetSparkleForm.zh-TW.resx">
-      <DependentUpon>NetSparkleForm.cs</DependentUpon>
+    <EmbeddedResource Include="UpdateAvailableWindow.zh-TW.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ToastNotifier.resx">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
