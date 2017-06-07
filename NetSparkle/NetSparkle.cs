@@ -418,13 +418,6 @@ namespace NetSparkle
         public Uri SystemProfileUrl { get; private set; }
 
         /// <summary>
-        /// This property enables the silent mode, this means 
-        /// the application will be updated without user interaction
-        /// </summary>
-        [System.Obsolete("Please use SilentModeType instead.", false)]
-        public bool EnableSilentMode { get; set; }
-
-        /// <summary>
         /// Allows for updating the application with or without user interaction.
         /// </summary>
         public enum SilentModeTypes
@@ -560,7 +553,7 @@ namespace NetSparkle
         /// <summary>
         /// WinForms only. If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
         /// </summary>
-        public bool UseSyncronizedForms { get; set; }
+        public bool ShowsUIOnMainThread { get; set; }
 
         /// <summary>
         /// If not "", sends extra JSON via POST to server with the web request for update information.
@@ -984,7 +977,7 @@ namespace NetSparkle
             if (UserWindow != null)
             {
                 // close old window
-                if (UseSyncronizedForms)
+                if (ShowsUIOnMainThread)
                 {
                     _syncContext.Send((state) =>
                     {
@@ -1018,7 +1011,7 @@ namespace NetSparkle
                     };
 
                     // call action
-                    if (UseSyncronizedForms)
+                    if (ShowsUIOnMainThread)
                     {
                         _syncContext.Send((state) => showSparkleUI(state), null);
                     }
@@ -1172,7 +1165,7 @@ namespace NetSparkle
         /// </summary>
         private bool isDownloadingSilently()
         {
-            return EnableSilentMode || SilentMode != SilentModeTypes.NotSilent;
+            return SilentMode != SilentModeTypes.NotSilent;
         }
 
         /// <summary>
@@ -1392,7 +1385,7 @@ namespace NetSparkle
                     }
                 };
 
-                if (UseSyncronizedForms)
+                if (ShowsUIOnMainThread)
                 {
                     _syncContext.Send((state) => UIAction(state), null);
                 }
@@ -1664,7 +1657,6 @@ namespace NetSparkle
                         case NextUpdateAction.PerformUpdateUnattended:
                             {
                                 ReportDiagnosticMessage("Unattended update desired from consumer");
-                                EnableSilentMode = true;
                                 SilentMode = SilentModeTypes.DownloadAndInstall;
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                                 //_worker.ReportProgress(1, updates);
@@ -1833,7 +1825,7 @@ namespace NetSparkle
                 FinishedDownloading?.Invoke(_downloadTempFileName);
                 ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                bool shouldInstallAndRelaunch = EnableSilentMode || SilentMode == SilentModeTypes.DownloadAndInstall;
+                bool shouldInstallAndRelaunch = SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
                     OnProgressWindowInstallAndRelaunch(this, new EventArgs());
