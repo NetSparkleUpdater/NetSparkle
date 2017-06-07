@@ -11,11 +11,10 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
+        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
-        /// <param name="isUpdateAlreadyDownloaded">If true, only show the install button and don't show the remind me later or skip update buttons.
-        /// Also, make sure any UI text doesn't imply that the user is about to download the file.</param>
-        /// <returns></returns>
+        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
@@ -23,7 +22,6 @@ namespace NetSparkle.Interfaces
         /// </summary>
         /// <param name="item">Appcast item to download</param>
         /// <param name="applicationIcon">Application icon to use</param>
-        /// <returns></returns>
         INetSparkleDownloadProgress CreateProgressWindow(NetSparkleAppCastItem item, Icon applicationIcon);
 
         /// <summary>
@@ -34,7 +32,6 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
-        /// <param name="downloadFileName"></param>
         void ShowUnknownInstallerFormatMessage(string downloadFileName, Icon applicationIcon = null);
 
         /// <summary>
@@ -50,7 +47,6 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
-        /// <param name="appcastUrl"></param>
         void ShowCannotDownloadAppcast(string appcastUrl, Icon applicationIcon = null);
 
         /// <summary>
@@ -65,7 +61,8 @@ namespace NetSparkle.Interfaces
         /// Show message on download error
         /// </summary>
         /// <param name="message">Error message from exception</param>
-        /// <param name="appCastUrl"></param>
-        void ShowDownloadErrorMessage(string message, string appCastUrl, Icon applicationIcon = null);
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">Icon to use in window</param>
+        void ShowDownloadErrorMessage(string message, string appcastUrl, Icon applicationIcon = null);
     }
 }

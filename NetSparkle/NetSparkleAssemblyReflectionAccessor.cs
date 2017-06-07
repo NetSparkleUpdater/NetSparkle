@@ -52,8 +52,6 @@ namespace NetSparkle
         /// This methods creates an attribute instance from the attribute data 
         /// information
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
         private Attribute CreateAttribute(CustomAttributeData data)
         {
             try

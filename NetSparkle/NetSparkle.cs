@@ -22,12 +22,27 @@ using System.Windows.Threading;
 namespace NetSparkle
 {
     /// <summary>
-    /// The states of availability
+    /// Possibilities for the status of an update request
     /// </summary>
-    /// <paramater>UpdateAvailable</paramater>
-#pragma warning disable 1591
-    public enum UpdateStatus { UpdateAvailable, UpdateNotAvailable, UserSkipped, CouldNotDetermine }
-#pragma warning restore 1591
+    public enum UpdateStatus
+    {
+        /// <summary>
+        /// An update is available
+        /// </summary>
+        UpdateAvailable,
+        /// <summary>
+        /// No updates are available
+        /// </summary>
+        UpdateNotAvailable,
+        /// <summary>
+        /// An update is available, but the user has chosen to skip this version
+        /// </summary>
+        UserSkipped,
+        /// <summary>
+        /// There was a problem fetching the appcast
+        /// </summary>
+        CouldNotDetermine
+    }
 
     /// <summary>
     /// A simple class to hold information on potential updates to a software product.
@@ -45,8 +60,6 @@ namespace NetSparkle
         /// <summary>
         /// Constructor for SparkleUpdate when there are some updates available.
         /// </summary>
-        /// <param name="status"></param>
-        /// <param name="updates"></param>
         public SparkleUpdateInfo(UpdateStatus status, NetSparkleAppCastItem[] updates)
         {
             Status = status;
@@ -55,7 +68,6 @@ namespace NetSparkle
         /// <summary>
         /// Constructor for SparkleUpdate for when there aren't any updates available. Updates are automatically set to null.
         /// </summary>
-        /// <param name="status"></param>
         public SparkleUpdateInfo(UpdateStatus status)
         {
             Status = status;
@@ -79,8 +91,6 @@ namespace NetSparkle
     /// This delegate will be used when an update was detected to allow library 
     /// consumer to add own user interface capabilities.    
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     public delegate void UpdateDetected(Object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
@@ -101,7 +111,6 @@ namespace NetSparkle
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">A System.ComponentModel.CancelEventArgs that contains the event data.</param>
-    /// <returns></returns>
     public delegate Task CancelEventHandlerAsync(object sender, CancelEventArgs e);
 
     /// <summary>
@@ -293,7 +302,8 @@ namespace NetSparkle
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        /// <param name="dsaPublicKey">The dsa public key to verfiy the sigatures.</param>
+        /// <param name="securityMode">Sparkle Security mode</param>
+        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
@@ -303,6 +313,8 @@ namespace NetSparkle
         /// </summary>        
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="securityMode">Sparkle Security mode</param>
+        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultNetSparkleUIFactory())
@@ -313,6 +325,8 @@ namespace NetSparkle
         /// </summary>        
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="securityMode">Sparkle Security mode</param>
+        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         /// <param name="factory">UI factory to use</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, INetSparkleUIFactory factory)
@@ -426,10 +440,10 @@ namespace NetSparkle
             DownloadNoInstall,
             /// <summary>
             /// Downloads the latest update file and automatically runs it as an installer file.
-            /// WARNING: if you don't tell the user that the application is about to quit
+            /// <para>WARNING: if you don't tell the user that the application is about to quit
             /// to update/run an installer, this setting might be quite the shock to the user!
             /// Make sure to implement AboutToExitForInstallerRun or AboutToExitForInstallerRunAsync
-            /// so that you can show your users what is about to happen.
+            /// so that you can show your users what is about to happen.</para>
             /// </summary>
             DownloadAndInstall,
         }
@@ -543,6 +557,9 @@ namespace NetSparkle
             set { _useNotificationToast = value; }
         }
 
+        /// <summary>
+        /// WinForms only. If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
+        /// </summary>
         public bool UseSyncronizedForms { get; set; }
 
         /// <summary>
@@ -592,7 +609,6 @@ namespace NetSparkle
         /// the check. You should only call this function when your app is initialized and 
         /// shows its main window.        
         /// </summary>        
-        /// <param name="doInitialCheck"></param>
         public void StartLoop(Boolean doInitialCheck)
         {
             StartLoop(doInitialCheck, false);
@@ -681,8 +697,6 @@ namespace NetSparkle
         /// <summary>
         /// TODO
         /// </summary>
-        /// <param name="Url"></param>
-        /// <returns></returns>
         public WebResponse GetWebContentResponse(string Url)
         {
             WebRequest request = WebRequest.Create(Url);
@@ -729,8 +743,6 @@ namespace NetSparkle
         /// <summary>
         /// TODO
         /// </summary>
-        /// <param name="Url"></param>
-        /// <returns></returns>
         public Stream GetWebContentStream(string Url)
         {
             var response = GetWebContentResponse(Url);
@@ -937,6 +949,7 @@ namespace NetSparkle
         /// update process
         /// </summary>
         /// <param name="updates">updates to show UI for</param>
+        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public void ShowUpdateNeededUI(NetSparkleAppCastItem[] updates, bool isUpdateAlreadyDownloaded = false)
         {
             if (updates != null)
@@ -1026,7 +1039,6 @@ namespace NetSparkle
         /// <summary>
         /// This method reports a message in the diagnostic window
         /// </summary>
-        /// <param name="message"></param>
         public void ReportDiagnosticMessage(string message)
         {
             if (!PrintDiagnosticToConsole)
@@ -1158,7 +1170,6 @@ namespace NetSparkle
         /// <summary>
         /// True if the user has silent updates enabled; false otherwise.
         /// </summary>
-        /// <returns></returns>
         private bool isDownloadingSilently()
         {
             return EnableSilentMode || SilentMode != SilentModeTypes.NotSilent;
@@ -1167,8 +1178,6 @@ namespace NetSparkle
         /// <summary>
         /// Return installer runner command. May throw InvalidDataException
         /// </summary>
-        /// <param name="downloadFileName"></param>
-        /// <returns></returns>
         protected virtual string GetInstallerCommand(string downloadFileName)
         {
             // get the file type
@@ -1566,8 +1575,6 @@ namespace NetSparkle
         /// <summary>
         /// This method will be executed as worker thread
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // store the did run once feature
@@ -1732,8 +1739,6 @@ namespace NetSparkle
         /// <summary>
         /// This method will be notified
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             switch (e.ProgressPercentage)

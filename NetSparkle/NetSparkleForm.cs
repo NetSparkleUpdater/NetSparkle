@@ -48,10 +48,12 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Constructor
+        /// Form constructor
         /// </summary>
+        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="items">List of updates to show</param>
-        /// <param name="applicationIcon">The icon</param>
+        /// <param name="applicationIcon">The icon to display</param>
+        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
         public NetSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 

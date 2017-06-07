@@ -12,12 +12,19 @@ namespace NetSparkle
 {
     public partial class CheckingForUpdatesWindow : Form
     {
+        /// <summary>
+        /// Default constructor for CheckingForUpdatesWindow
+        /// </summary>
         public CheckingForUpdatesWindow()
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
+        /// <summary>
+        /// Initializes window and sets the icon to <paramref name="applicationIcon"/>
+        /// </summary>
+        /// <param name="applicationIcon">The icon to use</param>
         public CheckingForUpdatesWindow(Icon applicationIcon = null)
         {
             InitializeComponent();

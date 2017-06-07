@@ -14,9 +14,10 @@ namespace NetSparkle
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
-        /// <param name="updates">Sorted array of updates from latest to previous</param>
-        /// <param name="applicationIcon">Icon</param>
-        /// <returns></returns>
+        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
+        /// <param name="updates">Sorted array of updates from latest to earliest</param>
+        /// <param name="applicationIcon">The icon to display</param>
+        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public virtual INetSparkleForm CreateSparkleForm(Sparkle sparkle, NetSparkleAppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
         {
             return new NetSparkleForm(sparkle, updates, applicationIcon, isUpdateAlreadyDownloaded);
@@ -27,7 +28,6 @@ namespace NetSparkle
         /// </summary>
         /// <param name="item">Appcast item to download</param>
         /// <param name="applicationIcon">Application icon to use</param>
-        /// <returns></returns>
         public virtual INetSparkleDownloadProgress CreateProgressWindow(NetSparkleAppCastItem item, Icon applicationIcon)
         {
             return new NetSparkleDownloadProgress(item, applicationIcon);
@@ -46,7 +46,8 @@ namespace NetSparkle
         /// <summary>
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
-        /// <param name="downloadFileName"></param>
+        /// <param name="downloadFileName">The filename to be inserted into the message text</param>
+        /// <param name="applicationIcon">The icon to display</param>
         public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName, Icon applicationIcon = null)
         {
             ShowMessage(Resources.DefaultNetSparkleUIFactory_MessageTitle, 
@@ -72,7 +73,8 @@ namespace NetSparkle
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
-        /// <param name="appcastUrl"></param>
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">The icon to display</param>
         public virtual void ShowCannotDownloadAppcast(string appcastUrl, Icon applicationIcon = null)
         {
             ShowMessage(Resources.DefaultNetSparkleUIFactory_ErrorTitle, Resources.DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage, applicationIcon);
@@ -101,8 +103,9 @@ namespace NetSparkle
         /// Show message on download error
         /// </summary>
         /// <param name="message">Error message from exception</param>
-        /// <param name="appCastUrl"></param>
-        public virtual void ShowDownloadErrorMessage(string message, string appCastUrl, Icon applicationIcon = null)
+        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="applicationIcon">The icon to display</param>
+        public virtual void ShowDownloadErrorMessage(string message, string appcastUrl, Icon applicationIcon = null)
         {
             ShowMessage(Resources.DefaultNetSparkleUIFactory_ErrorTitle, string.Format(Resources.DefaultNetSparkleUIFactory_ShowDownloadErrorMessage, message), applicationIcon);
         }
