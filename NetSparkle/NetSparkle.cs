@@ -303,7 +303,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verfiy the sigatures.</param>
+        /// <param name="dsaPublicKey">The DSA public key to verfiy the signatures.</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
@@ -314,7 +314,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verfiy the sigatures.</param>
+        /// <param name="dsaPublicKey">The DSA public key to verfiy the signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultNetSparkleUIFactory())
@@ -326,7 +326,7 @@ namespace NetSparkle
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
         /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verfiy the sigatures.</param>
+        /// <param name="dsaPublicKey">The DSA public key to verfiy the signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
         /// <param name="factory">UI factory to use</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, INetSparkleUIFactory factory)
