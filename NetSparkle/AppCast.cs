@@ -88,7 +88,7 @@ namespace NetSparkle
                 return false;
             }
 
-            // inputstream needs to be copied. WebResponse can't ne positionized back
+            // inputstream needs to be copied. WebResponse can't be positioned back
             var memorystream = new MemoryStream();
             inputstream.CopyTo(memorystream);
             memorystream.Position = 0;
@@ -197,7 +197,7 @@ namespace NetSparkle
                 }
             }
 
-            // sort versions reserve order
+            // sort versions in reverse order
             _items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         }
 
@@ -210,7 +210,7 @@ namespace NetSparkle
             var signatureNeeded = _sparkle.DSAChecker.SignatureNeeded();
 
             return _items.Where((item) => {
-                // filter smaler versions
+                // filter smaller versions
                 if (new Version(item.Version).CompareTo(installed) <= 0)
                     return false;
                 // filter versions without signature if we need signatures. But accept version without downloads.

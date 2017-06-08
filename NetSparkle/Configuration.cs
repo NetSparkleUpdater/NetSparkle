@@ -53,7 +53,7 @@ namespace NetSparkle
 
         /// <summary>
         /// If this property is true a reflection based accessor will be used
-        /// to determine the assmebly name and verison, otherwise a System.Diagnostics
+        /// to determine the assembly name and version, otherwise a System.Diagnostics
         /// based access will be used
         /// </summary>
         public Boolean UseReflectionBasedAssemblyAccessor { get; protected set; }
@@ -74,7 +74,7 @@ namespace NetSparkle
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="referenceAssembly">the name of hte reference assembly</param>
+        /// <param name="referenceAssembly">the name of the reference assembly</param>
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
         protected Configuration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
         {
@@ -132,7 +132,7 @@ namespace NetSparkle
         public abstract void Reload();
 
         /// <summary>
-        /// This method set's default values for the config
+        /// This method sets default values for the config
         /// </summary>
         protected void InitWithDefaultValues()
         {
