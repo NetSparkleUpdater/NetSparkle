@@ -121,31 +121,31 @@
   <data name="software_update_available1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ArtWork\software-update-available.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ShowUnknownInstallerFormatMessageText" xml:space="preserve">
+  <data name="DefaultUIFactory_ShowUnknownInstallerFormatMessageText" xml:space="preserve">
     <value>Updater not supported, please execute {0} manually</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ShowVersionIsUpToDateMessage" xml:space="preserve">
+  <data name="DefaultUIFactory_ShowVersionIsUpToDateMessage" xml:space="preserve">
     <value>Your current version is up to date.</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ErrorTitle" xml:space="preserve">
+  <data name="DefaultUIFactory_ErrorTitle" xml:space="preserve">
     <value>Error!</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_MessageTitle" xml:space="preserve">
+  <data name="DefaultUIFactory_MessageTitle" xml:space="preserve">
     <value>Info</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ShowVersionIsSkippedByUserRequestMessage" xml:space="preserve">
+  <data name="DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage" xml:space="preserve">
     <value>You have elected to skip this version.</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ShowCannotDownloadAppcastMessage" xml:space="preserve">
+  <data name="DefaultUIFactory_ShowCannotDownloadAppcastMessage" xml:space="preserve">
     <value>Sorry, either you aren't connected to the internet, or our server is having a problem.</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ToastCallToAction" xml:space="preserve">
+  <data name="DefaultUIFactory_ToastCallToAction" xml:space="preserve">
     <value>more information</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ToastMessage" xml:space="preserve">
+  <data name="DefaultUIFactory_ToastMessage" xml:space="preserve">
     <value>New Version Available</value>
   </data>
-  <data name="DefaultNetSparkleUIFactory_ShowDownloadErrorMessage" xml:space="preserve">
+  <data name="DefaultUIFactory_ShowDownloadErrorMessage" xml:space="preserve">
     <value>Sorry, there was a problem attempting to download the update
 
 {0}</value>
