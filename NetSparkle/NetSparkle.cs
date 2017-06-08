@@ -1259,6 +1259,8 @@ namespace NetSparkle
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
+            // start the installer process. the batch file will wait for the host app to close before starting.
+            _installerProcess.Start();
             // quit the app
             if (_exitHandle != null)
                 _exitHandle.Set(); // make SURE the loop exits!
@@ -1288,7 +1290,6 @@ namespace NetSparkle
                     ReportDiagnosticMessage(e.Message);
                 }
             }
-            _installerProcess.Start();
             Application.Exit();
         }
 
