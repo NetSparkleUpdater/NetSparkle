@@ -26,7 +26,6 @@ namespace NetSparkle.TestAppWPF
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", icon); //, "NetSparkleTestApp.exe");
-            _sparkle.RunningFromWPF = true;
             _sparkle.StartLoop(true, true);
         }
 
