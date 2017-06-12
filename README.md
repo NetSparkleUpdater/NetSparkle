@@ -7,6 +7,7 @@ Simple .NET update checker & installer downloader. You provide, somewhere on the
     - [Basic Usage](#basic-usage)
     - [Public Methods](#public-methods)
     - [Public Properties](#public-properties)
+    - [Public Events](#public-events)
 - [Appcast](#appcast)
 - [License](#license)
 - [Requirements](#requirements)
@@ -344,6 +345,92 @@ Specifies if you want to use the notification toast
 ### NetSparkle.Interfaces.IUpdateAvailable UserWindow { get; set; }
 
 The user interface window that shows the release notes and asks the user to skip, later or update
+
+## Public Events
+
+### AboutToExitForInstallerRun
+
+**Delegate**: void System.ComponentModel.CancelEventHandler(object sender, System.ComponentModel.CancelEventArgs e)
+
+Subscribe to this to get a chance to shut down gracefully before quitting. If [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync) is set, this has no effect.
+
+### AboutToExitForInstallerRunAsync
+
+**Delegate**: Task CancelEventHandlerAsync(object sender, System.ComponentModel.CancelEventArgs e)
+
+Subscribe to this to get a chance to asynchronously shut down gracefully before quitting. This overrides [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
+
+### CheckLoopFinished
+
+**Delegate**: void NetSparkle.LoopFinishedOperation(object sender, bool updateRequired)
+
+This event will be raised when a check loop is finished
+
+### CheckLoopStarted
+
+**Delegate**: void NetSparkle.LoopStartedOperation(object sender)
+
+This event will be raised when a check loop will be started
+
+### DownloadCanceled
+
+**Delegate**: void NetSparkle.DownloadEvent(string path)
+
+Called when the download has been canceled
+
+### DownloadedFileIsCorrupt
+
+**Delegate**: void NetSparkle.DownloadedFileIsCorrupt(NetSparkle.AppCastItem item, string downloadPath)
+
+Called when the downloaded file is downloaded (or at least partially on disk) and the DSA signature doesn't match. When this is called, Sparkle is not taking any further action to try to download the install file during this instance of the software. In order to make Sparkle try again, you must delete the file off disk yourself. Sparkle will try again after the software is restarted.
+
+### DownloadedFileReady
+
+**Delegate**: void NetSparkle.DownloadedFileReady(NetSparkle.AppCastItem item, string downloadPath)
+
+Called when the downloaded file is fully downloaded and verified regardless of the value for SilentMode. Note that if you are installing fully silently, this will be called before the install file is executed, so don't manually initiate the file or anything.
+
+### DownloadError
+
+**Delegate**: void NetSparkle.DownloadEvent(string path)
+
+Called when the download has downloaded but has an error other than corruption
+
+### FinishedDownloading
+
+**Delegate**: void NetSparkle.DownloadEvent(string path)
+
+Called when the download has finished successfully
+
+### StartedDownloading
+
+**Delegate**: void NetSparkle.DownloadEvent(string path)
+
+Called when the download has just started
+
+### UpdateCheckFinished
+
+**Delegate**: void NetSparkle.UpdateCheckFinished(object sender, NetSparkle.UpdateStatus status)
+
+Called when update check is all done. May or may not have called [UpdateDetected](#updatedetected) in the middle.
+
+### UpdateCheckStarted
+
+**Delegate**: void NetSparkle.UpdateCheckStarted(object sender)
+
+Called when update check has just started
+
+### UpdateDetected
+
+**Delegate**: void NetSparkle.UpdateDetected(object sender, NetSparkle.UpdateDetectedEventArgs e)
+
+This event can be used to override the standard user interface process when an update is detected
+
+### UserSkippedVersion
+
+**Delegate**: void NetSparkle.UserSkippedVersion(NetSparkle.AppCastItem item, string downloadPath)
+
+Called when the user skips some version of the application.
 
 ## Appcast
 

@@ -160,12 +160,14 @@ namespace NetSparkle
     public class Sparkle : IDisposable
     {
         /// <summary>
-        /// Subscribe to this to get a chance to shut down gracefully before quitting
+        /// Subscribe to this to get a chance to shut down gracefully before quitting.
+        /// If <see cref="AboutToExitForInstallerRunAsync"/> is set, this has no effect.
         /// </summary>
         public event CancelEventHandler AboutToExitForInstallerRun;
 
         /// <summary>
-        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitting
+        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitting.
+        /// This overrides <see cref="AboutToExitForInstallerRun"/>.
         /// </summary>
         public event CancelEventHandlerAsync AboutToExitForInstallerRunAsync;
 
@@ -202,7 +204,7 @@ namespace NetSparkle
         public event UpdateCheckStarted UpdateCheckStarted;
 
         /// <summary>
-        /// Called when update check is all done. May or may not have called UpdateDetected in the middle.
+        /// Called when update check is all done. May or may not have called <see cref="UpdateDetected"/> in the middle.
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
 
@@ -215,8 +217,8 @@ namespace NetSparkle
 
         /// <summary>
         /// Called when the downloaded file is downloaded (or at least partially on disk) and the DSA
-        /// signature doesn't match. When this is called, Sparkle is not taking any further action to 
-        /// try to download the install file during this instance of the software. In order to make Sparkle 
+        /// signature doesn't match. When this is called, Sparkle is not taking any further action to
+        /// try to download the install file during this instance of the software. In order to make Sparkle
         /// try again, you must delete the file off disk yourself. Sparkle will try again after the software
         /// is restarted.
         /// </summary>
