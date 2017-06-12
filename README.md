@@ -6,6 +6,7 @@ Simple .NET update checker & installer downloader. You provide, somewhere on the
 - Sparkle class
     - [Basic Usage](#basic-usage)
     - [Public Methods](#public-methods)
+    - [Public Properties](#public-properties)
 - [Appcast](#appcast)
 - [License](#license)
 - [Requirements](#requirements)
@@ -249,6 +250,100 @@ You should only call this function when your app is initialized and shows its ma
 ### void StopLoop()
 
 Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispose).
+
+## Public Properties
+
+### string AppcastUrl { get; set; }
+
+Gets or sets the appcast URL
+
+### NetSparkle.CheckingForUpdatesWindow CheckingForUpdatesWindow { get; set; }
+
+The user interface window that shows the 'Checking for Updates...' form. TODO: Make this an interface so user can config their own UI
+
+### System.Action ClearOldInstallers { get; set; }
+
+Function that is called asynchronously to clean up old installers that have been downloaded with SilentModeTypes.DownloadNoInstall or SilentModeTypes.DownloadAndInstall.
+
+### NetSparkle.Configuration Configuration { get; set; }
+
+The NetSparkle configuration object for the current assembly. TODO: this should be private, and only accessed by [GetApplicationConfig](#netsparkleconfiguration-getapplicationconfig)
+
+### string CustomInstallerArguments { get; set; }
+
+Run the downloaded installer with these arguments
+
+### NetSparkle.DSAChecker DSAChecker { get; set; }
+
+The DSA checker
+
+### bool EnableSystemProfiling { get; private set; }
+
+Enables system profiling against a profile server. URL to submit to is stored in [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-)
+
+### string ExtraJsonData { get; set; }
+
+If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
+
+### bool HideReleaseNotes { get; private set; }
+
+Hides the release notes view when an update is found.
+
+### bool IsUpdateLoopRunning { get; }
+
+Whether or not the update loop is running
+
+### NetSparkle.AppCastItem[] LatestAppCastItems { get; }
+
+Returns the latest appcast items to the caller. Might be null.
+
+### PrintDiagnosticToConsole { get; set; }
+
+If true, prints diagnostic messages to Console.WriteLine rather than Debug.WriteLine
+
+### NetSparkle.Interfaces.IDownloadProgress ProgressWindow { get; set; }
+
+The user interface window that shows a download progress bar, and then asks to install and relaunch the application
+
+### bool RelaunchAfterUpdate { get; set; }
+
+Defines if the application needs to be relaunched after executing the downloaded installer
+
+### bool ShowsUIOnMainThread { get; set; }
+
+WinForms only. If true, tries to run UI code on the main thread using System.Threading.SynchronizationContext.
+
+### NetSparkle.Sparkle.SilentModeTypes SilentMode { get; set; }
+
+Set the silent mode type for Sparkle to use when there is a valid update for the software
+
+### System.Uri SystemProfileUrl { get; private set; }
+
+If [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) is true, system profile information is sent to this URL
+
+### string TmpDownloadFilePath { get; set; }
+
+If set, downloads files to this path. If the folder doesn't already exist, creates the folder. Note that this variable is a path, not a full file name.
+
+### bool TrustEverySSLConnection { get; set; }
+
+If true, don't check the validity of SSL certificates
+
+### NetSparkle.Interfaces.IUIFactory UIFactory { get; set; }
+
+Factory for creating UI forms like progress window, etc.
+
+### bool UpdateMarkedCritical { get; }
+
+Loops through all of the most recently grabbed app cast items and checks if any of them are marked as critical
+
+### bool UseNotificationToast { get; set; }
+
+Specifies if you want to use the notification toast
+
+### NetSparkle.Interfaces.IUpdateAvailable UserWindow { get; set; }
+
+The user interface window that shows the release notes and asks the user to skip, later or update
 
 ## Appcast
 

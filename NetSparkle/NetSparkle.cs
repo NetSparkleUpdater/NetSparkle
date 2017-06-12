@@ -351,7 +351,6 @@ namespace NetSparkle
             {
                 _syncContext = new SynchronizationContext();
             }
-            // preconfige ssl trust
             TrustEverySSLConnection = false;
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
@@ -406,19 +405,17 @@ namespace NetSparkle
 
         #region Properties
         /// <summary>
-        /// Enables system profiling against a profile server
+        /// Enables system profiling against a profile server. URL to submit to is stored in <see cref="SystemProfileUrl"/>
         /// </summary>
         public bool EnableSystemProfiling { get; private set; }
 
         /// <summary>
-        /// Hides the release notes view when an update was found. This 
-        /// mode is switched on automatically when no sparkle:releaseNotesLink
-        /// tag was found in the app cast         
+        /// Hides the release notes view when an update is found.
         /// </summary>
         public bool HideReleaseNotes { get; private set; }
 
         /// <summary>
-        /// Contains the profile url for System profiling
+        /// If <see cref="EnableSystemProfiling"/> is true, system profile information is sent to this URL
         /// </summary>
         public Uri SystemProfileUrl { get; private set; }
 
@@ -447,8 +444,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Set the silent mode type for Sparkle to use when there is a valid update for the 
-        /// software
+        /// Set the silent mode type for Sparkle to use when there is a valid update for the software
         /// </summary>
         public SilentModeTypes SilentMode { get; set; }
 
@@ -480,8 +476,7 @@ namespace NetSparkle
         public Action ClearOldInstallers { get; set; }
 
         /// <summary>
-        /// This property returns true when the update loop is running
-        /// and false when the loop is not running
+        /// Whether or not the update loop is running
         /// </summary>
         public bool IsUpdateLoopRunning
         {
@@ -492,13 +487,12 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This property defines if we trust every ssl connection also when 
-        /// this connection has not a valid cert
+        /// If true, don't check the validity of SSL certificates
         /// </summary>
         public bool TrustEverySSLConnection { get; set; }
 
         /// <summary>
-        /// Factory for creating UI form like progress window etc.
+        /// Factory for creating UI forms like progress window, etc.
         /// </summary>
         public IUIFactory UIFactory { get; set; }
 
@@ -521,7 +515,8 @@ namespace NetSparkle
         public CheckingForUpdatesWindow CheckingForUpdatesWindow { get; set; }
 
         /// <summary>
-        /// The configuration.
+        /// The NetSparkle configuration object for the current assembly.
+        /// TODO: this should be private, and only accessed by <see cref="GetApplicationConfig"/>
         /// </summary>
         public Configuration Configuration { get; set; }
 
@@ -531,7 +526,7 @@ namespace NetSparkle
         public DSAChecker DSAChecker { get; set; }
 
         /// <summary>
-        /// Gets or sets the app cast URL
+        /// Gets or sets the appcast URL
         /// </summary>
         public string AppcastUrl
         {
@@ -559,7 +554,7 @@ namespace NetSparkle
         public string ExtraJsonData { get; set; }
 
         /// <summary>
-        /// Returns the latest app cast items to the caller. Might be null.
+        /// Returns the latest appcast items to the caller. Might be null.
         /// </summary>
         public AppCastItem[] LatestAppCastItems
         {
@@ -571,7 +566,7 @@ namespace NetSparkle
 
         /// <summary>
         /// Loops through all of the most recently grabbed app cast items
-        /// and see if any of them are marked as critical
+        /// and checks if any of them are marked as critical
         /// </summary>
         public bool UpdateMarkedCritical
         {
@@ -1314,7 +1309,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Determine if the remote X509 certificate is validate
+        /// Determine if the remote X509 certificate is valid
         /// </summary>
         /// <param name="sender">the web request</param>
         /// <param name="certificate">the certificate</param>
