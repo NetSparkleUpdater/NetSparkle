@@ -10,6 +10,9 @@ using System.Windows.Forms;
 
 namespace NetSparkle
 {
+    /// <summary>
+    /// The checking for updates window
+    /// </summary>
     public partial class CheckingForUpdatesWindow : Form
     {
         /// <summary>
