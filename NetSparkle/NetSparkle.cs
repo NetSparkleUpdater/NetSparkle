@@ -139,17 +139,15 @@ namespace NetSparkle
     public delegate void UserSkippedVersion(AppCastItem item, string downloadPath);
 
     /// <summary>
-    /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
-    /// knowing when the window needs to close
+    /// Delegate for custom application shutdown logic
     /// </summary>
-    public delegate void CloseWPFSoftware();
+    public delegate void CloseApplication();
 
     /// <summary>
-    /// Async version of CloseWPFSoftware().
-    /// Due to weird WPF issues that I don't have time to debug (sorry), delegate for
-    /// knowing when the window needs to close
+    /// Async version of CloseApplication().
+    /// Delegate for custom application shutdown logic
     /// </summary>
-    public delegate Task CloseWPFSoftwareAsync();
+    public delegate Task CloseApplicationAsync();
 
     /// <summary>
     /// A delegate for download events (start, finished, canceled).
@@ -188,15 +186,15 @@ namespace NetSparkle
         public event UpdateDetected UpdateDetected;
 
         /// <summary>
-        /// Event called for closing a WPF window.
-        /// If CloseWPFWindowAsync is non-null, CloseWPFWindow is never called.
+        /// Event called for shutting down the application.
+        /// If CloseApplicationAsync is non-null, CloseApplication is never called.
         /// </summary>
-        public event CloseWPFSoftware CloseWPFWindow;
+        public event CloseApplication CloseApplication;
 
         /// <summary>
-        /// Event called for closing a WPF window asynchronously.
+        /// Event called for shutting down the application asynchronously.
         /// </summary>
-        public event CloseWPFSoftwareAsync CloseWPFWindowAsync;
+        public event CloseApplicationAsync CloseApplicationAsync;
 
         /// <summary>
         /// Called when update check has just started
@@ -379,7 +377,6 @@ namespace NetSparkle
             // set the url
             _appCastUrl = appcastUrl;
             Debug.WriteLine("Using the following url: " + _appCastUrl);
-            RunningFromWPF = false;
             SilentMode = SilentModeTypes.NotSilent;
             TmpDownloadFilePath = "";
         }
@@ -452,13 +449,6 @@ namespace NetSparkle
         /// the folder. Note that this variable is a path, not a full file name.
         /// </summary>
         public string TmpDownloadFilePath { get; set; }
-
-        /// <summary>
-        /// Because of bugs with detecting that the application is closed, setting this to true
-        /// offers a quick bug-fix workaround for starting the _installerProcess when updating
-        /// a WPF application
-        /// </summary>
-        public bool RunningFromWPF { get; set; }
 
         /// <summary>
         /// Defines if the application needs to be relaunched after executing the downloaded installer
@@ -1264,33 +1254,32 @@ namespace NetSparkle
             // quit the app
             if (_exitHandle != null)
                 _exitHandle.Set(); // make SURE the loop exits!
-            if (RunningFromWPF == true)
+            // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
+            // If you have better ideas on how to figure out if they've shut all other windows, let me know...
+            try
             {
-                // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
-                // If you have better ideas on how to figure out if they've shut all other windows, let me know...
-                try
+                if (CloseApplicationAsync != null)
                 {
-                    if (CloseWPFWindowAsync != null)
-                    {
-                        await CloseWPFWindowAsync.Invoke();
-                    }
-                    else if (CloseWPFWindow != null)
-                    {
-                        CloseWPFWindow.Invoke();
-                    }
-                    else
-                    {
-                        System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                            System.Windows.Application.Current.Shutdown();
-                        });
-                    }
+                    await CloseApplicationAsync.Invoke();
                 }
-                catch (Exception e)
+                else if (CloseApplication != null)
                 {
-                    ReportDiagnosticMessage(e.Message);
+                    CloseApplication.Invoke();
+                }
+                else
+                {
+                    // if we're running from WPF, shutdown the WPF app (if not, the ?. makes this a no-op)
+                    System.Windows.Application.Current?.Dispatcher.Invoke(() => {
+                        System.Windows.Application.Current.Shutdown();
+                    });
+                    // close a WinForms app (no-op for WPF)
+                    Application.Exit();
                 }
             }
-            Application.Exit();
+            catch (Exception e)
+            {
+                ReportDiagnosticMessage(e.Message);
+            }
         }
 
         /// <summary>
