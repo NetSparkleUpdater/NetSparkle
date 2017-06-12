@@ -335,8 +335,7 @@ namespace NetSparkle
             PrintDiagnosticToConsole = false;
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
-            // DSA Verificator
-            DSAVerificator = new DSAVerificator(securityMode, dsaPublicKey);
+            DSAChecker = new DSAChecker(securityMode, dsaPublicKey);
             // Syncronisation Context
             _syncContext = SynchronizationContext.Current;
             if (_syncContext == null)
@@ -518,9 +517,9 @@ namespace NetSparkle
         public Configuration Configuration { get; set; }
 
         /// <summary>
-        /// The DSA Verificator
+        /// The DSA checker
         /// </summary>
-        public DSAVerificator DSAVerificator { get; set; }
+        public DSAChecker DSAChecker { get; set; }
 
         /// <summary>
         /// Gets or sets the app cast URL
@@ -1062,7 +1061,7 @@ namespace NetSparkle
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                ValidationResult result = DSAVerificator.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
+                ValidationResult result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
                 if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                 {
                     ReportDiagnosticMessage("File is already downloaded");
@@ -1787,7 +1786,7 @@ namespace NetSparkle
                     string dsaSignature = _itemBeingDownloaded?.DownloadDSASignature;
                     if (dsaSignature != null)
                     {
-                        validationRes = DSAVerificator.VerifyDSASignatureFile(dsaSignature, _downloadTempFileName);
+                        validationRes = DSAChecker.VerifyDSASignatureFile(dsaSignature, _downloadTempFileName);
                     }
                 }
             }
