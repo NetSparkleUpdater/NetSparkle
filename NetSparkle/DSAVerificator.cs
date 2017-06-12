@@ -60,7 +60,7 @@ namespace NetSparkle
     /// <summary>
     /// Class to verify a DSA signature
     /// </summary>
-    public class DSAVerificator
+    public class DSAChecker
     {
         private SecurityMode _securityMode;
         private DSACryptoServiceProvider _provider;
@@ -83,7 +83,7 @@ namespace NetSparkle
         /// <param name="mode">The security mode of the validator. Control what parts has to be exist</param>
         /// <param name="publicKey">the public key as string (will be prefered before the file)</param>
         /// <param name="publicKeyFile">the public key file</param>
-        public DSAVerificator(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
+        public DSAChecker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
         {
             _securityMode = mode;
 
