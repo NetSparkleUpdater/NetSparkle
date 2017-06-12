@@ -70,6 +70,31 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 
 ## Public Methods
 
+- [Sparkle(string appcastUrl)](#sparklestring-appcasturl)
+- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon)](#sparklestring-appcasturl-systemdrawingicon-applicationicon)
+- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode)
+- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey)
+- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly)
+- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly-netsparkleinterfacesiuifactory-factory)
+- void [CancelFileDownload()](#void-cancelfiledownload)
+- Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesAtUserRequest()](#tasknetsparklesparkleupdateinfo-checkforupdatesatuserrequest)
+- Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesQuietly()](#tasknetsparklesparkleupdateinfo-checkforupdatesquietly)
+- void [CheckOnFirstApplicationIdle()](#void-checkonfirstapplicationidle)
+- void [Dispose()](#void-dispose)
+- System.Uri [GetAbsoluteUrl(string)](#systemuri-getabsoluteurlstring)
+- NetSparkle.Configuration [GetApplicationConfig()](#netsparkleconfiguration-getapplicationconfig)
+- Task<NetSparkle.SparkleUpdateInfo> [GetUpdateStatus(NetSparkle.Configuration config)](#tasknetsparklesparkleupdateinfo-getupdatestatusnetsparkleconfiguration-config)
+- System.Net.WebResponse [GetWebContentResponse(string url)](#systemnetwebresponse-getwebcontentresponsestring-url)
+- System.IO.Stream [GetWebContentStream(string url)](#systemiostream-getwebcontentstreamstring-url)
+- void [ReportDiagnosticMessage(string message)](#void-reportdiagnosticmessagestring-message)
+- void [ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)](#void-showupdateneededuibool-isupdatealreadydownloaded)
+- void [ShowUpdateNeededUI(NetSparkle.AppCastItem[], bool)](#void-showupdateneededuinetsparkleappcastitem-bool)
+- void [StartLoop(bool doInitialCheck)](#void-startloopbool-doinitialcheck)
+- void [StartLoop(bool doInitialCheck, bool forceInitialCheck)](#void-startloopbool-doinitialcheck-bool-forceinitialcheck)
+- void [StartLoop(bool doInitialCheck, bool forceInitialCheck, System.TimeSpan checkFrequency)](#void-startloopbool-doinitialcheck-bool-forceinitialcheck-systemtimespan-checkfrequency)
+- void [StartLoop(bool doInitialCheck, System.TimeSpan checkFrequency)](#void-startloopbool-doinitialcheck-systemtimespan-checkfrequency)
+- void [StopLoop()](#void-stoploop)
+
 ### Sparkle(string appcastUrl)
 
 Initializes a new instance of the Sparkle class with the given appcast URL.
@@ -137,11 +162,11 @@ Initializes a new instance of the Sparkle class with the given appcast URL, an I
 
 Cancels an in-progress download and deletes the temporary file.
 
-### Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
+### Task<NetSparkle.SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
 
 Check for updates, using interaction appropriate for if the user just said "check for updates".
 
-### Task<SparkleUpdateInfo> CheckForUpdatesQuietly()
+### Task<NetSparkle.SparkleUpdateInfo> CheckForUpdatesQuietly()
 
 Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
 
@@ -254,6 +279,30 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 
 ## Public Properties
 
+- string [AppcastUrl](#string-appcasturl--get-set-) { get; set; }
+- NetSparkle.CheckingForUpdatesWindow [CheckingForUpdatesWindow](#netsparklecheckingforupdateswindow-checkingforupdateswindow--get-set-) { get; set; }
+- System.Action [ClearOldInstallers](#systemaction-clearoldinstallers--get-set-) { get; set; }
+- NetSparkle.Configuration [Configuration](#netsparkleconfiguration-configuration--get-set-) { get; set; }
+- string [CustomInstallerArguments](#string-custominstallerarguments--get-set-) { get; set; }
+- NetSparkle.DSAChecker [DSAChecker](#netsparkledsachecker-dsachecker--get-set-) { get; set; }
+- bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
+- string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
+- bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; private set; }
+- bool [IsUpdateLoopRunning](#bool-isupdatelooprunning--get-) { get; }
+- NetSparkle.AppCastItem[] [LatestAppCastItems](#netsparkleappcastitem-latestappcastitems--get-) { get; }
+- [PrintDiagnosticToConsole](#printdiagnostictoconsole--get-set-) { get; set; }
+- NetSparkle.Interfaces.IDownloadProgress [ProgressWindow](#netsparkleinterfacesidownloadprogress-progresswindow--get-set-) { get; set; }
+- bool [RelaunchAfterUpdate](#bool-relaunchafterupdate--get-set-) { get; set; }
+- bool [ShowsUIOnMainThread](#bool-showsuionmainthread--get-set-) { get; set; }
+- NetSparkle.Sparkle.SilentModeTypes [SilentMode](#netsparklesparklesilentmodetypes-silentmode--get-set-) { get; set; }
+- System.Uri [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-) { get; private set; }
+- string [TmpDownloadFilePath](#string-tmpdownloadfilepath--get-set-) { get; set; }
+- bool [TrustEverySSLConnection](#bool-trusteverysslconnection--get-set-) { get; set; }
+- NetSparkle.Interfaces.IUIFactory [UIFactory](#netsparkleinterfacesiuifactory-uifactory--get-set-) { get; set; }
+- bool [UpdateMarkedCritical](#bool-updatemarkedcritical--get-) { get; }
+- bool [UseNotificationToast](#bool-usenotificationtoast--get-set-) { get; set; }
+- NetSparkle.Interfaces.IUpdateAvailable [UserWindow](#netsparkleinterfacesiupdateavailable-userwindow--get-set-) { get; set; }
+
 ### string AppcastUrl { get; set; }
 
 Gets or sets the appcast URL
@@ -347,6 +396,21 @@ Specifies if you want to use the notification toast
 The user interface window that shows the release notes and asks the user to skip, later or update
 
 ## Public Events
+
+- [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)
+- [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync)
+- [CheckLoopFinished](#checkloopfinished)
+- [CheckLoopStarted](#checkloopstarted)
+- [DownloadCanceled](#downloadcanceled)
+- [DownloadedFileIsCorrupt](#downloadedfileiscorrupt)
+- [DownloadedFileReady](#downloadedfileready)
+- [DownloadError](#downloaderror)
+- [FinishedDownloading](#finisheddownloading)
+- [StartedDownloading](#starteddownloading)
+- [UpdateCheckFinished](#updatecheckfinished)
+- [UpdateCheckStarted](#updatecheckstarted)
+- [UpdateDetected](#updatedetected)
+- [UserSkippedVersion](#userskippedversion)
 
 ### AboutToExitForInstallerRun
 
