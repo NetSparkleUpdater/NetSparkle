@@ -269,18 +269,20 @@ namespace NetSparkle
         private SparkleUpdateInfo _latestDownloadedUpdateInfo;
 
         /// <summary>
-        /// ctor which needs the appcast url
+        /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
         /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
         public Sparkle(String appcastUrl)
             : this(appcastUrl, null)
         { }
 
         /// <summary>
-        /// ctor which needs the appcast url
+        /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL
+        /// and an <see cref="Icon"/> for the update UI.
         /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
+        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
+        /// If you're invoking this from a form, this would be <c>this.Icon</c>.</param>
         public Sparkle(string appcastUrl, Icon applicationIcon)
             : this(appcastUrl, applicationIcon, SecurityMode.Strict, null)
         { }
@@ -288,9 +290,10 @@ namespace NetSparkle
         /// <summary>
         /// ctor which needs the appcast url
         /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        /// <param name="securityMode">Sparkle Security mode</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
+        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
+        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
+        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode)
             : this(appcastUrl, applicationIcon, securityMode, null)
         { }
@@ -298,10 +301,12 @@ namespace NetSparkle
         /// <summary>
         /// ctor which needs the appcast url
         /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
+        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
+        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
+        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
+        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
+        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
         { }
@@ -309,11 +314,13 @@ namespace NetSparkle
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
-        /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
+        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
+        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
+        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
+        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
+        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
+        /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultUIFactory())
         { }
@@ -321,12 +328,14 @@ namespace NetSparkle
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
-        /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">If you're invoking this from a form, this would be this.Icon</param>
-        /// <param name="securityMode">Sparkle Security mode</param>
-        /// <param name="dsaPublicKey">The DSA public key to verify the signatures.</param>
-        /// <param name="referenceAssembly">the name of the assembly to use for comparison</param>
-        /// <param name="factory">UI factory to use</param>
+        /// <param name="appcastUrl">the URL of the appcast file</param>
+        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
+        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
+        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
+        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
+        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
+        /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
+        /// <param name="factory">a UI factory to use in place of the default UI</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
         {
             _applicationIcon = applicationIcon;
@@ -381,7 +390,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// The app will check once, after the app settles down.
+        /// (WinForms only) Schedules an update check to happen on the first Application.Idle event.
         /// </summary>
         public void CheckOnFirstApplicationIdle()
         {
@@ -545,7 +554,7 @@ namespace NetSparkle
         public bool ShowsUIOnMainThread { get; set; }
 
         /// <summary>
-        /// If not "", sends extra JSON via POST to server with the web request for update information.
+        /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
         /// </summary>
         public string ExtraJsonData { get; set; }
 
@@ -586,51 +595,46 @@ namespace NetSparkle
         #endregion
 
         /// <summary>
-        /// The method starts a NetSparkle background loop
-        /// If NetSparkle is configured to check for updates on startup, proceeds to perform 
-        /// the check. You should only call this function when your app is initialized and 
-        /// shows its main window.        
-        /// </summary>        
+        /// Starts a NetSparkle background loop to check for updates every 24 hours.
+        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
+        /// </summary>
+        /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         public void StartLoop(Boolean doInitialCheck)
         {
             StartLoop(doInitialCheck, false);
         }
 
         /// <summary>
-        /// The method starts a NetSparkle background loop
-        /// If NetSparkle is configured to check for updates on startup, proceeds to perform 
-        /// the check. You should only call this function when your app is initialized and 
-        /// shows its main window.
+        /// Starts a NetSparkle background loop to check for updates on a given interval.
+        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
         /// </summary>
-        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
-        /// <param name="checkFrequency">the frequency between checks.</param>
+        /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
+        /// <param name="checkFrequency">the interval to wait between update checks</param>
         public void StartLoop(Boolean doInitialCheck, TimeSpan checkFrequency)
         {
             StartLoop(doInitialCheck, false, checkFrequency);
         }
 
         /// <summary>
-        /// The method starts a NetSparkle background loop
-        /// If NetSparkle is configured to check for updates on startup, proceeds to perform 
-        /// the check. You should only call this function when your app is initialized and 
-        /// shows its main window.
+        /// Starts a NetSparkle background loop to check for updates every 24 hours.
+        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
         /// </summary>
-        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
-        /// <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
+        /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
+        /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
+        /// should happen even if the last check was less than 24 hours ago</param>
         public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck)
         {
             StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
         }
 
         /// <summary>
-        /// The method starts a NetSparkle background loop
-        /// If NetSparkle is configured to check for updates on startup, proceeds to perform 
-        /// the check. You should only call this function when your app is initialized and 
-        /// shows its main window.
+        /// Starts a NetSparkle background loop to check for updates on a given interval.
+        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
         /// </summary>
-        /// <param name="doInitialCheck"><c>true</c> if this instance should do an initial check.</param>
-        /// <param name="forceInitialCheck"><c>true</c> if this instance should force an initial check.</param>
-        /// <param name="checkFrequency">the frequency between checks.</param>
+        /// <param name="doInitialCheck">whether the first check should happen before or after the first period</param>
+        /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
+        /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
+        /// <param name="checkFrequency">the interval to wait between update checks</param>
         public async void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
@@ -658,8 +662,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This method will stop the sparkle background loop and is called
-        /// through the disposable interface automatically
+        /// Stops the Sparkle background loop. Called automatically by <see cref="Dispose"/>.
         /// </summary>
         public void StopLoop()
         {
@@ -668,7 +671,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Is called in the using context and will stop all background activities
+        /// Inherited from IDisposable. Stops all background activities.
         /// </summary>
         public void Dispose()
         {
@@ -677,11 +680,11 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// TODO
+        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature.
         /// </summary>
-        public WebResponse GetWebContentResponse(string Url)
+        public WebResponse GetWebContentResponse(string url)
         {
-            WebRequest request = WebRequest.Create(Url);
+            WebRequest request = WebRequest.Create(url);
             if (request != null)
             {
                 if (request is FileWebRequest)
@@ -723,11 +726,11 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// TODO
+        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature as a <see cref="Stream"/>.
         /// </summary>
-        public Stream GetWebContentStream(string Url)
+        public Stream GetWebContentStream(string url)
         {
-            var response = GetWebContentResponse(Url);
+            var response = GetWebContentResponse(url);
             if (response != null)
             {
                 var ms = new MemoryStream();
@@ -775,9 +778,11 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This method updates the profile information which can be sended to the server if enabled    
+        /// This method updates the profile information which can be sended to the server if enabled.
+        /// Called automatically when checking for updates.
         /// </summary>
         /// <param name="config">the configuration</param>
+        // TODO: this should be private
         public void UpdateSystemProfileInformation(Configuration config)
         {
             // check if profile data is enabled
@@ -845,8 +850,8 @@ namespace NetSparkle
         /// the calling process has read access to the reference assembly.
         /// This method is also called from the background loops.
         /// </summary>
-        /// <param name="config">the configuration</param>
-        /// <returns>SparkleUpdate with information on whether there is an update available or not.</returns>
+        /// <param name="config">the NetSparkle configuration for the reference assembly</param>
+        /// <returns><see cref="SparkleUpdateInfo"/> with information on whether there is an update available or not.</returns>
         public async Task<SparkleUpdateInfo> GetUpdateStatus(Configuration config)
         {
             AppCastItem[] updates = null;
@@ -902,10 +907,8 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This method reads the local sparkle configuration for the given
-        /// reference assembly
+        /// Reads the local Sparkle configuration for the given reference assembly.
         /// </summary>
-        /// <returns>the configuration</returns>
         public Configuration GetApplicationConfig()
         {
             if (Configuration == null)
@@ -917,18 +920,16 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Converts an relative url to an absolute url based on the 
+        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
         /// </summary>
-        /// <param name="url">relative or absolute url</param>
-        /// <returns>the absolute url</returns>
+        /// <param name="url">relative or absolute URL</param>
         public Uri GetAbsoluteUrl(string url)
         {
             return new Uri(new Uri(_appCastUrl), url);
         }
 
         /// <summary>
-        /// This method shows the update ui and allows to perform the 
-        /// update process
+        /// Shows the update needed UI with the given set of updates.
         /// </summary>
         /// <param name="updates">updates to show UI for</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
@@ -948,8 +949,9 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Show the update UI with the latest downloaded update information
+        /// Shows the update UI with the latest downloaded update information.
         /// </summary>
+        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public void ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded = false)
         {
             ShowUpdateNeededUI(_latestDownloadedUpdateInfo?.Updates, isUpdateAlreadyDownloaded);
@@ -1019,7 +1021,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This method reports a message in the diagnostic window
+        /// This method reports a message in the diagnostic window.
         /// </summary>
         public void ReportDiagnosticMessage(string message)
         {
@@ -1397,7 +1399,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite
+        /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
         /// </summary>
         public async Task<SparkleUpdateInfo> CheckForUpdatesQuietly()
         {
@@ -1487,7 +1489,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Cancels the install
+        /// Cancels an in-progress download and deletes the temporary file.
         /// </summary>
         public void CancelFileDownload()
         {

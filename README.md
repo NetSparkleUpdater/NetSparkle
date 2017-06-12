@@ -3,7 +3,9 @@
 Simple .NET update checker & installer downloader. You provide, somewhere on the internet, an XML file with version history. You also provide release notes as HTML or Markdown files. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
 
 - [About This Fork](#about-this-fork)
-- [Basic Usage](#basic-usage)
+- Sparkle class
+    - [Basic Usage](#basic-usage)
+    - [Public Methods](#public-methods)
 - [Appcast](#appcast)
 - [License](#license)
 - [Requirements](#requirements)
@@ -63,6 +65,190 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 	// ask the user to save, whatever else is needed to close down gracefully
 });
 ```
+
+## Public Methods
+
+### Sparkle(string appcastUrl)
+
+Initializes a new instance of the Sparkle class with the given appcast URL.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+
+### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon)
+
+Initializes a new instance of the Sparkle class with the given appcast URL and an Icon for the update UI.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
+
+### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode)
+
+Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, and the security mode for DSA signatures.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
+| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
+
+### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey)
+
+Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, and the DSA public key.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
+| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
+| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
+
+### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
+
+Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, the DSA public key, and the name of the assembly to use when comparing update versions.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
+| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
+| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
+| referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
+
+### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
+
+Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, the DSA public key, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
+
+| Name | Description |
+| ---- | ----------- |
+| appcastUrl | *System.String*<br>the URL of the appcast file |
+| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
+| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
+| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
+| referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
+| factory | *NetSparkle.Interfaces.IUIFactory*<br>a UI factory to use in place of the default UI |
+
+### void CancelFileDownload()
+
+Cancels an in-progress download and deletes the temporary file.
+
+### Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
+
+Check for updates, using interaction appropriate for if the user just said "check for updates".
+
+### Task<SparkleUpdateInfo> CheckForUpdatesQuietly()
+
+Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
+
+### void CheckOnFirstApplicationIdle()
+
+(WinForms only) Schedules an update check to happen on the first Application.Idle event.
+
+### void Dispose()
+
+Inherited from IDisposable. Stops all background activities.
+
+### System.Uri GetAbsoluteUrl(string)
+
+Creates a System.Uri from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
+
+| Name | Description |
+| ---- | ----------- |
+| url | *System.String*<br>relative or absolute URL |
+
+### NetSparkle.Configuration GetApplicationConfig()
+
+Reads the local Sparkle configuration for the given reference assembly.
+
+### Task<NetSparkle.SparkleUpdateInfo> GetUpdateStatus(NetSparkle.Configuration config)
+
+This method checks if an update is required. During this process the appcast will be downloaded and checked against the reference assembly. Ensure that the calling process has read access to the reference assembly. This method is also called from the background loops.
+
+| Name | Description |
+| ---- | ----------- |
+| config | *NetSparkle.Configuration*<br>the NetSparkle configuration for the reference assembly |
+
+**Returns**: NetSparkle.SparkleUpdateInfo with information on whether there is an update available or not.
+
+### System.Net.WebResponse GetWebContentResponse(string url)
+
+Used by NetSparkle.AppCast to fetch the appcast and DSA signature.
+
+### System.IO.Stream GetWebContentStream(string url)
+
+Used by NetSparkle.AppCast to fetch the appcast and DSA signature as a System.IO.Stream.
+
+### void ReportDiagnosticMessage(string message)
+
+This method reports a message in the diagnostic window.
+
+### void ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)
+
+Shows the update UI with the latest downloaded update information.
+
+| Name | Description |
+| ---- | ----------- |
+| isUpdateAlreadyDownloaded | *System.Boolean*<br>If true, make sure UI text shows that the user is about to install the file instead of download it. |
+
+### void ShowUpdateNeededUI(NetSparkle.AppCastItem[], bool)
+
+Shows the update needed UI with the given set of updates.
+
+| Name | Description |
+| ---- | ----------- |
+| updates | *NetSparkle.AppCastItem[]*<br>updates to show UI for |
+| isUpdateAlreadyDownloaded | *System.Boolean*<br>If true, make sure UI text shows that the user is about to install the file instead of download it. |
+
+### void StartLoop(bool doInitialCheck)
+
+Starts a NetSparkle background loop to check for updates every 24 hours.
+
+You should only call this function when your app is initialized and shows its main window.
+
+| Name | Description |
+| ---- | ----------- |
+| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
+
+### void StartLoop(bool doInitialCheck, bool forceInitialCheck)
+
+Starts a NetSparkle background loop to check for updates every 24 hours.
+
+You should only call this function when your app is initialized and shows its main window.
+
+| Name | Description |
+| ---- | ----------- |
+| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
+| forceInitialCheck | *System.Boolean*<br>if doInitialCheck is true, whether the first check should happen even if the last check was less than 24 hours ago |
+
+### void StartLoop(bool doInitialCheck, bool forceInitialCheck, System.TimeSpan checkFrequency)
+
+Starts a NetSparkle background loop to check for updates on a given interval.
+
+You should only call this function when your app is initialized and shows its main window.
+
+| Name | Description |
+| ---- | ----------- |
+| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first period |
+| forceInitialCheck | *System.Boolean*<br>if doInitialCheck is true, whether the first check should happen even if the last check was within the last checkFrequency interval |
+| checkFrequency | *System.TimeSpan*<br>the interval to wait between update checks |
+
+### void StartLoop(bool doInitialCheck, System.TimeSpan checkFrequency)
+
+Starts a NetSparkle background loop to check for updates on a given interval.
+
+You should only call this function when your app is initialized and shows its main window.
+
+| Name | Description |
+| ---- | ----------- |
+| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
+| checkFrequency | *System.TimeSpan*<br>the interval to wait between update checks |
+
+### void StopLoop()
+
+Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispose).
 
 ## Appcast
 
