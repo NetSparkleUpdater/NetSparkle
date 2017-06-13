@@ -50,7 +50,7 @@ All notable changes to this project will be documented in this file.
     - Note that NetSparkle does not perform resumable downloads in between software instances
 - Fixed potential infinite software update download loop if the software keeps downloading corrupted files (corrupt files or ones that don't pass the DSA check).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/v0.9.1.1...develop
-[0.9.1.1]: https://github.com/Deadpikle/NetSparkle/compare/v0.9.1...v0.9.1.1
-[0.9.1]: https://github.com/Deadpikle/NetSparkle/compare/v0.9...v0.9.1
-[0.9]: https://github.com/Deadpikle/NetSparkle/compare/v0.8.1...v0.9
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/c5e1e49...develop
+[0.9.1.1]: https://github.com/Deadpikle/NetSparkle/compare/e0f5004...c5e1e49
+[0.9.1]: https://github.com/Deadpikle/NetSparkle/compare/7d679f0...e0f5004
+[0.9]: https://github.com/Deadpikle/NetSparkle/compare/8034ec2...7d679f0
