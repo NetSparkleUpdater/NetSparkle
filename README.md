@@ -3,12 +3,12 @@
 Simple .NET update checker & installer downloader. You provide, somewhere on the internet, an XML file with version history. You also provide release notes as HTML or Markdown files. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer.
 
 - [About This Fork](#about-this-fork)
+- [Basic Usage](#basic-usage)
+- [Appcast](#appcast)
 - Sparkle class
-    - [Basic Usage](#basic-usage)
     - [Public Methods](#public-methods)
     - [Public Properties](#public-properties)
     - [Public Events](#public-events)
-- [Appcast](#appcast)
 - [License](#license)
 - [Requirements](#requirements)
 - [Other Options](#other-options)
@@ -67,6 +67,63 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 	// ask the user to save, whatever else is needed to close down gracefully
 });
 ```
+
+## Appcast
+
+NetSparkle uses Sparkle-compatible appcasts. Here is a sample appcast:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
+            <sparkle:releaseNotesLink>
+            https://deadpikle.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url="https://deadpikle.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
+                       sparkle:version="2.0"
+                       length="12288"
+                       type="application/octet-stream"
+                       sparkle:dsaSignature="NSG/eKz9BaTJrRDvKSwYEaOumYpPMtMYRq+vjsNlHqRGku/Ual3EoQ==" />
+        </item>
+    </channel>
+</rss>
+```
+
+NetSparkle reads the `<item>` tags to determine whether updates are available.
+
+The important tags in each `<item>` are:
+
+- `<description>`
+    - A description of the update in HTML or Markdown.
+    - Overrides the `<sparkle:releaseNotesLink>` tag.
+- `<sparkle:releaseNotesLink>`
+    - The URL to an HTML or Markdown document describing the update.
+    - If the `<description>` tag is present, it will be used instead.
+    - **Attributes**:
+        - `sparkle:dsaSignature`, optional: the DSA signature of the document; if present, notes will only be displayed if the DSA signature is valid
+- `<pubDate>`
+    - The date this update was published
+- `<enclosure>`
+    - This tag describes the update file that NetSparkle will download.
+    - **Attributes**:
+        - `url`: URL of the update file
+        - `sparkle:version`: machine-readable version number of this update
+        - `length`, optional: (not validated) size of the update file in bytes
+        - `type`: ignored
+        - `sparkle:dsaSignature`: DSA signature of the update file
+        - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
+
+By default, you need 2 DSA signatures (DSA Strict mode):
+
+1. One in the enclosure tag for your download file (`sparkle:dsaSignature="..."`)
+1. Another on your web server to secure the actual appcast file. **This file must be located at [CastURL].dsa**. In other words, if the appcast URL is http://example.com/awesome-software.xml, you need a valid DSA signature for that file at http://example.com/awesome-software.xml.dsa.
 
 ## Public Methods
 
@@ -495,63 +552,6 @@ This event can be used to override the standard user interface process when an u
 **Delegate**: void NetSparkle.UserSkippedVersion(NetSparkle.AppCastItem item, string downloadPath)
 
 Called when the user skips some version of the application.
-
-## Appcast
-
-NetSparkle uses Sparkle-compatible appcasts. Here is a sample appcast:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
-    <channel>
-        <title>NetSparkle Test App</title>
-        <link>https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml</link>
-        <description>Most recent changes with links to updates.</description>
-        <language>en</language>
-        <item>
-            <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
-            <sparkle:releaseNotesLink>
-            https://deadpikle.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
-            </sparkle:releaseNotesLink>
-            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
-            <enclosure url="https://deadpikle.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
-                       sparkle:version="2.0"
-                       length="12288"
-                       type="application/octet-stream"
-                       sparkle:dsaSignature="NSG/eKz9BaTJrRDvKSwYEaOumYpPMtMYRq+vjsNlHqRGku/Ual3EoQ==" />
-        </item>
-    </channel>
-</rss>
-```
-
-NetSparkle reads the `<item>` tags to determine whether updates are available.
-
-The important tags in each `<item>` are:
-
-- `<description>`
-    - A description of the update in HTML or Markdown.
-    - Overrides the `<sparkle:releaseNotesLink>` tag.
-- `<sparkle:releaseNotesLink>`
-    - The URL to an HTML or Markdown document describing the update.
-    - If the `<description>` tag is present, it will be used instead.
-    - **Attributes**:
-        - `sparkle:dsaSignature`, optional: the DSA signature of the document; if present, notes will only be displayed if the DSA signature is valid
-- `<pubDate>`
-    - The date this update was published
-- `<enclosure>`
-    - This tag describes the update file that NetSparkle will download.
-    - **Attributes**:
-        - `url`: URL of the update file
-        - `sparkle:version`: machine-readable version number of this update
-        - `length`, optional: (not validated) size of the update file in bytes
-        - `type`: ignored
-        - `sparkle:dsaSignature`: DSA signature of the update file
-        - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
-
-By default, you need 2 DSA signatures (DSA Strict mode):
-
-1. One in the enclosure tag for your download file (`sparkle:dsaSignature="..."`)
-1. Another on your web server to secure the actual appcast file. **This file must be located at [CastURL].dsa**. In other words, if the appcast URL is http://example.com/awesome-software.xml, you need a valid DSA signature for that file at http://example.com/awesome-software.xml.dsa.
 
 ## License
 
