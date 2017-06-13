@@ -4,7 +4,6 @@ NetSparkle is a C# .NET update checker that allows you to easily download instal
 
 **Please make sure to check the `develop` branch for the latest updates! It will be the default branch soon.**
 
-- [About This Fork](#about-this-fork)
 - [Basic Usage](#basic-usage)
 - [Appcast](#appcast)
 - Sparkle class
