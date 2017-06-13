@@ -8,13 +8,16 @@ All notable changes to this project will be documented in this file.
 - Section about how the appcast works to the readme
 
 ### Changed
-- Cleaned up and added documentation comments throughout the code
-- Renamed lots of identifiers throughout the project to remove "NetSparkle" (i.e., `NetSparkleAppCast` to `AppCast`, `NetSparkleConfiguration` to `Configuration`, etc.)
-- Renamed property `UseSyncronizedForms` to `ShowsUIOnMainThread` to better represent what it does
-- Renamed events `CloseWPFSoftware` and `CloseWPFSoftwareAsync` to `CloseApplication` and `CloseApplicationAsync`
+
+Much thanks to @stephenwade for his contributions to 0.10.0
+
+- Cleaned up and added documentation comments throughout the code (@stephenwade)
+- Renamed lots of identifiers throughout the project to remove "NetSparkle" (i.e., `NetSparkleAppCast` to `AppCast`, `NetSparkleConfiguration` to `Configuration`, etc.) (@stephenwade)
+- Renamed property `UseSyncronizedForms` to `ShowsUIOnMainThread` to better represent what it does (@stephenwade)
+- Renamed events `CloseWPFSoftware` and `CloseWPFSoftwareAsync` to `CloseApplication` and `CloseApplicationAsync` (@stephenwade)
     - These events are now always run, if present (instead of only on `RunningFromWPF`)
     - If one of these events is set, it will be run instead of quitting your app (to allow you a custom quit procedure), so these events should take care of quitting your app.
-- Renamed `DSAVerificator` to `DSAChecker`
+- Renamed `DSAVerificator` to `DSAChecker` (@stephenwade)
 
 ### Removed
 - deprecated property `EnableSilentMode`
