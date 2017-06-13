@@ -196,7 +196,7 @@ namespace NetSparkle
                 }
                 catch (Exception ex)
                 {
-                    _sparkle.ReportDiagnosticMessage("Error parsing MarkDown syntax: " + ex.Message);
+                    _sparkle.ReportDiagnosticMessage("Error parsing Markdown syntax: " + ex.Message);
                 }
             }
             return notes;
