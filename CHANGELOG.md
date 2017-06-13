@@ -20,14 +20,14 @@ All notable changes to this project will be documented in this file.
 - deprecated property `EnableSilentMode`
 - property `RunningFromWPF`
 
-## [0.9.1.1] - 2015-12-03
+## [0.9.1.1] - 2017-06-06
 ### Added
 - `ClearOldInstallers` Action that you can implement on your own to remove old installers. Use this if you download installers to a custom folder and need to erase them later.
 
 ### Changed
 - Fixed compilation issue with `EnableSilentMode` (not sure how I never came across this!)
 
-## [0.9.1] - 2015-10-06
+## [0.9.1] - 2017-03-30
 ### Added
 - `UpdateSize` to `NetSparkleAppCastItem`, analogous to the `length` field within the `<enclosure>` tag
 - `IsCriticalUpdate` to `NetSparkleAppCastItem`
