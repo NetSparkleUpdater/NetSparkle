@@ -78,7 +78,7 @@ namespace NetSparkle
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error in browser init: " + ex.Message);
+                _sparkle.ReportDiagnosticMessage("Error in browser init: " + ex.Message);
             }
 
             AppCastItem item = items[0];
