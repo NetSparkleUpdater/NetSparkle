@@ -1217,21 +1217,34 @@ namespace NetSparkle
                 // We should wait until the host process has died before starting the installer.
                 // This way, any DLLs or other items can be replaced properly.
                 // Code from: http://stackoverflow.com/a/22559462/3938401
-                int processID = Process.GetCurrentProcess().Id;
-                write.WriteLine(":loop");
-                write.WriteLine("tasklist | find \"" + processID.ToString() + "\" > nul");
-                write.WriteLine("if not errorlevel 1 (");
-                write.WriteLine("ECHO Waiting for application to close...");
-                write.WriteLine("timeout /t 1 >nul");
-                write.WriteLine("goto :loop");
-                write.WriteLine(")");
-                write.WriteLine(installerCmd);
-
+                string processID = Process.GetCurrentProcess().Id.ToString();
+                string relaunchAfterUpdate = "";
                 if (RelaunchAfterUpdate)
                 {
-                    write.WriteLine("cd " + workingDir);
-                    write.WriteLine(cmdLine);
+                    relaunchAfterUpdate = $@"
+                        cd {workingDir}
+                        {cmdLine}";
                 }
+
+                string output = $@"
+                    set /A counter=0                       
+                    setlocal ENABLEDELAYEDEXPANSION
+                    :loop
+                    set /A counter=!counter!+1
+                    if !counter! == 90 (
+                        goto :afterinstall
+                    )
+                    tasklist | find ""{processID}"" > nul
+                    if not errorlevel 1 (
+                        timeout /t 1 >nul
+                        goto :loop
+                    )
+                    :install
+                    endlocal
+                    {installerCmd}
+                    {relaunchAfterUpdate}
+                    :afterinstall";
+                write.Write(output);
                 write.Close();
             }
 
