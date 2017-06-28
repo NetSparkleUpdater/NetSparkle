@@ -16,7 +16,6 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
-        private bool _didFinishDownload = false;
         private bool _shouldLaunchInstallFileOnClose = false;
 
         /// <summary>
@@ -68,7 +67,6 @@ namespace NetSparkle
         /// </summary>
         public void FinishedDownloadingFile(bool isDownloadedFileValid)
         {
-            _didFinishDownload = true;
             progressDownload.Visible = false;
             buttonCancel.Visible = false;
             downloadProgressLbl.Visible = false;
