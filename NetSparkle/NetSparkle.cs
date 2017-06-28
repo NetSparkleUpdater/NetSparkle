@@ -1240,10 +1240,10 @@ namespace NetSparkle
                         goto :loop
                     )
                     :install
-                    endlocal
                     {installerCmd}
                     {relaunchAfterUpdate}
-                    :afterinstall";
+                    :afterinstall
+                    endlocal";
                 write.Write(output);
                 write.Close();
             }
