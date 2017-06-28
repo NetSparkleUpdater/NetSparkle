@@ -16,6 +16,9 @@ namespace NetSparkle
         /// </summary>
         public event EventHandler InstallAndRelaunch;
 
+        private bool _didFinishDownload = false;
+        private bool _shouldLaunchInstallFileOnClose = false;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -41,7 +44,15 @@ namespace NetSparkle
 
         private void DownloadProgressWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            FormClosing -= DownloadProgressWindow_FormClosing;
+            if (_shouldLaunchInstallFileOnClose)
+            {
+                InstallAndRelaunch?.Invoke(this, new EventArgs());
+            }
+            else
+            {
+                DialogResult = DialogResult.Cancel;
+            }
         }
 
         /// <summary>
@@ -57,6 +68,7 @@ namespace NetSparkle
         /// </summary>
         public void FinishedDownloadingFile(bool isDownloadedFileValid)
         {
+            _didFinishDownload = true;
             progressDownload.Visible = false;
             buttonCancel.Visible = false;
             downloadProgressLbl.Visible = false;
@@ -70,7 +82,6 @@ namespace NetSparkle
                 btnInstallAndReLaunch.Visible = false;
                 BackColor = Color.Tomato;
             }
-            FormClosing -= DownloadProgressWindow_FormClosing;
         }
 
         /// <summary>
@@ -145,7 +156,9 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
-            InstallAndRelaunch?.Invoke(this, new EventArgs());
+            DialogResult = DialogResult.OK;
+            _shouldLaunchInstallFileOnClose = true;
+            Close();
         }
 
         /// <summary>

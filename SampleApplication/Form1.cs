@@ -21,6 +21,12 @@ namespace SampleApplication
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkleUpdateDetector = new Sparkle(appcastUrl, icon);
             _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
+            _sparkleUpdateDetector.CloseApplication += _sparkleUpdateDetector_CloseApplication;
+        }
+
+        private void _sparkleUpdateDetector_CloseApplication()
+        {
+            Application.Exit();
         }
 
         private void button1_Click(object sender, EventArgs e)
