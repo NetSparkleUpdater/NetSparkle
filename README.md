@@ -51,6 +51,10 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 });
 ```
 
+**Warning!** 
+
+The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of `CloseApplication`/`CloseApplicationAsync` being called if you implement those events!
+
 ## Appcast
 
 NetSparkle uses Sparkle-compatible appcasts. Here is a sample appcast:
