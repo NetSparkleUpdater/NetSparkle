@@ -636,7 +636,14 @@ namespace NetSparkle
         {
             if (ClearOldInstallers != null)
             {
-                await Task.Run(ClearOldInstallers);
+                try
+                {
+                    await Task.Run(ClearOldInstallers);
+                }
+                catch
+                {
+                    ReportDiagnosticMessage("ClearOldInstallers threw an exception");
+                }
             }
             // first set the event handle
             _loopingHandle.Set();
