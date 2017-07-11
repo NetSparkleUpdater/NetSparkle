@@ -5,7 +5,7 @@
    <title>NetSparkle</title>
    <version>$version$</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
-   <owners>Deadpikle, Dirk Eisenberg</owners>
+   <owners>Deadpikle</owners>
    <licenseUrl>https://raw.githubusercontent.com/Deadpikle/NetSparkle/master/LICENSE</licenseUrl>
    <projectUrl>https://github.com/Deadpikle/NetSparkle</projectUrl>
    <iconUrl>https://deadpikle.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>

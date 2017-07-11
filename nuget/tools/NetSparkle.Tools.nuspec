@@ -1,17 +1,19 @@
 <?xml version="1.0"?>
 <package>
  <metadata>
-   <id>NetSparkle.Tools</id>
-   <version>1.0.0</version>
-   <authors>Dirk Eisenberg</authors>
-   <owners>Dirk Eisenberg</owners>
-   <licenseUrl>http://netsparkle.codeplex.com/license</licenseUrl>
-   <projectUrl>http://netsparkle.codeplex.com</projectUrl>
-   <iconUrl>http://download.codeplex.com/Download?ProjectName=netsparkle&amp;DownloadId=162503&amp;Build=18207</iconUrl>
-   <requireLicenseAcceptance>true</requireLicenseAcceptance>
-   <summary>Sparkle updater for .NET tools</summary>
-   <description>NetSparkle is an easy-to-use software update framework for .NET developers on Windows, MAC or Linux. It was inspired by the Sparkle (http://bit.ly/HWyJd) project for Cocoa developers and the WinSparkle (http://bit.ly/cj5kP5) project (a Win32 port).</description>
-   <copyright>Copyright 2010 - 2011</copyright>
-   <tags>Update Sparkle Autoupdate</tags>    
+   <id>com.pikleproductions.netsparkle.tools</id>
+   <title>NetSparkle Tools</title>
+   <version>$version$</version>
+   <authors>Deadpikle, Dirk Eisenberg</authors>
+   <owners>Deadpikle</owners>
+   <licenseUrl>https://raw.githubusercontent.com/Deadpikle/NetSparkle/master/LICENSE</licenseUrl>
+   <projectUrl>https://github.com/Deadpikle/NetSparkle</projectUrl>
+   <iconUrl>https://deadpikle.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>
+   <requireLicenseAcceptance>false</requireLicenseAcceptance>
+   <summary>Tools for NetSparkle</summary>
+   <description>Tools for NetSparkle (DSA helper, etc.). NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</description>
+   <copyright>Copyright 2010 - 2017</copyright>
+   <tags>Update Sparkle Autoupdate .NET Update</tags>    
+   <releaseNotes>First release of this fork of NetSparkle on nuget.org</releaseNotes>
  </metadata>
 </package>
