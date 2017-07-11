@@ -20,6 +20,7 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 - Renamed `DSAVerificator` to `DSAChecker` (@stephenwade)
 - Folder output changed to be more organized
 - Updated LICENSE file
+- Update NuGet package items
 
 ### Removed
 - deprecated property `EnableSilentMode`
