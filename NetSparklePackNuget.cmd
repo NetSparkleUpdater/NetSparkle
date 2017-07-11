@@ -22,12 +22,12 @@ mkdir Nuget\tools\content\Extras
 mkdir Nuget\tools\tools
 
 echo Copy Core Buildoutput to Nuget dir
-xcopy /s /q NetSparkle\Release\lib\net40-full\* Nuget\core\lib\net40-full\
-del /q Nuget\core\lib\net40-full\*.pdb
+xcopy /s /q bin\Release\NetSparkle\* Nuget\core\lib\net45\
+del /q Nuget\core\lib\*.pdb
 
 echo Copy Tools Buildoutput to Nuget dir
-xcopy /s /q /y NetSparkleChecker\bin\Release\* Nuget\tools\tools\
-xcopy /s /q /y NetSparkleDSAHelper\bin\Release Nuget\tools\tools\
+xcopy /s /q /y bin\Release\NetSparkleChecker\* Nuget\tools\tools\
+xcopy /s /q /y bin\Release\DSAHelper\* Nuget\tools\tools\
 xcopy /s /q /y Extras\* Nuget\tools\content\Extras\
 del /q Nuget\tools\tools\*.config
 del /q Nuget\tools\tools\*.pdb
@@ -49,8 +49,8 @@ cd tools
 cd ..
 
 echo Pushing nuget package 
-rem nuget Push core\NetSparkle.%1.nupkg
-rem nuget Push tools\NetSparkle.Tools.%1.nupkg
+rem nuget Push core\NetSparkle.New.%1.nupkg
+rem nuget Push tools\NetSparkle.New.Tools.%1.nupkg
 
 echo Leaving directories
 cd ..

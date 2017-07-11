@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
  <metadata>
-   <id>com.pikleproductions.netsparkle.tools</id>
+   <id>NetSparkle.New.Tools</id>
    <title>NetSparkle Tools</title>
    <version>$version$</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
