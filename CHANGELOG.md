@@ -18,6 +18,7 @@ Much thanks to @stephenwade for his contributions to 0.10.0
     - These events are now always run, if present (instead of only on `RunningFromWPF`)
     - If one of these events is set, it will be run instead of quitting your app (to allow you a custom quit procedure), so these events should take care of quitting your app.
 - Renamed `DSAVerificator` to `DSAChecker` (@stephenwade)
+- Folder output changed to be more organized
 
 ### Removed
 - deprecated property `EnableSilentMode`
