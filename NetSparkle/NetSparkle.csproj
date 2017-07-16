@@ -139,6 +139,7 @@
     <Compile Include="DefaultUIFactory.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Enums\SecurityMode.cs" />
+    <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\ValidationResult.cs" />
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />

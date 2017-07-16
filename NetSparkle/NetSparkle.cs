@@ -24,60 +24,6 @@ using NetSparkle.Enums;
 namespace NetSparkle
 {
     /// <summary>
-    /// Possibilities for the status of an update request
-    /// </summary>
-    public enum UpdateStatus
-    {
-        /// <summary>
-        /// An update is available
-        /// </summary>
-        UpdateAvailable,
-        /// <summary>
-        /// No updates are available
-        /// </summary>
-        UpdateNotAvailable,
-        /// <summary>
-        /// An update is available, but the user has chosen to skip this version
-        /// </summary>
-        UserSkipped,
-        /// <summary>
-        /// There was a problem fetching the appcast
-        /// </summary>
-        CouldNotDetermine
-    }
-
-    /// <summary>
-    /// A simple class to hold information on potential updates to a software product.
-    /// </summary>
-    public class SparkleUpdateInfo
-    {
-        /// <summary>
-        /// Update availability.
-        /// </summary>
-        public UpdateStatus Status { get; set; }
-        /// <summary>
-        /// Any available updates for the product.
-        /// </summary>
-        public AppCastItem[] Updates { get; set; }
-        /// <summary>
-        /// Constructor for SparkleUpdate when there are some updates available.
-        /// </summary>
-        public SparkleUpdateInfo(UpdateStatus status, AppCastItem[] updates)
-        {
-            Status = status;
-            Updates = updates;
-        }
-        /// <summary>
-        /// Constructor for SparkleUpdate for when there aren't any updates available. Updates are automatically set to null.
-        /// </summary>
-        public SparkleUpdateInfo(UpdateStatus status)
-        {
-            Status = status;
-            Updates = null;
-        }
-    }
-
-    /// <summary>
     /// The operation has started
     /// </summary>
     /// <param name="sender">the sender</param>
@@ -270,7 +216,7 @@ namespace NetSparkle
         private Process _installerProcess;
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
-        private SparkleUpdateInfo _latestDownloadedUpdateInfo;
+        private UpdateInfo _latestDownloadedUpdateInfo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
@@ -857,8 +803,8 @@ namespace NetSparkle
         /// This method is also called from the background loops.
         /// </summary>
         /// <param name="config">the NetSparkle configuration for the reference assembly</param>
-        /// <returns><see cref="SparkleUpdateInfo"/> with information on whether there is an update available or not.</returns>
-        public async Task<SparkleUpdateInfo> GetUpdateStatus(Configuration config)
+        /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
+        public async Task<UpdateInfo> GetUpdateStatus(Configuration config)
         {
             AppCastItem[] updates = null;
             // report
@@ -886,7 +832,7 @@ namespace NetSparkle
             if (updates == null)
             {
                 ReportDiagnosticMessage("No version information in app cast found");
-                return new SparkleUpdateInfo(UpdateStatus.CouldNotDetermine);
+                return new UpdateInfo(UpdateStatus.CouldNotDetermine);
             }
 
             // set the last check time
@@ -897,7 +843,7 @@ namespace NetSparkle
             if (updates.Length == 0)
             {
                 ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
-                return new SparkleUpdateInfo(UpdateStatus.UpdateNotAvailable);
+                return new UpdateInfo(UpdateStatus.UpdateNotAvailable);
             }
             ReportDiagnosticMessage("Latest version on the server is " + updates[0].Version);
 
@@ -905,11 +851,11 @@ namespace NetSparkle
             if (updates[0].Version.Equals(config.SkipThisVersion))
             {
                 ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
-                return new SparkleUpdateInfo(UpdateStatus.UserSkipped);
+                return new UpdateInfo(UpdateStatus.UserSkipped);
             }
 
             // ok we need an update
-            return new SparkleUpdateInfo(UpdateStatus.UpdateAvailable, updates);
+            return new UpdateInfo(UpdateStatus.UpdateAvailable, updates);
         }
 
         /// <summary>
@@ -1362,7 +1308,7 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for if the user just said "check for updates".
         /// </summary>
-        public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
+        public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current = Cursors.WaitCursor;
             CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
@@ -1370,7 +1316,7 @@ namespace NetSparkle
             CheckingForUpdatesWindow.Show();
             // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
             // actually cancel the request using a BackgroundWorker or something
-            SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            UpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1424,9 +1370,9 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
         /// </summary>
-        public async Task<SparkleUpdateInfo> CheckForUpdatesQuietly()
+        public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
-            SparkleUpdateInfo updateData = await CheckForUpdates(true);
+            UpdateInfo updateData = await CheckForUpdates(true);
             return updateData;
         }
 
@@ -1434,7 +1380,7 @@ namespace NetSparkle
         /// Does a one-off check for updates
         /// </summary>
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
-        private async Task<SparkleUpdateInfo> CheckForUpdates(bool useNotificationToast)
+        private async Task<UpdateInfo> CheckForUpdates(bool useNotificationToast)
         {
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting

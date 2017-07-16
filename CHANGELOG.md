@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+- Moved `UpdateStatus` enum to `NetSparkle.Enums`
+- Moved `UpdateInfo` class to its own file
+
+### Removed
+
 ## [0.11.0] - 2017-07-16
 
 ### Added
