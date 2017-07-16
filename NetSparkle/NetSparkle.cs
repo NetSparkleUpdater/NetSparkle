@@ -194,7 +194,6 @@ namespace NetSparkle
         /// </summary>
         public event DownloadEvent DownloadError;
 
-        //private BackgroundWorker _worker;
         private Task _taskWorker;
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
@@ -322,10 +321,6 @@ namespace NetSparkle
             });
             _cancelTokenSource = new CancellationTokenSource();
             _cancelToken = _cancelTokenSource.Token;
-
-            /*_worker = new BackgroundWorker {WorkerReportsProgress = true};
-            _worker.DoWork += OnWorkerDoWork;
-            _worker.ProgressChanged += OnWorkerProgressChanged;*/
 
             // build the wait handle
             _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
@@ -610,7 +605,6 @@ namespace NetSparkle
             //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             //_taskWorker.Start(scheduler);
             _taskWorker.Start();
-            //_worker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -701,9 +695,6 @@ namespace NetSparkle
         {
             ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
             _cancelTokenSource.Cancel();
-            /* _worker.DoWork -= OnWorkerDoWork;
-             _worker.ProgressChanged -= OnWorkerProgressChanged;
-             _worker = null; */
 
             if (_webDownloadClient != null)
             {
@@ -1619,7 +1610,6 @@ namespace NetSparkle
                                 ReportDiagnosticMessage("Unattended update desired from consumer");
                                 SilentMode = SilentModeTypes.DownloadAndInstall;
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                //_worker.ReportProgress(1, updates);
                                 break;
                             }
                         case NextUpdateAction.ProhibitUpdate:
@@ -1631,7 +1621,6 @@ namespace NetSparkle
                             {
                                 ReportDiagnosticMessage("Showing Standard Update UI");
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                //_worker.ReportProgress(1, updates);
                                 break;
                             }
                     }
