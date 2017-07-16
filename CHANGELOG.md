@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.11.0] - 2017-07-16
+
 ### Added
 
 - Refactored logic to quit application to a separate `QuitApplication()` function
@@ -69,7 +71,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
     - Note that NetSparkle does not perform resumable downloads in between software instances
 - Fixed potential infinite software update download loop if the software keeps downloading corrupted files (corrupt files or ones that don't pass the DSA check).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...develop
+[0.11.0]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...8a8b393
 [0.10.0]: https://github.com/Deadpikle/NetSparkle/compare/c5e1e49...d2740a4
 [0.9.1.1]: https://github.com/Deadpikle/NetSparkle/compare/e0f5004...c5e1e49
 [0.9.1]: https://github.com/Deadpikle/NetSparkle/compare/7d679f0...e0f5004
