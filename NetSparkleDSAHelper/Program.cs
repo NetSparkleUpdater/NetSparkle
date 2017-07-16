@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using NetSparkle.Enums;
 
 namespace NetSparkle.DSAHelper
 {

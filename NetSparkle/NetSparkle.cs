@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using NetSparkle.Enums;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download

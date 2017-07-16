@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
+using NetSparkle.Enums;
 
 // TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
