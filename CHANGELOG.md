@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - `RunDownloadedInstaller()` is now virtual and protected
+- Renamed some files and variables
+- Moved `SecurityMode` and `ValidationResult` enums to the `NetSparkle.Enums` namespace
 
 ### Removed
 

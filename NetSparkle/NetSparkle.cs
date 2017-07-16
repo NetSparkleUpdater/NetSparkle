@@ -18,6 +18,7 @@ using System.Windows.Threading;
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
 // TODO: Refactor a bunch of events to an interface instead?
+// TODO: That loop thing for the background worker needs to be reworked to have no goto and such.
 
 namespace NetSparkle
 {
