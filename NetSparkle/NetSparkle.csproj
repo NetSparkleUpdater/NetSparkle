@@ -138,6 +138,8 @@
     </Compile>
     <Compile Include="DefaultUIFactory.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Enums\SecurityMode.cs" />
+    <Compile Include="Enums\ValidationResult.cs" />
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />
     <Compile Include="Interfaces\IUIFactory.cs" />
@@ -163,7 +165,7 @@
     <Compile Include="DownloadProgressWindow.Designer.cs">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="DSAVerificator.cs" />
+    <Compile Include="DSAChecker.cs" />
     <Compile Include="NetSparkleException.cs" />
     <Compile Include="UpdateAvailableWindow.cs">
       <SubType>Form</SubType>
