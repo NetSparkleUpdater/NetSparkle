@@ -1192,7 +1192,7 @@ namespace NetSparkle
         /// <summary>
         /// Runs the downloaded installer
         /// </summary>
-        private async Task RunDownloadedInstaller()
+        protected virtual async Task RunDownloadedInstaller()
         {
             ReportDiagnosticMessage("Running downloaded installer");
             // get the commandline 
@@ -1200,13 +1200,13 @@ namespace NetSparkle
             string workingDir = Environment.CurrentDirectory;
 
             // generate the batch file path
-            string cmd = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
+            string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
             string installerCmd;
             try
             {
                 installerCmd = GetInstallerCommand(_downloadTempFileName);
 
-                if (!String.IsNullOrEmpty(CustomInstallerArguments))
+                if (!string.IsNullOrEmpty(CustomInstallerArguments))
                     installerCmd += " " + CustomInstallerArguments;
             }
             catch (InvalidDataException)
@@ -1216,9 +1216,9 @@ namespace NetSparkle
             }
 
             // generate the batch file                
-            ReportDiagnosticMessage("Generating batch in " + Path.GetFullPath(cmd));
+            ReportDiagnosticMessage("Generating batch in " + Path.GetFullPath(batchFilePath));
 
-            using (StreamWriter write = new StreamWriter(cmd))
+            using (StreamWriter write = new StreamWriter(batchFilePath))
             {
                 write.WriteLine("@echo off");
                 // We should wait until the host process has died before starting the installer.
@@ -1256,22 +1256,26 @@ namespace NetSparkle
             }
 
             // report
-            ReportDiagnosticMessage("Going to execute batch: " + cmd);
+            ReportDiagnosticMessage("Going to execute batch: " + batchFilePath);
             
             // init the installer helper
             _installerProcess = new Process
                 {
                     StartInfo =
                         {
-                            FileName = cmd, 
+                            FileName = batchFilePath, 
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
             // start the installer process. the batch file will wait for the host app to close before starting.
             _installerProcess.Start();
+            await QuitApplication();
+        }
+
+        public async Task QuitApplication()
+        {
             // quit the app
-            if (_exitHandle != null)
-                _exitHandle.Set(); // make SURE the loop exits!
+            _exitHandle?.Set(); // make SURE the loop exits!
             // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
             // If you have better ideas on how to figure out if they've shut all other windows, let me know...
             try
@@ -1286,7 +1290,7 @@ namespace NetSparkle
                 }
                 else
                 {
-                    // if we're running from WPF, shutdown the WPF app (if not, the ?. makes this a no-op)
+                    // if we're running from WPF, shutdown the WPF app (if not a WPF app, the ?. makes this a no-op)
                     System.Windows.Application.Current?.Dispatcher.Invoke(() => {
                         System.Windows.Application.Current.Shutdown();
                     });
