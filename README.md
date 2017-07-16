@@ -38,7 +38,7 @@ If you want to add a manual update in the background, do
 _sparkle.CheckForUpdatesQuietly();
 ```
 
-If you want have a menu item for the user to check for updates, use
+If you want to have a menu item for the user to check for updates, use
 
 ```csharp
 _sparkle.CheckForUpdatesAtUserRequest();
