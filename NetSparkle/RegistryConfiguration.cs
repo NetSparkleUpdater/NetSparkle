@@ -51,7 +51,7 @@ namespace NetSparkle
             try
             {
                 // build the reg path
-                String regPath = BuildRegistryPath();
+                string regPath = BuildRegistryPath();
 
                 // load the values
                 LoadValuesFromPath(regPath);
@@ -138,19 +138,19 @@ namespace NetSparkle
         /// </summary>
         /// <param name="regPath">the registry path</param>
         /// <returns><c>true</c> if the items were loaded</returns>
-        private Boolean LoadValuesFromPath(String regPath)
+        private bool LoadValuesFromPath(string regPath)
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
                 return false;
 
             // read out                
-            String strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as String;
-            String strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as String;
-            String strSkipThisVersion = key.GetValue("SkipThisVersion", "") as String;
-            String strDidRunOnc = key.GetValue("DidRunOnce", "False") as String;
-            String strShowDiagnosticWindow = key.GetValue("ShowDiagnosticWindow", "False") as String;
-            String strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as String;
+            string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as String;
+            string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as String;
+            string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as String;
+            string strDidRunOnc = key.GetValue("DidRunOnce", "False") as String;
+            string strShowDiagnosticWindow = key.GetValue("ShowDiagnosticWindow", "False") as String;
+            string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as String;
 
             // convert the right datatypes
             CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
@@ -182,18 +182,18 @@ namespace NetSparkle
         /// </summary>
         /// <param name="regPath">the registry path</param>
         /// <returns><c>true</c> if the values were saved to the registry</returns>
-        private Boolean SaveValuesToPath(String regPath)
+        private bool SaveValuesToPath(string regPath)
         {
             RegistryKey key = Registry.CurrentUser.CreateSubKey(regPath);
             if (key == null)
                 return false;
 
             // convert to regsz
-            String strCheckForUpdate = CheckForUpdate.ToString();
-            String strLastCheckTime = ConvertDateToString(LastCheckTime);
-            String strSkipThisVersion = SkipThisVersion;
-            String strDidRunOnc = DidRunOnce.ToString();
-            String strProfileTime = ConvertDateToString(LastProfileUpdate);
+            string strCheckForUpdate = CheckForUpdate.ToString();
+            string strLastCheckTime = ConvertDateToString(LastCheckTime);
+            string strSkipThisVersion = SkipThisVersion;
+            string strDidRunOnc = DidRunOnce.ToString();
+            string strProfileTime = ConvertDateToString(LastProfileUpdate);
 
             // set the values
             key.SetValue("CheckForUpdate", strCheckForUpdate, RegistryValueKind.String);
