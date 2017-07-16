@@ -10,8 +10,8 @@ namespace NetSparkle.DSAHelper
 {
     class Program
     {
-        private static String _dsaPrivKey = "NetSparkle_DSA.priv";
-        private static String _dsaPubKey = "NetSparkle_DSA.pub";
+        private static string _dsaPrivKey = "NetSparkle_DSA.priv";
+        private static string _dsaPubKey = "NetSparkle_DSA.pub";
 
         static void Main(string[] args)
         {
@@ -117,9 +117,9 @@ namespace NetSparkle.DSAHelper
                             }
 
                             // get parameter
-                            String binary = args[1];
-                            String pubKeyFile = args[2];
-                            String sign = args[3];
+                            string binary = args[1];
+                            string pubKeyFile = args[2];
+                            string sign = args[3];
 
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
