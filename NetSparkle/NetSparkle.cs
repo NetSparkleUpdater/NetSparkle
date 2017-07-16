@@ -313,7 +313,6 @@ namespace NetSparkle
                 Debug.WriteLine("Checking the following file: " + _appReferenceAssembly);
             }
 
-            // TODO: change BackgroundWorker to Task
             // adjust the delegates
             _taskWorker = new Task(() =>
             {
@@ -328,7 +327,7 @@ namespace NetSparkle
             
             // set the url
             _appCastUrl = appcastUrl;
-            Debug.WriteLine("Using the following url: " + _appCastUrl);
+            ReportDiagnosticMessage("Using the following url: " + _appCastUrl);
             SilentMode = SilentModeTypes.NotSilent;
             TmpDownloadFilePath = "";
         }
