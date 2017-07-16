@@ -79,32 +79,32 @@ namespace NetSparkle
     /// The operation has started
     /// </summary>
     /// <param name="sender">the sender</param>
-    public delegate void LoopStartedOperation(Object sender);
+    public delegate void LoopStartedOperation(object sender);
     /// <summary>
     /// The operation has ended
     /// </summary>
     /// <param name="sender">the sender</param>
     /// <param name="updateRequired"><c>true</c> if an update is required</param>
-    public delegate void LoopFinishedOperation(Object sender, Boolean updateRequired);
+    public delegate void LoopFinishedOperation(object sender, bool updateRequired);
 
     /// <summary>
     /// This delegate will be used when an update was detected to allow library 
     /// consumer to add own user interface capabilities.    
     /// </summary>
-    public delegate void UpdateDetected(Object sender, UpdateDetectedEventArgs e);
+    public delegate void UpdateDetected(object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
     /// Update check has started.
     /// </summary>
     /// <param name="sender">Sparkle updater that is checking for an update.</param>
-    public delegate void UpdateCheckStarted(Object sender);
+    public delegate void UpdateCheckStarted(object sender);
 
     /// <summary>
     /// Update check has finished.
     /// </summary>
     /// <param name="sender">Sparkle updater that finished checking for an update.</param>
     /// <param name="status">Update status</param>
-    public delegate void UpdateCheckFinished(Object sender, UpdateStatus status);
+    public delegate void UpdateCheckFinished(object sender, UpdateStatus status);
 
     /// <summary>
     /// An asynchronous cancel event handler.
@@ -274,7 +274,7 @@ namespace NetSparkle
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        public Sparkle(String appcastUrl)
+        public Sparkle(string appcastUrl)
             : this(appcastUrl, null)
         { }
 
@@ -596,7 +596,7 @@ namespace NetSparkle
         /// <para>You should only call this function when your app is initialized and shows its main window.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
-        public void StartLoop(Boolean doInitialCheck)
+        public void StartLoop(bool doInitialCheck)
         {
             StartLoop(doInitialCheck, false);
         }
@@ -607,7 +607,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public void StartLoop(Boolean doInitialCheck, TimeSpan checkFrequency)
+        public void StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
         {
             StartLoop(doInitialCheck, false, checkFrequency);
         }
@@ -619,7 +619,7 @@ namespace NetSparkle
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was less than 24 hours ago</param>
-        public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck)
+        public void StartLoop(bool doInitialCheck, bool forceInitialCheck)
         {
             StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
         }
@@ -632,7 +632,7 @@ namespace NetSparkle
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public async void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
+        public async void StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
             {
@@ -1626,7 +1626,7 @@ namespace NetSparkle
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
                     if (csp < _checkFrequency)
                     {
-                        ReportDiagnosticMessage(String.Format("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes));
+                        ReportDiagnosticMessage(string.Format("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes));
                         goto WaitSection;
                     }
                 }
@@ -1697,7 +1697,7 @@ namespace NetSparkle
                 CheckLoopFinished?.Invoke(this, bUpdateRequired);
 
                 // report wait statement
-                ReportDiagnosticMessage(String.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
+                ReportDiagnosticMessage(string.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
 
                 // wait for
                 if (!goIntoLoop || _cancelToken.IsCancellationRequested)
@@ -1715,7 +1715,7 @@ namespace NetSparkle
                     break;
                 if (WaitHandle.WaitTimeout == i)
                 {
-                    ReportDiagnosticMessage(String.Format("{0} minutes are over", _checkFrequency.TotalMinutes));
+                    ReportDiagnosticMessage(string.Format("{0} minutes are over", _checkFrequency.TotalMinutes));
                     continue;
                 }
 

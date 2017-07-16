@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Refactored logic to quit application to a separate `QuitApplication()` function
+
+### Changed
+- `RunDownloadedInstaller()` is now virtual and protected
+
+### Removed
+
 ## [0.10.0] - 2017-07-11
 ### Added
 - This changelog
