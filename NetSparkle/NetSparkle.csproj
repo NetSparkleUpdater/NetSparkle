@@ -188,6 +188,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UpdateDetectedEventArgs.cs" />
+    <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CheckingForUpdatesWindow.resx">
