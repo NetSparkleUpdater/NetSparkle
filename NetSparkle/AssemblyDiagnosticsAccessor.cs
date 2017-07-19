@@ -77,7 +77,7 @@ namespace NetSparkle
         {
             get
             {
-                return productVersion;                                
+                return productName;                                
             }
         }
 

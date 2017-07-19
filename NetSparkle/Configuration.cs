@@ -78,13 +78,13 @@ namespace NetSparkle
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
         protected Configuration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
         {
+            // set default values
+            InitWithDefaultValues();
+
             // set the value
             this.UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
             // save the reference assembly
             this.ReferenceAssembly = referenceAssembly;
-
-            // set default values
-            InitWithDefaultValues();
 
             try
             {
