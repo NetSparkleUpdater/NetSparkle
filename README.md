@@ -55,7 +55,7 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 
 **Warning!** 
 
-The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of `CloseApplication`/`CloseApplicationAsync` being called if you implement those events!
+The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
 ## Appcast
 
@@ -445,6 +445,8 @@ The user interface window that shows the release notes and asks the user to skip
 
 - [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)
 - [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync)
+- [CloseApplication](#closeapplication)
+- [CloseApplicationAsync](#closeapplicationasync)
 - [CheckLoopFinished](#checkloopfinished)
 - [CheckLoopStarted](#checkloopstarted)
 - [DownloadCanceled](#downloadcanceled)
@@ -469,6 +471,22 @@ Subscribe to this to get a chance to shut down gracefully before quitting. If [A
 **Delegate**: Task CancelEventHandlerAsync(object sender, System.ComponentModel.CancelEventArgs e)
 
 Subscribe to this to get a chance to asynchronously shut down gracefully before quitting. This overrides [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
+
+### CloseApplication
+
+**Delegate**: void CloseApplication()
+
+Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. If [CloseApplicationAsync](#closeapplicationasync) is set, this has no effect.
+
+**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
+
+### CloseApplicationAsync
+
+**Delegate**: Task CloseApplicationAsync()
+
+Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. This overrides [CloseApplication](#closeapplication).
+
+**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
 ### CheckLoopFinished
 

@@ -136,13 +136,22 @@ namespace NetSparkle
         public event UpdateDetected UpdateDetected;
 
         /// <summary>
-        /// Event called for shutting down the application.
-        /// If CloseApplicationAsync is non-null, CloseApplication is never called.
+        /// Event for custom shutdown logic. If this is set, it is called instead of
+        /// Application.Current.Shutdown or Application.Exit.
+        /// If <see cref="CloseApplicationAsync"/> is set, this has no effect.
+        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
+        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
+        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRun"/>.</para>
         /// </summary>
         public event CloseApplication CloseApplication;
 
         /// <summary>
-        /// Event called for shutting down the application asynchronously.
+        /// Event for asynchronous custom shutdown logic. If this is set, it is called instead of
+        /// Application.Current.Shutdown or Application.Exit.
+        /// This overrides <see cref="CloseApplication"/>.
+        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
+        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
+        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRunAsync"/>.</para>
         /// </summary>
         public event CloseApplicationAsync CloseApplicationAsync;
 
