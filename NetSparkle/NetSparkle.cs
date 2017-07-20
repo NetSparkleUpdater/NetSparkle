@@ -965,7 +965,7 @@ namespace NetSparkle
         /// <summary>
         /// This method reports a message in the diagnostic window.
         /// </summary>
-        public void ReportDiagnosticMessage(string message)
+        protected internal virtual void ReportDiagnosticMessage(string message)
         {
             if (!PrintDiagnosticToConsole)
                 Debug.WriteLine("netsparkle: " + message);
