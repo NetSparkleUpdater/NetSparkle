@@ -2,28 +2,22 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-
 ### Added
 
 ### Changed
-
 - Moved `UpdateStatus` enum to `NetSparkle.Enums`
 - Moved `UpdateInfo` class to its own file
 
 ### Removed
 
 ## [0.11.0] - 2017-07-16
-
 ### Added
-
 - Refactored logic to quit application to a separate `QuitApplication()` function
 
 ### Changed
 - `RunDownloadedInstaller()` is now virtual and protected
 - Renamed some files and variables
 - Moved `SecurityMode` and `ValidationResult` enums to the `NetSparkle.Enums` namespace
-
-### Removed
 
 ## [0.10.0] - 2017-07-11
 ### Added
@@ -32,7 +26,6 @@ All notable changes to this project will be documented in this file.
 - Section about how the appcast works to the readme
 
 ### Changed
-
 Much thanks to @stephenwade for his contributions to 0.10.0
 
 - Cleaned up and added documentation comments throughout the code (@stephenwade)
