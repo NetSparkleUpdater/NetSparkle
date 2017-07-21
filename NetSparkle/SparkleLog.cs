@@ -10,7 +10,7 @@ namespace NetSparkle
     /// <summary>
     /// A simple class to handle log information for NetSparkle
     /// </summary>
-    class SparkleLog
+    public class SparkleLog
     {
         /// <summary>
         /// Empty constructor -> sets PrintDiagnosticToConsole to false
