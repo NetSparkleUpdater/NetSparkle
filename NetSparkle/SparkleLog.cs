@@ -48,10 +48,10 @@ namespace NetSparkle
         /// <param name="arguments">Arguments to print (e.g. if using {0} format arguments)</param>
         public virtual void PrintMessage(string message, params string[] arguments)
         {
-            if (!PrintDiagnosticToConsole)
-                Debug.WriteLine("netsparkle: " + message, arguments);
-            else
+            if (PrintDiagnosticToConsole)
                 Console.WriteLine("netsparkle: " + message, arguments);
+            else
+                Debug.WriteLine("netsparkle: " + message, arguments);
         }
     }
 }
