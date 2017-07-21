@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 
 - Moved `UpdateStatus` enum to `NetSparkle.Enums`
 - Moved `UpdateInfo` class to its own file
+- Fixed bug in `Configuration.cs` where a few values were not set properly in the constructor due to `InitWithDefaultValues` being called at the wrong time (@devstudiosoft)
+- **BREAKING CHANGE** Fixed bug in `AssemblyDiagnosticsAccessor` where `AssemblyProduct` returned the assembly version and not the assembly name.
 
 ### Removed
 
