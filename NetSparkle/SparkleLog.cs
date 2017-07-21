@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 namespace NetSparkle
 {
     /// <summary>
-    /// A simple class to handle log information for NetSparkle
+    /// A simple class to handle log information for NetSparkle.
+    /// Make sure to do any setup for this class that you want
+    /// to do before calling StartLoop on your NetSparkle object.
     /// </summary>
     public class SparkleLog
     {

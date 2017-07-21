@@ -215,7 +215,7 @@ namespace NetSparkle
 
         private readonly EventWaitHandle _exitHandle;
         private readonly EventWaitHandle _loopingHandle;
-        private readonly Icon _applicationIcon;       
+        private readonly Icon _applicationIcon;
         private TimeSpan _checkFrequency;
         private bool _useNotificationToast;
 
@@ -279,7 +279,7 @@ namespace NetSparkle
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultUIFactory())
         { }
 
@@ -314,7 +314,7 @@ namespace NetSparkle
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
             // init UI
             UIFactory.Init();
-            _appReferenceAssembly = null;            
+            _appReferenceAssembly = null;
             // set the reference assembly
             if (referenceAssembly != null)
             {
@@ -333,7 +333,7 @@ namespace NetSparkle
             // build the wait handle
             _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
             _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-            
+
             // set the url
             _appCastUrl = appcastUrl;
             ReportDiagnosticMessage("Using the following url: " + _appCastUrl);
@@ -469,7 +469,6 @@ namespace NetSparkle
 
         /// <summary>
         /// The NetSparkle configuration object for the current assembly.
-        /// TODO: this should be private, and only accessed by <see cref="GetApplicationConfig"/>
         /// </summary>
         public Configuration Configuration { get; set; }
 
@@ -505,6 +504,15 @@ namespace NetSparkle
         /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
         /// </summary>
         public string ExtraJsonData { get; set; }
+
+        /// <summary>
+        /// Object that handles any diagnostic messages for NetSparkle.
+        /// If you want to use your own class for this, you should just
+        /// need to override <see cref="SparkleLog.PrintMessage"/> in your own class.
+        /// Make sure to set this object before calling <see cref="StartLoop"/> to guarantee
+        /// that all messages will get sent to the right place!
+        /// </summary>
+        public SparkleLog SparkleLogger { get; set; }
 
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.
