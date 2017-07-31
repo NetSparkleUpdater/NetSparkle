@@ -508,11 +508,11 @@ namespace NetSparkle
         /// <summary>
         /// Object that handles any diagnostic messages for NetSparkle.
         /// If you want to use your own class for this, you should just
-        /// need to override <see cref="SparkleLog.PrintMessage"/> in your own class.
+        /// need to override <see cref="LogWriter.PrintMessage"/> in your own class.
         /// Make sure to set this object before calling <see cref="StartLoop"/> to guarantee
         /// that all messages will get sent to the right place!
         /// </summary>
-        public SparkleLog SparkleLogger { get; set; }
+        public LogWriter LogWriter { get; set; }
 
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.

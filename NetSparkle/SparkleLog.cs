@@ -12,12 +12,12 @@ namespace NetSparkle
     /// Make sure to do any setup for this class that you want
     /// to do before calling StartLoop on your NetSparkle object.
     /// </summary>
-    public class SparkleLog
+    public class LogWriter
     {
         /// <summary>
         /// Empty constructor -> sets PrintDiagnosticToConsole to false
         /// </summary>
-        public SparkleLog()
+        public LogWriter()
         {
             PrintDiagnosticToConsole = false;
         }
@@ -27,7 +27,7 @@ namespace NetSparkle
         /// the value for printDiagnosticToConsole
         /// </summary>
         /// <param name="printDiagnosticToConsole">Whether this object should print via Debug.WriteLine or Console.WriteLine</param>
-        public SparkleLog(bool printDiagnosticToConsole)
+        public LogWriter(bool printDiagnosticToConsole)
         {
             PrintDiagnosticToConsole = printDiagnosticToConsole;
         }
