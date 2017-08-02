@@ -14,6 +14,7 @@ namespace NetSparkle
     /// </summary>
     public class LogWriter
     {
+        protected string tag = "netsparkle:";
         /// <summary>
         /// Empty constructor -> sets PrintDiagnosticToConsole to false
         /// </summary>
@@ -51,9 +52,9 @@ namespace NetSparkle
         public virtual void PrintMessage(string message, params string[] arguments)
         {
             if (PrintDiagnosticToConsole)
-                Console.WriteLine("netsparkle: " + message, arguments);
+                Console.WriteLine(tag + " " + message, arguments);
             else
-                Debug.WriteLine("netsparkle: " + message, arguments);
+                Debug.WriteLine(tag + " " + message, arguments);
         }
     }
 }

@@ -168,7 +168,7 @@
     </Compile>
     <Compile Include="DSAChecker.cs" />
     <Compile Include="NetSparkleException.cs" />
-    <Compile Include="SparkleLog.cs" />
+    <Compile Include="LogWriter.cs" />
     <Compile Include="UpdateAvailableWindow.cs">
       <SubType>Form</SubType>
     </Compile>

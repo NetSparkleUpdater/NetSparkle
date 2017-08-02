@@ -79,7 +79,7 @@ namespace NetSparkle
             }
             catch (Exception ex)
             {
-                _sparkle.ReportDiagnosticMessage("Error in browser init: " + ex.Message);
+                _sparkle.LogWriter.PrintMessage("Error in browser init: " + ex.Message);
             }
 
             AppCastItem item = items[0];
@@ -197,7 +197,7 @@ namespace NetSparkle
                 }
                 catch (Exception ex)
                 {
-                    _sparkle.ReportDiagnosticMessage("Error parsing Markdown syntax: " + ex.Message);
+                    _sparkle.LogWriter.PrintMessage("Error parsing Markdown syntax: " + ex.Message);
                 }
             }
             return notes;
@@ -217,7 +217,7 @@ namespace NetSparkle
             }
             catch (WebException ex)
             {
-                _sparkle.ReportDiagnosticMessage("Cannot download release notes from " + link + " because " + ex.Message);
+                _sparkle.LogWriter.PrintMessage("Cannot download release notes from " + link + " because " + ex.Message);
                 return "";
             }
         }

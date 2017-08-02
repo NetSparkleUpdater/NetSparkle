@@ -76,7 +76,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                _sparkle.ReportDiagnosticMessage(string.Format("error reading app cast {0}: {1} ", _castUrl, e.Message));
+                _sparkle.LogWriter.PrintMessage(string.Format("error reading app cast {0}: {1} ", _castUrl, e.Message));
                 return false;
             }
         }
@@ -85,7 +85,7 @@ namespace NetSparkle
         {
             if (inputstream == null)
             {
-                _sparkle.ReportDiagnosticMessage("Cannot read response from URL " + _castUrl);
+                _sparkle.LogWriter.PrintMessage("Cannot read response from URL " + _castUrl);
                 return false;
             }
 
@@ -98,7 +98,7 @@ namespace NetSparkle
             var signatureNeeded = _sparkle.DSAChecker.SignatureNeeded();
             if (signatureNeeded && _sparkle.DSAChecker.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
             {
-                _sparkle.ReportDiagnosticMessage("Signature check of appcast failed");
+                _sparkle.LogWriter.PrintMessage("Signature check of appcast failed");
                 return false;
             }
             memorystream.Position = 0;
@@ -181,7 +181,7 @@ namespace NetSparkle
                                 }
                                 catch (FormatException ex)
                                 {
-                                    _sparkle.ReportDiagnosticMessage("Cannot parse item datetime " + dt + " with message " + ex.Message);
+                                    _sparkle.LogWriter.PrintMessage("Cannot parse item datetime " + dt + " with message " + ex.Message);
                                 }
                             }
                             break;
