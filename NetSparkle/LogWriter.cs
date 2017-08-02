@@ -49,7 +49,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="message">Message to print</param>
         /// <param name="arguments">Arguments to print (e.g. if using {0} format arguments)</param>
-        public virtual void PrintMessage(string message, params string[] arguments)
+        public virtual void PrintMessage(string message, params object[] arguments)
         {
             if (PrintDiagnosticToConsole)
                 Console.WriteLine(tag + " " + message, arguments);

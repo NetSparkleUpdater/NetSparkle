@@ -840,7 +840,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Couldn't read/parse the app cast: " + e.Message);
+                LogWriter.PrintMessage("Couldn't read/parse the app cast: {0}", e.Message);
                 updates = null;
             }
 
@@ -858,15 +858,15 @@ namespace NetSparkle
             // check if the version will be the same then the installed version
             if (updates.Length == 0)
             {
-                LogWriter.PrintMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
+                LogWriter.PrintMessage("Installed version is valid, no update needed ({0})", config.InstalledVersion);
                 return new UpdateInfo(UpdateStatus.UpdateNotAvailable);
             }
-            LogWriter.PrintMessage("Latest version on the server is " + updates[0].Version);
+            LogWriter.PrintMessage("Latest version on the server is {0}", updates[0].Version);
 
             // check if the available update has to be skipped
             if (updates[0].Version.Equals(config.SkipThisVersion))
             {
-                LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
+                LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.SkipThisVersion);
                 return new UpdateInfo(UpdateStatus.UserSkipped);
             }
 
@@ -981,7 +981,7 @@ namespace NetSparkle
                 }  
                 catch (Exception e)
                 {
-                    LogWriter.PrintMessage("Error showing sparkle form: " + e.Message);
+                    LogWriter.PrintMessage("Error showing sparkle form: {0}", e.Message);
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
@@ -1000,7 +1000,7 @@ namespace NetSparkle
             {
                 return; // file is already downloading, don't do anything!
             }
-            LogWriter.PrintMessage("Preparing to download " + item.DownloadLink);
+            LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
             // get the filename of the download link
             string[] segments = item.DownloadLink.Split('/');
@@ -1072,7 +1072,7 @@ namespace NetSparkle
                 _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
                 Uri url = new Uri(item.DownloadLink);
-                LogWriter.PrintMessage("Starting to download " + url + " to " + _downloadTempFileName);
+                LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
                 StartedDownloading?.Invoke(_downloadTempFileName);
                 showProgressWindow();
@@ -1169,7 +1169,7 @@ namespace NetSparkle
             }
 
             // generate the batch file                
-            LogWriter.PrintMessage("Generating batch in " + Path.GetFullPath(batchFilePath));
+            LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
             using (StreamWriter write = new StreamWriter(batchFilePath))
             {
@@ -1209,7 +1209,7 @@ namespace NetSparkle
             }
 
             // report
-            LogWriter.PrintMessage("Going to execute batch: " + batchFilePath);
+            LogWriter.PrintMessage("Going to execute batch: {0}", batchFilePath);
             
             // init the installer helper
             _installerProcess = new Process
@@ -1406,8 +1406,7 @@ namespace NetSparkle
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
-                LogWriter.PrintMessage("Update needed from version " + config.InstalledVersion + " to version " +
-                                        updates[0].Version);
+                LogWriter.PrintMessage("Update needed from version {0}  to version {1}", config.InstalledVersion, updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
                                                     {
@@ -1579,7 +1578,7 @@ namespace NetSparkle
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
                     if (csp < _checkFrequency)
                     {
-                        LogWriter.PrintMessage(string.Format("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes));
+                        LogWriter.PrintMessage("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes);
                         goto WaitSection;
                     }
                 }
@@ -1610,7 +1609,7 @@ namespace NetSparkle
                 if (bUpdateRequired)
                 {
                     // show the update window
-                    LogWriter.PrintMessage("Update needed from version " + config.InstalledVersion + " to version " + updates[0].Version);
+                    LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                     // send notification if needed
                     UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
@@ -1648,7 +1647,7 @@ namespace NetSparkle
                 CheckLoopFinished?.Invoke(this, bUpdateRequired);
 
                 // report wait statement
-                LogWriter.PrintMessage(string.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
+                LogWriter.PrintMessage("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
 
                 // wait for
                 if (!goIntoLoop || _cancelToken.IsCancellationRequested)
@@ -1666,7 +1665,7 @@ namespace NetSparkle
                     break;
                 if (WaitHandle.WaitTimeout == i)
                 {
-                    LogWriter.PrintMessage(string.Format("{0} minutes are over", _checkFrequency.TotalMinutes));
+                    LogWriter.PrintMessage("{0} minutes are over", _checkFrequency.TotalMinutes);
                     continue;
                 }
 
@@ -1718,7 +1717,7 @@ namespace NetSparkle
             if (e.Error != null)
             {
                 DownloadError?.Invoke(_downloadTempFileName);
-                LogWriter.PrintMessage("Error on download finished: " + e.Error.Message);
+                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
                     UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
@@ -1742,7 +1741,7 @@ namespace NetSparkle
             var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
-                LogWriter.PrintMessage("Fully downloaded file exists at " + _downloadTempFileName);
+                LogWriter.PrintMessage("Fully downloaded file exists at {0}", _downloadTempFileName);
 
                 LogWriter.PrintMessage("Performing DSA check");
 
@@ -1773,7 +1772,7 @@ namespace NetSparkle
             // signature of file isn't valid so exit with error
             if (isSignatureInvalid)
             {
-                LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
+                LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
                 DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
