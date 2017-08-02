@@ -203,6 +203,7 @@ namespace NetSparkle
         /// </summary>
         public event DownloadEvent DownloadError;
 
+        private LogWriter _logWriter;
         private Task _taskWorker;
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
@@ -415,7 +416,12 @@ namespace NetSparkle
         /// <summary>
         /// If true, prints diagnostic messages to Console.WriteLine rather than Debug.WriteLine
         /// </summary>
-        public bool PrintDiagnosticToConsole { get; set; }
+        [System.Obsolete("PrintDiagnosticToConsole is deprecated, please use LogWriter.PrintDiagnosticToConsole instead.")]
+        public bool PrintDiagnosticToConsole
+        {
+            get { return LogWriter.PrintDiagnosticToConsole; }
+            set { LogWriter.PrintDiagnosticToConsole = value; }
+        }
 
         /// <summary>
         /// Run the downloaded installer with these arguments
@@ -512,7 +518,21 @@ namespace NetSparkle
         /// Make sure to set this object before calling <see cref="StartLoop"/> to guarantee
         /// that all messages will get sent to the right place!
         /// </summary>
-        public LogWriter LogWriter { get; set; }
+        public LogWriter LogWriter
+        {
+            get
+            {
+                if (_logWriter == null)
+                {
+                    _logWriter = new LogWriter();
+                }
+                return _logWriter;
+            }
+            set
+            {
+                _logWriter = value;
+            }
+        }
 
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.
