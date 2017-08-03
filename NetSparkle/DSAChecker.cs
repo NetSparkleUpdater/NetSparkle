@@ -1,62 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using NetSparkle.Enums;
 
 namespace NetSparkle
 {
-    /// <summary>
-    /// Controls the Mode in which situations which files has to be signed with the DSA private key.
-    /// If an DSA public key and an signature is preset they allways has to be valid.
-    /// </summary>
-    public enum SecurityMode
-    {
-        /// <summary>
-        /// All files (with or without signature) will be accepted. This was the default mode before.
-        /// I strongly don't recommend this mode. It can cause critical security issues.
-        /// </summary>
-        Unsafe = 1,
-
-        /// <summary>
-        /// If there is an DSA public key all files has to be signed. If there isn't any DSA public key
-        /// also files without an signature will be accepted. It's an mix between Unsafe and Strict and
-        /// can have some security issues if the DSA public key gets lost in the application.
-        /// </summary>
-        UseIfPossible = 2,
-
-        /// <summary>
-        /// Every file has to be signed. This means the DSA public key must exist. I recommend this mode
-        /// to enforce the use of secure update informations. This is the default mode.
-        /// </summary>
-        Strict = 3,
-    }
-
-    /// <summary>
-    /// Return value of the DSA verification check functions.
-    /// </summary>
-    public enum ValidationResult
-    {
-        /// <summary>
-        /// The DSA public key and signature exists and they are valid.
-        /// </summary>
-        Valid = 1,
-
-        /// <summary>
-        /// Depending on the SecirityMode at least one of DSA public key or the signature dosn't exist or
-        /// they exists but they are not valid. In this case the file will be rejected.
-        /// </summary>
-        Invalid = 2,
-
-        /// <summary>
-        /// There wasn't any DSA public key or signature and SecurityMode said this is okay.
-        /// </summary>
-        Unchecked = 3,
-    }
-
     /// <summary>
     /// Class to verify a DSA signature
     /// </summary>
@@ -164,7 +115,7 @@ namespace NetSparkle
                     break;
 
                 case SecurityMode.Strict:
-                    // only accept if we have booth
+                    // only accept if we have both
                     if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
@@ -173,7 +124,7 @@ namespace NetSparkle
                     break;
                 
                 case SecurityMode.Unsafe:
-                    // allways accept anything.
+                    // always accept anything.
                     // but exit with unchecked if we have an signature
                     if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
                     {

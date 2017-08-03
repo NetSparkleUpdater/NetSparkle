@@ -29,12 +29,16 @@ namespace NetSparkle
         {
             if (assemblyName != null)
             {
-                fileVersion = FileVersionInfo.GetVersionInfo(assemblyName).FileVersion;
-                productVersion = FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion;
-                productName = FileVersionInfo.GetVersionInfo(assemblyName).ProductName;
-                companyName = FileVersionInfo.GetVersionInfo(assemblyName).CompanyName;
-                legalCopyright = FileVersionInfo.GetVersionInfo(assemblyName).LegalCopyright;
-                fileDescription = FileVersionInfo.GetVersionInfo(assemblyName).FileDescription; 
+                string absolutePath = Path.GetFullPath(assemblyName);
+                if (!File.Exists(absolutePath))
+                    throw new FileNotFoundException();
+                var info = FileVersionInfo.GetVersionInfo(assemblyName);
+                fileVersion = info.FileVersion;
+                productVersion = info.ProductVersion;
+                productName = info.ProductName;
+                companyName = info.CompanyName;
+                legalCopyright = info.LegalCopyright;
+                fileDescription = info.FileDescription; 
             }
         }
 
@@ -77,7 +81,7 @@ namespace NetSparkle
         {
             get
             {
-                return productVersion;                                
+                return productName;                                
             }
         }
 

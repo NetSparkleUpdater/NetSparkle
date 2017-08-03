@@ -14,97 +14,45 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using NetSparkle.Enums;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
 // TODO: Refactor a bunch of events to an interface instead?
+// TODO: That loop thing for the background worker needs to be reworked to have no goto and such.
 
 namespace NetSparkle
 {
     /// <summary>
-    /// Possibilities for the status of an update request
-    /// </summary>
-    public enum UpdateStatus
-    {
-        /// <summary>
-        /// An update is available
-        /// </summary>
-        UpdateAvailable,
-        /// <summary>
-        /// No updates are available
-        /// </summary>
-        UpdateNotAvailable,
-        /// <summary>
-        /// An update is available, but the user has chosen to skip this version
-        /// </summary>
-        UserSkipped,
-        /// <summary>
-        /// There was a problem fetching the appcast
-        /// </summary>
-        CouldNotDetermine
-    }
-
-    /// <summary>
-    /// A simple class to hold information on potential updates to a software product.
-    /// </summary>
-    public class SparkleUpdateInfo
-    {
-        /// <summary>
-        /// Update availability.
-        /// </summary>
-        public UpdateStatus Status { get; set; }
-        /// <summary>
-        /// Any available updates for the product.
-        /// </summary>
-        public AppCastItem[] Updates { get; set; }
-        /// <summary>
-        /// Constructor for SparkleUpdate when there are some updates available.
-        /// </summary>
-        public SparkleUpdateInfo(UpdateStatus status, AppCastItem[] updates)
-        {
-            Status = status;
-            Updates = updates;
-        }
-        /// <summary>
-        /// Constructor for SparkleUpdate for when there aren't any updates available. Updates are automatically set to null.
-        /// </summary>
-        public SparkleUpdateInfo(UpdateStatus status)
-        {
-            Status = status;
-            Updates = null;
-        }
-    }
-
-    /// <summary>
     /// The operation has started
     /// </summary>
     /// <param name="sender">the sender</param>
-    public delegate void LoopStartedOperation(Object sender);
+    public delegate void LoopStartedOperation(object sender);
     /// <summary>
     /// The operation has ended
     /// </summary>
     /// <param name="sender">the sender</param>
     /// <param name="updateRequired"><c>true</c> if an update is required</param>
-    public delegate void LoopFinishedOperation(Object sender, Boolean updateRequired);
+    public delegate void LoopFinishedOperation(object sender, bool updateRequired);
 
     /// <summary>
     /// This delegate will be used when an update was detected to allow library 
     /// consumer to add own user interface capabilities.    
     /// </summary>
-    public delegate void UpdateDetected(Object sender, UpdateDetectedEventArgs e);
+    public delegate void UpdateDetected(object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
     /// Update check has started.
     /// </summary>
     /// <param name="sender">Sparkle updater that is checking for an update.</param>
-    public delegate void UpdateCheckStarted(Object sender);
+    public delegate void UpdateCheckStarted(object sender);
 
     /// <summary>
     /// Update check has finished.
     /// </summary>
     /// <param name="sender">Sparkle updater that finished checking for an update.</param>
     /// <param name="status">Update status</param>
-    public delegate void UpdateCheckFinished(Object sender, UpdateStatus status);
+    public delegate void UpdateCheckFinished(object sender, UpdateStatus status);
 
     /// <summary>
     /// An asynchronous cancel event handler.
@@ -188,13 +136,22 @@ namespace NetSparkle
         public event UpdateDetected UpdateDetected;
 
         /// <summary>
-        /// Event called for shutting down the application.
-        /// If CloseApplicationAsync is non-null, CloseApplication is never called.
+        /// Event for custom shutdown logic. If this is set, it is called instead of
+        /// Application.Current.Shutdown or Application.Exit.
+        /// If <see cref="CloseApplicationAsync"/> is set, this has no effect.
+        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
+        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
+        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRun"/>.</para>
         /// </summary>
         public event CloseApplication CloseApplication;
 
         /// <summary>
-        /// Event called for shutting down the application asynchronously.
+        /// Event for asynchronous custom shutdown logic. If this is set, it is called instead of
+        /// Application.Current.Shutdown or Application.Exit.
+        /// This overrides <see cref="CloseApplication"/>.
+        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
+        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
+        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRunAsync"/>.</para>
         /// </summary>
         public event CloseApplicationAsync CloseApplicationAsync;
 
@@ -246,7 +203,7 @@ namespace NetSparkle
         /// </summary>
         public event DownloadEvent DownloadError;
 
-        //private BackgroundWorker _worker;
+        private LogWriter _logWriter;
         private Task _taskWorker;
         private CancellationToken _cancelToken;
         private CancellationTokenSource _cancelTokenSource;
@@ -259,7 +216,7 @@ namespace NetSparkle
 
         private readonly EventWaitHandle _exitHandle;
         private readonly EventWaitHandle _loopingHandle;
-        private readonly Icon _applicationIcon;       
+        private readonly Icon _applicationIcon;
         private TimeSpan _checkFrequency;
         private bool _useNotificationToast;
 
@@ -268,13 +225,13 @@ namespace NetSparkle
         private Process _installerProcess;
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
-        private SparkleUpdateInfo _latestDownloadedUpdateInfo;
+        private UpdateInfo _latestDownloadedUpdateInfo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        public Sparkle(String appcastUrl)
+        public Sparkle(string appcastUrl)
             : this(appcastUrl, null)
         { }
 
@@ -323,7 +280,7 @@ namespace NetSparkle
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly) 
+        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
             : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultUIFactory())
         { }
 
@@ -343,7 +300,6 @@ namespace NetSparkle
             _applicationIcon = applicationIcon;
             ExtraJsonData = "";
             _latestDownloadedUpdateInfo = null;
-            PrintDiagnosticToConsole = false;
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
             DSAChecker = new DSAChecker(securityMode, dsaPublicKey);
@@ -358,7 +314,7 @@ namespace NetSparkle
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
             // init UI
             UIFactory.Init();
-            _appReferenceAssembly = null;            
+            _appReferenceAssembly = null;
             // set the reference assembly
             if (referenceAssembly != null)
             {
@@ -366,7 +322,6 @@ namespace NetSparkle
                 Debug.WriteLine("Checking the following file: " + _appReferenceAssembly);
             }
 
-            // TODO: change BackgroundWorker to Task
             // adjust the delegates
             _taskWorker = new Task(() =>
             {
@@ -375,17 +330,13 @@ namespace NetSparkle
             _cancelTokenSource = new CancellationTokenSource();
             _cancelToken = _cancelTokenSource.Token;
 
-            /*_worker = new BackgroundWorker {WorkerReportsProgress = true};
-            _worker.DoWork += OnWorkerDoWork;
-            _worker.ProgressChanged += OnWorkerProgressChanged;*/
-
             // build the wait handle
             _exitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
             _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-            
+
             // set the url
             _appCastUrl = appcastUrl;
-            Debug.WriteLine("Using the following url: " + _appCastUrl);
+            LogWriter.PrintMessage("Using the following url: {0}", _appCastUrl);
             SilentMode = SilentModeTypes.NotSilent;
             TmpDownloadFilePath = "";
         }
@@ -462,11 +413,6 @@ namespace NetSparkle
         public bool RelaunchAfterUpdate { get; set; }
 
         /// <summary>
-        /// If true, prints diagnostic messages to Console.WriteLine rather than Debug.WriteLine
-        /// </summary>
-        public bool PrintDiagnosticToConsole { get; set; }
-
-        /// <summary>
         /// Run the downloaded installer with these arguments
         /// </summary>
         public string CustomInstallerArguments { get; set; }
@@ -518,7 +464,6 @@ namespace NetSparkle
 
         /// <summary>
         /// The NetSparkle configuration object for the current assembly.
-        /// TODO: this should be private, and only accessed by <see cref="GetApplicationConfig"/>
         /// </summary>
         public Configuration Configuration { get; set; }
 
@@ -554,6 +499,29 @@ namespace NetSparkle
         /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
         /// </summary>
         public string ExtraJsonData { get; set; }
+
+        /// <summary>
+        /// Object that handles any diagnostic messages for NetSparkle.
+        /// If you want to use your own class for this, you should just
+        /// need to override <see cref="LogWriter.PrintMessage"/> in your own class.
+        /// Make sure to set this object before calling <see cref="StartLoop"/> to guarantee
+        /// that all messages will get sent to the right place!
+        /// </summary>
+        public LogWriter LogWriter
+        {
+            get
+            {
+                if (_logWriter == null)
+                {
+                    _logWriter = new LogWriter();
+                }
+                return _logWriter;
+            }
+            set
+            {
+                _logWriter = value;
+            }
+        }
 
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.
@@ -596,7 +564,7 @@ namespace NetSparkle
         /// <para>You should only call this function when your app is initialized and shows its main window.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
-        public void StartLoop(Boolean doInitialCheck)
+        public void StartLoop(bool doInitialCheck)
         {
             StartLoop(doInitialCheck, false);
         }
@@ -607,7 +575,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public void StartLoop(Boolean doInitialCheck, TimeSpan checkFrequency)
+        public void StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
         {
             StartLoop(doInitialCheck, false, checkFrequency);
         }
@@ -619,7 +587,7 @@ namespace NetSparkle
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was less than 24 hours ago</param>
-        public void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck)
+        public void StartLoop(bool doInitialCheck, bool forceInitialCheck)
         {
             StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
         }
@@ -632,7 +600,7 @@ namespace NetSparkle
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public async void StartLoop(Boolean doInitialCheck, Boolean forceInitialCheck, TimeSpan checkFrequency)
+        public async void StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
             {
@@ -642,7 +610,7 @@ namespace NetSparkle
                 }
                 catch
                 {
-                    ReportDiagnosticMessage("ClearOldInstallers threw an exception");
+                    LogWriter.PrintMessage("ClearOldInstallers threw an exception");
                 }
             }
             // first set the event handle
@@ -656,13 +624,12 @@ namespace NetSparkle
             _forceInitialCheck = forceInitialCheck;
             _checkFrequency = checkFrequency;
 
-            ReportDiagnosticMessage("Starting background worker");
+            LogWriter.PrintMessage("Starting background worker");
 
             // start the work
             //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             //_taskWorker.Start(scheduler);
             _taskWorker.Start();
-            //_worker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -753,9 +720,6 @@ namespace NetSparkle
         {
             ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
             _cancelTokenSource.Cancel();
-            /* _worker.DoWork -= OnWorkerDoWork;
-             _worker.ProgressChanged -= OnWorkerProgressChanged;
-             _worker = null; */
 
             if (_webDownloadClient != null)
             {
@@ -844,7 +808,7 @@ namespace NetSparkle
             catch (Exception ex)
             {
                 // No exception during data send 
-                ReportDiagnosticMessage(ex.Message);
+                LogWriter.PrintMessage(ex.Message);
             }
         }
 
@@ -855,12 +819,12 @@ namespace NetSparkle
         /// This method is also called from the background loops.
         /// </summary>
         /// <param name="config">the NetSparkle configuration for the reference assembly</param>
-        /// <returns><see cref="SparkleUpdateInfo"/> with information on whether there is an update available or not.</returns>
-        public async Task<SparkleUpdateInfo> GetUpdateStatus(Configuration config)
+        /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
+        public async Task<UpdateInfo> GetUpdateStatus(Configuration config)
         {
             AppCastItem[] updates = null;
             // report
-            ReportDiagnosticMessage("Downloading and checking appcast");
+            LogWriter.PrintMessage("Downloading and checking appcast");
 
             // init the appcast
             AppCast cast = new AppCast(_appCastUrl, this, config);
@@ -876,38 +840,38 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                ReportDiagnosticMessage("Couldn't read/parse the app cast: " + e.Message);
+                LogWriter.PrintMessage("Couldn't read/parse the app cast: {0}", e.Message);
                 updates = null;
             }
 
 
             if (updates == null)
             {
-                ReportDiagnosticMessage("No version information in app cast found");
-                return new SparkleUpdateInfo(UpdateStatus.CouldNotDetermine);
+                LogWriter.PrintMessage("No version information in app cast found");
+                return new UpdateInfo(UpdateStatus.CouldNotDetermine);
             }
 
             // set the last check time
-            ReportDiagnosticMessage("Touch the last check timestamp");
+            LogWriter.PrintMessage("Touch the last check timestamp");
             config.TouchCheckTime();
 
             // check if the version will be the same then the installed version
             if (updates.Length == 0)
             {
-                ReportDiagnosticMessage("Installed version is valid, no update needed (" + config.InstalledVersion + ")");
-                return new SparkleUpdateInfo(UpdateStatus.UpdateNotAvailable);
+                LogWriter.PrintMessage("Installed version is valid, no update needed ({0})", config.InstalledVersion);
+                return new UpdateInfo(UpdateStatus.UpdateNotAvailable);
             }
-            ReportDiagnosticMessage("Latest version on the server is " + updates[0].Version);
+            LogWriter.PrintMessage("Latest version on the server is {0}", updates[0].Version);
 
             // check if the available update has to be skipped
             if (updates[0].Version.Equals(config.SkipThisVersion))
             {
-                ReportDiagnosticMessage("Latest update has to be skipped (user decided to skip version " + config.SkipThisVersion + ")");
-                return new SparkleUpdateInfo(UpdateStatus.UserSkipped);
+                LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.SkipThisVersion);
+                return new UpdateInfo(UpdateStatus.UserSkipped);
             }
 
             // ok we need an update
-            return new SparkleUpdateInfo(UpdateStatus.UpdateAvailable, updates);
+            return new UpdateInfo(UpdateStatus.UpdateAvailable, updates);
         }
 
         /// <summary>
@@ -1017,22 +981,11 @@ namespace NetSparkle
                 }  
                 catch (Exception e)
                 {
-                    ReportDiagnosticMessage("Error showing sparkle form: " + e.Message);
+                    LogWriter.PrintMessage("Error showing sparkle form: {0}", e.Message);
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
-        }
-
-        /// <summary>
-        /// This method reports a message in the diagnostic window.
-        /// </summary>
-        public void ReportDiagnosticMessage(string message)
-        {
-            if (!PrintDiagnosticToConsole)
-                Debug.WriteLine("netsparkle: " + message);
-            else
-                Console.WriteLine("netsparkle: " + message);
         }
 
         /// <summary>
@@ -1047,7 +1000,7 @@ namespace NetSparkle
             {
                 return; // file is already downloading, don't do anything!
             }
-            ReportDiagnosticMessage("Preparing to download " + item.DownloadLink);
+            LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
             // get the filename of the download link
             string[] segments = item.DownloadLink.Split('/');
@@ -1070,7 +1023,7 @@ namespace NetSparkle
                 ValidationResult result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
                 if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                 {
-                    ReportDiagnosticMessage("File is already downloaded");
+                    LogWriter.PrintMessage("File is already downloaded");
                     // We already have the file! Don't redownload it!
                     needsToDownload = false;
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
@@ -1085,7 +1038,7 @@ namespace NetSparkle
                     // File is downloaded, but is corrupt or was stopped in the middle or something else happened.
                     // Redownload it!
                     _hasAttemptedFileRedownload = true;
-                    ReportDiagnosticMessage("File is corrupt; deleting file and redownloading...");
+                    LogWriter.PrintMessage("File is corrupt; deleting file and redownloading...");
                     File.Delete(_downloadTempFileName);
                 }
                 else
@@ -1119,7 +1072,7 @@ namespace NetSparkle
                 _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
                 Uri url = new Uri(item.DownloadLink);
-                ReportDiagnosticMessage("Starting to download " + url + " to " + _downloadTempFileName);
+                LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
                 StartedDownloading?.Invoke(_downloadTempFileName);
                 showProgressWindow();
@@ -1192,21 +1145,21 @@ namespace NetSparkle
         /// <summary>
         /// Runs the downloaded installer
         /// </summary>
-        private async Task RunDownloadedInstaller()
+        protected virtual async Task RunDownloadedInstaller()
         {
-            ReportDiagnosticMessage("Running downloaded installer");
+            LogWriter.PrintMessage("Running downloaded installer");
             // get the commandline 
             string cmdLine = Environment.CommandLine;
             string workingDir = Environment.CurrentDirectory;
 
             // generate the batch file path
-            string cmd = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
+            string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
             string installerCmd;
             try
             {
                 installerCmd = GetInstallerCommand(_downloadTempFileName);
 
-                if (!String.IsNullOrEmpty(CustomInstallerArguments))
+                if (!string.IsNullOrEmpty(CustomInstallerArguments))
                     installerCmd += " " + CustomInstallerArguments;
             }
             catch (InvalidDataException)
@@ -1216,9 +1169,9 @@ namespace NetSparkle
             }
 
             // generate the batch file                
-            ReportDiagnosticMessage("Generating batch in " + Path.GetFullPath(cmd));
+            LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
-            using (StreamWriter write = new StreamWriter(cmd))
+            using (StreamWriter write = new StreamWriter(batchFilePath))
             {
                 write.WriteLine("@echo off");
                 // We should wait until the host process has died before starting the installer.
@@ -1256,22 +1209,26 @@ namespace NetSparkle
             }
 
             // report
-            ReportDiagnosticMessage("Going to execute batch: " + cmd);
+            LogWriter.PrintMessage("Going to execute batch: {0}", batchFilePath);
             
             // init the installer helper
             _installerProcess = new Process
                 {
                     StartInfo =
                         {
-                            FileName = cmd, 
+                            FileName = batchFilePath, 
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
                 };
             // start the installer process. the batch file will wait for the host app to close before starting.
             _installerProcess.Start();
+            await QuitApplication();
+        }
+
+        public async Task QuitApplication()
+        {
             // quit the app
-            if (_exitHandle != null)
-                _exitHandle.Set(); // make SURE the loop exits!
+            _exitHandle?.Set(); // make SURE the loop exits!
             // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
             // If you have better ideas on how to figure out if they've shut all other windows, let me know...
             try
@@ -1286,7 +1243,7 @@ namespace NetSparkle
                 }
                 else
                 {
-                    // if we're running from WPF, shutdown the WPF app (if not, the ?. makes this a no-op)
+                    // if we're running from WPF, shutdown the WPF app (if not a WPF app, the ?. makes this a no-op)
                     System.Windows.Application.Current?.Dispatcher.Invoke(() => {
                         System.Windows.Application.Current.Shutdown();
                     });
@@ -1296,7 +1253,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                ReportDiagnosticMessage(e.Message);
+                LogWriter.PrintMessage(e.Message);
             }
         }
 
@@ -1325,7 +1282,7 @@ namespace NetSparkle
             }
             catch (Exception e)
             {
-                ReportDiagnosticMessage(e.Message);
+                LogWriter.PrintMessage(e.Message);
             }
             return true;
         }
@@ -1356,7 +1313,7 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for if the user just said "check for updates".
         /// </summary>
-        public async Task<SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
+        public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current = Cursors.WaitCursor;
             CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
@@ -1364,7 +1321,7 @@ namespace NetSparkle
             CheckingForUpdatesWindow.Show();
             // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
             // actually cancel the request using a BackgroundWorker or something
-            SparkleUpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            UpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1418,9 +1375,9 @@ namespace NetSparkle
         /// <summary>
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
         /// </summary>
-        public async Task<SparkleUpdateInfo> CheckForUpdatesQuietly()
+        public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
-            SparkleUpdateInfo updateData = await CheckForUpdates(true);
+            UpdateInfo updateData = await CheckForUpdates(true);
             return updateData;
         }
 
@@ -1428,7 +1385,7 @@ namespace NetSparkle
         /// Does a one-off check for updates
         /// </summary>
         /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
-        private async Task<SparkleUpdateInfo> CheckForUpdates(bool useNotificationToast)
+        private async Task<UpdateInfo> CheckForUpdates(bool useNotificationToast)
         {
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting
@@ -1449,8 +1406,7 @@ namespace NetSparkle
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
-                ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " +
-                                        updates[0].Version);
+                LogWriter.PrintMessage("Update needed from version {0}  to version {1}", config.InstalledVersion, updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
                                                     {
@@ -1467,7 +1423,7 @@ namespace NetSparkle
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.ShowStandardUserInterface:
-                            ReportDiagnosticMessage("Showing Standard Update UI");
+                            LogWriter.PrintMessage("Showing Standard Update UI");
                             OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                             break;
                     }
@@ -1510,7 +1466,7 @@ namespace NetSparkle
         /// </summary>
         public void CancelFileDownload()
         {
-            ReportDiagnosticMessage("Canceling download...");
+            LogWriter.PrintMessage("Canceling download...");
             DownloadCanceled?.Invoke(_downloadTempFileName);
             if (_webDownloadClient != null && _webDownloadClient.IsBusy)
             {
@@ -1598,16 +1554,16 @@ namespace NetSparkle
                 // report status
                 if (doInitialCheck == false)
                 {
-                    ReportDiagnosticMessage("Initial check prohibited, going to wait");
+                    LogWriter.PrintMessage("Initial check prohibited, going to wait");
                     doInitialCheck = true;
                     goto WaitSection;
                 }
 
                 // report status
-                ReportDiagnosticMessage("Starting update loop...");
+                LogWriter.PrintMessage("Starting update loop...");
 
                 // read the config
-                ReportDiagnosticMessage("Reading config...");
+                LogWriter.PrintMessage("Reading config...");
                 Configuration config = GetApplicationConfig();
 
                 // calc CheckTasp
@@ -1622,7 +1578,7 @@ namespace NetSparkle
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
                     if (csp < _checkFrequency)
                     {
-                        ReportDiagnosticMessage(String.Format("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes));
+                        LogWriter.PrintMessage("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes);
                         goto WaitSection;
                     }
                 }
@@ -1632,7 +1588,7 @@ namespace NetSparkle
                 // when sparkle will be deactivated wait an other cycle
                 if (config.CheckForUpdate == false)
                 {
-                    ReportDiagnosticMessage("Check for updates disabled");
+                    LogWriter.PrintMessage("Check for updates disabled");
                     goto WaitSection;
                 }
 
@@ -1653,7 +1609,7 @@ namespace NetSparkle
                 if (bUpdateRequired)
                 {
                     // show the update window
-                    ReportDiagnosticMessage("Update needed from version " + config.InstalledVersion + " to version " + updates[0].Version);
+                    LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                     // send notification if needed
                     UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
@@ -1664,22 +1620,20 @@ namespace NetSparkle
                     {
                         case NextUpdateAction.PerformUpdateUnattended:
                             {
-                                ReportDiagnosticMessage("Unattended update desired from consumer");
+                                LogWriter.PrintMessage("Unattended update desired from consumer");
                                 SilentMode = SilentModeTypes.DownloadAndInstall;
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                //_worker.ReportProgress(1, updates);
                                 break;
                             }
                         case NextUpdateAction.ProhibitUpdate:
                             {
-                                ReportDiagnosticMessage("Update prohibited from consumer");
+                                LogWriter.PrintMessage("Update prohibited from consumer");
                                 break;
                             }
                         default:
                             {
-                                ReportDiagnosticMessage("Showing Standard Update UI");
+                                LogWriter.PrintMessage("Showing Standard Update UI");
                                 OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                //_worker.ReportProgress(1, updates);
                                 break;
                             }
                     }
@@ -1693,7 +1647,7 @@ namespace NetSparkle
                 CheckLoopFinished?.Invoke(this, bUpdateRequired);
 
                 // report wait statement
-                ReportDiagnosticMessage(String.Format("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes));
+                LogWriter.PrintMessage("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
 
                 // wait for
                 if (!goIntoLoop || _cancelToken.IsCancellationRequested)
@@ -1711,21 +1665,21 @@ namespace NetSparkle
                     break;
                 if (WaitHandle.WaitTimeout == i)
                 {
-                    ReportDiagnosticMessage(String.Format("{0} minutes are over", _checkFrequency.TotalMinutes));
+                    LogWriter.PrintMessage("{0} minutes are over", _checkFrequency.TotalMinutes);
                     continue;
                 }
 
                 // check the exit handle
                 if (i == 0)
                 {
-                    ReportDiagnosticMessage("Got exit signal");
+                    LogWriter.PrintMessage("Got exit signal");
                     break;
                 }
 
                 // check an other check needed
                 if (i == 1)
                 {
-                    ReportDiagnosticMessage("Got force update check signal");
+                    LogWriter.PrintMessage("Got force update check signal");
                     checkTSP = false;
                 }
                 if (_cancelToken.IsCancellationRequested)
@@ -1747,7 +1701,7 @@ namespace NetSparkle
                     Update(e.UserState as AppCastItem[]);
                     break;
                 case 0:
-                    ReportDiagnosticMessage(e.UserState.ToString());
+                    LogWriter.PrintMessage(e.UserState.ToString());
                     break;
             }
         }
@@ -1763,7 +1717,7 @@ namespace NetSparkle
             if (e.Error != null)
             {
                 DownloadError?.Invoke(_downloadTempFileName);
-                ReportDiagnosticMessage("Error on download finished: " + e.Error.Message);
+                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
                     UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
@@ -1774,7 +1728,7 @@ namespace NetSparkle
             if (e.Cancelled)
             {
                 DownloadCanceled?.Invoke(_downloadTempFileName);
-                ReportDiagnosticMessage("Download was canceled");
+                LogWriter.PrintMessage("Download was canceled");
                 string errorMessage = "Download cancelled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
@@ -1787,9 +1741,9 @@ namespace NetSparkle
             var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
-                ReportDiagnosticMessage("Fully downloaded file exists at " + _downloadTempFileName);
+                LogWriter.PrintMessage("Fully downloaded file exists at {0}", _downloadTempFileName);
 
-                ReportDiagnosticMessage("Performing DSA check");
+                LogWriter.PrintMessage("Performing DSA check");
 
                 // get the assembly
                 if (File.Exists(_downloadTempFileName))
@@ -1818,7 +1772,7 @@ namespace NetSparkle
             // signature of file isn't valid so exit with error
             if (isSignatureInvalid)
             {
-                ReportDiagnosticMessage("Invalid signature for downloaded file for app cast: " + _downloadTempFileName);
+                LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
                 DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
@@ -1831,7 +1785,7 @@ namespace NetSparkle
             else
             {
                 FinishedDownloading?.Invoke(_downloadTempFileName);
-                ReportDiagnosticMessage("DSA Signature is valid. File successfully downloaded!");
+                LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)

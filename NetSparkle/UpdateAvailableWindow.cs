@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
+using NetSparkle.Enums;
 
 // TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
@@ -78,7 +79,7 @@ namespace NetSparkle
             }
             catch (Exception ex)
             {
-                _sparkle.ReportDiagnosticMessage("Error in browser init: " + ex.Message);
+                _sparkle.LogWriter.PrintMessage("Error in browser init: {0}", ex.Message);
             }
 
             AppCastItem item = items[0];
@@ -196,7 +197,7 @@ namespace NetSparkle
                 }
                 catch (Exception ex)
                 {
-                    _sparkle.ReportDiagnosticMessage("Error parsing Markdown syntax: " + ex.Message);
+                    _sparkle.LogWriter.PrintMessage("Error parsing Markdown syntax: {0}", ex.Message);
                 }
             }
             return notes;
@@ -216,7 +217,7 @@ namespace NetSparkle
             }
             catch (WebException ex)
             {
-                _sparkle.ReportDiagnosticMessage("Cannot download release notes from " + link + " because " + ex.Message);
+                _sparkle.LogWriter.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";
             }
         }
@@ -251,10 +252,7 @@ namespace NetSparkle
         void IUpdateAvailable.Show()
         {
             ShowDialog();
-            if (UserResponded != null)
-            {
-                UserResponded(this, new EventArgs());
-            }
+            UserResponded?.Invoke(this, new EventArgs());
         }
 
         void IUpdateAvailable.BringToFront()

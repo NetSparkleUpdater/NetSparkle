@@ -14,6 +14,6 @@
    <description>Tools for NetSparkle (DSA helper, etc.). NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</description>
    <copyright>Copyright 2010 - 2017</copyright>
    <tags>Update Sparkle Autoupdate .NET Update</tags>    
-   <releaseNotes>First release of this fork of NetSparkle on nuget.org</releaseNotes>
+   <releaseNotes>See https://github.com/Deadpikle/NetSparkle/releases for all release information and to file issues/pull requests for this project</releaseNotes>
  </metadata>
 </package>

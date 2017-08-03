@@ -2,7 +2,7 @@
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
-**Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!**
+**Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!** Note that we will switch to the ["official" NuGet](https://www.nuget.org/packages/NetSparkle/) sometime soon!
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
@@ -38,7 +38,7 @@ If you want to add a manual update in the background, do
 _sparkle.CheckForUpdatesQuietly();
 ```
 
-If you want have a menu item for the user to check for updates, use
+If you want to have a menu item for the user to check for updates, use
 
 ```csharp
 _sparkle.CheckForUpdatesAtUserRequest();
@@ -55,7 +55,7 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 
 **Warning!** 
 
-The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of `CloseApplication`/`CloseApplicationAsync` being called if you implement those events!
+The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
 ## Appcast
 
@@ -132,7 +132,6 @@ By default, you need 2 DSA signatures (DSA Strict mode):
 - Task<NetSparkle.SparkleUpdateInfo> [GetUpdateStatus(NetSparkle.Configuration config)](#tasknetsparklesparkleupdateinfo-getupdatestatusnetsparkleconfiguration-config)
 - System.Net.WebResponse [GetWebContentResponse(string url)](#systemnetwebresponse-getwebcontentresponsestring-url)
 - System.IO.Stream [GetWebContentStream(string url)](#systemiostream-getwebcontentstreamstring-url)
-- void [ReportDiagnosticMessage(string message)](#void-reportdiagnosticmessagestring-message)
 - void [ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)](#void-showupdateneededuibool-isupdatealreadydownloaded)
 - void [ShowUpdateNeededUI(NetSparkle.AppCastItem[], bool)](#void-showupdateneededuinetsparkleappcastitem-bool)
 - void [StartLoop(bool doInitialCheck)](#void-startloopbool-doinitialcheck)
@@ -254,10 +253,6 @@ Used by NetSparkle.AppCast to fetch the appcast and DSA signature.
 
 Used by NetSparkle.AppCast to fetch the appcast and DSA signature as a System.IO.Stream.
 
-### void ReportDiagnosticMessage(string message)
-
-This method reports a message in the diagnostic window.
-
 ### void ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)
 
 Shows the update UI with the latest downloaded update information.
@@ -331,6 +326,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - NetSparkle.Configuration [Configuration](#netsparkleconfiguration-configuration--get-set-) { get; set; }
 - string [CustomInstallerArguments](#string-custominstallerarguments--get-set-) { get; set; }
 - NetSparkle.DSAChecker [DSAChecker](#netsparkledsachecker-dsachecker--get-set-) { get; set; }
+- NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
 - bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
 - bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; private set; }
@@ -363,7 +359,7 @@ Function that is called asynchronously to clean up old installers that have been
 
 ### NetSparkle.Configuration Configuration { get; set; }
 
-The NetSparkle configuration object for the current assembly. TODO: this should be private, and only accessed by [GetApplicationConfig](#netsparkleconfiguration-getapplicationconfig)
+The NetSparkle configuration object for the current assembly.
 
 ### string CustomInstallerArguments { get; set; }
 
@@ -371,7 +367,11 @@ Run the downloaded installer with these arguments
 
 ### NetSparkle.DSAChecker DSAChecker { get; set; }
 
-The DSA checker
+The DSA checker that verifies/validates downloaded files
+
+### NetSparkle.LogWriter LogWriter { get; set; }
+
+Logs diagnostic information to `Console.WriteLine` or `Debug.WriteLine` or wherever else the child class wants to report diagnostic information
 
 ### bool EnableSystemProfiling { get; private set; }
 
@@ -445,6 +445,8 @@ The user interface window that shows the release notes and asks the user to skip
 
 - [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)
 - [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync)
+- [CloseApplication](#closeapplication)
+- [CloseApplicationAsync](#closeapplicationasync)
 - [CheckLoopFinished](#checkloopfinished)
 - [CheckLoopStarted](#checkloopstarted)
 - [DownloadCanceled](#downloadcanceled)
@@ -469,6 +471,22 @@ Subscribe to this to get a chance to shut down gracefully before quitting. If [A
 **Delegate**: Task CancelEventHandlerAsync(object sender, System.ComponentModel.CancelEventArgs e)
 
 Subscribe to this to get a chance to asynchronously shut down gracefully before quitting. This overrides [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
+
+### CloseApplication
+
+**Delegate**: void CloseApplication()
+
+Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. If [CloseApplicationAsync](#closeapplicationasync) is set, this has no effect.
+
+**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
+
+### CloseApplicationAsync
+
+**Delegate**: Task CloseApplicationAsync()
+
+Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. This overrides [CloseApplication](#closeapplication).
+
+**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
 ### CheckLoopFinished
 
@@ -552,8 +570,8 @@ NetSparkle is available under the [MIT License](LICENSE).
 
 ## Other Options
 
-An incomplete list of other projects related to updating:
+An incomplete list of other projects related to software updating:
 
-- [NAppUpdate](https://github.com/synhershko/NAppUpdate)
 - [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows)
 - [WinSparkle](https://github.com/vslavik/winsparkle)
+- [NAppUpdate](https://github.com/synhershko/NAppUpdate)

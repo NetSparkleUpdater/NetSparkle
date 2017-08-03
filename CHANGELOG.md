@@ -3,6 +3,37 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Removed
+
+## [0.12.0] - 2017-08-02
+### Added
+
+- Added new `LogWriter` class for printing diagnostic messages to the console. You can now create your own child class that inherits from `LogWriter` to customize how information is logged to the console (or file, or wherever else you want diagnostic messages sent!)!
+- Added .gitattributes file for line ending consistency for all developers (@stephenwade)
+
+### Changed
+- Moved `UpdateStatus` enum to `NetSparkle.Enums`
+- Moved `UpdateInfo` class to its own file
+- Fixed bug in `Configuration.cs` where a few values were not set properly in the constructor due to `InitWithDefaultValues` being called at the wrong time (@devstudiosoft)
+- **BREAKING CHANGE** Fixed bug in `AssemblyDiagnosticsAccessor` where `AssemblyProduct` returned the assembly version and not the assembly name (@devstudiosoft)
+
+### Removed
+
+- **BREAKING CHANGE** Removed `public void NetSparkle.ReportDiagnosticMessage` in lieu of new `LogWriter` class.
+
+## [0.11.0] - 2017-07-16
+### Added
+- Refactored logic to quit application to a separate `QuitApplication()` function
+
+### Changed
+- `RunDownloadedInstaller()` is now virtual and protected
+- Renamed some files and variables
+- Moved `SecurityMode` and `ValidationResult` enums to the `NetSparkle.Enums` namespace
+
 ## [0.10.0] - 2017-07-11
 ### Added
 - This changelog
@@ -10,7 +41,6 @@ All notable changes to this project will be documented in this file.
 - Section about how the appcast works to the readme
 
 ### Changed
-
 Much thanks to @stephenwade for his contributions to 0.10.0
 
 - Cleaned up and added documentation comments throughout the code (@stephenwade)
@@ -58,7 +88,16 @@ Much thanks to @stephenwade for his contributions to 0.10.0
     - Note that NetSparkle does not perform resumable downloads in between software instances
 - Fixed potential infinite software update download loop if the software keeps downloading corrupted files (corrupt files or ones that don't pass the DSA check).
 
+<<<<<<< HEAD
 [Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...develop
+=======
+## Older
+For older changes, see [HISTORY.md](HISTORY.md).
+
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...develop
+[0.12.0]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...85a50da
+[0.11.0]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...8a8b393
+>>>>>>> develop
 [0.10.0]: https://github.com/Deadpikle/NetSparkle/compare/c5e1e49...d2740a4
 [0.9.1.1]: https://github.com/Deadpikle/NetSparkle/compare/e0f5004...c5e1e49
 [0.9.1]: https://github.com/Deadpikle/NetSparkle/compare/7d679f0...e0f5004
