@@ -2,13 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-
 ### Added
 
 - Added new `LogWriter` class for printing diagnostic messages to the console. You can now create your own child class that inherits from `LogWriter` to customize how information is logged to the console (or file, or wherever else you want diagnostic messages sent!)!
 
 ### Changed
-
 - Moved `UpdateStatus` enum to `NetSparkle.Enums`
 - Moved `UpdateInfo` class to its own file
 - Fixed bug in `Configuration.cs` where a few values were not set properly in the constructor due to `InitWithDefaultValues` being called at the wrong time (@devstudiosoft)
@@ -19,17 +17,13 @@ All notable changes to this project will be documented in this file.
 - **BREAKING CHANGE** Removed `public void NetSparkle.ReportDiagnosticMessage` in lieu of new `LogWriter` class.
 
 ## [0.11.0] - 2017-07-16
-
 ### Added
-
 - Refactored logic to quit application to a separate `QuitApplication()` function
 
 ### Changed
 - `RunDownloadedInstaller()` is now virtual and protected
 - Renamed some files and variables
 - Moved `SecurityMode` and `ValidationResult` enums to the `NetSparkle.Enums` namespace
-
-### Removed
 
 ## [0.10.0] - 2017-07-11
 ### Added
@@ -38,7 +32,6 @@ All notable changes to this project will be documented in this file.
 - Section about how the appcast works to the readme
 
 ### Changed
-
 Much thanks to @stephenwade for his contributions to 0.10.0
 
 - Cleaned up and added documentation comments throughout the code (@stephenwade)
