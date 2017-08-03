@@ -2,6 +2,10 @@
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
+[![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
+[![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
+[![Issues](https://img.shields.io/github/issues/Deadpikle/NetSparkle.svg?style=flat-square)](https://github.com/Deadpikle/NetSparkle/issues)
+
 **Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!** Note that we will switch to the ["official" NuGet](https://www.nuget.org/packages/NetSparkle/) sometime soon!
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
