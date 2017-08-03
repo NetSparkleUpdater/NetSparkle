@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added new `LogWriter` class for printing diagnostic messages to the console. You can now create your own child class that inherits from `LogWriter` to customize how information is logged to the console (or file, or wherever else you want diagnostic messages sent!)!
+- Added .gitattributes file for line ending consistency for all developers (@stephenwade)
 
 ### Changed
 - Moved `UpdateStatus` enum to `NetSparkle.Enums`
