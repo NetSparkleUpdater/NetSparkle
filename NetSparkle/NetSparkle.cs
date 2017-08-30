@@ -1756,11 +1756,7 @@ namespace NetSparkle
                     }
 
                     // check the DSA signature
-                    string dsaSignature = _itemBeingDownloaded?.DownloadDSASignature;
-                    if (dsaSignature != null)
-                    {
-                        validationRes = DSAChecker.VerifyDSASignatureFile(dsaSignature, _downloadTempFileName);
-                    }
+                    validationRes = DSAChecker.VerifyDSASignatureFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
                 }
             }
 
