@@ -1729,7 +1729,7 @@ namespace NetSparkle
             {
                 DownloadCanceled?.Invoke(_downloadTempFileName);
                 LogWriter.PrintMessage("Download was canceled");
-                string errorMessage = "Download cancelled";
+                string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
@@ -1760,7 +1760,7 @@ namespace NetSparkle
                 }
             }
 
-            bool isSignatureInvalid = validationRes == ValidationResult.Invalid;
+            bool isSignatureInvalid = validationRes == ValidationResult.Invalid; // if Unchecked, we accept download as valid
             if (shouldShowUIItems)
             {
                 ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);

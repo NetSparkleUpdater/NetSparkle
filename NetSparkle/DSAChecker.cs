@@ -42,7 +42,7 @@ namespace NetSparkle
 
             if (string.IsNullOrEmpty(key))
             {
-                // TODO: Loading Ressources don't work
+                // TODO: Loading Resources don't work
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                     data = TryGetFileResource(publicKeyFile, data);
@@ -100,13 +100,13 @@ namespace NetSparkle
             switch (_securityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have an dsa key we accept only signatures
+                    // if we have a DSA key we only accept non-null signatures
                     if (PublicKeyExists() && string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
-                    // if we don't have an dsa key we accept all.
+                    // if we don't have an dsa key we accept any signature
                     if (!PublicKeyExists())
                     {
                         result = ValidationResult.Unchecked;
@@ -115,7 +115,7 @@ namespace NetSparkle
                     break;
 
                 case SecurityMode.Strict:
-                    // only accept if we have both
+                    // only accept if we have both a public key and a non-null signature
                     if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
@@ -124,8 +124,9 @@ namespace NetSparkle
                     break;
                 
                 case SecurityMode.Unsafe:
-                    // always accept anything.
-                    // but exit with unchecked if we have an signature
+                    // always accept anything
+                    // If we don't have a signature, make sure to note this as "Unchecked" since we
+                    // didn't end up checking anything
                     if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Unchecked;
@@ -144,7 +145,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="signature">expected signature</param>
         /// <param name="stream">the stream of the binary</param>
-        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
+        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
         public ValidationResult VerifyDSASignature(string signature, Stream stream)
         {
             ValidationResult res = ValidationResult.Invalid;
@@ -168,7 +169,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="signature">expected signature</param>
         /// <param name="binaryPath">the path to the binary</param>
-        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
+        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
         public ValidationResult VerifyDSASignatureFile(string signature, string binaryPath)
         {
             var data = string.Empty;
@@ -183,7 +184,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="signature">expected signature</param>
         /// <param name="data">the data</param>
-        /// <returns><c>true</c> if the signature matches the expected signature.</returns>
+        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
         public ValidationResult VerifyDSASignatureOfString(string signature, string data)
         {
             // creating stream from string
