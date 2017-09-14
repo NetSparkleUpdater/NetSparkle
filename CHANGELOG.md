@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Release notes are now downloaded asynchronously, which should speed up the time it takes to show the download window
+- Release note date is now Date.ToString("D") instead of "dd MMM yyyy" so that we get localized date strings
 - **POTENTIALLY BREAKING CHANGE** Fixed bug where `ValidationResult.Unchecked` was not returned properly from `OnDownloadFinished` if download file signature is null (@keithclanton)
 
 ### Removed

@@ -190,13 +190,13 @@ namespace NetSparkle
                 }
             }
 
-            // no embedded so try to get external
+            // not embedded so try to release notes from the link
             if (string.IsNullOrEmpty(item.ReleaseNotesLink))
             {
                 return null;
             }
 
-            // download release note
+            // download release notes
             string notes = await DownloadReleaseNotes(item.ReleaseNotesLink);
             if (string.IsNullOrEmpty(notes))
             {
