@@ -154,7 +154,6 @@ namespace NetSparkle
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
             }
             sb.Append("</body>");
-            _sparkle.LogWriter.PrintMessage("Done initializing release notes!");
 
             string fullHTML = sb.ToString();
             ReleaseNotesBrowser.Invoke((MethodInvoker)delegate
@@ -165,6 +164,7 @@ namespace NetSparkle
                 ReleaseNotesBrowser.Document.Write(fullHTML);
                 ReleaseNotesBrowser.DocumentText = fullHTML;
             });
+            _sparkle.LogWriter.PrintMessage("Done initializing release notes!");
         }
 
         private void UpdateAvailableWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -209,7 +209,7 @@ namespace NetSparkle
             // download release notes
             _sparkle.LogWriter.PrintMessage("Downloading release notes for {0} at {1}", item.Version, item.ReleaseNotesLink);
             string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, _cancellationToken);
-            _sparkle.LogWriter.PrintMessage("Downloaded release notes for {0}: {1}", item.Version, notes);
+            _sparkle.LogWriter.PrintMessage("Done downloading release notes for {0}", item.Version);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;
