@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
 using NetSparkle.Enums;
+using System.Threading.Tasks;
 
 // TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
@@ -33,11 +34,9 @@ namespace NetSparkle
         public event EventHandler UserResponded;
 
         /// <summary>
-        /// Template for HTML code drawig release notes separator. {0} used for version number, {1} for publication date
+        /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
-        // Useless. Because the form initialize this value it selfes and directlly generates the release notes html. So
-        // there is no chance to override the default. Also there isn't any chance to access from the interface
-        private string SeparatorTemplate { get; set; }
+        private string _separatorTemplate;
 
         private string getVersion(Version version)
         {
@@ -49,10 +48,10 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Form constructor
+        /// Form constructor for showing release notes.
         /// </summary>
         /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
-        /// <param name="items">List of updates to show</param>
+        /// <param name="items">List of updates to show. Should contain at least one item.</param>
         /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
@@ -63,7 +62,7 @@ namespace NetSparkle
             _sparkle = sparkle;
             _updates = items;
 
-            SeparatorTemplate = 
+            _separatorTemplate = 
                 !string.IsNullOrEmpty(separatorTemplate) ? 
                 separatorTemplate :
                 "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">" +
@@ -82,44 +81,53 @@ namespace NetSparkle
                 _sparkle.LogWriter.PrintMessage("Error in browser init: {0}", ex.Message);
             }
 
-            AppCastItem item = items[0];
+            AppCastItem item = items.FirstOrDefault();
 
-            lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName);
-            lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
-            lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", getVersion(new Version(item.AppVersionInstalled)));
-            lblInfoText.Text = lblInfoText.Text.Replace("[DOWNLOAD]", isUpdateAlreadyDownloaded ? "install" : "download");
-
-            if (items.Length == 0)
+            lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.AppName : "the application");
+            if (item != null)
             {
-                RemoveReleaseNotesControls();
+                lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
+                var versionString = "";
+                try
+                {
+                    // Use try/catch since Version constructor can throw an exception and we don't want to
+                    // die just because the user has a malformed version string
+                    Version versionObj = new Version(item.AppVersionInstalled);
+                    versionString = getVersion(versionObj);
+                }
+                catch
+                {
+                    versionString = "";
+                }
+                lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", versionString);
             }
             else
             {
-                AppCastItem latestVersion = _updates.OrderByDescending(p => p.Version).FirstOrDefault();
-
-                StringBuilder sb = new StringBuilder("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>");
-                bool isUserMissingCriticalUpdate = false;
-                foreach (AppCastItem castItem in items)
-                {
-                    isUserMissingCriticalUpdate = isUserMissingCriticalUpdate | castItem.IsCriticalUpdate;
-                    sb.Append(string.Format(SeparatorTemplate, 
-                                            castItem.Version,
-                                            castItem.PublicationDate.ToString("dd MMM yyyy"),
-                                            GetReleaseNotes(castItem),
-                                            latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
-                }
-                sb.Append("</body>");
-
-                string releaseNotes = sb.ToString();
-                ReleaseNotesBrowser.DocumentText = releaseNotes;
-
-                buttonRemind.Enabled = isUserMissingCriticalUpdate == false;
-                skipButton.Enabled = isUserMissingCriticalUpdate == false;
-                //if (isUserMissingCriticalUpdate)
-                //{
-                //    FormClosing += UpdateAvailableWindow_FormClosing; // no closing a critical update!
-                //}
+                // TODO: string translations (even though I guess this window should never be called with 0 app cast items...)
+                lblInfoText.Text = "Would you like to [DOWNLOAD] it now?"; 
             }
+            lblInfoText.Text = lblInfoText.Text.Replace("[DOWNLOAD]", isUpdateAlreadyDownloaded ? "install" : "download");
+
+            AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
+            string initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>";
+            ReleaseNotesBrowser.DocumentText = initialHTML + "<p><em>Loading release notes...</em></p></body></html>";
+            StringBuilder sb = new StringBuilder(initialHTML);
+            bool isUserMissingCriticalUpdate = false;
+            foreach (AppCastItem castItem in items)
+            {
+                isUserMissingCriticalUpdate = isUserMissingCriticalUpdate | castItem.IsCriticalUpdate;
+            }
+            sb.Append("</body></html>");
+
+            string releaseNotes = sb.ToString();
+            ReleaseNotesBrowser.DocumentText = releaseNotes;
+
+            buttonRemind.Enabled = isUserMissingCriticalUpdate == false;
+            skipButton.Enabled = isUserMissingCriticalUpdate == false;
+            //if (isUserMissingCriticalUpdate)
+            //{
+            //    FormClosing += UpdateAvailableWindow_FormClosing; // no closing a critical update!
+            //}
 
             if (applicationIcon != null)
             {
@@ -127,6 +135,26 @@ namespace NetSparkle
                 Icon = applicationIcon;
             }
             EnsureDialogShown();
+            downloadAndDisplayAllReleaseNotes(items, latestVersion, initialHTML);
+        }
+
+        private async void downloadAndDisplayAllReleaseNotes(AppCastItem[] items, AppCastItem latestVersion, string initialHTML)
+        {
+            StringBuilder sb = new StringBuilder(initialHTML);
+            foreach (AppCastItem castItem in items)
+            {
+                // TODO: could we optimize this by doing multiple downloads at once?
+                var releaseNotes = await GetReleaseNotes(castItem);
+                sb.Append(string.Format(_separatorTemplate,
+                                        castItem.Version,
+                                        castItem.PublicationDate.ToString("D"), // was dd MMM yyyy
+                                        releaseNotes,
+                                        latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
+            }
+            sb.Append("</body></html>");
+
+            string fullHTML = sb.ToString();
+            ReleaseNotesBrowser.DocumentText = fullHTML;
         }
 
         private void UpdateAvailableWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -134,7 +162,7 @@ namespace NetSparkle
             e.Cancel = true;
         }
 
-        private string GetReleaseNotes(AppCastItem item)
+        private async Task<string> GetReleaseNotes(AppCastItem item)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
@@ -146,7 +174,7 @@ namespace NetSparkle
                 {
                     if (item.IsCriticalUpdate)
                     {
-                        item.Description = "<p>" + criticalUpdate + "</p>" + "<br>" + item.Description;
+                        item.Description = "<p><em>" + criticalUpdate + "</em></p>" + "<br>" + item.Description;
                     }
                     return item.Description;
                 }
@@ -169,7 +197,7 @@ namespace NetSparkle
             }
 
             // download release note
-            string notes = DownloadReleaseNotes(item.ReleaseNotesLink);
+            string notes = await DownloadReleaseNotes(item.ReleaseNotesLink);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;
@@ -203,7 +231,7 @@ namespace NetSparkle
             return notes;
         }
 
-        private string DownloadReleaseNotes(string link)
+        private async Task<string> DownloadReleaseNotes(string link)
         {
             try
             {
@@ -212,7 +240,7 @@ namespace NetSparkle
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     webClient.Encoding = Encoding.UTF8;
 
-                    return webClient.DownloadString(_sparkle.GetAbsoluteUrl(link));
+                    return await webClient.DownloadStringTaskAsync(_sparkle.GetAbsoluteUrl(link));
                 }
             }
             catch (WebException ex)
