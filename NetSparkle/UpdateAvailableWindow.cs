@@ -11,6 +11,7 @@ using NetSparkle.Interfaces;
 using System.Text.RegularExpressions;
 using NetSparkle.Enums;
 using System.Threading.Tasks;
+using System.Threading;
 
 // TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
@@ -25,7 +26,7 @@ namespace NetSparkle
 
         private readonly Sparkle _sparkle;
         private readonly AppCastItem[] _updates;
-        private Timer _ensureDialogShownTimer;
+        private System.Windows.Forms.Timer _ensureDialogShownTimer;
 
         /// <summary>
         /// Event fired when the user has responded to the 
@@ -37,6 +38,8 @@ namespace NetSparkle
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
         private string _separatorTemplate;
+        private CancellationToken _cancellationToken;
+        private CancellationTokenSource _cancellationTokenSource;
 
         private string getVersion(Version version)
         {
@@ -135,6 +138,8 @@ namespace NetSparkle
                 Icon = applicationIcon;
             }
             EnsureDialogShown();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
             downloadAndDisplayAllReleaseNotes(items, latestVersion, initialHTML);
         }
 
@@ -197,7 +202,7 @@ namespace NetSparkle
             }
 
             // download release notes
-            string notes = await DownloadReleaseNotes(item.ReleaseNotesLink);
+            string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, _cancellationToken);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;
@@ -231,7 +236,7 @@ namespace NetSparkle
             return notes;
         }
 
-        private async Task<string> DownloadReleaseNotes(string link)
+        private async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken)
         {
             try
             {
@@ -239,7 +244,13 @@ namespace NetSparkle
                 {
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     webClient.Encoding = Encoding.UTF8;
-
+                    if (cancellationToken != null)
+                    {
+                        using (cancellationToken.Register(() => webClient.CancelAsync()))
+                        {
+                            return await webClient.DownloadStringTaskAsync(_sparkle.GetAbsoluteUrl(link));
+                        }
+                    }
                     return await webClient.DownloadStringTaskAsync(_sparkle.GetAbsoluteUrl(link));
                 }
             }
@@ -290,6 +301,7 @@ namespace NetSparkle
 
         void IUpdateAvailable.Close()
         {
+            _cancellationTokenSource?.Cancel();
             Close();
         }
 
@@ -327,6 +339,7 @@ namespace NetSparkle
             DialogResult = DialogResult.No;
 
             // close the windows
+            _cancellationTokenSource?.Cancel();
             Close();
         }
 
@@ -341,6 +354,7 @@ namespace NetSparkle
             DialogResult = DialogResult.Retry;
 
             // close the window
+            _cancellationTokenSource?.Cancel();
             Close();
         }
 
@@ -355,6 +369,7 @@ namespace NetSparkle
             DialogResult = DialogResult.Yes;
 
             // close the dialog
+            _cancellationTokenSource?.Cancel();
             Close();
         }
 
@@ -365,9 +380,9 @@ namespace NetSparkle
         /// </summary>
         public void EnsureDialogShown()
         {
-            _ensureDialogShownTimer = new Timer();
+            _ensureDialogShownTimer = new System.Windows.Forms.Timer();
             _ensureDialogShownTimer.Tick += new EventHandler(EnsureDialogeShown_tick);
-            _ensureDialogShownTimer.Interval = 250; // in miliseconds
+            _ensureDialogShownTimer.Interval = 250; // in milliseconds
             _ensureDialogShownTimer.Start();
         }
 
