@@ -114,17 +114,11 @@ namespace NetSparkle
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + headAddition + "</head><body>";
             ReleaseNotesBrowser.DocumentText = initialHTML + "<p><em>Loading release notes...</em></p></body></html>";
-            StringBuilder sb = new StringBuilder(initialHTML);
             bool isUserMissingCriticalUpdate = false;
             foreach (AppCastItem castItem in items)
             {
                 isUserMissingCriticalUpdate = isUserMissingCriticalUpdate | castItem.IsCriticalUpdate;
             }
-            sb.Append("</body></html>");
-
-            string releaseNotes = sb.ToString();
-            ReleaseNotesBrowser.DocumentText = releaseNotes;
-
             buttonRemind.Enabled = isUserMissingCriticalUpdate == false;
             skipButton.Enabled = isUserMissingCriticalUpdate == false;
             //if (isUserMissingCriticalUpdate)
@@ -145,9 +139,12 @@ namespace NetSparkle
 
         private async void downloadAndDisplayAllReleaseNotes(AppCastItem[] items, AppCastItem latestVersion, string initialHTML)
         {
+
+            _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
             StringBuilder sb = new StringBuilder(initialHTML);
             foreach (AppCastItem castItem in items)
             {
+                _sparkle.LogWriter.PrintMessage("Initializing release notes for {0}", castItem.Version);
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem);
                 sb.Append(string.Format(_separatorTemplate,
@@ -156,10 +153,18 @@ namespace NetSparkle
                                         releaseNotes,
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
             }
-            sb.Append("</body></html>");
+            sb.Append("</body>");
+            _sparkle.LogWriter.PrintMessage("Done initializing release notes!");
 
             string fullHTML = sb.ToString();
-            ReleaseNotesBrowser.DocumentText = fullHTML;
+            ReleaseNotesBrowser.Invoke((MethodInvoker)delegate
+            {
+                // see https://stackoverflow.com/a/15209861/3938401
+                ReleaseNotesBrowser.Navigate("about:blank");
+                ReleaseNotesBrowser.Document.OpenNew(true);
+                ReleaseNotesBrowser.Document.Write(fullHTML);
+                ReleaseNotesBrowser.DocumentText = fullHTML;
+            });
         }
 
         private void UpdateAvailableWindow_FormClosing(object sender, FormClosingEventArgs e)
@@ -202,7 +207,9 @@ namespace NetSparkle
             }
 
             // download release notes
+            _sparkle.LogWriter.PrintMessage("Downloading release notes for {0} at {1}", item.Version, item.ReleaseNotesLink);
             string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, _cancellationToken);
+            _sparkle.LogWriter.PrintMessage("Downloaded release notes for {0}: {1}", item.Version, notes);
             if (string.IsNullOrEmpty(notes))
             {
                 return null;

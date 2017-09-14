@@ -504,7 +504,7 @@ namespace NetSparkle
         /// Object that handles any diagnostic messages for NetSparkle.
         /// If you want to use your own class for this, you should just
         /// need to override <see cref="LogWriter.PrintMessage"/> in your own class.
-        /// Make sure to set this object before calling <see cref="StartLoop"/> to guarantee
+        /// Make sure to set this object before calling <see cref="StartLoop(bool)"/> to guarantee
         /// that all messages will get sent to the right place!
         /// </summary>
         public LogWriter LogWriter
@@ -1225,6 +1225,10 @@ namespace NetSparkle
             await QuitApplication();
         }
 
+        /// <summary>
+        /// Quits the application (host application) 
+        /// </summary>
+        /// <returns>Runs asynchrously, so returns a Task</returns>
         public async Task QuitApplication()
         {
             // quit the app

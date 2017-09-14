@@ -14,6 +14,9 @@ namespace NetSparkle
     /// </summary>
     public class LogWriter
     {
+        /// <summary>
+        /// Tag to show before any log statements
+        /// </summary>
         protected string tag = "netsparkle:";
         /// <summary>
         /// Empty constructor -> sets PrintDiagnosticToConsole to false
