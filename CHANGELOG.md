@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Release notes are now downloaded asynchronously, which should speed up the time it takes to show the download window
+- **POTENTIALLY BREAKING CHANGE** Fixed bug where `ValidationResult.Unchecked` was not returned properly from `OnDownloadFinished` if download file signature is null (@keithclanton)
+
 ### Removed
 
 ## [0.12.0] - 2017-08-02
