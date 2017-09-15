@@ -20,7 +20,7 @@ All notable changes to this project will be documented in the [changelog](CHANGE
 - [Requirements](#requirements)
 - [Other Options](#other-options)
 
-I highly recommend checking out [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows), which is a more Chrome-like software updater. That repo is actively maintained. You could also check out [WinSparkle](https://github.com/vslavik/winsparkle), but there isn't a merged .NET binding yet.
+I highly recommend checking out [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows), which is a more Chrome-like software updater. You could also check out [WinSparkle](https://github.com/vslavik/winsparkle), but there isn't a merged .NET binding yet.
 
 ## Basic Usage
 
@@ -334,6 +334,8 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
 - bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; private set; }
+- bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
+- bool [HideSkipButton](#bool-hideskipbutton--get-set-) { get; set; }
 - bool [IsUpdateLoopRunning](#bool-isupdatelooprunning--get-) { get; }
 - NetSparkle.AppCastItem[] [LatestAppCastItems](#netsparkleappcastitem-latestappcastitems--get-) { get; }
 - [PrintDiagnosticToConsole](#printdiagnostictoconsole--get-set-) { get; set; }
@@ -387,7 +389,15 @@ If not "", sends extra JSON via POST to server with the web request for update i
 
 ### bool HideReleaseNotes { get; private set; }
 
-Hides the release notes view when an update is found.
+Hides the release notes view when an update is found (currently broken; see #21).
+
+### bool HideRemindMeLaterButton { get; set; }
+
+Hides the remind me later button when an update is found.
+
+### bool HideSkipButton { get; set; }
+
+Hides the skip button view when an update is found.
 
 ### bool IsUpdateLoopRunning { get; }
 

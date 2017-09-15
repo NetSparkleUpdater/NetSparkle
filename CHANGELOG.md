@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **BREAKING CHANGE** Added `HideRemindMeLaterButton()` to `IUpdateAvailable`
+- **BREAKING CHANGE** Added `HideSkipButton()` to `IUpdateAvailable`
+- Added `HideRemindMeLaterButton` to the `NetSparkle` class. Defaults to false. Set to true to make `NetSparkle` call `HideRemindMeLaterButton()` when showing the update window.
+- Added `HideSkipButton` to the `NetSparkle` class. Defaults to false. Set to true to make `NetSparkle` call `HideSkipButton()` when showing the update window.
+
 ### Changed
 
 - Release notes are now downloaded asynchronously, which should speed up the time it takes to show the download window

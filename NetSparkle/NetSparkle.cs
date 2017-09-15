@@ -339,6 +339,8 @@ namespace NetSparkle
             LogWriter.PrintMessage("Using the following url: {0}", _appCastUrl);
             SilentMode = SilentModeTypes.NotSilent;
             TmpDownloadFilePath = "";
+            HideSkipButton = false;
+            HideRemindMeLaterButton = false;
         }
 
         /// <summary>
@@ -366,6 +368,16 @@ namespace NetSparkle
         /// Hides the release notes view when an update is found.
         /// </summary>
         public bool HideReleaseNotes { get; private set; }
+
+        /// <summary>
+        /// Hides the skip this update button when an update is found.
+        /// </summary>
+        public bool HideSkipButton { get; set; }
+
+        /// <summary>
+        /// Hides the remind me later button when an update is found.
+        /// </summary>
+        public bool HideRemindMeLaterButton { get; set; }
 
         /// <summary>
         /// If <see cref="EnableSystemProfiling"/> is true, system profile information is sent to this URL
@@ -962,6 +974,14 @@ namespace NetSparkle
                         if (HideReleaseNotes)
                         {
                             UserWindow.HideReleaseNotes();
+                        }
+                        if (HideSkipButton)
+                        {
+                            UserWindow.HideSkipButton();
+                        }
+                        if (HideRemindMeLaterButton)
+                        {
+                            UserWindow.HideRemindMeLaterButton();
                         }
 
                         // clear if already set.

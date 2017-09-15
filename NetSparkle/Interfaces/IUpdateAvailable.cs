@@ -26,6 +26,16 @@ namespace NetSparkle.Interfaces
         void HideReleaseNotes();
 
         /// <summary>
+        /// Hides the remind me later button
+        /// </summary>
+        void HideRemindMeLaterButton();
+
+        /// <summary>
+        /// Hides the skip update button
+        /// </summary>
+        void HideSkipButton();
+
+        /// <summary>
         /// Gets the result for skip, later, or install
         /// </summary>
         /// <value>Valid results are install = yes, skip = no, later = retry</value>

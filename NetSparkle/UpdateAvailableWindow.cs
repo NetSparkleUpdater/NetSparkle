@@ -403,5 +403,15 @@ namespace NetSparkle
             _ensureDialogShownTimer.Enabled = false;
             _ensureDialogShownTimer = null;
         }
+
+        public void HideRemindMeLaterButton()
+        {
+            buttonRemind.Visible = false;
+        }
+
+        public void HideSkipButton()
+        {
+            skipButton.Visible = false;
+        }
     }
 }
