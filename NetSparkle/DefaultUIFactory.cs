@@ -146,6 +146,7 @@ namespace NetSparkle
                 case DialogResult.No:
                     return UpdateAvailableResult.SkipUpdate;
                 case DialogResult.Retry:
+                case DialogResult.Cancel:
                     return UpdateAvailableResult.RemindMeLater;
             }
 

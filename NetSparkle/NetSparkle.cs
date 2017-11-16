@@ -87,6 +87,12 @@ namespace NetSparkle
     public delegate void UserSkippedVersion(AppCastItem item, string downloadPath);
 
     /// <summary>
+    /// Delegate called when the user decides to be reminded about update later.
+    /// </summary>
+    /// <param name="item">Item that the user chose to skip</param>
+    public delegate void RemindMeLaterSelected(AppCastItem item);
+
+    /// <summary>
     /// Delegate for custom application shutdown logic
     /// </summary>
     public delegate void CloseApplication();
@@ -185,6 +191,10 @@ namespace NetSparkle
         /// Called when the user skips some version of the application.
         /// </summary>
         public event UserSkippedVersion UserSkippedVersion;
+        /// <summary>
+        /// Called when the user skips some version of the application.
+        /// </summary>
+        public event RemindMeLaterSelected RemindMeLaterSelected;
 
         /// <summary>
         /// Called when the download has just started
@@ -1530,6 +1540,11 @@ namespace NetSparkle
                     InitDownloadAndInstallProcess(UserWindow.CurrentItem);
                 }
             }
+            else if (UserWindow.Result == UpdateAvailableResult.RemindMeLater)
+            {
+                RemindMeLaterSelected?.Invoke(_itemBeingDownloaded);
+            }
+
             UserWindow = null; // done using the window so don't hold onto reference
             CheckingForUpdatesWindow?.Close();
             CheckingForUpdatesWindow = null;
