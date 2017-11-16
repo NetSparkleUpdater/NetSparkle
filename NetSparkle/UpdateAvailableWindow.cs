@@ -279,10 +279,8 @@ namespace NetSparkle
         /// <summary>
         /// The result of ShowDialog()
         /// </summary>
-        DialogResult IUpdateAvailable.Result
-        {
-            get { return DialogResult; }
-        }
+        UpdateAvailableResult IUpdateAvailable.Result 
+            => DefaultUIFactory.ConvertDialogResultToUpdateAvailableResult(DialogResult);
 
         /// <summary>
         /// Hides the release notes

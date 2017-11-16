@@ -57,9 +57,9 @@ namespace NetSparkle
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        DialogResult IDownloadProgress.ShowDialog()
+        bool IDownloadProgress.ShowDialog()
         {
-            return base.ShowDialog();
+            return DefaultUIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
         }
 
         /// <summary>

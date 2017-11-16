@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System;
-using System.Windows.Forms;
 
 namespace NetSparkle.Interfaces
 {
@@ -25,7 +24,8 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        DialogResult ShowDialog();
+        /// <returns>TRUE, if download successfull, otherwise FALSE</returns>
+        bool ShowDialog();
 
         /// <summary>
         /// Called when the download progress changes

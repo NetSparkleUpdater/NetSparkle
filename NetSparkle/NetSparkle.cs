@@ -1118,10 +1118,10 @@ namespace NetSparkle
         /// </summary>
         private void showProgressWindow()
         {
-            if (!isDownloadingSilently() && ProgressWindow != null)
+            if (!isDownloadingSilently() 
+                && ProgressWindow != null)
             {
-                DialogResult result = ProgressWindow.ShowDialog();
-                if (result == DialogResult.Abort || result == DialogResult.Cancel)
+                if (!ProgressWindow.ShowDialog())
                 {
                     CancelFileDownload();
                 }
@@ -1509,7 +1509,7 @@ namespace NetSparkle
         /// <param name="e">not used.</param>
         private void OnUserWindowUserResponded(object sender, EventArgs e)
         {
-            if (UserWindow.Result == DialogResult.No)
+            if (UserWindow.Result == UpdateAvailableResult.SkipUpdate)
             {
                 // skip this version
                 // TODO: inform delegate so we can hide stuff in GUI if silent no install update method
@@ -1517,7 +1517,7 @@ namespace NetSparkle
                 config.SetVersionToSkip(UserWindow.CurrentItem.Version);
                 UserSkippedVersion?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
             }
-            else if (UserWindow.Result == DialogResult.Yes)
+            else if (UserWindow.Result == UpdateAvailableResult.InstallUpdate)
             {
                 if (SilentMode == SilentModeTypes.DownloadNoInstall && File.Exists(_downloadTempFileName))
                 {

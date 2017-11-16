@@ -116,5 +116,43 @@ namespace NetSparkle
             messageWindow.StartPosition = FormStartPosition.CenterScreen;
             messageWindow.ShowDialog();
         }
+
+        #region --- Windows Forms Result Converters ---
+
+        /// <summary>
+        /// Method performs simple conversion of DialogResult to boolean.
+        /// This method is a convenience, when upgrading the legacy code.
+        /// </summary>
+        /// <param name="dialogResult">WinForms DialogResult instance</param>
+        /// <returns>Boolean based on dialog result</returns>
+        public static bool ConvertDialogResultToDownloadProgressResult(DialogResult dialogResult)
+        {
+            return (dialogResult != DialogResult.Abort)
+                   && (dialogResult != DialogResult.Cancel);
+        }
+
+        /// <summary>
+        /// Method performs simple conversion of DialogResult to UpdateAvailableResult.
+        /// This method is a convenience, when upgrading the legacy code.
+        /// </summary>
+        /// <param name="dialogResult">WinForms DialogResult instance</param>
+        /// <returns>Enumeration value based on dialog result</returns>
+        public static UpdateAvailableResult ConvertDialogResultToUpdateAvailableResult(DialogResult dialogResult)
+        {
+            switch (dialogResult)
+            {
+                case DialogResult.Yes:
+                    return UpdateAvailableResult.InstallUpdate;
+                case DialogResult.No:
+                    return UpdateAvailableResult.SkipUpdate;
+                case DialogResult.Retry:
+                    return UpdateAvailableResult.RemindMeLater;
+            }
+
+            return UpdateAvailableResult.None;
+
+        }
+
+        #endregion
     }
 }

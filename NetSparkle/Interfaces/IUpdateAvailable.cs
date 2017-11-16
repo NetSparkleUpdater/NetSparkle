@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 
 namespace NetSparkle.Interfaces
 {
@@ -38,8 +37,7 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Gets the result for skip, later, or install
         /// </summary>
-        /// <value>Valid results are install = yes, skip = no, later = retry</value>
-        DialogResult Result { get; }
+        UpdateAvailableResult Result { get; }
 
         /// <summary>
         /// Gets or sets the current item being installed
@@ -55,5 +53,31 @@ namespace NetSparkle.Interfaces
         /// Close the form
         /// </summary>
         void Close();
+    }
+
+    /// <summary>
+    /// Possible Result values for IUpdateAvailable implementation.
+    /// </summary>
+    public enum UpdateAvailableResult
+    {
+        /// <summary>
+        /// No result specified. Default value.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// User chose to install the update immediatelly.
+        /// </summary>
+        InstallUpdate,
+
+        /// <summary>
+        /// Used chose to skip the update.
+        /// </summary>
+        SkipUpdate,
+
+        /// <summary>
+        /// User chose to remind her later.
+        /// </summary>
+        RemindMeLater
     }
 }
