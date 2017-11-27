@@ -24,7 +24,7 @@ namespace NetSparkle.Interfaces
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        /// <returns>TRUE, if download successfull, otherwise FALSE</returns>
+        /// <returns>True if download was successful; false otherwise</returns>
         bool ShowDialog();
 
         /// <summary>

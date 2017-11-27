@@ -121,7 +121,7 @@ namespace NetSparkle
 
         /// <summary>
         /// Method performs simple conversion of DialogResult to boolean.
-        /// This method is a convenience, when upgrading the legacy code.
+        /// This method is a convenience when upgrading legacy code.
         /// </summary>
         /// <param name="dialogResult">WinForms DialogResult instance</param>
         /// <returns>Boolean based on dialog result</returns>
@@ -133,7 +133,7 @@ namespace NetSparkle
 
         /// <summary>
         /// Method performs simple conversion of DialogResult to UpdateAvailableResult.
-        /// This method is a convenience, when upgrading the legacy code.
+        /// This method is a convenience when upgrading legacy code.
         /// </summary>
         /// <param name="dialogResult">WinForms DialogResult instance</param>
         /// <returns>Enumeration value based on dialog result</returns>
@@ -151,7 +151,6 @@ namespace NetSparkle
             }
 
             return UpdateAvailableResult.None;
-
         }
 
         #endregion
