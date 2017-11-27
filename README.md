@@ -473,6 +473,7 @@ The user interface window that shows the release notes and asks the user to skip
 - [UpdateCheckStarted](#updatecheckstarted)
 - [UpdateDetected](#updatedetected)
 - [UserSkippedVersion](#userskippedversion)
+- [RemindMeLaterSelected](#remindmelaterselected)
 
 ### AboutToExitForInstallerRun
 
@@ -573,6 +574,12 @@ This event can be used to override the standard user interface process when an u
 **Delegate**: void NetSparkle.UserSkippedVersion(NetSparkle.AppCastItem item, string downloadPath)
 
 Called when the user skips some version of the application.
+
+### RemindMeLaterSelected
+
+**Delegate**: void NetSparkle.RemindMeLaterSelected(AppCastItem item);
+
+Called when the user skips some version of the application by clicking the 'Remind Me Later' button
 
 ## License
 

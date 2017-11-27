@@ -192,10 +192,10 @@ namespace NetSparkle
         /// </summary>
         public event UserSkippedVersion UserSkippedVersion;
         /// <summary>
-        /// Called when the user skips some version of the application.
+        /// Called when the user skips some version of the application by clicking
+        /// the 'Remind Me Later' button.
         /// </summary>
         public event RemindMeLaterSelected RemindMeLaterSelected;
-
         /// <summary>
         /// Called when the download has just started
         /// </summary>
