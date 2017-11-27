@@ -9,7 +9,7 @@ namespace NetSparkle.Enums
     /// <summary>
     /// Possible Result values for IUpdateAvailable implementation.
     /// </summary>
-    public class UpdateAvailableResult
+    public enum UpdateAvailableResult
     {
         /// <summary>
         /// No result specified. Default value.

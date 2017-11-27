@@ -273,7 +273,14 @@ namespace NetSparkle
         /// </summary>
         AppCastItem IUpdateAvailable.CurrentItem
         {
-            get { return _updates[0]; }
+            get
+            {
+                if (_updates.Count() > 0)
+                {
+                    return _updates[0];
+                }
+                return null; // don't know why user would have opened this window with no updates, but oh well
+            }
         }
 
         /// <summary>

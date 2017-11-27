@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using NetSparkle.Properties;
+using NetSparkle.Enums;
 
 namespace NetSparkle
 {

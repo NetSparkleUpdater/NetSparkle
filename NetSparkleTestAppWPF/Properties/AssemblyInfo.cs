@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NetSparkle.TestAppWPF")]
+[assembly: AssemblyTitle("YourApplication")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("None")]
-[assembly: AssemblyProduct("NetSparkle.TestAppWPF")]
+[assembly: AssemblyProduct("YourApplication")]
 [assembly: AssemblyCopyright("Portions Copyright © Dirk Eisenberg 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

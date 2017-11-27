@@ -1525,7 +1525,7 @@ namespace NetSparkle
                 // TODO: inform delegate so we can hide stuff in GUI if silent no install update method
                 Configuration config = GetApplicationConfig();
                 config.SetVersionToSkip(UserWindow.CurrentItem.Version);
-                UserSkippedVersion?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                UserSkippedVersion?.Invoke(UserWindow.CurrentItem, _downloadTempFileName);
             }
             else if (UserWindow.Result == UpdateAvailableResult.InstallUpdate)
             {
@@ -1540,9 +1540,9 @@ namespace NetSparkle
                     InitDownloadAndInstallProcess(UserWindow.CurrentItem);
                 }
             }
-            else if (UserWindow.Result == UpdateAvailableResult.RemindMeLater)
+            else if (UserWindow.Result == UpdateAvailableResult.RemindMeLater && UserWindow.CurrentItem != null)
             {
-                RemindMeLaterSelected?.Invoke(_itemBeingDownloaded);
+                RemindMeLaterSelected?.Invoke(UserWindow.CurrentItem);
             }
 
             UserWindow = null; // done using the window so don't hold onto reference
