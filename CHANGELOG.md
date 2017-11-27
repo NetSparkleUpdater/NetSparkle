@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - **BREAKING CHANGE** Added `HideSkipButton()` to `IUpdateAvailable`
 - Added `HideRemindMeLaterButton` to the `NetSparkle` class. Defaults to false. Set to true to make `NetSparkle` call `HideRemindMeLaterButton()` when showing the update window.
 - Added `HideSkipButton` to the `NetSparkle` class. Defaults to false. Set to true to make `NetSparkle` call `HideSkipButton()` when showing the update window.
+- Added `RemindMeLaterSelected` to the `NetSparkle` class. Defaults to null. Use this event to be notified when the user has clicked the `Remind Me Later` button in the update window. (@enscope)
+- **BREAKING CHANGE** `IUpdateAvailable` now has a `Result` of type `UpdateAvailableResult` rather than `DialogResult` in order to remove a dependency on WinForms. Use `DefaultUIFactory.ConvertDialogResultToUpdateAvailableResult` to convert from `DialogResult` to `UpdateAvailableResult` if needed. (@enscope) 
 
 ### Changed
 
