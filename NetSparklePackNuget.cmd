@@ -49,8 +49,8 @@ cd tools
 cd ..
 
 echo Pushing nuget package 
-nuget Push core\NetSparkle.New.%1.nupkg
-nuget Push tools\NetSparkle.New.Tools.%1.nupkg
+nuget Push core\NetSparkle.New.%1.nupkg -Source https://www.nuget.org/api/v2/package
+nuget Push tools\NetSparkle.New.Tools.%1.nupkg -Source https://www.nuget.org/api/v2/package
 
 echo Leaving directories
 cd ..
