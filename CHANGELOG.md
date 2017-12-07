@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [0.13.0] - 2017-12-06
+
+### Added
+
 - **BREAKING CHANGE** Added `HideRemindMeLaterButton()` to `IUpdateAvailable`
 - **BREAKING CHANGE** Added `HideSkipButton()` to `IUpdateAvailable`
 - Added `HideRemindMeLaterButton` to the `NetSparkle` class. Defaults to false. Set to true to make `NetSparkle` call `HideRemindMeLaterButton()` when showing the update window.
@@ -102,7 +110,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/b442795...develop
+[0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795
 [0.12.0]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...85a50da
 [0.11.0]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...8a8b393
 [0.10.0]: https://github.com/Deadpikle/NetSparkle/compare/c5e1e49...d2740a4
