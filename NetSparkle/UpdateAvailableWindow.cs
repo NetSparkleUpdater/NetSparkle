@@ -409,11 +409,17 @@ namespace NetSparkle
             _ensureDialogShownTimer = null;
         }
 
+        /// <summary>
+        /// Hides the remind me later button for the update available window
+        /// </summary>
         public void HideRemindMeLaterButton()
         {
             buttonRemind.Visible = false;
         }
 
+        /// <summary>
+        /// Hides the skip button for the update available window
+        /// </summary>
         public void HideSkipButton()
         {
             skipButton.Visible = false;
