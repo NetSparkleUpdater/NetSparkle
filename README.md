@@ -333,7 +333,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
 - bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
-- bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; private set; }
+- bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; set; }
 - bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
 - bool [HideSkipButton](#bool-hideskipbutton--get-set-) { get; set; }
 - bool [IsUpdateLoopRunning](#bool-isupdatelooprunning--get-) { get; }
@@ -387,9 +387,9 @@ Enables system profiling against a profile server. URL to submit to is stored in
 
 If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
 
-### bool HideReleaseNotes { get; private set; }
+### bool HideReleaseNotes { get; set; }
 
-Hides the release notes view when an update is found (currently broken; see #21).
+Hides the release notes view when an update is found.
 
 ### bool HideRemindMeLaterButton { get; set; }
 

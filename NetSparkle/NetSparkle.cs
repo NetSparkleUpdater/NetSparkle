@@ -377,7 +377,7 @@ namespace NetSparkle
         /// <summary>
         /// Hides the release notes view when an update is found.
         /// </summary>
-        public bool HideReleaseNotes { get; private set; }
+        public bool HideReleaseNotes { get; set; }
 
         /// <summary>
         /// Hides the skip this update button when an update is found.
