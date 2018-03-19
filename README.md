@@ -333,7 +333,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
 - bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
-- bool [HideReleaseNotes](#bool-hidereleasenotes--get-private-set-) { get; set; }
+- bool [HideReleaseNotes](#bool-hidereleasenotes--get-set-) { get; set; }
 - bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
 - bool [HideSkipButton](#bool-hideskipbutton--get-set-) { get; set; }
 - bool [IsUpdateLoopRunning](#bool-isupdatelooprunning--get-) { get; }
