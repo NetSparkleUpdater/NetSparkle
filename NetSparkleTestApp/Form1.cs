@@ -15,10 +15,9 @@ namespace NetSparkleTestApp
         {
             InitializeComponent();
 
-            _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", SystemIcons.Application)
-            {
-                TrustEverySSLConnection = true,
-            };
+            _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", SystemIcons.Application);
+            // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
+            _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
 
             _sparkle.UpdateDetected += new UpdateDetected(_sparkle_updateDetected);
             //_sparkle.EnableSilentMode = true;
