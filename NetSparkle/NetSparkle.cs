@@ -354,7 +354,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// The security protocol used by NetSparkle. Will also set this 
+        /// The security protocol used by NetSparkle. Setting this property will also set this 
         /// for the current AppDomain of the caller. Needs to be set to 
         /// SecurityProtocolType.Tls12 for some cases.
         /// </summary>

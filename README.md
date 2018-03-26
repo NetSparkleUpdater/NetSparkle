@@ -350,6 +350,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - bool [UpdateMarkedCritical](#bool-updatemarkedcritical--get-) { get; }
 - bool [UseNotificationToast](#bool-usenotificationtoast--get-set-) { get; set; }
 - NetSparkle.Interfaces.IUpdateAvailable [UserWindow](#netsparkleinterfacesiupdateavailable-userwindow--get-set-) { get; set; }
+- NetSparkle.SecurityProtocolType [SecurityProtocolType](#netsparklesecurityprotocoltype--get-set-) { get; set; }
 
 ### string AppcastUrl { get; set; }
 
@@ -454,6 +455,10 @@ Specifies if you want to use the notification toast
 ### NetSparkle.Interfaces.IUpdateAvailable UserWindow { get; set; }
 
 The user interface window that shows the release notes and asks the user to skip, later or update
+
+### NetSparkle.SecurityProtocolType { get; set; }
+
+The security protocol (`System.Net.SecurityProtocolType`) used by NetSparkle. Setting this property will also set this property for the current AppDomain of the caller. Needs to be set to `SecurityProtocolType.Tls12` for some cases, such as downloading something over HTTPS for a GitHub pages site.
 
 ## Public Events
 
