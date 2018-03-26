@@ -354,6 +354,23 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// The security protocol used by NetSparkle. Will also set this 
+        /// for the current AppDomain of the caller. Needs to be set to 
+        /// SecurityProtocolType.Tls12 for some cases.
+        /// </summary>
+        public SecurityProtocolType SecurityProtocolType
+        {
+            get
+            {
+                return ServicePointManager.SecurityProtocol;
+            }
+            set
+            {
+                ServicePointManager.SecurityProtocol = value;
+            }
+        }
+
+        /// <summary>
         /// (WinForms only) Schedules an update check to happen on the first Application.Idle event.
         /// </summary>
         public void CheckOnFirstApplicationIdle()
