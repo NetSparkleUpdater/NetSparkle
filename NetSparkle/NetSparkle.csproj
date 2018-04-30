@@ -137,7 +137,7 @@
       <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="DefaultUIFactory.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="Enums\NextUpdateAction.cs" />
     <Compile Include="Enums\SecurityMode.cs" />
     <Compile Include="Enums\UpdateAvailableResult.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />

@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 - `NetSparkle.UpdateSystemProfileInformation` is now private
 - `AppCast` no longer takes a Sparkle object and instead takes only those parameters that it needs to operate
+- `NextUpdateAction` is now in its own file in the `NetSparkle.Enums` namespace
 
 ### Removed
 
