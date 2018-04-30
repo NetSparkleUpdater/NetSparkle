@@ -1596,7 +1596,13 @@ namespace NetSparkle
                     LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                     // send notification if needed
-                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs { NextAction = NextUpdateAction.ShowStandardUserInterface, ApplicationConfig = config, LatestVersion = updates[0] };
+                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
+                    {
+                        NextAction = NextUpdateAction.ShowStandardUserInterface,
+                        ApplicationConfig = config,
+                        LatestVersion = updates[0],
+                        AppCastItems = updates
+                    };
                     UpdateDetected?.Invoke(this, ev);
 
                     // check results
