@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - To increase compatibility with the main macOS Sparkle project, the `enclosure` tag can now be either `enclosure` or `sparkle:enclosure`
 - Added `AppCastItem.MIMEType` to read the `<enclosure type="">` attribute if they want to (#15). Defaults to `application/octet-stream`.
 - Added `UpdateDetectedEventArgs.AppCastItems` if you want to look at all available app cast items
+- Added `DownloadPathForAppCastItem(AppCastItem item)` to easily grab the download path for a given downloadable appcast item
 
 ### Changed
 

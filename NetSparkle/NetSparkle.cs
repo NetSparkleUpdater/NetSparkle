@@ -230,6 +230,7 @@ namespace NetSparkle
         private TimeSpan _checkFrequency;
         private bool _useNotificationToast;
 
+        private string _tmpDownloadFilePath;
         private string _downloadTempFileName;
         private WebClient _webDownloadClient;
         private Process _installerProcess;
@@ -442,9 +443,18 @@ namespace NetSparkle
 
         /// <summary>
         /// If set, downloads files to this path. If the folder doesn't already exist, creates
-        /// the folder. Note that this variable is a path, not a full file name.
+        /// the folder at download time (and not before). 
+        /// Note that this variable is a path, not a full file name.
         /// </summary>
-        public string TmpDownloadFilePath { get; set; }
+        public string TmpDownloadFilePath
+        {
+            get { return _tmpDownloadFilePath; }
+            set
+            {
+                _tmpDownloadFilePath = value;
+                _tmpDownloadFilePath = _tmpDownloadFilePath?.Trim();
+            }
+        }
 
         /// <summary>
         /// Defines if the application needs to be relaunched after executing the downloaded installer
@@ -963,6 +973,34 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Get the download path for a given app cast item.
+        /// If any directories need to be created, this function
+        /// will create those directories.
+        /// </summary>
+        /// <param name="item">The item that you want to generate a download path for</param>
+        /// <returns>The download path for an app cast item if item is not null and has valid download link
+        /// Otherwise returns null.</returns>
+        public string DownloadPathForAppCastItem(AppCastItem item)
+        {
+            if (item != null && item.DownloadLink != null)
+            {
+                string[] segments = item.DownloadLink.Split('/');
+                if (segments.Count() > 0)
+                {
+                    string fileName = segments[segments.Length - 1];
+                    bool isTmpDownloadFilePathSet = TmpDownloadFilePath != null && TmpDownloadFilePath != "";
+                    string tmpPath = isTmpDownloadFilePathSet ? TmpDownloadFilePath : Path.GetTempPath();
+                    if (isTmpDownloadFilePathSet && !File.Exists(tmpPath))
+                    {
+                        Directory.CreateDirectory(tmpPath);
+                    }
+                    return Path.Combine(tmpPath, fileName);
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Starts the download process
         /// </summary>
         /// <param name="item">the appcast item to download</param>
@@ -976,19 +1014,7 @@ namespace NetSparkle
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
-            // get the filename of the download link
-            string[] segments = item.DownloadLink.Split('/');
-            string fileName = segments[segments.Length - 1];
-
-            // get temp path
-            TmpDownloadFilePath = TmpDownloadFilePath.Trim();
-            bool isTmpDownloadFilePathSet = TmpDownloadFilePath != null && TmpDownloadFilePath != "";
-            string tmpPath = isTmpDownloadFilePathSet ? TmpDownloadFilePath : Path.GetTempPath();
-            if (isTmpDownloadFilePathSet && !File.Exists(tmpPath))
-            {
-                Directory.CreateDirectory(tmpPath);
-            }
-            _downloadTempFileName = Path.Combine(tmpPath, fileName);
+            _downloadTempFileName = DownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // DSA signature checks out, don't redownload the file!
             bool needsToDownload = true;
