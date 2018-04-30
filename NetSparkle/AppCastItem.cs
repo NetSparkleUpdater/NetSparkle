@@ -70,8 +70,7 @@ namespace NetSparkle
                 if (OperatingSystemString != null)
                 {
                     var lowercasedOS = OperatingSystemString.ToLower();
-                    if (lowercasedOS == "win" ||
-                        lowercasedOS == "windows")
+                    if (lowercasedOS == "win" || lowercasedOS == "windows")
                     {
                         return true;
                     }

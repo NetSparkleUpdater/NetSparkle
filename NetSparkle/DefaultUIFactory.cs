@@ -128,8 +128,7 @@ namespace NetSparkle
         /// <returns>Boolean based on dialog result</returns>
         public static bool ConvertDialogResultToDownloadProgressResult(DialogResult dialogResult)
         {
-            return (dialogResult != DialogResult.Abort)
-                   && (dialogResult != DialogResult.Cancel);
+            return (dialogResult != DialogResult.Abort) && (dialogResult != DialogResult.Cancel);
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace NetSparkle.Interfaces
     public interface IUIFactory
     {
         /// <summary>
-        /// Create sparkle form implementation
+        /// Create sparkle form implementation. This is the form that tells the user that an update is available, shows changelogs if necessary, etc.
         /// </summary>
         /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
