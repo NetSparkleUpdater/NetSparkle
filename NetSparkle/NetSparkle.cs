@@ -722,12 +722,11 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// This method updates the profile information which can be sended to the server if enabled.
+        /// This method updates the profile information which can be sent to the server if enabled.
         /// Called automatically when checking for updates.
         /// </summary>
         /// <param name="config">the configuration</param>
-        // TODO: this should be private
-        public void UpdateSystemProfileInformation(Configuration config)
+        private void UpdateSystemProfileInformation(Configuration config)
         {
             // check if profile data is enabled
             if (!EnableSystemProfiling)
@@ -1385,7 +1384,7 @@ namespace NetSparkle
             }
             UpdateCheckStarted?.Invoke(this);
             Configuration config = GetApplicationConfig();
-            // update profile information is needed
+            // update profile information as needed
             UpdateSystemProfileInformation(config);
 
             // check if update is required
