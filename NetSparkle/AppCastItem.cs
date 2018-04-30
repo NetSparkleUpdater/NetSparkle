@@ -52,7 +52,36 @@ namespace NetSparkle
         /// </summary>
         public int UpdateSize { get; set; }
 
+        /// <summary>
+        /// Operating system that this update applies to
+        /// </summary>
+        public string OperatingSystemString { get; set; }
+
+        /// <summary>
+        /// True if this update is a windows update; false otherwise.
+        /// Acceptable OS strings are: "win" or "windows" (this is 
+        /// checked with a case-insensitive check).
+        /// </summary>
+        public bool IsWindowsUpdate
+        {
+            get
+            {
+                if (OperatingSystemString != null)
+                {
+                    var lowercasedOS = OperatingSystemString.ToLower();
+                    if (lowercasedOS == "win" ||
+                        lowercasedOS == "windows")
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                return true;
+            }
+        }
+
         #region IComparable<AppCastItem> Members
+
         /// <summary>
         /// Compares this instance to another
         /// </summary>

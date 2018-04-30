@@ -22,6 +22,7 @@ namespace NetSparkle
         private const string versionAttribute = "sparkle:version";
         private const string dsaSignature = "sparkle:dsaSignature";
         private const string criticalAttribute = "sparkle:criticalUpdate";
+        private const string operatingSystemAttribute = "sparkle:os";
         private const string lengthAttribute = "length";
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
@@ -201,7 +202,8 @@ namespace NetSparkle
                                 AppVersionInstalled = _config.InstalledVersion,
                                 AppName = _config.ApplicationName,
                                 UpdateSize = 0,
-                                IsCriticalUpdate = false
+                                IsCriticalUpdate = false,
+                                OperatingSystemString = "windows"
                             };
                             break;
                         case releaseNotesLinkNode:
@@ -243,6 +245,12 @@ namespace NetSparkle
                                     isCritical = true;
                                 }
                                 currentItem.IsCriticalUpdate = isCritical;
+
+                                string operatingSystem = reader.GetAttribute(operatingSystemAttribute);
+                                if (operatingSystem != null && operatingSystem != "")
+                                {
+                                    currentItem.OperatingSystemString = operatingSystem;
+                                }
                             }
                             break;
                         case pubDateNode:
@@ -285,13 +293,16 @@ namespace NetSparkle
             var signatureNeeded = _dsaChecker.SignatureNeeded();
 
             return _items.Where((item) => {
+                // don't allow non-windows updates
+                if (!item.IsWindowsUpdate)
+                    return false;
                 // filter smaller versions
                 if (new Version(item.Version).CompareTo(installed) <= 0)
                     return false;
                 // filter versions without signature if we need signatures. But accept version without downloads.
                 if (signatureNeeded && string.IsNullOrEmpty(item.DownloadDSASignature) && !string.IsNullOrEmpty(item.DownloadLink))
                     return false;
-                // accept everthing else
+                // accept everything else
                 return true;
             }).ToArray();
         }

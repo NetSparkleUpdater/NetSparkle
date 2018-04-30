@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- NetSparkle now supports the `sparkle:os` attribute (#17). If this is not present, an update is assumed to be a Windows update. Valid types for Windows are "win" or "windows". The operating system string check is a case-insensitive check.
+    - Added `OperatingSystemString` (default "windows") and `bool IsWindowsUpdate` to `AppCastItem`
+    - `AppCast.GetUpdates()` no longer returns non-Windows updates
+
 ### Changed
 
 - `NetSparkle.UpdateSystemProfileInformation` is now private
