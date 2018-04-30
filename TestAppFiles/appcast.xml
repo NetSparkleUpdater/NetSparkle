@@ -7,7 +7,7 @@
       <language>en</language>
          <item>
             <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
-				<sparkle:releaseNotesLink>https://deadpikle.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+				<sparkle:releaseNotesLink sparkle:dsaSignature="alwQNYk2SkgG3sTl9DvpgXIPYF1mxyK3FrSJG2Ll9/NRhenYPxRszg==">https://deadpikle.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
 				</sparkle:releaseNotesLink>
             <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
             <enclosure url="https://deadpikle.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe" sparkle:version="2.0" length="12288" type="application/octet-stream" sparkle:dsaSignature="NSG/eKz9BaTJrRDvKSwYEaOumYpPMtMYRq+vjsNlHqRGku/Ual3EoQ==" />
