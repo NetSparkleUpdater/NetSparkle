@@ -1098,12 +1098,38 @@ namespace NetSparkle
         /// </summary>
         private void showProgressWindow()
         {
-            if (!isDownloadingSilently() 
-                && ProgressWindow != null)
+            if (!isDownloadingSilently() && ProgressWindow != null)
             {
                 if (!ProgressWindow.ShowDialog())
                 {
                     CancelFileDownload();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Run the provided app cast item update regardless of what else is going on.
+        /// Note that a more up to date download may be taking place, so if you don't
+        /// want to run a potentially out-of-date installer, don't use this. This should
+        /// only be used if your user wants to update before another update has been
+        /// installed AND the file is already downloaded.
+        /// This function will verify that the file exists and that the DSA 
+        /// signature is valid before running. It will also utilize the
+        /// AboutToExitForInstallerRun event to ensure that the application can close.
+        /// </summary>
+        /// <param name="item"></param>
+        public async void RunUpdate(AppCastItem item)
+        {
+            if (await AskApplicationToSafelyCloseUp())
+            {
+                var path = DownloadPathForAppCastItem(item);
+                if (File.Exists(path))
+                {
+                    var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
+                    if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
+                    {
+                        await RunDownloadedInstaller(DownloadPathForAppCastItem(item));
+                    }
                 }
             }
         }
@@ -1119,24 +1145,24 @@ namespace NetSparkle
         /// <summary>
         /// Return installer runner command. May throw InvalidDataException
         /// </summary>
-        protected virtual string GetInstallerCommand(string downloadFileName)
+        protected virtual string GetInstallerCommand(string downloadFilePath)
         {
             // get the file type
-            string installerExt = Path.GetExtension(downloadFileName);
+            string installerExt = Path.GetExtension(downloadFilePath);
             if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // build the command line 
-                return "\"" + downloadFileName + "\"";
+                return "\"" + downloadFilePath + "\"";
             }
             if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // buid the command line
-                return "msiexec /i \"" + downloadFileName + "\"";
+                return "msiexec /i \"" + downloadFilePath + "\"";
             }
             if (".msp".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
             {
                 // build the command line
-                return "msiexec /p \"" + downloadFileName + "\"";
+                return "msiexec /p \"" + downloadFilePath + "\"";
             }
 
             throw new InvalidDataException("Unknown installer format");
@@ -1145,7 +1171,7 @@ namespace NetSparkle
         /// <summary>
         /// Runs the downloaded installer
         /// </summary>
-        protected virtual async Task RunDownloadedInstaller()
+        protected virtual async Task RunDownloadedInstaller(string downloadFilePath)
         {
             LogWriter.PrintMessage("Running downloaded installer");
             // get the commandline 
@@ -1157,14 +1183,14 @@ namespace NetSparkle
             string installerCmd;
             try
             {
-                installerCmd = GetInstallerCommand(_downloadTempFileName);
+                installerCmd = GetInstallerCommand(downloadFilePath);
 
                 if (!string.IsNullOrEmpty(CustomInstallerArguments))
                     installerCmd += " " + CustomInstallerArguments;
             }
             catch (InvalidDataException)
             {
-                UIFactory.ShowUnknownInstallerFormatMessage(_downloadTempFileName, _applicationIcon);
+                UIFactory.ShowUnknownInstallerFormatMessage(downloadFilePath, _applicationIcon);
                 return;
             }
 
@@ -1531,7 +1557,7 @@ namespace NetSparkle
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
-                await RunDownloadedInstaller();
+                await RunDownloadedInstaller(_downloadTempFileName);
             }
             else
             {
