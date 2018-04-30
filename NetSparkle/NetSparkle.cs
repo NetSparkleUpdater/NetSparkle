@@ -1120,6 +1120,8 @@ namespace NetSparkle
         /// <param name="item"></param>
         public async void RunUpdate(AppCastItem item)
         {
+            ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
+            bool needToReenableDownloadButton = true;
             if (await AskApplicationToSafelyCloseUp())
             {
                 var path = DownloadPathForAppCastItem(item);
@@ -1131,6 +1133,10 @@ namespace NetSparkle
                         await RunDownloadedInstaller(DownloadPathForAppCastItem(item));
                     }
                 }
+            }
+            if (needToReenableDownloadButton)
+            {
+                ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
             }
         }
 
