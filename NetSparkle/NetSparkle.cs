@@ -1569,7 +1569,7 @@ namespace NetSparkle
                 else
                     checkTSP = true;
 
-                // when sparkle will be deactivated wait an other cycle
+                // when sparkle will be deactivated wait another cycle
                 if (config.CheckForUpdate == false)
                 {
                     LogWriter.PrintMessage("Check for updates disabled");
@@ -1789,11 +1789,7 @@ namespace NetSparkle
         private void OnWindowsFormsApplicationExit(object sender, EventArgs e)
         {
             Application.ApplicationExit -= OnWindowsFormsApplicationExit;
-            if (_installerProcess != null)
-            {
-                _installerProcess.Start();
-            }
+            _installerProcess?.Start();
         }
-     
     }
 }
