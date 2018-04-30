@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NetSparkle.Enums
+﻿namespace NetSparkle.Enums
 {
     /// <summary>
     /// Return value of the DSA verification check functions.
