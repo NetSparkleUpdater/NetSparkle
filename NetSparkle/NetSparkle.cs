@@ -863,15 +863,6 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
-        /// </summary>
-        /// <param name="url">relative or absolute URL</param>
-        public Uri GetAbsoluteUrl(string url)
-        {
-            return new Uri(new Uri(_appCastUrl), url);
-        }
-
-        /// <summary>
         /// Shows the update needed UI with the given set of updates.
         /// </summary>
         /// <param name="updates">updates to show UI for</param>

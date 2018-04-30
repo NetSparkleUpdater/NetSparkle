@@ -255,10 +255,10 @@ namespace NetSparkle
                     {
                         using (cancellationToken.Register(() => webClient.CancelAsync()))
                         {
-                            return await webClient.DownloadStringTaskAsync(_sparkle.GetAbsoluteUrl(link));
+                            return await webClient.DownloadStringTaskAsync(GetAbsoluteUrl(link));
                         }
                     }
-                    return await webClient.DownloadStringTaskAsync(_sparkle.GetAbsoluteUrl(link));
+                    return await webClient.DownloadStringTaskAsync(GetAbsoluteUrl(link));
                 }
             }
             catch (WebException ex)
@@ -266,6 +266,15 @@ namespace NetSparkle
                 _sparkle.LogWriter.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";
             }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
+        /// </summary>
+        /// <param name="url">relative or absolute URL</param>
+        public Uri GetAbsoluteUrl(string url)
+        {
+            return new Uri(new Uri(_sparkle.AppcastUrl), url);
         }
 
         /// <summary>

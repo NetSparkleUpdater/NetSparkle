@@ -15,20 +15,6 @@ namespace NetSparkle
     /// </summary>
     public class AppCast
     {
-        private const string itemNode = "item";
-        private const string enclosureNode = "enclosure";
-        private const string sparkleEnclosureNode = "sparkle:enclosure";
-        private const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
-        private const string descriptionNode = "description";
-        private const string versionAttribute = "sparkle:version";
-        private const string dsaSignature = "sparkle:dsaSignature";
-        private const string criticalAttribute = "sparkle:criticalUpdate";
-        private const string operatingSystemAttribute = "sparkle:os";
-        private const string lengthAttribute = "length";
-        private const string typeAttribute = "type";
-        private const string urlAttribute = "url";
-        private const string pubDateNode = "pubDate";
-
         private readonly Configuration _config;
         private readonly string _castUrl;
         private readonly List<AppCastItem> _items;
@@ -190,6 +176,20 @@ namespace NetSparkle
 
         private void Parse(XmlReader reader)
         {
+            const string itemNode = "item";
+            const string enclosureNode = "enclosure";
+            const string sparkleEnclosureNode = "sparkle:enclosure";
+            const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
+            const string descriptionNode = "description";
+            const string versionAttribute = "sparkle:version";
+            const string dsaSignature = "sparkle:dsaSignature";
+            const string criticalAttribute = "sparkle:criticalUpdate";
+            const string operatingSystemAttribute = "sparkle:os";
+            const string lengthAttribute = "length";
+            const string typeAttribute = "type";
+            const string urlAttribute = "url";
+            const string pubDateNode = "pubDate";
+
             AppCastItem currentItem = null;
 
             while (reader.Read())
