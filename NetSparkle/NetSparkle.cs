@@ -690,69 +690,6 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature.
-        /// </summary>
-        public WebResponse GetWebContentResponse(string url)
-        {
-            WebRequest request = WebRequest.Create(url);
-            if (request != null)
-            {
-                if (request is FileWebRequest)
-                {
-                    FileWebRequest fileRequest = request as FileWebRequest;
-                    if (fileRequest != null)
-                    {
-                        return request.GetResponse();
-                    }
-                }
-
-                if (request is HttpWebRequest)
-                {
-                    HttpWebRequest httpRequest = request as HttpWebRequest;
-                    httpRequest.UseDefaultCredentials = true;
-                    httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    if (TrustEverySSLConnection)
-                        httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-
-                    // http://stackoverflow.com/a/10027534/3938401
-                    if (ExtraJsonData != null && ExtraJsonData != "")
-                    {
-                        httpRequest.ContentType = "application/json";
-                        httpRequest.Method = "POST";
-
-                        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
-                        {
-                            streamWriter.Write(ExtraJsonData);
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                        }
-                    }
-
-                    // request the cast and build the stream
-                    return httpRequest.GetResponse();
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature as a <see cref="Stream"/>.
-        /// </summary>
-        public Stream GetWebContentStream(string url)
-        {
-            var response = GetWebContentResponse(url);
-            if (response != null)
-            {
-                var ms = new MemoryStream();
-                response.GetResponseStream().CopyTo(ms);
-                response.Close();
-                ms.Position = 0;
-                return ms;
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Unregisters events so that we don't have multiple items updating
         /// </summary>
         private void UnregisterEvents()
@@ -866,7 +803,7 @@ namespace NetSparkle
             LogWriter.PrintMessage("Downloading and checking appcast");
 
             // init the appcast
-            AppCast cast = new AppCast(_appCastUrl, this, config);
+            AppCast cast = new AppCast(_appCastUrl, TrustEverySSLConnection, config, DSAChecker, LogWriter, ExtraJsonData);
             // check if any updates are available
             try
             {

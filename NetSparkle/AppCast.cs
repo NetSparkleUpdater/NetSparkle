@@ -26,31 +26,42 @@ namespace NetSparkle
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
 
-        private readonly Sparkle _sparkle;
         private readonly Configuration _config;
         private readonly string _castUrl;
         private readonly List<AppCastItem> _items;
+
+        private readonly bool _trustEverySSLConnection;
+        private readonly string _extraJSON;
+        private DSAChecker _dsaChecker;
+        private LogWriter _logWriter;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="castUrl">the URL of the appcast file</param>
-        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
+        /// <param name="trustEverySSLConnection">whether or not to trust every SSL connection</param>
         /// <param name="config">the current configuration</param>
-        public AppCast(string castUrl, Sparkle sparkle, Configuration config)
+        /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
+        /// <param name="logWriter">object to write any log statements to</param>
+        /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
+        public AppCast(string castUrl, bool trustEverySSLConnection, Configuration config, DSAChecker dsaChecker, LogWriter logWriter, string extraJSON = null)
         {
-            _sparkle = sparkle;
             _config = config;
             _castUrl = castUrl;
 
             _items = new List<AppCastItem>();
+
+            _trustEverySSLConnection = trustEverySSLConnection;
+            _dsaChecker = dsaChecker;
+            _logWriter = logWriter;
+            _extraJSON = extraJSON;
         }
 
         private string TryReadSignature()
         {
             try
             {
-                var signaturestream = _sparkle.GetWebContentStream(_castUrl + ".dsa");
+                var signaturestream = GetWebContentStream(_castUrl + ".dsa");
                 var signature = string.Empty;
                 using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
                 {
@@ -64,19 +75,82 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature as a <see cref="Stream"/>.
+        /// </summary>
+        public Stream GetWebContentStream(string url)
+        {
+            var response = GetWebContentResponse(url);
+            if (response != null)
+            {
+                var ms = new MemoryStream();
+                response.GetResponseStream().CopyTo(ms);
+                response.Close();
+                ms.Position = 0;
+                return ms;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature.
+        /// </summary>
+        public WebResponse GetWebContentResponse(string url)
+        {
+            WebRequest request = WebRequest.Create(url);
+            if (request != null)
+            {
+                if (request is FileWebRequest)
+                {
+                    FileWebRequest fileRequest = request as FileWebRequest;
+                    if (fileRequest != null)
+                    {
+                        return request.GetResponse();
+                    }
+                }
+
+                if (request is HttpWebRequest)
+                {
+                    HttpWebRequest httpRequest = request as HttpWebRequest;
+                    httpRequest.UseDefaultCredentials = true;
+                    httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    if (_trustEverySSLConnection)
+                        httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+                    // http://stackoverflow.com/a/10027534/3938401
+                    if (_extraJSON != null && _extraJSON != "")
+                    {
+                        httpRequest.ContentType = "application/json";
+                        httpRequest.Method = "POST";
+
+                        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+                        {
+                            streamWriter.Write(_extraJSON);
+                            streamWriter.Flush();
+                            streamWriter.Close();
+                        }
+                    }
+
+                    // request the cast and build the stream
+                    return httpRequest.GetResponse();
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
         public bool Read()
         {
             try
             {
-                var inputstream = _sparkle.GetWebContentStream(_castUrl);
+                var inputstream = GetWebContentStream(_castUrl);
                 var signature = TryReadSignature();
                 return ReadStream(inputstream, signature);
             }
             catch (Exception e)
             {
-                _sparkle.LogWriter.PrintMessage("error reading app cast {0}: {1} ", _castUrl, e.Message);
+                _logWriter.PrintMessage("error reading app cast {0}: {1} ", _castUrl, e.Message);
                 return false;
             }
         }
@@ -85,7 +159,7 @@ namespace NetSparkle
         {
             if (inputstream == null)
             {
-                _sparkle.LogWriter.PrintMessage("Cannot read response from URL {0}", _castUrl);
+                _logWriter.PrintMessage("Cannot read response from URL {0}", _castUrl);
                 return false;
             }
 
@@ -95,10 +169,10 @@ namespace NetSparkle
             memorystream.Position = 0;
 
             // checking signature
-            var signatureNeeded = _sparkle.DSAChecker.SignatureNeeded();
-            if (signatureNeeded && _sparkle.DSAChecker.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
+            var signatureNeeded = _dsaChecker.SignatureNeeded();
+            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
             {
-                _sparkle.LogWriter.PrintMessage("Signature check of appcast failed");
+                _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;
             }
             memorystream.Position = 0;
@@ -181,7 +255,7 @@ namespace NetSparkle
                                 }
                                 catch (FormatException ex)
                                 {
-                                    _sparkle.LogWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
+                                    _logWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
                                 }
                             }
                             break;
@@ -208,7 +282,7 @@ namespace NetSparkle
         public AppCastItem[] GetUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
-            var signatureNeeded = _sparkle.DSAChecker.SignatureNeeded();
+            var signatureNeeded = _dsaChecker.SignatureNeeded();
 
             return _items.Where((item) => {
                 // filter smaller versions

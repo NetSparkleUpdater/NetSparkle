@@ -10,9 +10,9 @@ namespace NetSparkle
 {
     internal class DeviceInventory
     {
-        public Boolean x64System { get; set; }
+        public bool x64System { get; set; }
         public uint ProcessorSpeed { get; set; }
-        public Int64 MemorySize { get; set; }
+        public long MemorySize { get; set; }
         public string OsVersion { get; set; }
         public int CPUCount { get; set; }
 
@@ -41,9 +41,9 @@ namespace NetSparkle
             CollectWindowsVersion();
         }
 
-        public String BuildRequestUrl(String baseRequestUrl)
+        public string BuildRequestUrl(string baseRequestUrl)
         {
-            String retValue = baseRequestUrl;
+            string retValue = baseRequestUrl;
             
             // x64 
             retValue += "cpu64bit=" + (x64System ? "1" : "0") + "&";
