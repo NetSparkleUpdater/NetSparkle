@@ -1615,76 +1615,74 @@ namespace NetSparkle
                     checkTSPInternal = !_forceInitialCheck;
 
                 // check if it's ok the recheck to software state
-                if (checkTSPInternal)
+                TimeSpan csp = DateTime.Now - config.LastCheckTime;
+                if (checkTSPInternal && csp < _checkFrequency)
                 {
-                    TimeSpan csp = DateTime.Now - config.LastCheckTime;
-                    if (csp < _checkFrequency)
-                    {
-                        LogWriter.PrintMessage("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes);
-                        goto WaitSection;
-                    }
+                    LogWriter.PrintMessage("Update check performed within the last {0} minutes!", _checkFrequency.TotalMinutes);
+                    goto WaitSection;
                 }
                 else
                     checkTSP = true;
 
                 // when sparkle will be deactivated wait another cycle
-                if (config.CheckForUpdate == false)
+                if (config.CheckForUpdate == true)
+                {
+                    // update the runonce feature
+                    goIntoLoop = !config.DidRunOnce;
+
+                    // update profile information is needed
+                    UpdateSystemProfileInformation(config);
+
+                    // check if update is required
+                    if (_cancelToken.IsCancellationRequested)
+                        break;
+                    _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
+                    if (_cancelToken.IsCancellationRequested)
+                        break;
+                    AppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
+                    bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
+                    if (bUpdateRequired)
+                    {
+                        // show the update window
+                        LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
+
+                        // send notification if needed
+                        UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
+                        {
+                            NextAction = NextUpdateAction.ShowStandardUserInterface,
+                            ApplicationConfig = config,
+                            LatestVersion = updates[0],
+                            AppCastItems = updates
+                        };
+                        UpdateDetected?.Invoke(this, ev);
+
+                        // check results
+                        switch (ev.NextAction)
+                        {
+                            case NextUpdateAction.PerformUpdateUnattended:
+                                {
+                                    LogWriter.PrintMessage("Unattended update desired from consumer");
+                                    SilentMode = SilentModeTypes.DownloadAndInstall;
+                                    OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                    break;
+                                }
+                            case NextUpdateAction.ProhibitUpdate:
+                                {
+                                    LogWriter.PrintMessage("Update prohibited from consumer");
+                                    break;
+                                }
+                            default:
+                                {
+                                    LogWriter.PrintMessage("Showing Standard Update UI");
+                                    OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                    break;
+                                }
+                        }
+                    }
+                }
+                else
                 {
                     LogWriter.PrintMessage("Check for updates disabled");
-                    goto WaitSection;
-                }
-
-                // update the runonce feature
-                goIntoLoop = !config.DidRunOnce;
-
-                // update profile information is needed
-                UpdateSystemProfileInformation(config);
-
-                // check if update is required
-                if (_cancelToken.IsCancellationRequested)
-                    break;
-                _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
-                if (_cancelToken.IsCancellationRequested)
-                    break;
-                AppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
-                bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
-                if (bUpdateRequired)
-                {
-                    // show the update window
-                    LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
-
-                    // send notification if needed
-                    UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
-                    {
-                        NextAction = NextUpdateAction.ShowStandardUserInterface,
-                        ApplicationConfig = config,
-                        LatestVersion = updates[0],
-                        AppCastItems = updates
-                    };
-                    UpdateDetected?.Invoke(this, ev);
-
-                    // check results
-                    switch (ev.NextAction)
-                    {
-                        case NextUpdateAction.PerformUpdateUnattended:
-                            {
-                                LogWriter.PrintMessage("Unattended update desired from consumer");
-                                SilentMode = SilentModeTypes.DownloadAndInstall;
-                                OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                break;
-                            }
-                        case NextUpdateAction.ProhibitUpdate:
-                            {
-                                LogWriter.PrintMessage("Update prohibited from consumer");
-                                break;
-                            }
-                        default:
-                            {
-                                LogWriter.PrintMessage("Showing Standard Update UI");
-                                OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                                break;
-                            }
-                    }
                 }
 
             WaitSection:
