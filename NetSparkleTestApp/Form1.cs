@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using NetSparkle;
+using NetSparkle.Enums;
 
 namespace NetSparkleTestApp
 {
