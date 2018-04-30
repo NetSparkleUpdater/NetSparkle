@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [0.14.0]
+
+### Added
+
 - NetSparkle now supports the `sparkle:os` attribute (#17). If this is not present, an update is assumed to be a Windows update. Valid types for Windows are "win" or "windows". The operating system string check is a case-insensitive check.
     - Added `OperatingSystemString` (default "windows") and `bool IsWindowsUpdate` to `AppCastItem`
     - `AppCast.GetUpdates()` no longer returns non-Windows updates
@@ -123,7 +131,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/b442795...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/cbc605d...develop
+[0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...cbc605d
 [0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795
 [0.12.0]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...85a50da
 [0.11.0]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...8a8b393
