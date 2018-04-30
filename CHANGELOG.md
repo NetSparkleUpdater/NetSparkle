@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
     - Added `OperatingSystemString` (default "windows") and `bool IsWindowsUpdate` to `AppCastItem`
     - `AppCast.GetUpdates()` no longer returns non-Windows updates
 - To increase compatibility with the main macOS Sparkle project, the `enclosure` tag can now be either `enclosure` or `sparkle:enclosure`
+- Added `AppCastItem.MIMEType` to read the `<enclosure type="">` attribute if they want to (#15). Defaults to `application/octet-stream`.
 
 ### Changed
 

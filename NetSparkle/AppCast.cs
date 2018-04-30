@@ -25,6 +25,7 @@ namespace NetSparkle
         private const string criticalAttribute = "sparkle:criticalUpdate";
         private const string operatingSystemAttribute = "sparkle:os";
         private const string lengthAttribute = "length";
+        private const string typeAttribute = "type";
         private const string urlAttribute = "url";
         private const string pubDateNode = "pubDate";
 
@@ -204,7 +205,8 @@ namespace NetSparkle
                                 AppName = _config.ApplicationName,
                                 UpdateSize = 0,
                                 IsCriticalUpdate = false,
-                                OperatingSystemString = "windows"
+                                OperatingSystemString = "windows",
+                                MIMEType = "application/octet-stream"
                             };
                             break;
                         case releaseNotesLinkNode:
@@ -252,6 +254,12 @@ namespace NetSparkle
                                 if (operatingSystem != null && operatingSystem != "")
                                 {
                                     currentItem.OperatingSystemString = operatingSystem;
+                                }
+
+                                string mimeType = reader.GetAttribute(typeAttribute);
+                                if (mimeType != null && mimeType != "")
+                                {
+                                    currentItem.MIMEType = mimeType;
                                 }
                             }
                             break;

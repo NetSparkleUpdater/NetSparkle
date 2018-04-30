@@ -80,6 +80,11 @@ namespace NetSparkle
             }
         }
 
+        /// <summary>
+        /// MIME type for file as specified in the closure tag. Defaults to "application/octet-stream".
+        /// </summary>
+        public string MIMEType { get; set; }
+
         #region IComparable<AppCastItem> Members
 
         /// <summary>
