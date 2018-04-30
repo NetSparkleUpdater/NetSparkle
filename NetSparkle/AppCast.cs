@@ -17,6 +17,7 @@ namespace NetSparkle
     {
         private const string itemNode = "item";
         private const string enclosureNode = "enclosure";
+        private const string sparkleEnclosureNode = "sparkle:enclosure";
         private const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
         private const string descriptionNode = "description";
         private const string versionAttribute = "sparkle:version";
@@ -220,6 +221,7 @@ namespace NetSparkle
                             }
                             break;
                         case enclosureNode:
+                        case sparkleEnclosureNode:
                             if (currentItem != null)
                             {
                                 currentItem.Version = reader.GetAttribute(versionAttribute);
