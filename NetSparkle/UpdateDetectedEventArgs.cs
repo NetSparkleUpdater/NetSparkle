@@ -20,5 +20,10 @@ namespace NetSparkle
         /// The latest available version
         /// </summary>
         public AppCastItem LatestVersion { get; set; }
+
+        /// <summary>
+        /// All app cast items that were sent in the appcast
+        /// </summary>
+        public AppCastItem[] AppCastItems { get; set; }
     }
 }

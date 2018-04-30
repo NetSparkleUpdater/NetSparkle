@@ -1384,13 +1384,14 @@ namespace NetSparkle
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
-                LogWriter.PrintMessage("Update needed from version {0}  to version {1}", config.InstalledVersion, updates[0].Version);
+                LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
                                                     {
                                                         NextAction = NextUpdateAction.ShowStandardUserInterface,
                                                         ApplicationConfig = config,
-                                                        LatestVersion = updates[0]
+                                                        LatestVersion = updates[0],
+                                                        AppCastItems = updates
                                                     };
 
                 // if the client wants to intercept, send an event

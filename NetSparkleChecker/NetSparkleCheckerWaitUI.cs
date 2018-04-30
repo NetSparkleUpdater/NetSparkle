@@ -13,7 +13,7 @@ namespace NetSparkleChecker
         private readonly Sparkle _sparkle;
         private AppCastItem[] _updates;
 
-        public Boolean SparkleRequestedUpdate = false;
+        public bool SparkleRequestedUpdate = false;
         
         public NetSparkleCheckerWaitUI(Icon icon)
         {
@@ -21,7 +21,7 @@ namespace NetSparkleChecker
             InitializeComponent();
 
             // get cmdline args
-            String[] args = Environment.GetCommandLineArgs();
+            string[] args = Environment.GetCommandLineArgs();
 
             // init sparkle
             _sparkle = new Sparkle(args[2], icon, SecurityMode.UseIfPossible, null, args[1]);
@@ -46,10 +46,9 @@ namespace NetSparkleChecker
             // get the config
             Configuration config = _sparkle.GetApplicationConfig();
 
-            // check for updats
-            //NetSparkleAppCastItem[] newUpdates;
+            // check for updates
             UpdateInfo updateInfo = await _sparkle.GetUpdateStatus(config);
-            Boolean bUpdateRequired = UpdateStatus.UpdateAvailable == updateInfo.Status;
+            bool bUpdateRequired = UpdateStatus.UpdateAvailable == updateInfo.Status;
                                 
             // save the result
             SparkleRequestedUpdate = bUpdateRequired;
