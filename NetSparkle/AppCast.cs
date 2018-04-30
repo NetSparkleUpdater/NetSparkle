@@ -33,7 +33,7 @@ namespace NetSparkle
         /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
         /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
-        public AppCast(string castUrl, bool trustEverySSLConnection, Configuration config, DSAChecker dsaChecker, LogWriter logWriter, string extraJSON = null)
+        public AppCast(string castUrl, bool trustEverySSLConnection, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null, string extraJSON = null)
         {
             _config = config;
             _castUrl = castUrl;
@@ -42,7 +42,7 @@ namespace NetSparkle
 
             _trustEverySSLConnection = trustEverySSLConnection;
             _dsaChecker = dsaChecker;
-            _logWriter = logWriter;
+            _logWriter = logWriter ?? new LogWriter();
             _extraJSON = extraJSON;
         }
 
