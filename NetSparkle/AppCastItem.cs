@@ -60,7 +60,8 @@ namespace NetSparkle
         /// <summary>
         /// True if this update is a windows update; false otherwise.
         /// Acceptable OS strings are: "win" or "windows" (this is 
-        /// checked with a case-insensitive check).
+        /// checked with a case-insensitive check). If not specified,
+        /// assumed to be a Windows update.
         /// </summary>
         public bool IsWindowsUpdate
         {
