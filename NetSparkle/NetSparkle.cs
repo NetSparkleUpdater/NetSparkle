@@ -330,7 +330,7 @@ namespace NetSparkle
             if (referenceAssembly != null)
             {
                 _appReferenceAssembly = referenceAssembly;
-                Debug.WriteLine("Checking the following file: " + _appReferenceAssembly);
+                LogWriter.PrintMessage("Checking the following file: " + _appReferenceAssembly);
             }
 
             // adjust the delegates

@@ -80,11 +80,11 @@ namespace NetSparkle
             switch (_securityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have an dsa key we need an signature
+                    // if we have a dsa key, we need a signature
                     return PublicKeyExists();
 
                 case SecurityMode.Strict:
-                    // we always need an signature
+                    // we always need a signature
                     return true;
 
                 case SecurityMode.Unsafe:
@@ -100,13 +100,13 @@ namespace NetSparkle
             switch (_securityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have a DSA key we only accept non-null signatures
+                    // if we have a DSA key, we only accept non-null signatures
                     if (PublicKeyExists() && string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
-                    // if we don't have an dsa key we accept any signature
+                    // if we don't have an dsa key, we accept any signature
                     if (!PublicKeyExists())
                     {
                         result = ValidationResult.Unchecked;
@@ -157,7 +157,7 @@ namespace NetSparkle
 
             // read the data
             byte[] bData = null;
-            bData = new Byte[stream.Length];
+            bData = new byte[stream.Length];
             stream.Read(bData, 0, bData.Length);
 
             // verify

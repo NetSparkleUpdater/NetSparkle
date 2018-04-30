@@ -103,7 +103,9 @@ namespace NetSparkle
                     httpRequest.UseDefaultCredentials = true;
                     httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     if (_trustEverySSLConnection)
+                    {
                         httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                    }
 
                     // http://stackoverflow.com/a/10027534/3938401
                     if (_extraJSON != null && _extraJSON != "")
