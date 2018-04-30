@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Added `AppCastItem.MIMEType` to read the `<enclosure type="">` attribute if they want to (#15). Defaults to `application/octet-stream`.
 - Added `UpdateDetectedEventArgs.AppCastItems` if you want to look at all available app cast items
 - Added `DownloadPathForAppCastItem(AppCastItem item)` to easily grab the download path for a given downloadable appcast item
+- Added `RunUpdate(AppCastItem item)` to allow you to run an update without waiting for the latest version to download. The DSA signature of the file is still checked!
 
 ### Changed
 
