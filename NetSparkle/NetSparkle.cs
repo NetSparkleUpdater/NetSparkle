@@ -495,7 +495,7 @@ namespace NetSparkle
 
         /// <summary>
         /// The user interface window that shows the release notes and
-        /// asks the user to skip, later or update
+        /// asks the user to skip, remind me later, or update
         /// </summary>
         public IUpdateAvailable UserWindow { get; set; }
 
