@@ -1130,7 +1130,7 @@ namespace NetSparkle
                     var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
                     if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                     {
-                        await RunDownloadedInstaller(DownloadPathForAppCastItem(item));
+                        await RunDownloadedInstaller(path);
                     }
                 }
             }
