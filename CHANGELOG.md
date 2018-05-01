@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- `AppCastItem` is now marked serializable
+
 ### Removed
 
 ## [0.14.0] (Same as 0.14.0.1 because Deadpikle goofed)

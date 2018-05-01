@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace NetSparkle
 {
     /// <summary>
     /// Item from a Sparkle AppCast file
     /// </summary>
+    [Serializable]
     public class AppCastItem : IComparable<AppCastItem>
     {
         /// <summary>
