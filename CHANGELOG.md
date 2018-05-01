@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-## [0.14.0]
+## [0.14.0] (Same as 0.14.0.1 because Deadpikle goofed)
 
 ### Added
 
@@ -131,8 +131,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/cbc605d...develop
-[0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...cbc605d
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...develop
+[0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...6b30321
 [0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795
 [0.12.0]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...85a50da
 [0.11.0]: https://github.com/Deadpikle/NetSparkle/compare/d2740a4...8a8b393
