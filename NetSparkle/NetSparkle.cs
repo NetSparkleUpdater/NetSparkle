@@ -1039,7 +1039,18 @@ namespace NetSparkle
                     // Redownload it!
                     _hasAttemptedFileRedownload = true;
                     LogWriter.PrintMessage("File is corrupt; deleting file and redownloading...");
-                    File.Delete(_downloadTempFileName);
+                    try
+                    {
+                        File.Delete(_downloadTempFileName);
+                    }
+                    catch (Exception e)
+                    {
+                        LogWriter.PrintMessage("Hm, seems as though we couldn't delete the temporary file even though it is apparently corrupt. {0}",
+                            e.Message);
+                        // we won't be able to download anyway since we couldn't delete the file :( we'll try next time the
+                        // update loop goes around.
+                        needsToDownload = false; 
+                    }
                 }
                 else
                 {
