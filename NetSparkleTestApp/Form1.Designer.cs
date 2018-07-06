@@ -1,4 +1,4 @@
-﻿namespace NetSparkleTestApp
+namespace NetSparkleTestApp
 {
     partial class Form1
     {
