@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - `AppCastItem` is now marked serializable
+- Fixed a bug where if you cancel the download process or if an error occurs during download, the update file stays in the same directory (@rolikoff)
+- Fixed a bug where the `DownloadCanceled` event was fired twice (@rolikoff)
 
 ### Removed
 
