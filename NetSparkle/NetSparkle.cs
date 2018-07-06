@@ -1068,6 +1068,7 @@ namespace NetSparkle
                         _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
                     }
                     _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
+                    _webDownloadClient.Dispose();
                     _webDownloadClient = null;
                 }
 
@@ -1515,14 +1516,9 @@ namespace NetSparkle
         public void CancelFileDownload()
         {
             LogWriter.PrintMessage("Canceling download...");
-            DownloadCanceled?.Invoke(_downloadTempFileName);
             if (_webDownloadClient != null && _webDownloadClient.IsBusy)
             {
                 _webDownloadClient.CancelAsync();
-            }
-            if (File.Exists(_downloadTempFileName))
-            {
-                File.Delete(_downloadTempFileName);
             }
         }
 
@@ -1774,25 +1770,35 @@ namespace NetSparkle
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
             bool shouldShowUIItems = !isDownloadingSilently();
-            if (e.Error != null)
-            {
-                DownloadError?.Invoke(_downloadTempFileName);
-                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
-                {
-                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
-                }
-                return;
-            }
 
             if (e.Cancelled)
             {
                 DownloadCanceled?.Invoke(_downloadTempFileName);
+                if (File.Exists(_downloadTempFileName))
+                {
+                    File.Delete(_downloadTempFileName);
+                }
                 LogWriter.PrintMessage("Download was canceled");
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
                     UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
+                }
+                return;
+            }
+
+            if (e.Error != null)
+            {
+                DownloadError?.Invoke(_downloadTempFileName);
+                // Clean temp files on error too
+                if (File.Exists(_downloadTempFileName))
+                {
+                    File.Delete(_downloadTempFileName);
+                }
+                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                {
+                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
                 }
                 return;
             }
