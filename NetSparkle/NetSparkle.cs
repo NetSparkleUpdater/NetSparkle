@@ -1520,10 +1520,8 @@ namespace NetSparkle
             {
                 _webDownloadClient.CancelAsync();
             }
-<<<<<<< HEAD
-            if (File.Exists(_downloadTempFileName))
-            {
-                File.Delete(_downloadTempFileName);
+        }
+        
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
