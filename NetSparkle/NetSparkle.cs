@@ -1521,9 +1521,7 @@ namespace NetSparkle
                 _webDownloadClient.CancelAsync();
             }
         }
-
-        /// <summary>
-        /// Called when the user responds to the "skip, later, install" question.
+        
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
@@ -1786,7 +1784,6 @@ namespace NetSparkle
                 }
                 return;
             }
-
             if (e.Error != null)
             {
                 DownloadError?.Invoke(_downloadTempFileName);
@@ -1802,7 +1799,6 @@ namespace NetSparkle
                 }
                 return;
             }
-
             // test the item for DSA signature
             var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
