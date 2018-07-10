@@ -1020,9 +1020,8 @@ namespace NetSparkle
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                var fileInfo = new FileInfo(_downloadTempFileName);
                 ValidationResult result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
-                if ((result == ValidationResult.Valid || result == ValidationResult.Unchecked) && fileInfo.Length == item.UpdateSize)
+                if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                 {
                     LogWriter.PrintMessage("File is already downloaded");
                     // We already have the file! Don't redownload it!
