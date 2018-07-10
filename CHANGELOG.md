@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - `AppCastItem` is now marked serializable
+- If using `SecurityMode.Unsafe`, files are **always** redownloaded because the library has no good way of knowing whether or not the file that is on disk is the file that is actually on the server (@rolikoff)
 - Fixed a bug where if you cancel the download process or if an error occurs during download, the update file stays in the same directory (@rolikoff)
 - Fixed a bug where the `DownloadCanceled` event was fired twice (@rolikoff)
 
