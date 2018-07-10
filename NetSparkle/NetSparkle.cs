@@ -984,17 +984,25 @@ namespace NetSparkle
         {
             if (item != null && item.DownloadLink != null)
             {
-                string[] segments = item.DownloadLink.Split('/');
-                if (segments.Count() > 0)
+                string filename = string.Empty;
+
+                try
                 {
-                    string fileName = segments[segments.Length - 1];
-                    bool isTmpDownloadFilePathSet = TmpDownloadFilePath != null && TmpDownloadFilePath != "";
-                    string tmpPath = isTmpDownloadFilePathSet ? TmpDownloadFilePath : Path.GetTempPath();
-                    if (isTmpDownloadFilePathSet && !File.Exists(tmpPath))
-                    {
-                        Directory.CreateDirectory(tmpPath);
-                    }
-                    return Path.Combine(tmpPath, fileName);
+                    filename = Path.GetFileName(new Uri(item.DownloadLink).LocalPath);
+                }
+                catch (UriFormatException)
+                {
+                    // ignore
+                }
+
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    string tmpPath = string.IsNullOrEmpty(TmpDownloadFilePath) ? Path.GetTempPath() : TmpDownloadFilePath;
+
+                    // Creates all directories and subdirectories in the specific path unless they already exist.
+                    Directory.CreateDirectory(tmpPath);
+
+                    return Path.Combine(tmpPath, filename);
                 }
             }
             return null;
@@ -1021,7 +1029,7 @@ namespace NetSparkle
             if (File.Exists(_downloadTempFileName))
             {
                 ValidationResult result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
-                if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
+                if (result == ValidationResult.Valid)
                 {
                     LogWriter.PrintMessage("File is already downloaded");
                     // We already have the file! Don't redownload it!
@@ -1035,10 +1043,10 @@ namespace NetSparkle
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
-                    // File is downloaded, but is corrupt or was stopped in the middle or something else happened.
+                    // The file exists but it either has a bad DSA signature or SecurityMode is set to Unsafe.
                     // Redownload it!
                     _hasAttemptedFileRedownload = true;
-                    LogWriter.PrintMessage("File is corrupt; deleting file and redownloading...");
+                    LogWriter.PrintMessage("File is corrupt or DSA signature is Unchecked; deleting file and redownloading...");
                     try
                     {
                         File.Delete(_downloadTempFileName);
@@ -1772,6 +1780,7 @@ namespace NetSparkle
             if (e.Cancelled)
             {
                 DownloadCanceled?.Invoke(_downloadTempFileName);
+                _hasAttemptedFileRedownload = false;
                 if (File.Exists(_downloadTempFileName))
                 {
                     File.Delete(_downloadTempFileName);
