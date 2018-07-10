@@ -1529,7 +1529,8 @@ namespace NetSparkle
                 _webDownloadClient.CancelAsync();
             }
         }
-        
+
+        /// <summary>
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
