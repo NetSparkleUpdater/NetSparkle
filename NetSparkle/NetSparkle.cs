@@ -1780,6 +1780,7 @@ namespace NetSparkle
             if (e.Cancelled)
             {
                 DownloadCanceled?.Invoke(_downloadTempFileName);
+                _hasAttemptedFileRedownload = false;
                 if (File.Exists(_downloadTempFileName))
                 {
                     File.Delete(_downloadTempFileName);
