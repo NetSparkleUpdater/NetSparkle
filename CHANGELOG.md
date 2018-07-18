@@ -7,11 +7,16 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+### Removed
+
+## [0.15.0]
+
+### Changed
+
 - `AppCastItem` is now marked serializable
+- If using `SecurityMode.Unsafe`, files are **always** redownloaded because the library has no good way of knowing whether or not the file that is on disk is the file that is actually on the server (@rolikoff)
 - Fixed a bug where if you cancel the download process or if an error occurs during download, the update file stays in the same directory (@rolikoff)
 - Fixed a bug where the `DownloadCanceled` event was fired twice (@rolikoff)
-
-### Removed
 
 ## [0.14.0] (Same as 0.14.0.1 because Deadpikle goofed)
 
@@ -136,6 +141,7 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 For older changes, see [HISTORY.md](HISTORY.md).
 
 [Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...develop
+[0.15.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...ee65d3e
 [0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...6b30321
 [0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795
 [0.12.0]: https://github.com/Deadpikle/NetSparkle/compare/8a8b393...85a50da
