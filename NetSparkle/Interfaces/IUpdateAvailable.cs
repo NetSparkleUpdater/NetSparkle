@@ -1,4 +1,4 @@
-﻿using NetSparkle.Enums;
+using NetSparkle.Enums;
 using System;
 
 namespace NetSparkle.Interfaces
