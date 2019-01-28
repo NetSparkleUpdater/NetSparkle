@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle", "NetSparkle\NetSparkle.csproj", "{74635A21-2BAD-4522-AB95-E3E5703CD301}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApplication", "SampleApplication\SampleApplication.csproj", "{B85E1883-AD3C-4EEF-B947-7B743ECCE0F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleDownloadedExecutable", "SampleDownloadedExecutable\SampleDownloadedExecutable.csproj", "{3FECC323-E8A1-45F9-8764-32B64871535A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkleGenerator", "NetSparkleGenerator\NetSparkleGenerator.csproj", "{19F0D329-2127-4788-8AFA-DDEDA4B70F88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,8 +103,23 @@ Global
 		{3FECC323-E8A1-45F9-8764-32B64871535A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3FECC323-E8A1-45F9-8764-32B64871535A}.Release|x86.ActiveCfg = Release|Any CPU
 		{3FECC323-E8A1-45F9-8764-32B64871535A}.Release|x86.Build.0 = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Debug|x86.Build.0 = Debug|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|x86.ActiveCfg = Release|Any CPU
+		{19F0D329-2127-4788-8AFA-DDEDA4B70F88}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A84A257-B554-4263-8E94-0D8097282331}
 	EndGlobalSection
 EndGlobal
