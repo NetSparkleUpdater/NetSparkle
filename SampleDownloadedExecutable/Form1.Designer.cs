@@ -1,4 +1,4 @@
-﻿namespace SampleDownloadedExecutable
+namespace SampleDownloadedExecutable
 {
     partial class Form1
     {

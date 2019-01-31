@@ -1,4 +1,4 @@
-﻿namespace NetSparkleChecker
+namespace NetSparkleChecker
 {
     partial class NetSparkleCheckerWaitUI
     {
