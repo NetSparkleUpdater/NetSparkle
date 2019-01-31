@@ -191,6 +191,7 @@
     </Compile>
     <Compile Include="UpdateDetectedEventArgs.cs" />
     <Compile Include="UpdateInfo.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CheckingForUpdatesWindow.resx">

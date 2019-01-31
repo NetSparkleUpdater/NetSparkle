@@ -41,15 +41,6 @@ namespace NetSparkle
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
 
-        private string getVersion(Version version)
-        {
-            if (version.Build != 0)
-                return version.ToString();
-            if (version.Revision != 0)
-                return version.ToString(3);
-            return version.ToString(2);
-        }
-
         /// <summary>
         /// Form constructor for showing release notes.
         /// </summary>
@@ -96,7 +87,7 @@ namespace NetSparkle
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
                     Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = getVersion(versionObj);
+                    versionString = Utilities.GetVersionString(versionObj);
                 }
                 catch
                 {
