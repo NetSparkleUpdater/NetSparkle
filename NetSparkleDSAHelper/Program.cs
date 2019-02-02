@@ -86,25 +86,7 @@ namespace NetSparkle.DSAHelper
                                 return;
                             }
 
-                            // Reading private key
-                            String key = null;
-                            using (StreamReader reader = new StreamReader(privKey))
-                            {
-                                key = reader.ReadToEnd();
-                            }
-
-                            DSACryptoServiceProvider prv = new DSACryptoServiceProvider();
-                            prv.FromXmlString(key);
-
-                            // open stream
-                            Byte[] hash = null;
-                            using (Stream inputStream = File.OpenRead(binary))
-                            {
-                                hash = prv.SignData(inputStream);
-                            }
-
-                            String base64Hash = Convert.ToBase64String(hash);
-                            Console.WriteLine(base64Hash);
+                            Console.WriteLine(NetSparkle.Utilities.GetDSASignature(binary, privKey));
                         }
                         break;
                     case "/verify_update":
