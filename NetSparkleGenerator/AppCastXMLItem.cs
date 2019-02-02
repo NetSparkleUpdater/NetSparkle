@@ -14,8 +14,9 @@ namespace NetSparkleGenerator
         public string Length;
         public string Type;
         public string DsaSignature;
+        public string OS;
 
-        public AppCastXMLItem(string title, string downloadLink, string version, DateTime? pubDate, string shortVersion = "", string releaseNotesLink = "", string length = "0", string type = "application/octet-stream", string dsaSignature = "")
+        public AppCastXMLItem(string title, string downloadLink, string version, DateTime? pubDate, string shortVersion = "", string releaseNotesLink = "", string length = "0", string type = "application/octet-stream", string dsaSignature = "", string os = "windows")
         {
             Title = title;
             DownloadLink = downloadLink;
@@ -26,6 +27,7 @@ namespace NetSparkleGenerator
             Length = length;
             Type = type;
             DsaSignature = dsaSignature;
+            OS = os;
         }
 
         public void WriteItem(XmlWriter writer)
@@ -56,6 +58,7 @@ namespace NetSparkleGenerator
                 }
 
                 writer.WriteAttributeString("length", Length);
+                writer.WriteAttributeString("sparkle", "os", AppCastXMLGenerator.xmlns, OS);
                 writer.WriteAttributeString("type", Type);
 
                 if (!String.IsNullOrEmpty(DsaSignature))
