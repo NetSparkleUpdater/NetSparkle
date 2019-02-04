@@ -10,29 +10,39 @@ namespace NetSparkleGenerator
         private static void PrintUsage()
         {
             Console.WriteLine(" Usage:");
-            Console.WriteLine("   generate_appcast [<path_to_private_key>] <directory_with_update_files> [<search_pattern>]");
+            Console.WriteLine("   generate_appcast [<path_to_private_key>] <directory_with_update_files> [Options]");
+            Console.WriteLine();
+            Console.WriteLine(" Options:");
+            Console.WriteLine("   /S <search_pattern>");
+            Console.WriteLine("     -> Only scan for .exe files that match the given search pattern.");
+            Console.WriteLine("        eg. \"/S MyApp\" will only scan for \"*MyApp*.exe\" files.");
+            Console.WriteLine("   /U <base_url>");
+            Console.WriteLine("     -> Base URL for the Download Links.");
+            Console.WriteLine("        eg. \"/U https://www.example.com/downloads\" will result in \"https://www.example.com/downloads/fileName.exe\".");
             Console.WriteLine();
             Console.WriteLine(" Examples:");
             Console.WriteLine("   generate_appcast .\\DirWithUpdateFiles");
             Console.WriteLine("   (this will generate appcast.xml for all \"*.exe\" files in the given directory)");
             Console.WriteLine();
-            Console.WriteLine("   generate_appcast .\\DirWithUpdateFiles MyApp");
+            Console.WriteLine("   generate_appcast .\\DirWithUpdateFiles /S MyApp");
             Console.WriteLine("   (this will generate appcast.xml for all \"*MyApp*.exe\" files in the given directory)");
             Console.WriteLine();
             Console.WriteLine("   generate_appcast .\\NetSparkle_DSA.priv .\\DirWithUpdateFiles");
             Console.WriteLine("   (this will generate appcast.xml for all \"*.exe\" files in the given directory");
             Console.WriteLine("   and automatically add DSA signature)");
             Console.WriteLine();
-            Console.WriteLine("   generate_appcast .\\NetSparkle_DSA.priv .\\DirWithUpdateFiles MyApp");
+            Console.WriteLine("   generate_appcast .\\NetSparkle_DSA.priv .\\DirWithUpdateFiles /S MyApp /U https://www.example.com/downloads");
             Console.WriteLine("   (this will generate appcast.xml for all \"*MyApp*.exe\" files in the given directory");
-            Console.WriteLine("   and automatically add DSA signature)");
+            Console.WriteLine("   and automatically add DSA signature.");
+            Console.WriteLine("   Download Links will be \"https://www.example.com/downloads/<FileName>.exe\")");
         }
+
+        private static string _privateKeyFilePath = "";
+        private static string _searchPattern = "*.exe";
+        private static string _baseUrl = "";
 
         static void Main(string[] args)
         {
-            var privateKeyFilePath = "";
-            var searchPattern = "*.exe";
-
             if (Environment.GetCommandLineArgs().Length == 1)
             {
                 PrintUsage();
@@ -41,49 +51,35 @@ namespace NetSparkleGenerator
 
             try
             {
-                if (Environment.GetCommandLineArgs().Length == 2 && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[1]))
+                var numArgs = Environment.GetCommandLineArgs().Length;
+                if (numArgs == 2 || numArgs == 4 || numArgs == 6)
                 {
                     Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
                 }
-                else if (Environment.GetCommandLineArgs().Length == 3
-                    && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[1])
-                    && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[2]))
+                else if (numArgs == 3 || numArgs == 5 || numArgs == 7)
                 {
-                    if (Environment.GetCommandLineArgs()[1].EndsWith(".priv", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // private key file path and directory were given
-                        privateKeyFilePath = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
-                        Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[2]);
-                    }
-                    else
-                    {
-                        // directory and search pattern were given
-                        Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
-                        searchPattern = $"*{ Environment.GetCommandLineArgs()[2] }*.exe"; ;
-                    }
-                }
-                else if (Environment.GetCommandLineArgs().Length == 4
-                    && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[1])
-                    && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[2])
-                    && !string.IsNullOrEmpty(Environment.GetCommandLineArgs()[3]))
-                {
-                    // all arguments given
-                    privateKeyFilePath = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
+                    _privateKeyFilePath = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
                     Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[2]);
-                    searchPattern = $"*{ Environment.GetCommandLineArgs()[3] }*.exe"; ;
+                }
+                else
+                {
+                    PrintUsage();
+                    Environment.Exit(1);
                 }
 
-                var exePaths = Directory.GetFiles(Environment.CurrentDirectory, searchPattern);
+                ParseOptions();
+
+                var exePaths = Directory.GetFiles(Environment.CurrentDirectory, _searchPattern);
 
                 if (exePaths.Length == 0)
                 {
-                    if (!string.IsNullOrEmpty(searchPattern))
+                    if (!string.IsNullOrEmpty(_searchPattern))
                     {
-                        Console.WriteLine($"Didn't find any matching files (with pattern: \"{ searchPattern }\"");
+                        Console.WriteLine($"Didn't find any matching files (with pattern: \"{ _searchPattern }\"");
                     }
                     else
                     {
-                        Console.WriteLine($"Didn't find any matching files (with pattern: \"{ searchPattern }\"");
+                        Console.WriteLine($"Didn't find any matching files");
                     }
 
                     Environment.Exit(1);
@@ -96,11 +92,11 @@ namespace NetSparkleGenerator
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
                     var fileInfo = new FileInfo(exePath);
-                    var dsaSignature = NetSparkleUtilities.Utilities.GetDSASignature(exePath, privateKeyFilePath);
+                    var dsaSignature = NetSparkleUtilities.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
 
                     appCastGenerator.AddItem(
                         new AppCastXMLItem(versionInfo.ProductVersion,
-                        Path.GetFileName(versionInfo.FileName),
+                        _baseUrl + Path.GetFileName(versionInfo.FileName),
                         versionInfo.ProductVersion,
                         fileInfo.CreationTime,
                         length: fileInfo.Length.ToString(),
@@ -112,7 +108,7 @@ namespace NetSparkleGenerator
                 appcastXmlDocument.Save("appcast.xml");
 
                 var appcastXmlPath = Path.Combine(Environment.CurrentDirectory, "appcast.xml");
-                var signature = NetSparkleUtilities.Utilities.GetDSASignature(appcastXmlPath, privateKeyFilePath);
+                var signature = NetSparkleUtilities.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
                     File.WriteAllText("appcast.xml.dsa", signature);
@@ -124,6 +120,23 @@ namespace NetSparkleGenerator
                 Console.WriteLine();
                 PrintUsage();
                 Environment.Exit(1);
+            }
+        }
+
+        private static void ParseOptions()
+        {
+            for (int i = 2; i < Environment.GetCommandLineArgs().Length; i++)
+            {
+                if (Environment.GetCommandLineArgs()[i] == "/S")
+                {
+                    _searchPattern = $"*{ Environment.GetCommandLineArgs()[i+1] }*.exe";
+                }
+                else if (Environment.GetCommandLineArgs()[i] == "/U")
+                {
+                    var url = Environment.GetCommandLineArgs()[i + 1];
+                    var trailingSlash = url.EndsWith("/") ? "" : "/";
+                    _baseUrl = $"{url}{trailingSlash}";
+                }
             }
         }
     }
