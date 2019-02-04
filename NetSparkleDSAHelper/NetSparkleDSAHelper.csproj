@@ -60,13 +60,17 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
-      <Project>{74635A21-2BAD-4522-AB95-E3E5703CD301}</Project>
-      <Name>NetSparkle</Name>
-    </ProjectReference>
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <ProjectReference Include="..\NetSparkleUtilities\NetSparkleUtilities.csproj">
+      <Project>{15feee53-282b-41bc-9674-965ddbf4f59c}</Project>
+      <Name>NetSparkleUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
+      <Project>{74635a21-2bad-4522-ab95-e3e5703cd301}</Project>
+      <Name>NetSparkle</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

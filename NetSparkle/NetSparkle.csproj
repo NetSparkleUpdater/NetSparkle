@@ -191,7 +191,6 @@
     </Compile>
     <Compile Include="UpdateDetectedEventArgs.cs" />
     <Compile Include="UpdateInfo.cs" />
-    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CheckingForUpdatesWindow.resx">
@@ -303,6 +302,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkleUtilities\NetSparkleUtilities.csproj">
+      <Project>{15feee53-282b-41bc-9674-965ddbf4f59c}</Project>
+      <Name>NetSparkleUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

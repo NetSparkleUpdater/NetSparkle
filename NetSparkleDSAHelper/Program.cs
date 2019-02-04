@@ -86,7 +86,7 @@ namespace NetSparkle.DSAHelper
                                 return;
                             }
 
-                            Console.WriteLine(NetSparkle.Utilities.GetDSASignature(binary, privKey));
+                            Console.WriteLine(NetSparkleUtilities.Utilities.GetDSASignature(binary, privKey));
                         }
                         break;
                     case "/verify_update":

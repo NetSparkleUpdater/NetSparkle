@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
-      <Project>{74635a21-2bad-4522-ab95-e3e5703cd301}</Project>
-      <Name>NetSparkle</Name>
+    <ProjectReference Include="..\NetSparkleUtilities\NetSparkleUtilities.csproj">
+      <Project>{15feee53-282b-41bc-9674-965ddbf4f59c}</Project>
+      <Name>NetSparkleUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
