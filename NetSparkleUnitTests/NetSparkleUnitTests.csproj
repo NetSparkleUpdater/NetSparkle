@@ -53,12 +53,7 @@
     <Compile Include="UtilitiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NetSparkleUtilities\NetSparkleUtilities.csproj">
-      <Project>{15feee53-282b-41bc-9674-965ddbf4f59c}</Project>
-      <Name>NetSparkleUtilities</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\NetSparkleUtilities\NetSparkleUtilities.projitems" Label="Shared" />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
