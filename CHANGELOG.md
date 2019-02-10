@@ -9,6 +9,17 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.16.0]
+
+### Added
+
+- We now offer a `generate_appcast.exe` tool in the `NetSparkle.New.Tools` NuGet! This works very similarly to macOS Sparkle's `generate_appcast` tool and is due to the work by @ndreisg.
+- Started to work on adding formal unit tests for the project. Lots to do here, still.
+
+### Changed
+
+### Removed
+
 ## [0.15.0]
 
 ### Changed
@@ -140,7 +151,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/9298e3c...develop
+[0.16.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...9298e3c
 [0.15.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...ee65d3e
 [0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...6b30321
 [0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795
