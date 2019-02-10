@@ -4,11 +4,11 @@ using System.Security.Cryptography;
 
 namespace NetSparkleUtilities
 {
-  /// <summary>
-  /// Provides commonly used utility functions.
-  /// </summary>
-  public class Utilities
-  {
+    /// <summary>
+    /// Provides commonly used utility functions.
+    /// </summary>
+    public class Utilities
+    {
         /// <summary>
         /// Removes trailing 0 components from the given version.
         /// </summary>
