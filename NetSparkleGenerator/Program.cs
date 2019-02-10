@@ -85,7 +85,7 @@ namespace NetSparkleGenerator
                     Environment.Exit(1);
                 }
 
-                var productName = FileVersionInfo.GetVersionInfo(exePaths[0]).ProductName;
+                var productName = FileVersionInfo.GetVersionInfo(exePaths[0]).ProductName.Trim();
                 var appCastGenerator = new AppCastXMLGenerator(productName);
 
                 foreach (var exePath in exePaths)
@@ -93,11 +93,12 @@ namespace NetSparkleGenerator
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
                     var fileInfo = new FileInfo(exePath);
                     var dsaSignature = NetSparkleUtilities.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
-
+                    var productVersion = versionInfo.ProductVersion.Trim();
+                    var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
                     appCastGenerator.AddItem(
-                        new AppCastXMLItem(versionInfo.ProductVersion,
+                        new AppCastXMLItem(itemTitle,
                         _baseUrl + Path.GetFileName(versionInfo.FileName),
-                        versionInfo.ProductVersion,
+                        productVersion,
                         fileInfo.CreationTime,
                         length: fileInfo.Length.ToString(),
                         dsaSignature: dsaSignature)
