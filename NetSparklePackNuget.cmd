@@ -1,5 +1,11 @@
 @echo off
 
+if "%~1"=="" (
+	echo Error: A version number is required
+	echo Usage: "NetSparklePackNuget.cmd [VersionNumber]"
+	exit
+)
+
 echo Cleanup NuGet environment
 rmdir /S /Q Nuget\core\lib
 rmdir /S /Q Nuget\core\content
@@ -28,6 +34,7 @@ del /q Nuget\core\lib\*.pdb
 echo Copy Tools Buildoutput to Nuget dir
 xcopy /s /q /y bin\Release\NetSparkleChecker\* Nuget\tools\tools\
 xcopy /s /q /y bin\Release\DSAHelper\* Nuget\tools\tools\
+xcopy /s /q /y bin\Release\NetSparkleGenerator\* Nuget\tools\tools\
 xcopy /s /q /y Extras\* Nuget\tools\content\Extras\
 del /q Nuget\tools\tools\*.config
 del /q Nuget\tools\tools\*.pdb
