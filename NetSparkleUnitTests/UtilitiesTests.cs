@@ -9,21 +9,21 @@ namespace NetSparkleUnitTests
         [TestMethod]
         public void TestGetVersionString()
         {
-            var versionString = NetSparkle.Utilities.GetVersionString(new Version(1, 0, 0, 0));
+            var versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(1, 0, 0, 0));
             Assert.AreEqual("1.0", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(0, 1, 0, 0));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(0, 1, 0, 0));
             Assert.AreEqual("0.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(1, 1, 0, 0));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(1, 1, 0, 0));
             Assert.AreEqual("1.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(0, 0, 1, 0));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(0, 0, 1, 0));
             Assert.AreEqual("0.0.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(1, 1, 1, 1));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(1, 1, 1, 1));
             Assert.AreEqual("1.1.1.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(1, 0, 0, 1));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(1, 0, 0, 1));
             Assert.AreEqual("1.0.0.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(1, 0, 1, 0));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(1, 0, 1, 0));
             Assert.AreEqual("1.0.1", versionString);
-            versionString = NetSparkle.Utilities.GetVersionString(new Version(0, 0, 0, 1));
+            versionString = NetSparkleUtilities.Utilities.GetVersionString(new Version(0, 0, 0, 1));
             Assert.AreEqual("0.0.0.1", versionString);
         }
     }

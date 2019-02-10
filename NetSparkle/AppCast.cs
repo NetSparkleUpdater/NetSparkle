@@ -230,6 +230,12 @@ namespace NetSparkle
                             {
                                 currentItem.Version = reader.GetAttribute(versionAttribute);
                                 currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
+                                if (!string.IsNullOrEmpty(currentItem.DownloadLink) && !currentItem.DownloadLink.Contains("/"))
+                                {
+                                    // Download link contains only the filename -> complete with _castUrl
+                                    currentItem.DownloadLink = _castUrl.Substring(0, _castUrl.LastIndexOf('/') + 1) + currentItem.DownloadLink;
+                                }
+
                                 currentItem.DownloadDSASignature = reader.GetAttribute(dsaSignature);
                                 string length = reader.GetAttribute(lengthAttribute);
                                 if (length != null)

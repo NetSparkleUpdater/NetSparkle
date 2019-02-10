@@ -87,7 +87,7 @@ namespace NetSparkle
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
                     Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = Utilities.GetVersionString(versionObj);
+                    versionString = NetSparkleUtilities.Utilities.GetVersionString(versionObj);
                 }
                 catch
                 {
