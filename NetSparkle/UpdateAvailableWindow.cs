@@ -305,7 +305,19 @@ namespace NetSparkle
         void IUpdateAvailable.Close()
         {
             _cancellationTokenSource?.Cancel();
-            this.BeginInvoke((MethodInvoker) delegate { Close(); });
+            CloseForm();
+        }
+
+        private void CloseForm()
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { Close(); });
+            }
+            else
+            {
+                Close();
+            }
         }
 
         /// <summary>
@@ -343,7 +355,7 @@ namespace NetSparkle
 
             // close the windows
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>
@@ -358,7 +370,7 @@ namespace NetSparkle
 
             // close the window
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>
@@ -373,7 +385,7 @@ namespace NetSparkle
 
             // close the dialog
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>
