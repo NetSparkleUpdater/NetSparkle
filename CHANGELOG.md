@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.16.2]
+
+### Fixed
+
+- Fixed a bug where release notes were downloaded incorrectly
+- Fixed a bug where the update form window wasn't closed properly
+
 ## [0.16.1]
 
 ### Added
