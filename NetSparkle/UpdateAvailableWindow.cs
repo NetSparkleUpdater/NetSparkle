@@ -246,10 +246,10 @@ namespace NetSparkle
                     {
                         using (cancellationToken.Register(() => webClient.CancelAsync()))
                         {
-                            return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(_sparkle.AppcastUrl, link));
+                            return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, _sparkle.AppcastUrl));
                         }
                     }
-                    return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(_sparkle.AppcastUrl, link));
+                    return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, _sparkle.AppcastUrl));
                 }
             }
             catch (WebException ex)
