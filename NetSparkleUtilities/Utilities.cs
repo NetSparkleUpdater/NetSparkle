@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace NetSparkleUtilities
+namespace NetSparkle
 {
     /// <summary>
     /// Provides commonly used utility functions.
@@ -56,6 +56,16 @@ namespace NetSparkleUtilities
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
+        /// </summary>
+        /// <param name="url">relative or absolute URL</param>
+        /// <param name="appcastURL">URL to appcast</param>
+        public static Uri GetAbsoluteURL(string url, string appcastURL)
+        {
+            return new Uri(new Uri(appcastURL), url);
         }
     }
 }

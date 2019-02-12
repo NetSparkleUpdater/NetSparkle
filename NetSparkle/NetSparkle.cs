@@ -1091,7 +1091,7 @@ namespace NetSparkle
                 }
                 _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
-                Uri url = new Uri(item.DownloadLink);
+                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
                 LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
                 StartedDownloading?.Invoke(_downloadTempFileName);

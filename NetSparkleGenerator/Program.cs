@@ -92,7 +92,7 @@ namespace NetSparkleGenerator
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
                     var fileInfo = new FileInfo(exePath);
-                    var dsaSignature = NetSparkleUtilities.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
+                    var dsaSignature = NetSparkle.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
                     var productVersion = versionInfo.ProductVersion.Trim();
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
                     appCastGenerator.AddItem(
@@ -109,7 +109,7 @@ namespace NetSparkleGenerator
                 appcastXmlDocument.Save("appcast.xml");
 
                 var appcastXmlPath = Path.Combine(Environment.CurrentDirectory, "appcast.xml");
-                var signature = NetSparkleUtilities.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
+                var signature = NetSparkle.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
                     File.WriteAllText("appcast.xml.dsa", signature);
