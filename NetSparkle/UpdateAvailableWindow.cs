@@ -305,7 +305,7 @@ namespace NetSparkle
         void IUpdateAvailable.Close()
         {
             _cancellationTokenSource?.Cancel();
-            Close();
+            this.BeginInvoke((MethodInvoker) delegate { Close(); });
         }
 
         /// <summary>
