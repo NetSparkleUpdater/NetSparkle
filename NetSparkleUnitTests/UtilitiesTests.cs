@@ -34,6 +34,8 @@ namespace NetSparkleUnitTests
             Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkle.Utilities.GetAbsoluteURL("program.exe", "https://example.com/appcast.xml");
             Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
+            abosluteURL = NetSparkle.Utilities.GetAbsoluteURL("program.exe", "https://example.com/subfolder/appcast.xml");
+            Assert.AreEqual("https://example.com/subfolder/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkle.Utilities.GetAbsoluteURL("../program.exe", "https://example.com/subfolder/appcast.xml");
             Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkle.Utilities.GetAbsoluteURL("./program.exe", "https://example.com/subfolder/appcast.xml");
