@@ -29,7 +29,7 @@ mkdir Nuget\tools\tools
 
 echo Copy Core Buildoutput to Nuget dir
 xcopy /s /q bin\Release\NetSparkle\* Nuget\core\lib\net45\
-del /q Nuget\core\lib\*.pdb
+del /q Nuget\core\lib\net45\*.pdb
 
 echo Copy Tools Buildoutput to Nuget dir
 xcopy /s /q /y bin\Release\NetSparkleChecker\* Nuget\tools\tools\
