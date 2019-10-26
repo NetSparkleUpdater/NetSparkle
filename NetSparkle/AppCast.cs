@@ -279,9 +279,20 @@ namespace NetSparkle
                                 {
                                     currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture);
                                 }
-                                catch (FormatException ex)
+                                catch (FormatException)
                                 {
-                                    _logWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
+                                    // Check for MS AppCenter Sparkle date format which ends with GMT
+                                    // e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
+
+                                    try
+                                    {
+                                        currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss Z", System.Globalization.CultureInfo.InvariantCulture);
+                                    }
+                                    catch (FormatException ex)
+                                    {
+                                        _logWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
+                                    }
+
                                 }
                             }
                             break;
@@ -310,7 +321,8 @@ namespace NetSparkle
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = _dsaChecker.SignatureNeeded();
 
-            return _items.Where((item) => {
+            return _items.Where((item) =>
+            {
                 // don't allow non-windows updates
                 if (!item.IsWindowsUpdate)
                     return false;
