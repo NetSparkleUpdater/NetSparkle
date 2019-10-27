@@ -2,6 +2,7 @@ using NetSparkle.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -274,25 +275,22 @@ namespace NetSparkle
                         case pubDateNode:
                             if (currentItem != null)
                             {
+                                // "ddd, dd MMM yyyy HH:mm:ss zzz" => Standard date format
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11 -05:00"
+                                // "ddd, dd MMM yyyy HH:mm:ss Z" => Check for MS AppCenter Sparkle date format which ends with GMT
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
+                                // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11"
+                                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", "ddd, dd MMM yyyy HH:mm:ss" };
                                 string dt = reader.ReadString().Trim();
-                                try
+                                if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                                 {
-                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture);
+                                    _logWriter.PrintMessage("Converted '{0}' to {1}.", dt, dateValue);
+                                    currentItem.PublicationDate = dateValue;
                                 }
-                                catch (FormatException)
+                                else
                                 {
-                                    // Check for MS AppCenter Sparkle date format which ends with GMT
-                                    // e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
-
-                                    try
-                                    {
-                                        currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss Z", System.Globalization.CultureInfo.InvariantCulture);
-                                    }
-                                    catch (FormatException ex)
-                                    {
-                                        _logWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
-                                    }
-
+                                    _logWriter.PrintMessage("Cannot parse item datetime {0}", dt);
                                 }
                             }
                             break;
