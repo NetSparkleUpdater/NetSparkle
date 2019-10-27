@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Net;
 using NetSparkle.Interfaces;
 
-namespace NetSparkle
+namespace NetSparkle.NetFramework.WinForms
 {
     /// <summary>
     /// A progress bar
@@ -59,7 +59,7 @@ namespace NetSparkle
         /// </summary>
         bool IDownloadProgress.ShowDialog()
         {
-            return DefaultUIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
+            return WinFormsUIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
         }
 
         /// <summary>

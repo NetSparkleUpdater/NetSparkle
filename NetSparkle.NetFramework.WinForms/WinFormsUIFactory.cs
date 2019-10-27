@@ -5,12 +5,12 @@ using NetSparkle.Interfaces;
 using NetSparkle.Properties;
 using NetSparkle.Enums;
 
-namespace NetSparkle
+namespace NetSparkle.NetFramework.WinForms
 {
     /// <summary>
     /// UI factory for default interface
     /// </summary>
-    public class DefaultUIFactory : IUIFactory
+    public class WinFormsUIFactory : IUIFactory
     {
         /// <summary>
         /// Create sparkle form implementation
@@ -32,6 +32,15 @@ namespace NetSparkle
         public virtual IDownloadProgress CreateProgressWindow(AppCastItem item, Icon applicationIcon)
         {
             return new DownloadProgressWindow(item, applicationIcon);
+        }
+
+        /// <summary>
+        /// Inform user in some way that NetSparkle is checking for updates
+        /// </summary>
+        /// <param name="applicationIcon">The icon to display</param>
+        public virtual ICheckingForUpdates ShowCheckingForUpdates(Icon applicationIcon = null)
+        {
+            return new CheckingForUpdatesWindow(applicationIcon);
         }
 
         /// <summary>

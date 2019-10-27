@@ -1,4 +1,4 @@
-namespace NetSparkle
+namespace NetSparkle.NetFramework.WinForms
 {
     partial class MessageNotificationWindow
     {
@@ -37,7 +37,6 @@ namespace NetSparkle
             // 
             // iconImage
             // 
-            this.iconImage.Image = global::NetSparkle.Properties.Resources.software_update_available1;
             this.iconImage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.iconImage.Location = new System.Drawing.Point(15, 29);
             this.iconImage.Margin = new System.Windows.Forms.Padding(6);

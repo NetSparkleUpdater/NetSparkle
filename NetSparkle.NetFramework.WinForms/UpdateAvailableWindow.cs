@@ -15,7 +15,7 @@ using System.Threading;
 
 // TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
-namespace NetSparkle
+namespace NetSparkle.NetFramework.WinForms
 {
     /// <summary>
     /// The main form
@@ -278,7 +278,7 @@ namespace NetSparkle
         /// The result of ShowDialog()
         /// </summary>
         UpdateAvailableResult IUpdateAvailable.Result 
-            => DefaultUIFactory.ConvertDialogResultToUpdateAvailableResult(DialogResult);
+            => WinFormsUIFactory.ConvertDialogResultToUpdateAvailableResult(DialogResult);
 
         /// <summary>
         /// Hides the release notes

@@ -1,4 +1,4 @@
-namespace NetSparkle
+namespace NetSparkle.NetFramework.WinForms
 {
     partial class CheckingForUpdatesWindow
     {

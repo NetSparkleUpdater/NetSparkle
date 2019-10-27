@@ -131,28 +131,16 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CheckingForUpdatesWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CheckingForUpdatesWindow.Designer.cs">
-      <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DefaultUIFactory.cs" />
     <Compile Include="Enums\NextUpdateAction.cs" />
     <Compile Include="Enums\SecurityMode.cs" />
     <Compile Include="Enums\UpdateAvailableResult.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\ValidationResult.cs" />
+    <Compile Include="Interfaces\ICheckingForUpdates.cs" />
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />
     <Compile Include="Interfaces\IUIFactory.cs" />
     <Compile Include="MarkdownSharp.cs" />
-    <Compile Include="MessageNotificationWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MessageNotificationWindow.Designer.cs">
-      <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="AssemblyReflectionAccessor.cs" />
     <Compile Include="Interfaces\IAssemblyAccessor.cs" />
     <Compile Include="NetSparkle.cs" />
@@ -162,21 +150,9 @@
     <Compile Include="AssemblyDiagnosticsAccessor.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DeviceInventory.cs" />
-    <Compile Include="DownloadProgressWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DownloadProgressWindow.Designer.cs">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="DSAChecker.cs" />
     <Compile Include="NetSparkleException.cs" />
     <Compile Include="LogWriter.cs" />
-    <Compile Include="UpdateAvailableWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UpdateAvailableWindow.Designer.cs">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="RegistryConfiguration.cs" />
     <Compile Include="TempFile.cs" />
     <Compile Include="ToastNotifier.cs">
@@ -194,89 +170,11 @@
     <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CheckingForUpdatesWindow.resx">
-      <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MessageNotificationWindow.resx">
-      <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.bg.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.de.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.es-MX.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.fr.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.it.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.lt.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.nl.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.pt-BR.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.ru.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.zh-CN.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.zh-TW.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.bg.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.de.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.es-MX.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.fr.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.it.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.lt.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.nl.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.pt-BR.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.ru.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.zh-CN.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.zh-TW.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ToastNotifier.resx">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>

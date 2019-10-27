@@ -293,7 +293,7 @@ namespace NetSparkle
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
-            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, new DefaultUIFactory())
+            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, null)
         { }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace NetSparkle
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
             // init UI
-            UIFactory.Init();
+            UIFactory?.Init();
             _appReferenceAssembly = null;
             // set the reference assembly
             if (referenceAssembly != null)
@@ -486,7 +486,7 @@ namespace NetSparkle
         public bool TrustEverySSLConnection { get; set; }
 
         /// <summary>
-        /// Factory for creating UI forms like progress window, etc.
+        /// Factory for creating UI elements like progress window, etc.
         /// </summary>
         public IUIFactory UIFactory { get; set; }
 
@@ -504,9 +504,9 @@ namespace NetSparkle
 
         /// <summary>
         /// The user interface window that shows the 'Checking for Updates...'
-        /// form. TODO: Make this an interface so user can config their own UI
+        /// form.
         /// </summary>
-        public CheckingForUpdatesWindow CheckingForUpdatesWindow { get; set; }
+        public ICheckingForUpdates CheckingForUpdatesWindow { get; set; }
 
         /// <summary>
         /// The NetSparkle configuration object for the current assembly.
@@ -880,7 +880,7 @@ namespace NetSparkle
             {
                 if (_useNotificationToast)
                 {
-                    UIFactory.ShowToast(updates, _applicationIcon, OnToastClick);
+                    UIFactory?.ShowToast(updates, _applicationIcon, OnToastClick);
                 }
                 else
                 {
@@ -930,24 +930,27 @@ namespace NetSparkle
                     // define action
                     Action<object> showSparkleUI = (state) =>
                     {
-                        UserWindow = UIFactory.CreateSparkleForm(this, updates, _applicationIcon, isUpdateAlreadyDownloaded);
+                        UserWindow = UIFactory?.CreateSparkleForm(this, updates, _applicationIcon, isUpdateAlreadyDownloaded);
 
-                        if (HideReleaseNotes)
+                        if (UserWindow != null)
                         {
-                            UserWindow.HideReleaseNotes();
-                        }
-                        if (HideSkipButton)
-                        {
-                            UserWindow.HideSkipButton();
-                        }
-                        if (HideRemindMeLaterButton)
-                        {
-                            UserWindow.HideRemindMeLaterButton();
-                        }
+                            if (HideReleaseNotes)
+                            {
+                                UserWindow.HideReleaseNotes();
+                            }
+                            if (HideSkipButton)
+                            {
+                                UserWindow.HideSkipButton();
+                            }
+                            if (HideRemindMeLaterButton)
+                            {
+                                UserWindow.HideRemindMeLaterButton();
+                            }
 
-                        // clear if already set.
-                        UserWindow.UserResponded += OnUserWindowUserResponded;
-                        UserWindow.Show();
+                            // clear if already set.
+                            UserWindow.UserResponded += OnUserWindowUserResponded;
+                            UserWindow.Show();
+                        }
                     };
 
                     // call action
@@ -1137,8 +1140,11 @@ namespace NetSparkle
             }
             if (ProgressWindow == null && !isDownloadingSilently())
             {
-                ProgressWindow = UIFactory.CreateProgressWindow(castItem, _applicationIcon);
-                ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
+                ProgressWindow = UIFactory?.CreateProgressWindow(castItem, _applicationIcon);
+                if (ProgressWindow != null)
+                {
+                    ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
+                }
             }
         }
 
@@ -1245,7 +1251,7 @@ namespace NetSparkle
             }
             catch (InvalidDataException)
             {
-                UIFactory.ShowUnknownInstallerFormatMessage(downloadFilePath, _applicationIcon);
+                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath, _applicationIcon);
                 return;
             }
 
@@ -1402,13 +1408,16 @@ namespace NetSparkle
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
             Cursor.Current = Cursors.WaitCursor;
-            CheckingForUpdatesWindow = new CheckingForUpdatesWindow(_applicationIcon);
-            CheckingForUpdatesWindow.FormClosed += CheckingForUpdatesWindow_FormClosed; // to detect canceling -- TODO: there's probably a better way...
-            CheckingForUpdatesWindow.Show();
+            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(_applicationIcon);
+            if (CheckingForUpdatesWindow != null)
+            {
+                CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
+                CheckingForUpdatesWindow.Show();
+            }
             // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
             // actually cancel the request using a BackgroundWorker or something
             UpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
-            if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window
+            if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
                 UpdateStatus updateAvailable = updateData.Status;
@@ -1420,16 +1429,16 @@ namespace NetSparkle
                     {
                         case UpdateStatus.UpdateAvailable:
                             if (_useNotificationToast)
-                                UIFactory.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
+                                UIFactory?.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
                             break;
                         case UpdateStatus.UpdateNotAvailable:
-                            UIFactory.ShowVersionIsUpToDate(_applicationIcon);
+                            UIFactory?.ShowVersionIsUpToDate(_applicationIcon);
                             break;
                         case UpdateStatus.UserSkipped:
-                            UIFactory.ShowVersionIsSkippedByUserRequest(_applicationIcon); // TODO: pass skipped version number
+                            UIFactory?.ShowVersionIsSkippedByUserRequest(_applicationIcon); // TODO: pass skipped version number
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory.ShowCannotDownloadAppcast(_appCastUrl, _applicationIcon);
+                            UIFactory?.ShowCannotDownloadAppcast(_appCastUrl, _applicationIcon);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -1453,7 +1462,7 @@ namespace NetSparkle
             return updateData;// in this case, we've already shown UI talking about the new version
         }
 
-        private void CheckingForUpdatesWindow_FormClosed(object sender, FormClosedEventArgs e)
+        private void CheckingForUpdatesWindow_Closing(object sender, EventArgs e)
         {
             CheckingForUpdatesWindow = null;
         }
@@ -1820,7 +1829,7 @@ namespace NetSparkle
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
                 return;
             }
@@ -1835,7 +1844,7 @@ namespace NetSparkle
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
                 }
                 return;
             }
@@ -1876,7 +1885,7 @@ namespace NetSparkle
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
                 }
                 // Let the progress window handle closing itself.
             }

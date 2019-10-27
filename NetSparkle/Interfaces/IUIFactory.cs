@@ -25,6 +25,12 @@ namespace NetSparkle.Interfaces
         IDownloadProgress CreateProgressWindow(AppCastItem item, Icon applicationIcon);
 
         /// <summary>
+        /// Inform user in some way that NetSparkle is checking for updates
+        /// </summary>
+        /// <param name="applicationIcon">The icon to display</param>
+        ICheckingForUpdates ShowCheckingForUpdates(Icon applicationIcon = null);
+
+        /// <summary>
         /// Initialize UI. Called when Sparkle is constructed.
         /// </summary>
         void Init();
