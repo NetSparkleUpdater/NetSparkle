@@ -105,38 +105,14 @@ namespace NetSparkle.NetFramework.WinForms
             Close();
         }
 
-        private string numBytesToUserReadableString(long numBytes)
-        {
-            if (numBytes > 1024)
-            {
-                double numBytesDecimal = numBytes;
-                // Put in KB
-                numBytesDecimal /= 1024;
-                if (numBytesDecimal > 1024)
-                {
-                    // Put in MB
-                    numBytesDecimal /= 1024;
-                    if (numBytesDecimal > 1024)
-                    {
-                        // Put in GB
-                        numBytesDecimal /= 1024;
-                        return numBytesDecimal.ToString("F2") + " GB";
-                    }
-                    return numBytesDecimal.ToString("F2") + " MB";
-                }
-                return numBytesDecimal.ToString("F2") + " KB";
-            }
-            return numBytes.ToString();
-        }
-
         /// <summary>
         /// Event called when the client download progress changes
         /// </summary>
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
             progressDownload.Value = percentage;
-            downloadProgressLbl.Text = " (" + numBytesToUserReadableString(bytesReceived) + " / " + 
-                numBytesToUserReadableString(totalBytesToReceive) + ")";
+            downloadProgressLbl.Text = "(" + Utilities.NumBytesToUserReadableString(bytesReceived) + " / " +
+                Utilities.NumBytesToUserReadableString(totalBytesToReceive) + ")";
         }
 
         /// <summary>

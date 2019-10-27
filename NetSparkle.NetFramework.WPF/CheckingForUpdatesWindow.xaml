@@ -8,6 +8,9 @@
         Width="400"
         Height="145"
         Title="Software Update"
+        ResizeMode="NoResize"
+        MaxWidth="400"
+        MaxHeight="145"
         d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>

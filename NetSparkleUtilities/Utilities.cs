@@ -67,5 +67,35 @@ namespace NetSparkle
         {
             return new Uri(new Uri(appcastURL), url);
         }
+
+        /// <summary>
+        /// Convert a number of bytes to a user-readable string
+        /// </summary>
+        /// <param name="numBytes">Number of bytes to convert</param>
+        /// <returns>A string that represents the number of bytes in KB, MB, or GB if numBytes > 1024.
+        /// If numBytes < 1024, returns numBytes.</returns>
+        public static string NumBytesToUserReadableString(long numBytes)
+        {
+            if (numBytes > 1024)
+            {
+                double numBytesDecimal = numBytes;
+                // Put in KB
+                numBytesDecimal /= 1024;
+                if (numBytesDecimal > 1024)
+                {
+                    // Put in MB
+                    numBytesDecimal /= 1024;
+                    if (numBytesDecimal > 1024)
+                    {
+                        // Put in GB
+                        numBytesDecimal /= 1024;
+                        return numBytesDecimal.ToString("F2") + " GB";
+                    }
+                    return numBytesDecimal.ToString("F2") + " MB";
+                }
+                return numBytesDecimal.ToString("F2") + " KB";
+            }
+            return numBytes.ToString();
+        }
     }
 }

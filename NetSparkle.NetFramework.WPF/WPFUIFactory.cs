@@ -34,7 +34,11 @@ namespace NetSparkle.NetFramework.WPF
         /// <param name="applicationIcon">Application icon to use</param>
         public virtual IDownloadProgress CreateProgressWindow(AppCastItem item, Icon applicationIcon)
         {
-            return new DownloadProgressWindow(item, applicationIcon);
+            return new DownloadProgressWindow
+            {
+                ItemToDownload = item,
+                Icon = ToImageSource(applicationIcon)
+            };
         }
 
         /// <summary>
