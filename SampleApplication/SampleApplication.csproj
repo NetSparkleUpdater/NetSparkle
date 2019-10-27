@@ -102,6 +102,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NetSparkle.NetFramework.WinForms\NetSparkle.NetFramework.WinForms.csproj">
+      <Project>{45f5aadb-a39b-446f-8025-71647238bb89}</Project>
+      <Name>NetSparkle.NetFramework.WinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
       <Project>{74635A21-2BAD-4522-AB95-E3E5703CD301}</Project>
       <Name>NetSparkle</Name>

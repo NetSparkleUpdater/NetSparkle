@@ -19,7 +19,10 @@ namespace SampleApplication
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkleUpdateDetector = new Sparkle(appcastUrl, icon);
+            _sparkleUpdateDetector = new Sparkle(appcastUrl, icon)
+            {
+                UIFactory = new NetSparkle.NetFramework.WinForms.WinFormsUIFactory()
+            };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkleUpdateDetector.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
             _sparkleUpdateDetector.CheckOnFirstApplicationIdle();
