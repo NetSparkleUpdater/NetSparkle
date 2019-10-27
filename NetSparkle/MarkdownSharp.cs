@@ -1,4 +1,4 @@
-﻿﻿/*
+/*
  * MarkdownSharp
  * -------------
  * a C# Markdown processor

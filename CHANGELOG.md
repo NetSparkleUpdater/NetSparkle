@@ -9,6 +9,43 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.17.0]
+
+### Added
+
+- NetSparkle now handles the `ddd, dd MMM yyyy HH:mm:ss Z` and `ddd, dd MMM yyyy HH:mm:ss` date formats when parsing an app cast file (@Mostlypyjamas)
+
+### Changed
+
+- [Breaking Change] NetSparkle defaults to using the server's file name as the download file name rather than the app cast file name (@Mostlypyjamas)
+- Many buttons use `AutoSize = true` to alleviate some concerns outlined in #44
+
+### Removed
+
+## [0.16.2]
+
+### Fixed
+
+- Fixed a bug where release notes were downloaded incorrectly
+- Fixed a bug where the update form window wasn't closed properly
+
+## [0.16.1]
+
+### Added
+
+- Appcast download links can now be relative (this change may be removed in a future X.0 verison of `NetSparkle` as it does not follow the RSS spec). This change was made to be consistent with how release notes are downloaded.
+
+### Changed
+
+- `NetSparkleUtilities` namespace renamed to just `NetSparkle`.
+
+## [0.16.0]
+
+### Added
+
+- We now offer a `generate_appcast.exe` tool in the `NetSparkle.New.Tools` NuGet! This works very similarly to macOS Sparkle's `generate_appcast` tool and is due to the work by @ndreisg.
+- Started to work on adding formal unit tests for the project. Lots to do here, still.
+
 ## [0.15.0]
 
 ### Changed
@@ -140,7 +177,11 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...develop
+[0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...bc91f54
+[0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/b1bb3d1...a3df35b
+[0.16.1]: https://github.com/Deadpikle/NetSparkle/compare/9298e3c...b1bb3d1
+[0.16.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...9298e3c
 [0.15.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...ee65d3e
 [0.14.0]: https://github.com/Deadpikle/NetSparkle/compare/b442795...6b30321
 [0.13.0]: https://github.com/Deadpikle/NetSparkle/compare/85a50da...b442795

@@ -6,7 +6,9 @@ NetSparkle is a C# .NET update checker that allows you to easily download instal
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
 [![Issues](https://img.shields.io/github/issues/Deadpikle/NetSparkle.svg?style=flat-square)](https://github.com/Deadpikle/NetSparkle/issues)
 
-**Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!** Note that we will switch to the ["official" NuGet](https://www.nuget.org/packages/NetSparkle/) sometime soon!
+**Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!** Note that we will switch to the ["official" NuGet](https://www.nuget.org/packages/NetSparkle/) eventually!
+
+NetSparkle also offers a command line tool to automatically generate your appcast for you! It still needs a few more features to have feature parity with the macOS `generate_appcast` tool, but it can still save you a lot of time. Check it out on [NuGet](https://www.nuget.org/packages/NetSparkle.New.Tools/)!
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 

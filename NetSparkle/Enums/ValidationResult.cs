@@ -1,4 +1,4 @@
-﻿namespace NetSparkle.Enums
+namespace NetSparkle.Enums
 {
     /// <summary>
     /// Return value of the DSA verification check functions.
