@@ -49,7 +49,6 @@ namespace NetSparkle.NetFramework.WinForms
 
 
         public event EventHandler UpdatesUIClosing;
-        //public event EventHandler ICheckingForUpdates.Closing;
 
         void ICheckingForUpdates.Close()
         {
@@ -76,6 +75,5 @@ namespace NetSparkle.NetFramework.WinForms
                 Close();
             }
         }
-
     }
 }

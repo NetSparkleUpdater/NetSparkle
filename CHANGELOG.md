@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- [Breaking Change] Split UI to separate DLLs. The core NetSparkle DLL no longer requires a `UI`.
+- Updated SampleApplication to more easily see new usage of NetSparkle
+
 ### Removed
 
 ## [0.17.0]

@@ -68,7 +68,7 @@ namespace NetSparkle.NetFramework.WinForms
             // 
             // iconImage
             // 
-            this.iconImage.Image = global::NetSparkle.Properties.Resources.software_update_available1;
+            this.iconImage.Image = ((System.Drawing.Image)(resources.GetObject("iconImage.Image")));
             this.iconImage.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.iconImage.Location = new System.Drawing.Point(15, 32);
             this.iconImage.Margin = new System.Windows.Forms.Padding(6);
