@@ -450,11 +450,7 @@ namespace NetSparkle
         public string TmpDownloadFilePath
         {
             get { return _tmpDownloadFilePath; }
-            set
-            {
-                _tmpDownloadFilePath = value;
-                _tmpDownloadFilePath = _tmpDownloadFilePath?.Trim();
-            }
+            set { _tmpDownloadFilePath = value?.Trim(); }
         }
 
         /// <summary>
