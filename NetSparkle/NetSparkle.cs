@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using NetSparkle.Enums;
+using System.Net.Http;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
@@ -687,7 +688,7 @@ namespace NetSparkle
         public void StopLoop()
         {
             // ensure the work will finished
-            _exitHandle.Set();                       
+            _exitHandle.Set();
         }
 
         /// <summary>
@@ -962,7 +963,7 @@ namespace NetSparkle
                     {
                         showSparkleUI(null);
                     }
-                }  
+                }
                 catch (Exception e)
                 {
                     LogWriter.PrintMessage("Error showing sparkle form: {0}", e.Message);
@@ -970,6 +971,24 @@ namespace NetSparkle
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
+        }
+
+        private async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        {
+            var httpClient = new HttpClient { Timeout = TimeSpan.FromDays(1) };
+
+            using (var response =
+                await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
+                    string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
+
+                    return Path.GetFileName(destFilename);
+                }
+                return null;
+            }
         }
 
         /// <summary>
@@ -986,13 +1005,27 @@ namespace NetSparkle
             {
                 string filename = string.Empty;
 
+                // default to using the server's file name as the download file name
                 try
                 {
-                    filename = Path.GetFileName(new Uri(item.DownloadLink).LocalPath);
+                    filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
                 }
-                catch (UriFormatException)
+                catch (Exception)
                 {
                     // ignore
+                }
+
+                if (string.IsNullOrEmpty(filename))
+                {
+                    // attempt to get download file name based on download link
+                    try
+                    {
+                        filename = Path.GetFileName(new Uri(item.DownloadLink).LocalPath);
+                    }
+                    catch (UriFormatException)
+                    {
+                        // ignore
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(filename))
@@ -1057,7 +1090,7 @@ namespace NetSparkle
                             e.Message);
                         // we won't be able to download anyway since we couldn't delete the file :( we'll try next time the
                         // update loop goes around.
-                        needsToDownload = false; 
+                        needsToDownload = false;
                     }
                 }
                 else
@@ -1262,16 +1295,16 @@ namespace NetSparkle
 
             // report
             LogWriter.PrintMessage("Going to execute batch: {0}", batchFilePath);
-            
+
             // init the installer helper
             _installerProcess = new Process
-                {
-                    StartInfo =
+            {
+                StartInfo =
                         {
-                            FileName = batchFilePath, 
+                            FileName = batchFilePath,
                             WindowStyle = ProcessWindowStyle.Hidden
                         }
-                };
+            };
             // start the installer process. the batch file will wait for the host app to close before starting.
             _installerProcess.Start();
             await QuitApplication();
@@ -1285,8 +1318,8 @@ namespace NetSparkle
         {
             // quit the app
             _exitHandle?.Set(); // make SURE the loop exits!
-            // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
-            // If you have better ideas on how to figure out if they've shut all other windows, let me know...
+                                // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
+                                // If you have better ideas on how to figure out if they've shut all other windows, let me know...
             try
             {
                 if (CloseApplicationAsync != null)
@@ -1300,7 +1333,8 @@ namespace NetSparkle
                 else
                 {
                     // if we're running from WPF, shutdown the WPF app (if not a WPF app, the ?. makes this a no-op)
-                    System.Windows.Application.Current?.Dispatcher.Invoke(() => {
+                    System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+                    {
                         System.Windows.Application.Current.Shutdown();
                     });
                     // close a WinForms app (no-op for WPF)
@@ -1465,12 +1499,12 @@ namespace NetSparkle
                 LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
-                                                    {
-                                                        NextAction = NextUpdateAction.ShowStandardUserInterface,
-                                                        ApplicationConfig = config,
-                                                        LatestVersion = updates[0],
-                                                        AppCastItems = updates
-                                                    };
+                {
+                    NextAction = NextUpdateAction.ShowStandardUserInterface,
+                    ApplicationConfig = config,
+                    LatestVersion = updates[0],
+                    AppCastItems = updates
+                };
 
                 // if the client wants to intercept, send an event
                 if (UpdateDetected != null)

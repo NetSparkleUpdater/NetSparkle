@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- [Breaking Change] NetSparkle defaults to using the server's file name as the download file name rather than the app cast file name (@Mostlypyjamas)
+- NetSparkle now handles the `ddd, dd MMM yyyy HH:mm:ss Z` and `ddd, dd MMM yyyy HH:mm:ss` date formats when parsing an app cast file (@Mostlypyjamas)
+
 ### Changed
 
 - Many buttons use `AutoSize = true` to alleviate some concerns outlined in #44
