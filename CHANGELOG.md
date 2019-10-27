@@ -5,11 +5,19 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- [Breaking Change] NetSparkle defaults to using the server's file name as the download file name rather than the app cast file name (@Mostlypyjamas)
+### Changed
+
+### Removed
+
+## [0.17.0]
+
+### Added
+
 - NetSparkle now handles the `ddd, dd MMM yyyy HH:mm:ss Z` and `ddd, dd MMM yyyy HH:mm:ss` date formats when parsing an app cast file (@Mostlypyjamas)
 
 ### Changed
 
+- [Breaking Change] NetSparkle defaults to using the server's file name as the download file name rather than the app cast file name (@Mostlypyjamas)
 - Many buttons use `AutoSize = true` to alleviate some concerns outlined in #44
 
 ### Removed
@@ -169,7 +177,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...develop
+[0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...bc91f54
 [0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/b1bb3d1...a3df35b
 [0.16.1]: https://github.com/Deadpikle/NetSparkle/compare/9298e3c...b1bb3d1
 [0.16.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...9298e3c
