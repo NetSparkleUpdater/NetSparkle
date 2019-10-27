@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Many buttons use `AutoSize = true` to alleviate some concerns outlined in #44
+
 ### Removed
 
 ## [0.16.2]
