@@ -973,7 +973,6 @@ namespace NetSparkle
             thread.Start();
         }
 
-
         private async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
             var httpClient = new HttpClient { Timeout = TimeSpan.FromDays(1) };
@@ -981,13 +980,14 @@ namespace NetSparkle
             using (var response =
                 await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead))
             {
-                response.EnsureSuccessStatusCode();
+                if (response.IsSuccessStatusCode)
+                {
+                    //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
+                    string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
 
-                var totalBytes = response.Content.Headers.ContentLength;
-                string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
-
-                return Path.GetFileName(destFilename);
-
+                    return Path.GetFileName(destFilename);
+                }
+                return null;
             }
         }
 
@@ -1005,6 +1005,7 @@ namespace NetSparkle
             {
                 string filename = string.Empty;
 
+                // default to using the server's file name as the download file name
                 try
                 {
                     filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
@@ -1016,6 +1017,7 @@ namespace NetSparkle
 
                 if (string.IsNullOrEmpty(filename))
                 {
+                    // attempt to get download file name based on download link
                     try
                     {
                         filename = Path.GetFileName(new Uri(item.DownloadLink).LocalPath);
