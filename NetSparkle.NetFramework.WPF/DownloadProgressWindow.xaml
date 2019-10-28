@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:NetSparkle.NetFramework.WPF"
         mc:Ignorable="d" 
         Width="600"
+        MaxWidth="600"
         Title="Software Update"
         ResizeMode="NoResize"
-        MaxWidth="600"
         SizeToContent="Height"
         d:DesignHeight="250" d:DesignWidth="800">
     <Grid Margin="5">

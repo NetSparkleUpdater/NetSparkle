@@ -72,13 +72,10 @@ namespace NetSparkle.NetFramework.WPF
         }
 
         /// <summary>
-        /// Initialize UI. Called when Sparkle is constructed.
+        /// Initialize UI. Called when Sparkle is constructed and/or when the UIFactory is set.
         /// </summary>
         public virtual void Init()
         {
-            // enable visual style to ensure that we have XP style or higher
-            // also in WPF applications
-            Application.EnableVisualStyles();
         }
 
         /// <summary>
@@ -150,8 +147,13 @@ namespace NetSparkle.NetFramework.WPF
 
         private void ShowMessage(string title, string message, Icon applicationIcon = null)
         {
-            var messageWindow = new MessageNotificationWindow(title, message, applicationIcon);
-            messageWindow.StartPosition = FormStartPosition.CenterScreen;
+            var messageWindow = new MessageNotificationWindow
+            {
+                Title = title,
+                MessageToShow = message,
+                Icon = ToImageSource(applicationIcon)
+            };
+            messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen
             messageWindow.ShowDialog();
         }
 

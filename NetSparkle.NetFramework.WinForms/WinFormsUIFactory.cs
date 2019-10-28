@@ -44,7 +44,7 @@ namespace NetSparkle.NetFramework.WinForms
         }
 
         /// <summary>
-        /// Initialize UI. Called when Sparkle is constructed.
+        /// Initialize UI. Called when Sparkle is constructed and/or when the UIFactory is set.
         /// </summary>
         public virtual void Init()
         {

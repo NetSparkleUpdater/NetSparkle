@@ -238,6 +238,7 @@ namespace NetSparkle
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
         private UpdateInfo _latestDownloadedUpdateInfo;
+        private IUIFactory _uiFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
@@ -488,7 +489,11 @@ namespace NetSparkle
         /// <summary>
         /// Factory for creating UI elements like progress window, etc.
         /// </summary>
-        public IUIFactory UIFactory { get; set; }
+        public IUIFactory UIFactory
+        { 
+            get { return _uiFactory; } 
+            set { _uiFactory = value; _uiFactory?.Init(); }
+        }
 
         /// <summary>
         /// The user interface window that shows the release notes and

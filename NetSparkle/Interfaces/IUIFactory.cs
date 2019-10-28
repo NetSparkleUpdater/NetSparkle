@@ -31,7 +31,7 @@ namespace NetSparkle.Interfaces
         ICheckingForUpdates ShowCheckingForUpdates(Icon applicationIcon = null);
 
         /// <summary>
-        /// Initialize UI. Called when Sparkle is constructed.
+        /// Initialize UI. Called when Sparkle is constructed and/or when the UIFactory is set.
         /// </summary>
         void Init();
 
