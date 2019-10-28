@@ -49,7 +49,16 @@
     <Compile Include="CheckingForUpdatesWindow.xaml.cs">
       <DependentUpon>CheckingForUpdatesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DownloadProgressWindow.xaml.cs">
+      <DependentUpon>DownloadProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageNotificationWindow.xaml.cs">
+      <DependentUpon>MessageNotificationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateAvailableWindow.xaml.cs">
+      <DependentUpon>UpdateAvailableWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPFUIFactory.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +69,18 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="CheckingForUpdatesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DownloadProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MessageNotificationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UpdateAvailableWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

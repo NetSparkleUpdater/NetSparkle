@@ -24,7 +24,13 @@ namespace NetSparkle.NetFramework.WPF
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, AppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
         {
-            return new UpdateAvailableWindow(sparkle, updates, applicationIcon, isUpdateAlreadyDownloaded);
+            return new UpdateAvailableWindow
+            {
+                Sparkle = sparkle,
+                Updates = updates,
+                Icon = ToImageSource(applicationIcon),
+                IsUpdateAlreadyDownloaded = isUpdateAlreadyDownloaded
+            };
         }
 
         /// <summary>
@@ -123,6 +129,7 @@ namespace NetSparkle.NetFramework.WPF
         /// <param name="clickHandler">handler for click</param>
         public virtual void ShowToast(AppCastItem[] updates, Icon applicationIcon, Action<AppCastItem[]> clickHandler)
         {
+            /* TODO: Toast!
             var toast = new ToastNotifier
                 {
                     Image =
@@ -131,7 +138,7 @@ namespace NetSparkle.NetFramework.WPF
                         }
                 };
             toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak
-            toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+            toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);*/
         }
 
         /// <summary>
@@ -153,45 +160,8 @@ namespace NetSparkle.NetFramework.WPF
                 MessageToShow = message,
                 Icon = ToImageSource(applicationIcon)
             };
-            messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen
+            messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             messageWindow.ShowDialog();
         }
-
-        #region --- Windows Forms Result Converters ---
-
-        /// <summary>
-        /// Method performs simple conversion of DialogResult to boolean.
-        /// This method is a convenience when upgrading legacy code.
-        /// </summary>
-        /// <param name="dialogResult">WinForms DialogResult instance</param>
-        /// <returns>Boolean based on dialog result</returns>
-        public static bool ConvertDialogResultToDownloadProgressResult(DialogResult dialogResult)
-        {
-            return (dialogResult != DialogResult.Abort) && (dialogResult != DialogResult.Cancel);
-        }
-
-        /// <summary>
-        /// Method performs simple conversion of DialogResult to UpdateAvailableResult.
-        /// This method is a convenience when upgrading legacy code.
-        /// </summary>
-        /// <param name="dialogResult">WinForms DialogResult instance</param>
-        /// <returns>Enumeration value based on dialog result</returns>
-        public static UpdateAvailableResult ConvertDialogResultToUpdateAvailableResult(DialogResult dialogResult)
-        {
-            switch (dialogResult)
-            {
-                case DialogResult.Yes:
-                    return UpdateAvailableResult.InstallUpdate;
-                case DialogResult.No:
-                    return UpdateAvailableResult.SkipUpdate;
-                case DialogResult.Retry:
-                case DialogResult.Cancel:
-                    return UpdateAvailableResult.RemindMeLater;
-            }
-
-            return UpdateAvailableResult.None;
-        }
-
-        #endregion
     }
 }

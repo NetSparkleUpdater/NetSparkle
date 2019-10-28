@@ -73,7 +73,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="numBytes">Number of bytes to convert</param>
         /// <returns>A string that represents the number of bytes in KB, MB, or GB if numBytes > 1024.
-        /// If numBytes < 1024, returns numBytes.</returns>
+        /// If numBytes is less than 1024, returns numBytes.</returns>
         public static string NumBytesToUserReadableString(long numBytes)
         {
             if (numBytes > 1024)
