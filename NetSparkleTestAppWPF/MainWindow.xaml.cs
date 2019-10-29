@@ -12,7 +12,7 @@ namespace NetSparkle.TestAppWPF
         private Sparkle _sparkle;
 
         public MainWindow()
-        {           
+        {
             InitializeComponent();
 
             // remove the netsparkle key from registry 
@@ -26,8 +26,9 @@ namespace NetSparkle.TestAppWPF
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", icon); //, "NetSparkleTestApp.exe");
+
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
-            _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12; 
+            _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
             _sparkle.StartLoop(true, true);
         }
 

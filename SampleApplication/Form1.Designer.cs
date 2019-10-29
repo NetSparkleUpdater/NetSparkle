@@ -32,8 +32,8 @@ namespace SampleApplication
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.checkForUpdatesTimer = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.AppBackgroundCheckButton = new System.Windows.Forms.Button();
+            this.ExplicitUserRequestCheckButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // checkForUpdatesTimer
@@ -48,37 +48,34 @@ namespace SampleApplication
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
             // 
-            // button1
+            // AppBackgroundCheckButton
             // 
-            this.button1.Location = new System.Drawing.Point(24, 71);
-            this.button1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(424, 44);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "App Background Check";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.AppBackgroundCheckButton.Location = new System.Drawing.Point(12, 37);
+            this.AppBackgroundCheckButton.Name = "AppBackgroundCheckButton";
+            this.AppBackgroundCheckButton.Size = new System.Drawing.Size(212, 23);
+            this.AppBackgroundCheckButton.TabIndex = 0;
+            this.AppBackgroundCheckButton.Text = "App Background Check";
+            this.AppBackgroundCheckButton.UseVisualStyleBackColor = true;
+            this.AppBackgroundCheckButton.Click += new System.EventHandler(this.AppBackgroundCheckButton_Click);
             // 
-            // button2
+            // ExplicitUserRequestCheckButton
             // 
-            this.button2.Location = new System.Drawing.Point(24, 154);
-            this.button2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(424, 44);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Explicit User Request To Check ";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.ExplicitUserRequestCheckButton.Location = new System.Drawing.Point(12, 80);
+            this.ExplicitUserRequestCheckButton.Name = "ExplicitUserRequestCheckButton";
+            this.ExplicitUserRequestCheckButton.Size = new System.Drawing.Size(212, 23);
+            this.ExplicitUserRequestCheckButton.TabIndex = 1;
+            this.ExplicitUserRequestCheckButton.Text = "Explicit User Request To Check ";
+            this.ExplicitUserRequestCheckButton.UseVisualStyleBackColor = true;
+            this.ExplicitUserRequestCheckButton.Click += new System.EventHandler(this.ExplicitUserRequestCheckButton_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(496, 296);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(248, 154);
+            this.Controls.Add(this.ExplicitUserRequestCheckButton);
+            this.Controls.Add(this.AppBackgroundCheckButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -89,8 +86,8 @@ namespace SampleApplication
 
         private System.Windows.Forms.Timer checkForUpdatesTimer;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button AppBackgroundCheckButton;
+        private System.Windows.Forms.Button ExplicitUserRequestCheckButton;
     }
 }
 
