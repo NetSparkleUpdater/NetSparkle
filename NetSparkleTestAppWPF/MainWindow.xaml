@@ -4,6 +4,6 @@
         Title="MainWindow" Height="350" Width="525" Icon="software-update-available.ico">
     <Grid>
         <Button Content="Manual Update Check" 
-                Height="23" HorizontalAlignment="Center" Margin="0" Name="button1" VerticalAlignment="Center" Width="146" Click="button1_Click" />
+                Height="23" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Width="146" Click="ManualUpdateCheck_Click" />
     </Grid>
 </Window>

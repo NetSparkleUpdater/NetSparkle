@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using NetSparkle;
+using NetSparkle.Enums;
 
 namespace SampleApplication
 {
@@ -34,12 +35,19 @@ namespace SampleApplication
             Application.Exit();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void AppBackgroundCheckButton_Click(object sender, EventArgs e)
         {
-            _sparkleUpdateDetector.CheckForUpdatesQuietly();
+            // Manually check for updates, this will not show a ui
+            var result = await _sparkleUpdateDetector.CheckForUpdatesQuietly();
+            if (result.Status == UpdateStatus.UpdateAvailable)
+            {
+                // if update(s) are found, then we have to trigger the UI to show it gracefully
+                _sparkleUpdateDetector.ShowUpdateNeededUI();
+            }
+
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ExplicitUserRequestCheckButton_Click(object sender, EventArgs e)
         {
             _sparkleUpdateDetector.CheckForUpdatesAtUserRequest();
         }
