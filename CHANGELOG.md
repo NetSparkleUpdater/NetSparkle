@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.18.0]
+
+### Added
+
+### Changed
+
+- `RegistryConfiguration.BuildRegistryInfo()` is now `public virtual` rather than `private`
+
+### Removed
+
 ## [0.17.0]
 
 ### Added
