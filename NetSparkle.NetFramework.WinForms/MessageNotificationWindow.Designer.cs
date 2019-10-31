@@ -1,4 +1,4 @@
-namespace NetSparkle.NetFramework.WinForms
+namespace NetSparkle.UI.NetFramework.WinForms
 {
     partial class MessageNotificationWindow
     {

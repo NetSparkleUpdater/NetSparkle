@@ -955,6 +955,10 @@ namespace NetSparkle
                             // clear if already set.
                             UserWindow.UserResponded += OnUserWindowUserResponded;
                             UserWindow.Show();
+                            System.Windows.Threading.Dispatcher.Run(); // should happen somewhere else...
+                            // https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
+                            // also, need to make sure dispatcher is nicely shut down.
+                            // how can we do this with the threads and UI factory and all that? :think:
                         }
                     };
 

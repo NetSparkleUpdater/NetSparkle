@@ -27,7 +27,7 @@ namespace NetSparkle.TestAppWPF
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml", icon)
             {
-                UIFactory = new NetSparkle.NetFramework.WPF.WPFUIFactory()
+                UIFactory = new NetSparkle.UI.NetFramework.WPF.WPFUIFactory()
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;

@@ -24,9 +24,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkleUnitTests", "NetS
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NetSparkleUtilities", "NetSparkleUtilities\NetSparkleUtilities.shproj", "{D9115E42-6ED7-452F-A623-81F70201578B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.NetFramework.WinForms", "NetSparkle.NetFramework.WinForms\NetSparkle.NetFramework.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.NetFramework.WinForms", "NetSparkle.NetFramework.WinForms\NetSparkle.UI.NetFramework.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.NetFramework.WPF", "NetSparkle.NetFramework.WPF\NetSparkle.NetFramework.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.NetFramework.WPF", "NetSparkle.NetFramework.WPF\NetSparkle.UI.NetFramework.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

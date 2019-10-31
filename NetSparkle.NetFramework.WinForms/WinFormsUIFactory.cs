@@ -5,7 +5,7 @@ using NetSparkle.Interfaces;
 using NetSparkle.Properties;
 using NetSparkle.Enums;
 
-namespace NetSparkle.NetFramework.WinForms
+namespace NetSparkle.UI.NetFramework.WinForms
 {
     /// <summary>
     /// UI factory for default interface

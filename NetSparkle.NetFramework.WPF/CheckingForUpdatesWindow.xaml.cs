@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NetSparkle.NetFramework.WPF
+namespace NetSparkle.UI.NetFramework.WPF
 {
     /// <summary>
     /// Interaction logic for CheckingForUpdatesWindow.xaml

@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 
-namespace NetSparkle.NetFramework.WPF
+namespace NetSparkle.UI.NetFramework.WPF
 {
     /// <summary>
     /// UI factory for default interface

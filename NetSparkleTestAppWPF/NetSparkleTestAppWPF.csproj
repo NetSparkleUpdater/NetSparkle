@@ -114,9 +114,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle.NetFramework.WPF\NetSparkle.NetFramework.WPF.csproj">
+    <ProjectReference Include="..\NetSparkle.NetFramework.WPF\NetSparkle.UI.NetFramework.WPF.csproj">
       <Project>{6915843c-7947-4268-b569-6f5684651df4}</Project>
-      <Name>NetSparkle.NetFramework.WPF</Name>
+      <Name>NetSparkle.UI.NetFramework.WPF</Name>
     </ProjectReference>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
       <Project>{74635A21-2BAD-4522-AB95-E3E5703CD301}</Project>

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Net;
 using NetSparkle.Interfaces;
 
-namespace NetSparkle.NetFramework.WinForms
+namespace NetSparkle.UI.NetFramework.WinForms
 {
     /// <summary>
     /// A progress bar
