@@ -59,7 +59,7 @@
     <Compile Include="UpdateAvailableWindow.xaml.cs">
       <DependentUpon>UpdateAvailableWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WPFUIFactory.cs" />
+    <Compile Include="UIFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">

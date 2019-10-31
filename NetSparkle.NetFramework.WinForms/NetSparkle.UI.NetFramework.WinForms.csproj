@@ -61,7 +61,7 @@
     <Compile Include="UpdateAvailableWindow.Designer.cs">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="WinFormsUIFactory.cs" />
+    <Compile Include="UIFactory.cs" />
     <Compile Include="MessageNotificationWindow.cs">
       <SubType>Form</SubType>
     </Compile>

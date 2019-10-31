@@ -278,7 +278,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// The result of ShowDialog()
         /// </summary>
         UpdateAvailableResult IUpdateAvailable.Result 
-            => WinFormsUIFactory.ConvertDialogResultToUpdateAvailableResult(DialogResult);
+            => UIFactory.ConvertDialogResultToUpdateAvailableResult(DialogResult);
 
         /// <summary>
         /// Hides the release notes

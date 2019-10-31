@@ -13,7 +13,7 @@ namespace NetSparkle.UI.NetFramework.WPF
     /// <summary>
     /// UI factory for default interface
     /// </summary>
-    public class WPFUIFactory : IUIFactory
+    public class UIFactory : IUIFactory
     {
         /// <summary>
         /// Create sparkle form implementation

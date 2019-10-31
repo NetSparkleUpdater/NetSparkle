@@ -59,7 +59,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// </summary>
         bool IDownloadProgress.ShowDialog()
         {
-            return WinFormsUIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
+            return UIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
         }
 
         /// <summary>
