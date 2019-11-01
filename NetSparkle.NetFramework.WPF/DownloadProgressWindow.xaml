@@ -10,8 +10,13 @@
         Title="Software Update"
         ResizeMode="NoResize"
         SizeToContent="Height"
+        Name="DownloadProgressWindow"
         d:DesignHeight="250" d:DesignWidth="800">
     <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,18 +24,23 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Label Name="DownloadingTitle" Grid.Row="0" Grid.Column="0" 
+        <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+               Source="{Binding ElementName=DownloadProgressWindow, Path=Icon}"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left" Width="48" Height="48" Margin="10,10,5,0"/>
+        <Label Name="DownloadingTitle" Grid.Row="0" Grid.Column="1" 
                Content="Downloading [APP]" HorizontalAlignment="Left" FontWeight="Bold" FontSize="24"/>
-        <Label Name="DownloadProgress" Grid.Row="1" Grid.Column="0" 
+        <Label Name="DownloadProgress" Grid.Row="1" Grid.Column="1" 
                Content="(0 MB / 10 MB)" HorizontalAlignment="Left" FontWeight="Bold" FontSize="20"/>
-        <ProgressBar Name="ProgressBar" Grid.Row="2" Grid.Column="0" 
+        <ProgressBar Name="ProgressBar" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" 
                      Minimum="0"
                      Maximum="100"
                      IsIndeterminate="False" Height="25" Margin="5,0,5,0"/>
         <TextBlock TextWrapping="Wrap" Name="ErrorMessage" Grid.Row="3" Grid.Column="0" Margin="5,5,0,5"
+                   Grid.ColumnSpan="2"
                Text="I am an error" HorizontalAlignment="Left" FontWeight="Regular" FontSize="16"/>
-        <Button Name="ActionButton" Grid.Row="4" Grid.Column="0" 
-                Content="Cancel" FontSize="16" Width="100" Margin="0,10,0,0"
+        <Button Name="ActionButton" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                Content="Cancel" FontSize="16" Width="100" Margin="0,10,0,10"
                 Click="ActionButton_Click"/>
     </Grid>
 </Window>
