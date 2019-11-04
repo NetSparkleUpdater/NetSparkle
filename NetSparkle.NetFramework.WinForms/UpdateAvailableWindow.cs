@@ -1,19 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows.Forms;
 using NetSparkle.Interfaces;
-using System.Text.RegularExpressions;
 using NetSparkle.Enums;
-using System.Threading.Tasks;
 using System.Threading;
-
-// TODO: Move a bunch of this logic to other objects than the form since it isn't really GUI logic and it could be put elsewhere
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -96,12 +87,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             }
             lblInfoText.Text = lblInfoText.Text.Replace("[DOWNLOAD]", isUpdateAlreadyDownloaded ? "install" : "download");
 
-            ReleaseNotesBrowser.DocumentText = _releaseNotesGrabber.GetLoadingText();
-            bool isUserMissingCriticalUpdate = false;
-            foreach (AppCastItem castItem in items)
-            {
-                isUserMissingCriticalUpdate |= castItem.IsCriticalUpdate;
-            }
+            bool isUserMissingCriticalUpdate = items.Any(x => x.IsCriticalUpdate);
             buttonRemind.Enabled = isUserMissingCriticalUpdate == false;
             skipButton.Enabled = isUserMissingCriticalUpdate == false;
             //if (isUserMissingCriticalUpdate)
@@ -117,10 +103,11 @@ namespace NetSparkle.UI.NetFramework.WinForms
                 }
                 Icon = applicationIcon;
             }
-            EnsureDialogShown();
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
 
+            ReleaseNotesBrowser.DocumentText = _releaseNotesGrabber.GetLoadingText();
+            EnsureDialogShown();
             LoadReleaseNotes(items);
         }
 
@@ -148,10 +135,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// </summary>
         AppCastItem IUpdateAvailable.CurrentItem
         {
-            get
-            {
-                return _updates.Count() > 0 ? _updates[0] : null;
-            }
+            get { return _updates.Count() > 0 ? _updates[0] : null; }
         }
 
         /// <summary>
