@@ -62,10 +62,10 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
             AppCastItem item = items.FirstOrDefault();
 
+            var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.AppName : "the application");
             if (item != null)
             {
-                lblInfoText.Text = lblInfoText.Text.Replace("APP", item.AppName + " " + item.Version);
                 var versionString = "";
                 try
                 {
@@ -76,16 +76,15 @@ namespace NetSparkle.UI.NetFramework.WinForms
                 }
                 catch
                 {
-                    versionString = "";
+                    versionString = "?";
                 }
-                lblInfoText.Text = lblInfoText.Text.Replace("OLDVERSION", versionString);
+                lblInfoText.Text = string.Format("{0} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, downloadInstallText);
             }
             else
             {
                 // TODO: string translations (even though I guess this window should never be called with 0 app cast items...)
-                lblInfoText.Text = "Would you like to [DOWNLOAD] it now?"; 
+                lblInfoText.Text = string.Format("Would you like to {0} it now?", downloadInstallText);
             }
-            lblInfoText.Text = lblInfoText.Text.Replace("[DOWNLOAD]", isUpdateAlreadyDownloaded ? "install" : "download");
 
             bool isUserMissingCriticalUpdate = items.Any(x => x.IsCriticalUpdate);
             buttonRemind.Enabled = isUserMissingCriticalUpdate == false;

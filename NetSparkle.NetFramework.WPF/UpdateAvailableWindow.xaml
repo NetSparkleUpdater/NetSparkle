@@ -12,10 +12,39 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
-               Source="{Binding ElementName=UpdateAvailableWindow, Path=Icon}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+               Source="{Binding ElementName=UpdateAvailableWindowControl, Path=Icon}"
                VerticalAlignment="Top"
                HorizontalAlignment="Left" Width="48" Height="48" Margin="10,10,0,0"/>
-        <WebBrowser x:Name="NotesBrowser" Grid.Column="1"/>
+        <Label Name="TitleHeader"
+               Grid.Column="1"
+               Grid.Row="0"/>
+        <Label Name="InfoText"
+               Grid.Column="1"
+               Grid.Row="1"/>
+        <WebBrowser Name="ReleaseNotesBrowser"
+               Grid.Column="1"
+               Grid.Row="2"/>
+        <Button Name="SkipButton"
+                Content="Skip this version"
+                Grid.Column="1"
+                Grid.Row="3"
+                Height="25" Width="100"/>
+        <Button Name="RemindMeLaterButton"
+                Content="Remind me later"
+                Grid.Column="1"
+                Grid.Row="3"
+                Height="25" Width="100"/>
+        <Button Name="DownloadInstallButton"
+                Content="Download/Install"
+                Grid.Column="1"
+                Grid.Row="3"
+                Height="25" Width="100"/>
     </Grid>
 </Window>

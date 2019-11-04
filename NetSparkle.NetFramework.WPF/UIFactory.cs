@@ -24,13 +24,12 @@ namespace NetSparkle.UI.NetFramework.WPF
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, AppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
         {
-            return new UpdateAvailableWindow
+            var window = new UpdateAvailableWindow()
             {
-                Sparkle = sparkle,
-                Updates = updates,
-                Icon = ToImageSource(applicationIcon),
-                IsUpdateAlreadyDownloaded = isUpdateAlreadyDownloaded
+                Icon = ToImageSource(applicationIcon)
             };
+            window.Initialize(sparkle, updates, isUpdateAlreadyDownloaded);
+            return window;
         }
 
         /// <summary>
