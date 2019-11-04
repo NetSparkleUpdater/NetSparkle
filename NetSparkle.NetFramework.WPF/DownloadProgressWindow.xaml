@@ -10,7 +10,7 @@
         Title="Software Update"
         ResizeMode="NoResize"
         SizeToContent="Height"
-        Name="DownloadProgressWindow"
+        Name="DownloadProgressWindowControl"
         d:DesignHeight="250" d:DesignWidth="800">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
-               Source="{Binding ElementName=DownloadProgressWindow, Path=Icon}"
+               Source="{Binding ElementName=DownloadProgressWindowControl, Path=Icon}"
                VerticalAlignment="Top"
                HorizontalAlignment="Left" Width="48" Height="48" Margin="10,10,5,0"/>
         <Label Name="DownloadingTitle" Grid.Row="0" Grid.Column="1" 

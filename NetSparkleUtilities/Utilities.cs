@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 
 namespace NetSparkle
@@ -39,11 +41,10 @@ namespace NetSparkle
             {
                 return null;
             }
-            DSACryptoServiceProvider cryptoProvider = null;
             var privateKey = File.ReadAllText(privateKeyFilePath);
             if (!string.IsNullOrEmpty(privateKey))
             {
-                cryptoProvider = new DSACryptoServiceProvider();
+                DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider();
                 cryptoProvider.FromXmlString(privateKey);
 
                 using (Stream inputStream = File.OpenRead(fileToSignPath))

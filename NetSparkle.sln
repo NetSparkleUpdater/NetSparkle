@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkleUnitTests", "NetS
 		{74635A21-2BAD-4522-AB95-E3E5703CD301} = {74635A21-2BAD-4522-AB95-E3E5703CD301}
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NetSparkleUtilities", "NetSparkleUtilities\NetSparkleUtilities.shproj", "{D9115E42-6ED7-452F-A623-81F70201578B}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NetSparkle.Shared", "NetSparkleUtilities\NetSparkle.Shared.shproj", "{D9115E42-6ED7-452F-A623-81F70201578B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.NetFramework.WinForms", "NetSparkle.NetFramework.WinForms\NetSparkle.UI.NetFramework.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
 EndProject

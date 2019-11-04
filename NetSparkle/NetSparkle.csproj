@@ -154,6 +154,7 @@
     <Compile Include="NetSparkleException.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="RegistryConfiguration.cs" />
+    <Compile Include="ReleaseNotesGrabber.cs" />
     <Compile Include="TempFile.cs" />
     <Compile Include="ToastNotifier.cs">
       <SubType>Form</SubType>
