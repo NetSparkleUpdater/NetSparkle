@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:NetSparkle.UI.NetFramework.WPF"
         mc:Ignorable="d" 
         Name="UpdateAvailableWindowControl"
+        MinWidth="200"
+        MinHeight="200"
         d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -22,12 +24,18 @@
                Source="{Binding ElementName=UpdateAvailableWindowControl, Path=Icon}"
                VerticalAlignment="Top"
                HorizontalAlignment="Left" Width="48" Height="48" Margin="10,10,0,0"/>
-        <Label Name="TitleHeader"
-               Grid.Column="1"
-               Grid.Row="0"/>
-        <Label Name="InfoText"
-               Grid.Column="1"
-               Grid.Row="1"/>
+        <TextBlock 
+            Name="TitleHeader"
+            TextWrapping="Wrap"
+            Margin="10,0,0,0"
+            Grid.Column="1"
+            Grid.Row="0"/>
+        <TextBlock
+            Name="InfoText"
+            TextWrapping="Wrap"
+            Margin="10,0,0,0"
+            Grid.Column="1"
+            Grid.Row="1"/>
         <WebBrowser Name="ReleaseNotesBrowser"
                Grid.Column="1"
                Grid.Row="2"/>

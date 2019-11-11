@@ -30,9 +30,23 @@ namespace NetSparkle.UI.NetFramework.WPF
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
 
+        private bool _isOnMainThread;
+        private bool _hasInitiatedShutdown;
+
         public UpdateAvailableWindow()
         {
             InitializeComponent();
+            Closing += UpdateAvailableWindow_Closing;
+        }
+
+        private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Closing -= UpdateAvailableWindow_Closing;
+            if (!_isOnMainThread && !_hasInitiatedShutdown)
+            {
+                _hasInitiatedShutdown = true;
+                Dispatcher.InvokeShutdown();
+            }
         }
 
         public void Initialize(Sparkle sparkle, AppCastItem[] items, bool isUpdateAlreadyDownloaded = false,
@@ -48,7 +62,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             AppCastItem item = items.FirstOrDefault();
 
             // TODO: string translations
-            TitleHeader.Content = string.Format("A new version of {0} is available.", item?.AppName ?? "the application");
+            TitleHeader.Text = string.Format("A new version of {0} is available.", item?.AppName ?? "the application");
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             if (item != null)
             {
@@ -64,11 +78,11 @@ namespace NetSparkle.UI.NetFramework.WPF
                 {
                     versionString = "?";
                 }
-                InfoText.Content = string.Format("{0} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, downloadInstallText);
+                InfoText.Text = string.Format("{0} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, downloadInstallText);
             }
             else
             {
-                InfoText.Content = string.Format("Would you like to {0} it now?", downloadInstallText);
+                InfoText.Text = string.Format("Would you like to {0} it now?", downloadInstallText);
             }
 
             bool isUserMissingCriticalUpdate = items.Any(x => x.IsCriticalUpdate);
@@ -108,6 +122,11 @@ namespace NetSparkle.UI.NetFramework.WPF
         void IUpdateAvailable.Close()
         {
             Close();
+            if (!_isOnMainThread && !_hasInitiatedShutdown)
+            {
+                _hasInitiatedShutdown = true;
+                Dispatcher.InvokeShutdown();
+            }
         }
 
         void IUpdateAvailable.HideReleaseNotes()
@@ -126,9 +145,27 @@ namespace NetSparkle.UI.NetFramework.WPF
             SkipButton.Visibility = Visibility.Collapsed; // TODO: Binding instead of direct property setting (#70)
         }
 
-        void IUpdateAvailable.Show()
+        void IUpdateAvailable.Show(bool IsOnMainThread)
         {
-            Show();
+
+            try
+            {
+                Show();
+                _isOnMainThread = IsOnMainThread;
+                if (!IsOnMainThread)
+                {
+                    // https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
+                    System.Windows.Threading.Dispatcher.Run();
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                Close();
+                if (!IsOnMainThread)
+                {
+                    Dispatcher.InvokeShutdown();
+                }
+            }
         }
     }
 }

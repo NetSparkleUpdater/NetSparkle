@@ -153,7 +153,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <summary>
         /// Shows the dialog
         /// </summary>
-        void IUpdateAvailable.Show()
+        void IUpdateAvailable.Show(bool IsOnMainThread)
         {
             ShowDialog();
             UserResponded?.Invoke(this, new EventArgs());
