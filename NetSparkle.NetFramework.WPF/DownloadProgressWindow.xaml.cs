@@ -24,11 +24,13 @@ namespace NetSparkle.UI.NetFramework.WPF
     {
         private AppCastItem _itemToDownload;
         private bool _isDownloading;
+        private bool _didDownloadAnything;
 
         public DownloadProgressWindow()
         {
             InitializeComponent();
             _isDownloading = true;
+            _didDownloadAnything = false;
             ErrorMessage.Text = "";
         }
 
@@ -61,6 +63,11 @@ namespace NetSparkle.UI.NetFramework.WPF
         void IDownloadProgress.FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             _isDownloading = false;
+            ProgressBar.Value = 100;
+            if (!_didDownloadAnything)
+            {
+                DownloadProgress.Content = string.Format("(- / -)");
+            }
             ActionButton.Content = "Install and Relaunch";
         }
 
@@ -83,6 +90,7 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         void IDownloadProgress.OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            _didDownloadAnything = true;
             OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
         }
 

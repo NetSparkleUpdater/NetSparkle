@@ -40,7 +40,7 @@
                    Grid.ColumnSpan="2"
                Text="I am an error" HorizontalAlignment="Left" FontWeight="Regular" FontSize="16"/>
         <Button Name="ActionButton" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
-                Content="Cancel" FontSize="16" Width="100" Margin="0,10,0,10"
+                Content="Cancel" FontSize="16" Width="175" Margin="0,10,0,10"
                 Click="ActionButton_Click"/>
     </Grid>
 </Window>

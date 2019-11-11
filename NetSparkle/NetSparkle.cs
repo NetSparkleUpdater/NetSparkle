@@ -1003,7 +1003,7 @@ namespace NetSparkle
         /// <param name="item">The item that you want to generate a download path for</param>
         /// <returns>The download path for an app cast item if item is not null and has valid download link
         /// Otherwise returns null.</returns>
-        public string DownloadPathForAppCastItem(AppCastItem item)
+        public async Task<string> DownloadPathForAppCastItem(AppCastItem item)
         {
             if (item != null && item.DownloadLink != null)
             {
@@ -1012,7 +1012,7 @@ namespace NetSparkle
                 // default to using the server's file name as the download file name
                 try
                 {
-                    filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
+                    filename = await RetrieveDestinationFileNameAsync(item);
                 }
                 catch (Exception)
                 {
@@ -1049,7 +1049,7 @@ namespace NetSparkle
         /// Starts the download process
         /// </summary>
         /// <param name="item">the appcast item to download</param>
-        private void InitDownloadAndInstallProcess(AppCastItem item)
+        private async Task InitDownloadAndInstallProcess(AppCastItem item)
         {
             // TODO: is this a good idea? What if it's a user initiated request,
             // and they want to watch progress instead of it being a silent download?
@@ -1059,7 +1059,7 @@ namespace NetSparkle
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
-            _downloadTempFileName = DownloadPathForAppCastItem(item);
+            _downloadTempFileName = await DownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // DSA signature checks out, don't redownload the file!
             bool needsToDownload = true;
@@ -1184,7 +1184,7 @@ namespace NetSparkle
             bool needToReenableDownloadButton = true;
             if (await AskApplicationToSafelyCloseUp())
             {
-                var path = DownloadPathForAppCastItem(item);
+                var path = await DownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
                     var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
@@ -1546,14 +1546,14 @@ namespace NetSparkle
         /// Updates from appcast
         /// </summary>
         /// <param name="updates">updates to be installed</param>
-        private void Update(AppCastItem[] updates)
+        private async void Update(AppCastItem[] updates)
         {
             if (updates == null)
                 return;
 
             if (isDownloadingSilently())
             {
-                InitDownloadAndInstallProcess(updates[0]); // install only latest
+                await InitDownloadAndInstallProcess(updates[0]); // install only latest
             }
             else
             {
@@ -1578,8 +1578,9 @@ namespace NetSparkle
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        private void OnUserWindowUserResponded(object sender, EventArgs e)
+        private async void OnUserWindowUserResponded(object sender, EventArgs e)
         {
+            LogWriter.PrintMessage("Update window response: {0}", UserWindow.Result);
             if (UserWindow.Result == UpdateAvailableResult.SkipUpdate)
             {
                 // skip this version
@@ -1598,14 +1599,14 @@ namespace NetSparkle
                 else
                 {
                     // download the binaries
-                    InitDownloadAndInstallProcess(UserWindow.CurrentItem);
+                    await InitDownloadAndInstallProcess(UserWindow.CurrentItem);
                 }
             }
             else if (UserWindow.Result == UpdateAvailableResult.RemindMeLater && UserWindow.CurrentItem != null)
             {
                 RemindMeLaterSelected?.Invoke(UserWindow.CurrentItem);
             }
-
+            UserWindow?.Close();
             UserWindow = null; // done using the window so don't hold onto reference
             CheckingForUpdatesWindow?.Close();
             CheckingForUpdatesWindow = null;

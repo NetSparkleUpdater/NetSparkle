@@ -33,10 +33,13 @@ namespace NetSparkle.UI.NetFramework.WPF
         private bool _isOnMainThread;
         private bool _hasInitiatedShutdown;
 
+        private UpdateAvailableResult _userResponse;
+
         public UpdateAvailableWindow()
         {
             InitializeComponent();
             Closing += UpdateAvailableWindow_Closing;
+            _userResponse = UpdateAvailableResult.None;
         }
 
         private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -107,7 +110,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             });
         }
 
-        UpdateAvailableResult IUpdateAvailable.Result => UpdateAvailableResult.None; // TODO: Set actual result 
+        UpdateAvailableResult IUpdateAvailable.Result => _userResponse;
         // actually the result should be sent back in the UserResponded event! that would simplify the event handling a lot)
 
         AppCastItem IUpdateAvailable.CurrentItem => _updates.Count() > 0 ? _updates[0] : null;
@@ -116,7 +119,9 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         void IUpdateAvailable.BringToFront()
         {
+            Topmost = true;
             Activate();
+            Topmost = false;
         }
 
         void IUpdateAvailable.Close()
@@ -147,7 +152,6 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         void IUpdateAvailable.Show(bool IsOnMainThread)
         {
-
             try
             {
                 Show();
@@ -166,6 +170,24 @@ namespace NetSparkle.UI.NetFramework.WPF
                     Dispatcher.InvokeShutdown();
                 }
             }
+        }
+
+        private void SkipButton_Click(object sender, RoutedEventArgs e)
+        {
+            _userResponse = UpdateAvailableResult.SkipUpdate;
+            UserResponded?.Invoke(this, new EventArgs());
+        }
+
+        private void RemindMeLaterButton_Click(object sender, RoutedEventArgs e)
+        {
+            _userResponse = UpdateAvailableResult.RemindMeLater;
+            UserResponded?.Invoke(this, new EventArgs());
+        }
+
+        private void DownloadInstallButton_Click(object sender, RoutedEventArgs e)
+        {
+            _userResponse = UpdateAvailableResult.InstallUpdate;
+            UserResponded?.Invoke(this, new EventArgs());
         }
     }
 }
