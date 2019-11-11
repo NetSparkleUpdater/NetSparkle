@@ -11,6 +11,9 @@ using System.Net;
 
 namespace NetSparkle
 {
+    /// <summary>
+    /// Grabs release notes formatted as Markdown from the server and allows you to view them as HTML
+    /// </summary>
     public class ReleaseNotesGrabber
     {
         private string _separatorTemplate;
@@ -18,8 +21,17 @@ namespace NetSparkle
 
         private Sparkle _sparkle;
 
+        /// <summary>
+        /// List of supported extensions for markdown files (.md, .mkdn, .mkd, .markdown)
+        /// </summary>
         public static readonly List<string> MarkDownExtensions = new List<string> { ".md", ".mkdn", ".mkd", ".markdown" };
 
+        /// <summary>
+        /// Base constructor for ReleaseNotesGrabber
+        /// </summary>
+        /// <param name="separatorTemplate">Template to use for separating each item in the HTML</param>
+        /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
+        /// <param name="sparkle">Sparkle updater being used</param>
         public ReleaseNotesGrabber(string separatorTemplate, string htmlHeadAddition, Sparkle sparkle)
         {
             _separatorTemplate =
@@ -31,11 +43,22 @@ namespace NetSparkle
             _sparkle = sparkle;
         }
 
+        /// <summary>
+        /// Generates the text to display while release notes are loading
+        /// </summary>
+        /// <returns>HTML to show to the user while release notes are loading</returns>
         public string GetLoadingText()
         {
             return _initialHTML + "<p><em>Loading release notes...</em></p></body></html>"; ;
         }
 
+        /// <summary>
+        /// Download all of the release notes provided to this function and convert them to HTML
+        /// </summary>
+        /// <param name="items">List of items that you want to display in the release notes</param>
+        /// <param name="latestVersion">The latest version (most current version) of your releases</param>
+        /// <param name="cancellationToken">Token to cancel the async download requests</param>
+        /// <returns></returns>
         public async Task<string> DownloadAllReleaseNotesAsHTML(AppCastItem[] items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
