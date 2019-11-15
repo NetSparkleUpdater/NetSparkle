@@ -136,6 +136,7 @@
     <Compile Include="Enums\UpdateAvailableResult.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
     <Compile Include="Enums\ValidationResult.cs" />
+    <Compile Include="Events\DownloadInstallArgs.cs" />
     <Compile Include="Interfaces\ICheckingForUpdates.cs" />
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Windows.Threading;
 using NetSparkle.Enums;
 using System.Net.Http;
+using NetSparkle.Events;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
@@ -727,7 +728,7 @@ namespace NetSparkle
 
             if (ProgressWindow != null)
             {
-                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
+                ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 ProgressWindow = null;
             }
 
@@ -1076,7 +1077,7 @@ namespace NetSparkle
                     initializeProgressWindow(item);
                     ProgressWindow?.FinishedDownloadingFile(true);
                     OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
-                    showProgressWindow(); // opens as a dialog, hence why we call OnDownloadFinished before showing the window
+                    showProgressWindow();
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
@@ -1140,7 +1141,7 @@ namespace NetSparkle
         {
             if (ProgressWindow != null)
             {
-                ProgressWindow.InstallAndRelaunch -= OnProgressWindowInstallAndRelaunch;
+                ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 ProgressWindow = null;
             }
             if (ProgressWindow == null && !isDownloadingSilently())
@@ -1148,8 +1149,30 @@ namespace NetSparkle
                 ProgressWindow = UIFactory?.CreateProgressWindow(castItem, _applicationIcon);
                 if (ProgressWindow != null)
                 {
-                    ProgressWindow.InstallAndRelaunch += OnProgressWindowInstallAndRelaunch;
+                    ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
                 }
+            }
+        }
+
+        private async void ProgressWindowCompleted(object sender, DownloadInstallArgs args)
+        {
+            if (args.ShouldInstall)
+            {
+                ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
+                if (await AskApplicationToSafelyCloseUp())
+                {
+                    ProgressWindow?.Close();
+                    await RunDownloadedInstaller(_downloadTempFileName);
+                }
+                else
+                {
+                    ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
+                }
+            }
+            else
+            {
+                CancelFileDownload();
+                ProgressWindow?.Close();
             }
         }
 
@@ -1160,10 +1183,7 @@ namespace NetSparkle
         {
             if (!isDownloadingSilently() && ProgressWindow != null)
             {
-                if (!ProgressWindow.ShowDialog())
-                {
-                    CancelFileDownload();
-                }
+                ProgressWindow?.Show();
             }
         }
 
@@ -1594,7 +1614,7 @@ namespace NetSparkle
                 if (SilentMode == SilentModeTypes.DownloadNoInstall && File.Exists(_downloadTempFileName))
                 {
                     // Binary should already be downloaded. Run it!
-                    OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
                 }
                 else
                 {
@@ -1610,24 +1630,6 @@ namespace NetSparkle
             UserWindow = null; // done using the window so don't hold onto reference
             CheckingForUpdatesWindow?.Close();
             CheckingForUpdatesWindow = null;
-        }
-
-        /// <summary>
-        /// Called when the progress bar fires the update event
-        /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">not used.</param>
-        private async void OnProgressWindowInstallAndRelaunch(object sender, EventArgs e)
-        {
-            ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
-            if (await AskApplicationToSafelyCloseUp())
-            {
-                await RunDownloadedInstaller(_downloadTempFileName);
-            }
-            else
-            {
-                ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
-            }
         }
 
         /// <summary>
@@ -1903,7 +1905,7 @@ namespace NetSparkle
                 bool shouldInstallAndRelaunch = SilentMode == SilentModeTypes.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
-                    OnProgressWindowInstallAndRelaunch(this, new EventArgs());
+                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
                 }
             }
         }

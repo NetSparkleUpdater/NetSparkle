@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Net;
 using NetSparkle.Interfaces;
+using NetSparkle.Events;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -12,11 +13,13 @@ namespace NetSparkle.UI.NetFramework.WinForms
     public partial class DownloadProgressWindow : Form, IDownloadProgress
     {
         /// <summary>
-        /// event to fire when the form asks the application to be relaunched
+        /// Event to fire when the download UI is complete; tells you 
+        /// if the install process should happen or not
         /// </summary>
-        public event EventHandler InstallAndRelaunch;
+        public event DownloadInstallEventHandler DownloadProcessCompleted;
 
         private bool _shouldLaunchInstallFileOnClose = false;
+        private bool _didCallDownloadProcessCompletedHandler = false;
 
         /// <summary>
         /// Constructor
@@ -44,22 +47,18 @@ namespace NetSparkle.UI.NetFramework.WinForms
         private void DownloadProgressWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormClosing -= DownloadProgressWindow_FormClosing;
-            if (_shouldLaunchInstallFileOnClose)
+            if (!_didCallDownloadProcessCompletedHandler)
             {
-                InstallAndRelaunch?.Invoke(this, new EventArgs());
-            }
-            else
-            {
-                DialogResult = DialogResult.Cancel;
+                DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(_shouldLaunchInstallFileOnClose));
             }
         }
 
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        bool IDownloadProgress.ShowDialog()
+        void IDownloadProgress.Show()
         {
-            return UIFactory.ConvertDialogResultToDownloadProgressResult(ShowDialog());
+            Show();
         }
 
         /// <summary>
@@ -97,9 +96,9 @@ namespace NetSparkle.UI.NetFramework.WinForms
         }
 
         /// <summary>
-        /// Force window close
+        /// Close UI
         /// </summary>
-        public void ForceClose()
+        void IDownloadProgress.Close()
         {
             DialogResult = DialogResult.Abort;
             Close();
@@ -132,11 +131,12 @@ namespace NetSparkle.UI.NetFramework.WinForms
         {
             DialogResult = DialogResult.OK;
             _shouldLaunchInstallFileOnClose = true;
-            Close();
+            _didCallDownloadProcessCompletedHandler = true;
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(true));
         }
 
         /// <summary>
-        /// TODO
+        /// Enables or disables the "Install and Relaunch" button
         /// </summary>
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
         {
@@ -146,7 +146,8 @@ namespace NetSparkle.UI.NetFramework.WinForms
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
-            Close();
+            _didCallDownloadProcessCompletedHandler = true;
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(false));
         }
     }
 }

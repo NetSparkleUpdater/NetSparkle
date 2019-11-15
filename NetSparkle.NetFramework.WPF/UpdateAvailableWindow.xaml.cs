@@ -176,18 +176,24 @@ namespace NetSparkle.UI.NetFramework.WPF
         {
             _userResponse = UpdateAvailableResult.SkipUpdate;
             UserResponded?.Invoke(this, new EventArgs());
+            _cancellationTokenSource?.Cancel();
+            Close();
         }
 
         private void RemindMeLaterButton_Click(object sender, RoutedEventArgs e)
         {
             _userResponse = UpdateAvailableResult.RemindMeLater;
             UserResponded?.Invoke(this, new EventArgs());
+            _cancellationTokenSource?.Cancel();
+            Close();
         }
 
         private void DownloadInstallButton_Click(object sender, RoutedEventArgs e)
         {
             _userResponse = UpdateAvailableResult.InstallUpdate;
             UserResponded?.Invoke(this, new EventArgs());
+            _cancellationTokenSource?.Cancel();
+            Close();
         }
     }
 }

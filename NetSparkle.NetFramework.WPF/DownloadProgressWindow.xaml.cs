@@ -1,4 +1,5 @@
-﻿using NetSparkle.Interfaces;
+﻿using NetSparkle.Events;
+using NetSparkle.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace NetSparkle.UI.NetFramework.WPF
         private AppCastItem _itemToDownload;
         private bool _isDownloading;
         private bool _didDownloadAnything;
+        private bool _didCallDownloadProcessCompletedHandler = false;
 
         public DownloadProgressWindow()
         {
@@ -32,6 +34,15 @@ namespace NetSparkle.UI.NetFramework.WPF
             _isDownloading = true;
             _didDownloadAnything = false;
             ErrorMessage.Text = "";
+            Closing += DownloadProgressWindow_Closing;
+        }
+
+        private void DownloadProgressWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_didCallDownloadProcessCompletedHandler)
+            {
+                DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(false));
+            }
         }
 
         public AppCastItem ItemToDownload 
@@ -51,7 +62,11 @@ namespace NetSparkle.UI.NetFramework.WPF
             }
         }
 
-        public event EventHandler InstallAndRelaunch;
+        /// <summary>
+        /// Event to fire when the download UI is complete; tells you 
+        /// if the install process should happen or not
+        /// </summary>
+        public event DownloadInstallEventHandler DownloadProcessCompleted;
 
         bool IDownloadProgress.DisplayErrorMessage(string errorMessage)
         {
@@ -71,10 +86,9 @@ namespace NetSparkle.UI.NetFramework.WPF
             ActionButton.Content = "Install and Relaunch";
         }
 
-        void IDownloadProgress.ForceClose()
+        void IDownloadProgress.Close()
         {
             DialogResult = false;
-            Close();
         }
 
         /// <summary>
@@ -99,24 +113,16 @@ namespace NetSparkle.UI.NetFramework.WPF
             ActionButton.IsEnabled = shouldBeEnabled;
         }
 
-        bool IDownloadProgress.ShowDialog()
+        void IDownloadProgress.Show()
         {
-            return (bool)ShowDialog();
+            Show();
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_isDownloading)
-            {
-                DialogResult = false;
-                Close();
-            }
-            else
-            {
-                InstallAndRelaunch?.Invoke(sender, new EventArgs());
-                DialogResult = true;
-                Close();
-            }
+            DialogResult = !_isDownloading;
+            _didCallDownloadProcessCompletedHandler = true;
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(!_isDownloading));
         }
     }
 }
