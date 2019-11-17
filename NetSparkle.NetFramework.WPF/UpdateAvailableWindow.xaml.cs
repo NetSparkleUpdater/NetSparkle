@@ -126,12 +126,21 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         void IUpdateAvailable.Close()
         {
-            Close();
-            if (!_isOnMainThread && !_hasInitiatedShutdown)
+            CloseWindow();
+        }
+
+        private void CloseWindow()
+        {
+            // make sure to close the window on the thread it has been started on
+            Dispatcher.InvokeAsync(() =>
             {
-                _hasInitiatedShutdown = true;
-                Dispatcher.InvokeShutdown();
-            }
+                Close();
+                if (!_isOnMainThread && !_hasInitiatedShutdown)
+                {
+                    _hasInitiatedShutdown = true;
+                    Dispatcher.InvokeShutdown();
+                }
+            });
         }
 
         void IUpdateAvailable.HideReleaseNotes()
@@ -177,7 +186,6 @@ namespace NetSparkle.UI.NetFramework.WPF
             _userResponse = UpdateAvailableResult.SkipUpdate;
             UserResponded?.Invoke(this, new EventArgs());
             _cancellationTokenSource?.Cancel();
-            Close();
         }
 
         private void RemindMeLaterButton_Click(object sender, RoutedEventArgs e)
@@ -185,7 +193,6 @@ namespace NetSparkle.UI.NetFramework.WPF
             _userResponse = UpdateAvailableResult.RemindMeLater;
             UserResponded?.Invoke(this, new EventArgs());
             _cancellationTokenSource?.Cancel();
-            Close();
         }
 
         private void DownloadInstallButton_Click(object sender, RoutedEventArgs e)
@@ -193,7 +200,6 @@ namespace NetSparkle.UI.NetFramework.WPF
             _userResponse = UpdateAvailableResult.InstallUpdate;
             UserResponded?.Invoke(this, new EventArgs());
             _cancellationTokenSource?.Cancel();
-            Close();
         }
     }
 }

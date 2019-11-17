@@ -49,6 +49,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             FormClosing -= DownloadProgressWindow_FormClosing;
             if (!_didCallDownloadProcessCompletedHandler)
             {
+                _didCallDownloadProcessCompletedHandler = true;
                 DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(_shouldLaunchInstallFileOnClose));
             }
         }
@@ -56,9 +57,13 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        void IDownloadProgress.Show()
+        void IDownloadProgress.Show(bool isOnMainThread)
         {
             Show();
+            if (!isOnMainThread)
+            {
+                Application.Run(this);
+            }
         }
 
         /// <summary>
@@ -101,7 +106,19 @@ namespace NetSparkle.UI.NetFramework.WinForms
         void IDownloadProgress.Close()
         {
             DialogResult = DialogResult.Abort;
-            Close();
+            CloseForm();
+        }
+
+        private void CloseForm()
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { Close(); });
+            }
+            else
+            {
+                Close();
+            }
         }
 
         /// <summary>

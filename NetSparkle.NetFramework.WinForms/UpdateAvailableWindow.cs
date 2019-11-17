@@ -31,6 +31,8 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
         private ReleaseNotesGrabber _releaseNotesGrabber;
 
+        private bool _didSendResponse = false;
+
         /// <summary>
         /// Form constructor for showing release notes.
         /// </summary>
@@ -108,6 +110,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             ReleaseNotesBrowser.DocumentText = _releaseNotesGrabber.GetLoadingText();
             EnsureDialogShown();
             LoadReleaseNotes(items);
+            FormClosing += UpdateAvailableWindow_FormClosing;
         }
 
         private async void LoadReleaseNotes(AppCastItem[] items)
@@ -126,7 +129,12 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
         private void UpdateAvailableWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
+            if (!_didSendResponse)
+            {
+                DialogResult = DialogResult.None;
+                _didSendResponse = true;
+                UserResponded?.Invoke(this, new EventArgs());
+            }
         }
 
         /// <summary>
@@ -155,8 +163,11 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// </summary>
         void IUpdateAvailable.Show(bool IsOnMainThread)
         {
-            ShowDialog();
-            UserResponded?.Invoke(this, new EventArgs());
+            Show();
+            if (!IsOnMainThread)
+            {
+                Application.Run(this);
+            }
         }
 
         void IUpdateAvailable.BringToFront()
@@ -217,7 +228,8 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
             // close the windows
             _cancellationTokenSource?.Cancel();
-            CloseForm();
+            _didSendResponse = true;
+            UserResponded?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -232,7 +244,8 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
             // close the window
             _cancellationTokenSource?.Cancel();
-            CloseForm();
+            _didSendResponse = true;
+            UserResponded?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -247,7 +260,8 @@ namespace NetSparkle.UI.NetFramework.WinForms
 
             // close the dialog
             _cancellationTokenSource?.Cancel();
-            CloseForm();
+            _didSendResponse = true;
+            UserResponded?.Invoke(this, new EventArgs());
         }
 
         /// <summary>

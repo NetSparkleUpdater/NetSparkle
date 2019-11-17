@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,9 @@ namespace NetSparkle.UI.NetFramework.WPF
         private bool _didDownloadAnything;
         private bool _didCallDownloadProcessCompletedHandler = false;
 
+        private bool _isOnMainThread;
+        private bool _hasInitiatedShutdown;
+
         public DownloadProgressWindow()
         {
             InitializeComponent();
@@ -41,7 +45,14 @@ namespace NetSparkle.UI.NetFramework.WPF
         {
             if (!_didCallDownloadProcessCompletedHandler)
             {
+                _didCallDownloadProcessCompletedHandler = true;
                 DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(false));
+            }
+            Closing -= DownloadProgressWindow_Closing;
+            if (!_isOnMainThread && !_hasInitiatedShutdown)
+            {
+                _hasInitiatedShutdown = true;
+                Dispatcher.InvokeShutdown();
             }
         }
 
@@ -51,14 +62,18 @@ namespace NetSparkle.UI.NetFramework.WPF
             set 
             {
                 _itemToDownload = value;
-                if (value != null)
+
+                Dispatcher.InvokeAsync(() =>
                 {
-                    DownloadingTitle.Content = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
-                }
-                else
-                {
-                    DownloadingTitle.Content = string.Format("Downloading...");
-                }
+                    if (value != null)
+                    {
+                        DownloadingTitle.Content = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
+                    }
+                    else
+                    {
+                        DownloadingTitle.Content = string.Format("Downloading...");
+                    }
+                });
             }
         }
 
@@ -70,25 +85,40 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         bool IDownloadProgress.DisplayErrorMessage(string errorMessage)
         {
-            ErrorMessage.Text = errorMessage;
-            ErrorMessage.Visibility = Visibility.Visible;
+            Dispatcher.InvokeAsync(() =>
+            {
+                ErrorMessage.Text = errorMessage;
+                ErrorMessage.Visibility = Visibility.Visible;
+            });
             return true;
         }
 
         void IDownloadProgress.FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             _isDownloading = false;
-            ProgressBar.Value = 100;
-            if (!_didDownloadAnything)
+
+            Dispatcher.InvokeAsync(() =>
             {
-                DownloadProgress.Content = string.Format("(- / -)");
-            }
-            ActionButton.Content = "Install and Relaunch";
+                ProgressBar.Value = 100;
+                if (!_didDownloadAnything)
+                {
+                    DownloadProgress.Content = string.Format("(- / -)");
+                }
+                ActionButton.Content = "Install and Relaunch";
+            });
         }
 
         void IDownloadProgress.Close()
         {
-            DialogResult = false;
+            Dispatcher.InvokeAsync(() =>
+            {
+                Close();
+                if (!_isOnMainThread && !_hasInitiatedShutdown)
+                {
+                    _hasInitiatedShutdown = true;
+                    Dispatcher.InvokeShutdown();
+                }
+            });
         }
 
         /// <summary>
@@ -96,10 +126,13 @@ namespace NetSparkle.UI.NetFramework.WPF
         /// </summary>
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
-            ProgressBar.Value = percentage;
-            DownloadProgress.Content = string.Format("({0} / {1})",
-                Utilities.NumBytesToUserReadableString(bytesReceived),
-                Utilities.NumBytesToUserReadableString(totalBytesToReceive));
+            Dispatcher.InvokeAsync(() =>
+            {
+                ProgressBar.Value = percentage;
+                DownloadProgress.Content = string.Format("({0} / {1})",
+                    Utilities.NumBytesToUserReadableString(bytesReceived),
+                    Utilities.NumBytesToUserReadableString(totalBytesToReceive));
+            });
         }
 
         void IDownloadProgress.OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -113,14 +146,30 @@ namespace NetSparkle.UI.NetFramework.WPF
             ActionButton.IsEnabled = shouldBeEnabled;
         }
 
-        void IDownloadProgress.Show()
+        void IDownloadProgress.Show(bool isOnMainThread)
         {
-            Show();
+            try
+            {
+                Show();
+                _isOnMainThread = isOnMainThread;
+                if (!isOnMainThread)
+                {
+                    // https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
+                    System.Windows.Threading.Dispatcher.Run();
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                Close();
+                if (!isOnMainThread)
+                {
+                    Dispatcher.InvokeShutdown();
+                }
+            }
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = !_isDownloading;
             _didCallDownloadProcessCompletedHandler = true;
             DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(!_isDownloading));
         }
