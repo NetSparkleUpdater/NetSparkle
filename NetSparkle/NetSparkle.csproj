@@ -137,7 +137,7 @@
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />
     <Compile Include="Interfaces\IUIFactory.cs" />
-    <Compile Include="MarkdownSharp.cs" />
+    <Compile Include="Libraries\MarkdownSharp.cs" />
     <Compile Include="AssemblyReflectionAccessor.cs" />
     <Compile Include="Interfaces\IAssemblyAccessor.cs" />
     <Compile Include="NetSparkle.cs" />
