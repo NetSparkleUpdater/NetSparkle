@@ -55,6 +55,12 @@
     <Compile Include="DownloadProgressWindow.Designer.cs">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="ToastNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToastNotifier.designer.cs">
+      <DependentUpon>ToastNotifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="UpdateAvailableWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MessageNotificationWindow.resx">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToastNotifier.resx">
+      <DependentUpon>ToastNotifier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateAvailableWindow.bg.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>

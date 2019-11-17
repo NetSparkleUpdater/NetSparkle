@@ -38,6 +38,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             _isDownloading = true;
             _didDownloadAnything = false;
             ErrorMessage.Text = "";
+            ErrorMessage.Visibility = Visibility.Collapsed;
             Closing += DownloadProgressWindow_Closing;
         }
 

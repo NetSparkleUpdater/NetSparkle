@@ -157,12 +157,6 @@
     <Compile Include="RegistryConfiguration.cs" />
     <Compile Include="ReleaseNotesGrabber.cs" />
     <Compile Include="TempFile.cs" />
-    <Compile Include="ToastNotifier.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ToastNotifier.designer.cs">
-      <DependentUpon>ToastNotifier.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -172,9 +166,6 @@
     <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ToastNotifier.resx">
-      <DependentUpon>ToastNotifier.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
