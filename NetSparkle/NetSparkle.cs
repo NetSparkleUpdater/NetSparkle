@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using System.IO;
 using System.Diagnostics;
@@ -373,21 +372,6 @@ namespace NetSparkle
                 ServicePointManager.SecurityProtocol = value;
             }
         }
-
-        /// <summary>
-        /// (WinForms only) Schedules an update check to happen on the first Application.Idle event.
-        /// </summary>
-        public void CheckOnFirstApplicationIdle()
-        {
-            Application.Idle += OnFirstApplicationIdle;
-        }
-
-        private async void OnFirstApplicationIdle(object sender, EventArgs e)
-        {
-            Application.Idle -= OnFirstApplicationIdle;
-            await CheckForUpdates(true);
-        }
-
 
         #region Properties
         /// <summary>
@@ -1367,13 +1351,7 @@ namespace NetSparkle
                 }
                 else
                 {
-                    // if we're running from WPF, shutdown the WPF app (if not a WPF app, the ?. makes this a no-op)
-                    System.Windows.Application.Current?.Dispatcher.Invoke(() =>
-                    {
-                        System.Windows.Application.Current.Shutdown();
-                    });
-                    // close a WinForms app (no-op for WPF)
-                    Application.Exit();
+                    UIFactory?.Shutdown();
                 }
             }
             catch (Exception e)
@@ -1440,7 +1418,6 @@ namespace NetSparkle
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
-            Cursor.Current = Cursors.WaitCursor;
             CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(_applicationIcon);
             if (CheckingForUpdatesWindow != null)
             {
@@ -1454,7 +1431,6 @@ namespace NetSparkle
             {
                 CheckingForUpdatesWindow?.Close();
                 UpdateStatus updateAvailable = updateData.Status;
-                Cursor.Current = Cursors.Default;
 
                 Action<object> UIAction = (state) =>
                 {
@@ -1939,17 +1915,6 @@ namespace NetSparkle
                     ProgressWindowCompleted(this, new DownloadInstallArgs(true));
                 }
             }
-        }
-
-        /// <summary>
-        /// Called when a Windows forms application exits. Starts the installer.
-        /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">not used.</param>
-        private void OnWindowsFormsApplicationExit(object sender, EventArgs e)
-        {
-            Application.ApplicationExit -= OnWindowsFormsApplicationExit;
-            _installerProcess?.Start();
         }
     }
 }

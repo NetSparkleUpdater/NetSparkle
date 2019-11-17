@@ -127,6 +127,16 @@ namespace NetSparkle.UI.NetFramework.WinForms
             messageWindow.ShowDialog();
         }
 
+        /// <summary>
+        /// Shut down the UI so we can run an upate.
+        /// If in WPF, System.Windows.Application.Current.Shutdown().
+        /// If in WinForms, Application.Exit().
+        /// </summary>
+        public void Shutdown()
+        {
+            Application.Exit();
+        }
+
         #region --- Windows Forms Result Converters ---
 
         /// <summary>

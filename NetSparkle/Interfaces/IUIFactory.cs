@@ -70,5 +70,12 @@ namespace NetSparkle.Interfaces
         /// <param name="appcastUrl">the URL for the appcast file</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         void ShowDownloadErrorMessage(string message, string appcastUrl, Icon applicationIcon = null);
+
+        /// <summary>
+        /// Shut down the UI so we can run an upate.
+        /// If in WPF, System.Windows.Application.Current.Shutdown().
+        /// If in WinForms, Application.Exit().
+        /// </summary>
+        void Shutdown();
     }
 }

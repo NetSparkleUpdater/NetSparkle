@@ -162,5 +162,15 @@ namespace NetSparkle.UI.NetFramework.WPF
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             messageWindow.ShowDialog();
         }
+
+        /// <summary>
+        /// Shut down the UI so we can run an upate.
+        /// If in WPF, System.Windows.Application.Current.Shutdown().
+        /// If in WinForms, Application.Exit().
+        /// </summary>
+        public void Shutdown()
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
     }
 }
