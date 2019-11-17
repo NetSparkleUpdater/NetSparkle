@@ -145,18 +145,27 @@ namespace NetSparkle.UI.NetFramework.WPF
 
         void IUpdateAvailable.HideReleaseNotes()
         {
-            ReleaseNotesBrowser.Visibility = Visibility.Collapsed;
+            Dispatcher.InvokeAsync(() =>
+            {
+                ReleaseNotesBrowser.Visibility = Visibility.Collapsed;
+            });
             // TODO: resize window to account for no release notes being shown
         }
 
         void IUpdateAvailable.HideRemindMeLaterButton()
         {
-            RemindMeLaterButton.Visibility = Visibility.Collapsed; // TODO: Binding instead of direct property setting (#70)
+            Dispatcher.InvokeAsync(() =>
+            {
+                RemindMeLaterButton.Visibility = Visibility.Collapsed; // TODO: Binding instead of direct property setting (#70)
+            });
         }
 
         void IUpdateAvailable.HideSkipButton()
         {
-            SkipButton.Visibility = Visibility.Collapsed; // TODO: Binding instead of direct property setting (#70)
+            Dispatcher.InvokeAsync(() =>
+            {
+                SkipButton.Visibility = Visibility.Collapsed; // TODO: Binding instead of direct property setting (#70)
+            });
         }
 
         void IUpdateAvailable.Show(bool IsOnMainThread)
