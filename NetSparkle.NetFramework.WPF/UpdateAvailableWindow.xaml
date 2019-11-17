@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:NetSparkle.UI.NetFramework.WPF"
         mc:Ignorable="d" 
         Name="UpdateAvailableWindowControl"
+        Title="Software Update"
         MinWidth="450"
         MinHeight="350"
         Width="700"
