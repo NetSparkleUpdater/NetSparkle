@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using NetSparkle.Properties;
 using NetSparkle.Enums;
+using System.Threading;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -98,15 +99,18 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <param name="clickHandler">handler for click</param>
         public virtual void ShowToast(AppCastItem[] updates, Icon applicationIcon, Action<AppCastItem[]> clickHandler)
         {
-            var toast = new ToastNotifier
+            Thread thread = new Thread(() =>
+            {
+                var toast = new ToastNotifier(applicationIcon)
                 {
-                    Image =
-                        {
-                            Image = applicationIcon != null ? applicationIcon.ToBitmap() : Resources.software_update_available1
-                        }
+                    ClickAction = clickHandler,
+                    Updates = updates
                 };
-            toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak
-            toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+                toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+                Application.Run(toast);
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         /// <summary>

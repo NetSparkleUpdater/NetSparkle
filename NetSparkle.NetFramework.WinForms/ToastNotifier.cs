@@ -1,4 +1,6 @@
+using NetSparkle.Properties;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace NetSparkle
@@ -16,16 +18,9 @@ namespace NetSparkle
         private int startPosY;
 
         /// <summary>
-        /// The user clicked on the toast popup
-        /// </summary>
-        public event EventHandler ToastClicked;
-
-
-
-        /// <summary>
         /// constructor
         /// </summary>
-        public ToastNotifier()
+        public ToastNotifier(Icon applicationIcon = null)
         {
             InitializeComponent();
             // We want our window to be the top most
@@ -42,7 +37,17 @@ namespace NetSparkle
             _pauseTimer = new Timer();
             _pauseTimer.Interval = 15000;
             _pauseTimer.Tick += PauseTimerTick;
+
+            if (applicationIcon != null)
+            {
+                Icon = applicationIcon;
+                this.Image.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
+            }
         }
+
+        public Action<AppCastItem[]> ClickAction { get; set; }
+
+        public AppCastItem[] Updates { get; set; }
 
         private void PauseTimerTick(object sender, EventArgs e)
         {
@@ -75,7 +80,9 @@ namespace NetSparkle
                 _pauseTimer.Start();
             }
             else
+            {
                 SetDesktopLocation(startPosX, startPosY);
+            }
         }
 
         private void GoDownTimerTick(object sender, EventArgs e)
@@ -86,21 +93,19 @@ namespace NetSparkle
             if (startPosY > Screen.PrimaryScreen.WorkingArea.Height)
             {
                 _goDownTimer.Stop();
-                Hide();
+                Close();
             }
             else
             {
                 SetDesktopLocation(startPosX, startPosY);
-                this.SendToBack();
             }
         }
 
         private void ToastNotifier_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Yes;
+            ClickAction?.Invoke(Updates);
             Close();
-            EventHandler handler = ToastClicked;
-            if (handler != null) handler(this, e);
         }
 
         /// <summary>
