@@ -102,7 +102,7 @@ namespace NetSparkle.UI.NetFramework.WPF
                 ProgressBar.Value = 100;
                 if (!_didDownloadAnything)
                 {
-                    DownloadProgress.Content = string.Format("(- / -)");
+                    DownloadProgress.Content = string.Format("");
                 }
                 ActionButton.Content = "Install and Relaunch";
             });

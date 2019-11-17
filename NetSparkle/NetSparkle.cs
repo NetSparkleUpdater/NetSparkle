@@ -917,7 +917,7 @@ namespace NetSparkle
                 // close old window
                 if (ShowsUIOnMainThread)
                 {
-                    _syncContext.Send((state) =>
+                    _syncContext.Post((state) =>
                     {
                         UpdateAvailableWindow.Close();
                         UpdateAvailableWindow = null;
@@ -964,7 +964,7 @@ namespace NetSparkle
                     // call action
                     if (ShowsUIOnMainThread)
                     {
-                        _syncContext.Send((state) => showSparkleUI(state), null);
+                        _syncContext.Post((state) => showSparkleUI(state), null);
                     }
                     else
                     {
@@ -1076,7 +1076,7 @@ namespace NetSparkle
                     needsToDownload = false;
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
-                    createAndShowProgressWindow(item, true);
+                    CreateAndShowProgressWindow(item, true);
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
@@ -1099,12 +1099,11 @@ namespace NetSparkle
                 }
                 else
                 {
-                    DownloadedFileIsCorrupt?.Invoke(item, _downloadTempFileName);
+                    CallFuncConsideringUIThreads(() => { DownloadedFileIsCorrupt?.Invoke(item, _downloadTempFileName); });
                 }
             }
             if (needsToDownload)
             {
-                createAndShowProgressWindow(item, false);
 
                 if (_webDownloadClient != null)
                 {
@@ -1122,20 +1121,23 @@ namespace NetSparkle
                     UseDefaultCredentials = true,
                     Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
                 };
-                if (ProgressWindow != null)
+                CreateAndShowProgressWindow(item, false, () =>
                 {
-                    _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-                }
-                _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
+                    if (ProgressWindow != null)
+                    {
+                        _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+                    }
+                    _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
 
-                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
-                LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
-                StartedDownloading?.Invoke(_downloadTempFileName);
+                    Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
+                    LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
+                    _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+                    CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
+                });
             }
         }
 
-        private void createAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready)
+        private void CreateAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready, Action actionToRunOnceCreatedBeforeShown = null)
         {
             if (ProgressWindow != null)
             {
@@ -1154,21 +1156,19 @@ namespace NetSparkle
                         if (shouldShowAsDownloadedAlready)
                         {
                             ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Send((state) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                            _syncContext.Post((state) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
                         }
+
+                        actionToRunOnceCreatedBeforeShown?.Invoke();
+
                         // call action
                         if (ShowsUIOnMainThread)
                         {
-                            _syncContext.Send((state) => ProgressWindow?.Show(ShowsUIOnMainThread), null);
+                            _syncContext.Post((state) => ProgressWindow?.Show(ShowsUIOnMainThread), null);
                         }
                         else
                         {
                             ProgressWindow?.Show(ShowsUIOnMainThread);
-                        }
-
-                        if (ProgressWindow != null)
-                        {
-                            ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
                         }
                     });
                     thread.SetApartmentState(ApartmentState.STA);
@@ -1213,7 +1213,6 @@ namespace NetSparkle
         public async void RunUpdate(AppCastItem item)
         {
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
-            bool needToReenableDownloadButton = true;
             if (await AskApplicationToSafelyCloseUp())
             {
                 var path = await DownloadPathForAppCastItem(item);
@@ -1226,10 +1225,7 @@ namespace NetSparkle
                     }
                 }
             }
-            if (needToReenableDownloadButton)
-            {
-                ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
-            }
+            ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
         }
 
         /// <summary>
@@ -1389,7 +1385,7 @@ namespace NetSparkle
         /// <summary>
         /// Apps may need, for example, to let user save their work
         /// </summary>
-        /// <returns>true if it's ok</returns>
+        /// <returns>true if it's OK to run the installer</returns>
         private async Task<bool> AskApplicationToSafelyCloseUp()
         {
             try
@@ -1484,12 +1480,13 @@ namespace NetSparkle
 
                 if (ShowsUIOnMainThread)
                 {
-                    _syncContext.Send((state) => UIAction(state), null);
+                    _syncContext.Post((state) => UIAction(state), null);
                 }
                 else
                 {
                     UIAction(null);
                 }
+                CallFuncConsideringUIThreads(() => UIAction(null));
             }
             else
             {
@@ -1607,6 +1604,27 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Events should always be fired on the thread that started the Sparkle object.
+        /// Used for events that are fired after coming from an update available window
+        /// or the download progress window.
+        /// Basically, if ShowsUIOnMainThread, just invokes the action. Otherwise,
+        /// uses the SynchronizationContext to call the action. Ensures that the action
+        /// is always on the main thread.
+        /// </summary>
+        /// <param name="action"></param>
+        private void CallFuncConsideringUIThreads(Action action)
+        {
+            if (ShowsUIOnMainThread)
+            {
+                action?.Invoke();
+            }
+            else
+            {
+                _syncContext.Post((state) => action?.Invoke(), null);
+            }
+        }
+
+        /// <summary>
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
@@ -1620,7 +1638,7 @@ namespace NetSparkle
                 // skip this version
                 Configuration config = GetApplicationConfig();
                 config.SetVersionToSkip(currentItem.Version);
-                UserSkippedVersion?.Invoke(currentItem, _downloadTempFileName);
+                CallFuncConsideringUIThreads(() => { UserSkippedVersion?.Invoke(currentItem, _downloadTempFileName); });
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
@@ -1637,12 +1655,8 @@ namespace NetSparkle
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
             {
-                RemindMeLaterSelected?.Invoke(currentItem);
+                CallFuncConsideringUIThreads(() => { RemindMeLaterSelected?.Invoke(currentItem); });
             }
-            // go ahead and close the applicable windows.
-            // we do this first because if we're running on a background thread,
-            // the await InitDownload... call returns as MTA, not STA, which throws
-            // things off and makes things crash and burn
             UpdateAvailableWindow?.Close();
             UpdateAvailableWindow = null; // done using the window so don't hold onto reference
             CheckingForUpdatesWindow?.Close();
