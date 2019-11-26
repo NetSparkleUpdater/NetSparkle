@@ -1380,6 +1380,12 @@ namespace NetSparkle
                 }
                 else
                 {
+                    // Because the download/install window is usually on a separate thread,
+                    // send dual shutdown messages via both the sync context (kills "main" app)
+                    // and the current thread (kills current thread)
+                    _syncContext?.Post((state) =>
+                        UIFactory?.Shutdown(),
+                    null);
                     UIFactory?.Shutdown();
                 }
             }
