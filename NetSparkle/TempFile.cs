@@ -12,7 +12,8 @@ namespace NetSparkle
 	/// <example>using(f = new TempFile())</example>
 	public class TempFile : IDisposable
 	{
-		private string _path;
+		private readonly string _path;
+        private bool _disposed;
 
 		internal TempFile()
 		{
@@ -51,14 +52,46 @@ namespace NetSparkle
 		}
 
         /// <summary>
-        /// 
+        /// Finalizer
         /// </summary>
-	    public void Dispose()
-		{
-			File.Delete(_path);
-		}
+        ~TempFile()
+        {
+            Dispose(false);
+        }
 
-		internal static TempFile CopyOf(string pathToExistingFile)
+        /// <summary>
+        /// Inherited from IDisposable. Stops all background activities.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of managed and unmanaged resources
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    
+                }
+                // unmanaged resources to release
+                try
+                {
+                    File.Delete(_path);
+                }
+                catch { }
+            }
+            _disposed = true;
+        }
+
+        internal static TempFile CopyOf(string pathToExistingFile)
 		{
 			TempFile t = new TempFile();
 			File.Copy(pathToExistingFile, t.Path, true);

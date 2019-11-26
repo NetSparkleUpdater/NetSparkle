@@ -211,10 +211,10 @@ namespace NetSparkle
         public event DownloadEvent DownloadError;
 
         private LogWriter _logWriter;
-        private Task _taskWorker;
+        private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
-        private CancellationTokenSource _cancelTokenSource;
-        private SynchronizationContext _syncContext;
+        private readonly CancellationTokenSource _cancelTokenSource;
+        private readonly SynchronizationContext _syncContext;
         private string _appCastUrl;
         private readonly string _appReferenceAssembly;
 
@@ -235,6 +235,7 @@ namespace NetSparkle
         private bool _hasAttemptedFileRedownload;
         private UpdateInfo _latestDownloadedUpdateInfo;
         private IUIFactory _uiFactory;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
@@ -665,7 +666,7 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Stops the Sparkle background loop. Called automatically by <see cref="Dispose"/>.
+        /// Stops the Sparkle background loop. Called automatically by <see cref="Dispose()"/>.
         /// </summary>
         public void StopLoop()
         {
@@ -674,12 +675,45 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// Finalizer
+        /// </summary>
+        ~Sparkle()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
         /// Inherited from IDisposable. Stops all background activities.
         /// </summary>
         public void Dispose()
         {
-            StopLoop();
-            UnregisterEvents();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of managed and unmanaged resources
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    StopLoop();
+                    UnregisterEvents();
+                    _cancelTokenSource?.Dispose();
+                    _exitHandle?.Dispose();
+                    _loopingHandle?.Dispose();
+                    _webDownloadClient?.Dispose();
+                    _installerProcess?.Dispose();
+                }
+                // There are no unmanaged resources to release, but
+                // if we add them, they need to be released here.
+            }
+            _disposed = true;
         }
 
         /// <summary>
@@ -758,8 +792,7 @@ namespace NetSparkle
                     string requestUrl = inv.BuildRequestUrl(SystemProfileUrl + "?");
 
                     // perform the webrequest
-                    HttpWebRequest request = WebRequest.Create(requestUrl) as HttpWebRequest;
-                    if (request != null)
+                    if (WebRequest.Create(requestUrl) is HttpWebRequest request)
                     {
                         //request.ServerCertificateValidationCallback += 
                         request.UseDefaultCredentials = true;
@@ -1396,17 +1429,15 @@ namespace NetSparkle
         /// <returns><c>true</c> if the cert is valid</returns>
         private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
-            X509Certificate2 cert2 = certificate as X509Certificate2;
             if (TrustEverySSLConnection)
             {
                 // verify if we talk about our app cast dll 
-                HttpWebRequest req = sender as HttpWebRequest;
-                if (req != null && req.RequestUri.Equals(new Uri(_appCastUrl)))
+                if (sender is HttpWebRequest req && req.RequestUri.Equals(new Uri(_appCastUrl)))
                     return true;
             }
 
             // check our cert                 
-            return sslPolicyErrors == SslPolicyErrors.None && cert2 != null && cert2.Verify();
+            return sslPolicyErrors == SslPolicyErrors.None && certificate is X509Certificate2 cert2 && cert2.Verify();
         }
 
         /// <summary>
