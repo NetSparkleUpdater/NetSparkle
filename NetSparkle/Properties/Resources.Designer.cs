@@ -126,7 +126,7 @@ namespace NetSparkle.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to more information.
+        ///   Looks up a localized string similar to More information.
         /// </summary>
         public static string DefaultUIFactory_ToastCallToAction {
             get {

@@ -5,9 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NetSparkle.UI.NetFramework.WPF"
              mc:Ignorable="d" 
-        WindowStyle="None"
-        Width="300"
-        Height="150"
+             WindowStyle="None"
+             Width="300"
+             Height="90"
+             Name="ToastNotificationWindow"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,20 +20,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Image Grid.Row="0" Grid.Column="0"
-               Source="{Binding ElementName=UpdateAvailableWindowControl, Path=Icon}"
+               Source="{Binding ElementName=ToastNotificationWindow, Path=Icon}"
                VerticalAlignment="Top"
                Grid.RowSpan="2"
                HorizontalAlignment="Left" Width="48" Height="48" Margin="10,10,0,0"/>
 
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Notification text" HorizontalAlignment="Left" FontWeight="Bold" FontSize="18"
-                   Margin="5,10,0,0"
+                   Margin="8,10,0,0"
+                   Name="NotificationTitle"
                    TextWrapping="Wrap"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="Link" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14"
-                   Margin="5,10,0,0"
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14"
+                   Name="MessageTextBlock"
+                   Margin="8,10,0,0"
                    TextWrapping="Wrap">
-            <Hyperlink NavigateUri="http://www.google.com" RequestNavigate="Hyperlink_RequestNavigate">
-                Click here
-            </Hyperlink>
+            <Hyperlink RequestNavigate="NotificationLink_RequestNavigate" NavigateUri="" Name="NotificationLink"/>
         </TextBlock>
     </Grid>
 </Window>

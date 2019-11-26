@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
+using System.Threading;
 
 namespace NetSparkle.UI.NetFramework.WPF
 {
@@ -128,16 +129,26 @@ namespace NetSparkle.UI.NetFramework.WPF
         /// <param name="clickHandler">handler for click</param>
         public virtual void ShowToast(AppCastItem[] updates, Icon applicationIcon, Action<AppCastItem[]> clickHandler)
         {
-            /* TODO: Toast!
-            var toast = new ToastNotifier
+            Thread thread = new Thread(() =>
+            {
+                var toast = new ToastNotification()
                 {
-                    Image =
-                        {
-                            Image = applicationIcon != null ? applicationIcon.ToBitmap() : Resources.software_update_available1
-                        }
+                    ClickAction = clickHandler,
+                    Updates = updates,
+                    Icon = ToImageSource(applicationIcon)
                 };
-            toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak
-            toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);*/
+                try
+                {
+                    toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+                    System.Windows.Threading.Dispatcher.Run();
+                }
+                catch (ThreadAbortException)
+                {
+                    toast.Dispatcher.InvokeShutdown();
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         /// <summary>
