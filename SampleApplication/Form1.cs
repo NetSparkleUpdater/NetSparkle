@@ -23,6 +23,7 @@ namespace SampleApplication
             _sparkleUpdateDetector = new Sparkle(appcastUrl, icon)
             {
                 UIFactory = new NetSparkle.UI.NetFramework.WinForms.UIFactory(),
+                //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)

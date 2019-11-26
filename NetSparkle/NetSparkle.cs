@@ -1162,25 +1162,32 @@ namespace NetSparkle
                 if (!isDownloadingSilently() && ProgressWindow == null)
                 {
                     // create the form
-                    Thread thread = new Thread(() =>
+                    Action<object> showSparkleDownloadUI = (state) =>
                     {
                         ProgressWindow = UIFactory?.CreateProgressWindow(castItem, _applicationIcon);
                         ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
                         if (shouldShowAsDownloadedAlready)
                         {
                             ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Post((state) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                            _syncContext.Post((state2) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
                         }
 
                         actionToRunOnceCreatedBeforeShown?.Invoke();
-
+                    };
+                    Thread thread = new Thread(() =>
+                    {
                         // call action
                         if (ShowsUIOnMainThread)
                         {
-                            _syncContext.Post((state) => ProgressWindow?.Show(ShowsUIOnMainThread), null);
+                            _syncContext.Post((state) =>
+                            {
+                                showSparkleDownloadUI(null);
+                                ProgressWindow?.Show(ShowsUIOnMainThread);
+                            }, null);
                         }
                         else
                         {
+                            showSparkleDownloadUI(null);
                             ProgressWindow?.Show(ShowsUIOnMainThread);
                         }
                     });
