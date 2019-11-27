@@ -1493,15 +1493,6 @@ namespace NetSparkle
                             throw new ArgumentOutOfRangeException();
                     }
                 };
-
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) => UIAction(state), null);
-                }
-                else
-                {
-                    UIAction(null);
-                }
                 CallFuncConsideringUIThreads(() => UIAction(null));
             }
             else
