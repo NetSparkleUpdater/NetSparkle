@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,7 +12,7 @@ namespace NetSparkleChecker
     public partial class NetSparkleCheckerWaitUI : Form
     {
         private readonly Sparkle _sparkle;
-        private AppCastItem[] _updates;
+        private List<AppCastItem> _updates;
 
         public bool SparkleRequestedUpdate = false;
         

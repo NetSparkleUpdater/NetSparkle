@@ -1,7 +1,8 @@
 using NetSparkle.Enums;
 using System;
+using System.Collections.Generic;
 
-namespace NetSparkle
+namespace NetSparkle.Events
 {
     /// <summary>
     /// Contains all information for the update detected event
@@ -24,6 +25,6 @@ namespace NetSparkle
         /// <summary>
         /// All app cast items that were sent in the appcast
         /// </summary>
-        public AppCastItem[] AppCastItems { get; set; }
+        public List<AppCastItem> AppCastItems { get; set; }
     }
 }

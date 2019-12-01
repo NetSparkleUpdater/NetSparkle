@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using NetSparkle.Enums;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -14,7 +15,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
     public partial class UpdateAvailableWindow : Form, IUpdateAvailable
     {
         private readonly Sparkle _sparkle;
-        private readonly AppCastItem[] _updates;
+        private readonly List<AppCastItem> _updates;
         private System.Windows.Forms.Timer _ensureDialogShownTimer;
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
-        public UpdateAvailableWindow(Sparkle sparkle, AppCastItem[] items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
+        public UpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;
@@ -113,7 +114,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             FormClosing += UpdateAvailableWindow_FormClosing;
         }
 
-        private async void LoadReleaseNotes(AppCastItem[] items)
+        private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotesAsHTML(items, latestVersion, _cancellationToken);

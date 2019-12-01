@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using NetSparkle.Enums;
 using System.Net.Http;
 using NetSparkle.Events;
+using System.Collections.Generic;
 
 // TODO: resume downloads if the download didn't finish but the software was killed
 // instead of restarting the entire download
@@ -474,7 +475,7 @@ namespace NetSparkle
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.
         /// </summary>
-        public AppCastItem[] LatestAppCastItems
+        public List<AppCastItem> LatestAppCastItems
         {
             get
             {
@@ -490,10 +491,9 @@ namespace NetSparkle
         {
             get
             {
-                AppCastItem[] items = LatestAppCastItems;
-                if (items != null)
+                if (LatestAppCastItems != null)
                 {
-                    foreach (AppCastItem item in items)
+                    foreach (AppCastItem item in LatestAppCastItems)
                     {
                         if (item.IsCriticalUpdate)
                         {
@@ -738,7 +738,7 @@ namespace NetSparkle
         /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
         public async Task<UpdateInfo> GetUpdateStatus(Configuration config)
         {
-            AppCastItem[] updates = null;
+            List<AppCastItem> updates = null;
             // report
             LogWriter.PrintMessage("Downloading and checking appcast");
 
@@ -772,7 +772,7 @@ namespace NetSparkle
             config.TouchCheckTime();
 
             // check if the version will be the same then the installed version
-            if (updates.Length == 0)
+            if (updates.Count == 0)
             {
                 LogWriter.PrintMessage("Installed version is valid, no update needed ({0})", config.InstalledVersion);
                 return new UpdateInfo(UpdateStatus.UpdateNotAvailable);
@@ -808,7 +808,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="updates">updates to show UI for</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        public void ShowUpdateNeededUI(AppCastItem[] updates, bool isUpdateAlreadyDownloaded = false)
+        public void ShowUpdateNeededUI(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             if (updates != null)
             {
@@ -832,12 +832,12 @@ namespace NetSparkle
             ShowUpdateNeededUI(_latestDownloadedUpdateInfo?.Updates, isUpdateAlreadyDownloaded);
         }
 
-        private void OnToastClick(AppCastItem[] updates)
+        private void OnToastClick(List<AppCastItem> updates)
         {
             ShowUpdateNeededUIInner(updates);
         }
 
-        private void ShowUpdateNeededUIInner(AppCastItem[] updates, bool isUpdateAlreadyDownloaded = false)
+        private void ShowUpdateNeededUIInner(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             // TODO: In the future, instead of remaking the window, just send the new data to the old window
             if (UpdateAvailableWindow != null)
@@ -1453,7 +1453,7 @@ namespace NetSparkle
 
             // check if update is required
             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
-            AppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
+            List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // show the update window
@@ -1497,7 +1497,7 @@ namespace NetSparkle
         /// Updates from appcast
         /// </summary>
         /// <param name="updates">updates to be installed</param>
-        private async void Update(AppCastItem[] updates)
+        private async void Update(List<AppCastItem> updates)
         {
             if (updates == null)
                 return;
@@ -1644,7 +1644,7 @@ namespace NetSparkle
                             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
                             if (_cancelToken.IsCancellationRequested)
                                 break;
-                            AppCastItem[] updates = _latestDownloadedUpdateInfo.Updates;
+                            List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
                             bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
                             if (bUpdateRequired)
                             {
@@ -1761,7 +1761,7 @@ namespace NetSparkle
             switch (e.ProgressPercentage)
             {
                 case 1:
-                    Update(e.UserState as AppCastItem[]);
+                    Update(e.UserState as List<AppCastItem>);
                     break;
                 case 0:
                     LogWriter.PrintMessage(e.UserState.ToString());

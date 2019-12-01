@@ -24,7 +24,7 @@ namespace NetSparkle.UI.NetFramework.WPF
     public partial class UpdateAvailableWindow : Window, IUpdateAvailable
     {
         private Sparkle _sparkle;
-        private AppCastItem[] _updates;
+        private List<AppCastItem> _updates;
         private ReleaseNotesGrabber _releaseNotesGrabber;
 
         private CancellationToken _cancellationToken;
@@ -52,7 +52,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             }
         }
 
-        public void Initialize(Sparkle sparkle, AppCastItem[] items, bool isUpdateAlreadyDownloaded = false,
+        public void Initialize(Sparkle sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;
@@ -99,7 +99,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             LoadReleaseNotes(items);
         }
 
-        private async void LoadReleaseNotes(AppCastItem[] items)
+        private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotesAsHTML(items, latestVersion, _cancellationToken);

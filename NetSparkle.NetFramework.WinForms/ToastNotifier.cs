@@ -1,5 +1,6 @@
 using NetSparkle.Properties;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -45,9 +46,9 @@ namespace NetSparkle
             }
         }
 
-        public Action<AppCastItem[]> ClickAction { get; set; }
+        public Action<List<AppCastItem>> ClickAction { get; set; }
 
-        public AppCastItem[] Updates { get; set; }
+        public List<AppCastItem> Updates { get; set; }
 
         private void PauseTimerTick(object sender, EventArgs e)
         {

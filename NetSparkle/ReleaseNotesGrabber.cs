@@ -59,7 +59,7 @@ namespace NetSparkle
         /// <param name="latestVersion">The latest version (most current version) of your releases</param>
         /// <param name="cancellationToken">Token to cancel the async download requests</param>
         /// <returns></returns>
-        public async Task<string> DownloadAllReleaseNotesAsHTML(AppCastItem[] items, AppCastItem latestVersion, CancellationToken cancellationToken)
+        public async Task<string> DownloadAllReleaseNotesAsHTML(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
             StringBuilder sb = new StringBuilder(_initialHTML);
