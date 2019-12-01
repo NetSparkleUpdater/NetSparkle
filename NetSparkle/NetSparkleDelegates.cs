@@ -93,4 +93,11 @@ namespace NetSparkle
     /// A delegate for download events (start, finished, canceled).
     /// </summary>
     public delegate void DownloadEvent(string path);
+
+    /// <summary>
+    /// A handler called when the user responsed to an available update
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">An UpdateResponse object that contains the event data.</param>
+    public delegate void UserRespondedToUpdate(object sender, UpdateResponseArgs e);
 }

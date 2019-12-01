@@ -760,7 +760,6 @@ namespace NetSparkle
                 updates = null;
             }
 
-
             if (updates == null)
             {
                 LogWriter.PrintMessage("No version information in app cast found");
@@ -1549,12 +1548,12 @@ namespace NetSparkle
         /// <summary>
         /// </summary>
         /// <param name="sender">not used.</param>
-        /// <param name="e">not used.</param>
-        private async void OnUserWindowUserResponded(object sender, EventArgs e) // TODO: this should send the result in the args instead of having to ask the window again
+        /// <param name="args">Info on the user response and what update item they responded to</param>
+        private async void OnUserWindowUserResponded(object sender, UpdateResponseArgs args)
         {
-            LogWriter.PrintMessage("Update window response: {0}", UpdateAvailableWindow.Result);
-            var currentItem = UpdateAvailableWindow.CurrentItem;
-            var result = UpdateAvailableWindow.Result;
+            LogWriter.PrintMessage("Update window response: {0}", args.Result);
+            var currentItem = args.UpdateItem;
+            var result = args.Result;
             if (result == UpdateAvailableResult.SkipUpdate)
             {
                 // skip this version

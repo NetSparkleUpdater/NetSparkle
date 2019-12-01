@@ -6,6 +6,7 @@ using NetSparkle.Interfaces;
 using NetSparkle.Enums;
 using System.Threading;
 using System.Collections.Generic;
+using NetSparkle.Events;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -22,7 +23,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// Event fired when the user has responded to the 
         /// skip, later, install question.
         /// </summary>
-        public event EventHandler UserResponded;
+        public event UserRespondedToUpdate UserResponded;
 
         /// <summary>
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
@@ -134,14 +135,16 @@ namespace NetSparkle.UI.NetFramework.WinForms
             {
                 DialogResult = DialogResult.None;
                 _didSendResponse = true;
-                UserResponded?.Invoke(this, new EventArgs());
+                UserResponded?.Invoke(this, new UpdateResponseArgs(UpdateAvailableResult.None, CurrentItem));
             }
         }
 
         /// <summary>
         /// The current item being installed
         /// </summary>
-        AppCastItem IUpdateAvailable.CurrentItem
+        AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
+
+        public AppCastItem CurrentItem
         {
             get { return _updates.Count() > 0 ? _updates[0] : null; }
         }
@@ -217,6 +220,13 @@ namespace NetSparkle.UI.NetFramework.WinForms
             Size = newSize;
         }
 
+        void SendResponse(UpdateAvailableResult response)
+        {
+            _cancellationTokenSource?.Cancel();
+            _didSendResponse = true;
+            UserResponded?.Invoke(this, new UpdateResponseArgs(response, CurrentItem));
+        }
+
         /// <summary>
         /// Event called when the skip button is clicked
         /// </summary>
@@ -228,9 +238,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.No;
 
             // close the windows
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.SkipUpdate);
         }
 
         /// <summary>
@@ -244,9 +252,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.Retry;
 
             // close the window
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.RemindMeLater);
         }
 
         /// <summary>
@@ -260,9 +266,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.Yes;
 
             // close the dialog
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.InstallUpdate);
         }
 
         /// <summary>
