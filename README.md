@@ -346,7 +346,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - NetSparkle.Interfaces.IDownloadProgress [ProgressWindow](#netsparkleinterfacesidownloadprogress-progresswindow--get-set-) { get; set; }
 - bool [RelaunchAfterUpdate](#bool-relaunchafterupdate--get-set-) { get; set; }
 - bool [ShowsUIOnMainThread](#bool-showsuionmainthread--get-set-) { get; set; }
-- NetSparkle.Sparkle.SilentModeTypes [SilentMode](#netsparklesparklesilentmodetypes-silentmode--get-set-) { get; set; }
+- NetSparkle.Sparkle.UserInteractionMode [UserInteractionMode](#netsparklesparkleuserinteractionmode-silentmode--get-set-) { get; set; }
 - System.Uri [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-) { get; private set; }
 - string [TmpDownloadFilePath](#string-tmpdownloadfilepath--get-set-) { get; set; }
 - bool [TrustEverySSLConnection](#bool-trusteverysslconnection--get-set-) { get; set; }
@@ -366,7 +366,7 @@ The user interface window that shows the 'Checking for Updates...' form. TODO: M
 
 ### System.Action ClearOldInstallers { get; set; }
 
-Function that is called asynchronously to clean up old installers that have been downloaded with SilentModeTypes.DownloadNoInstall or SilentModeTypes.DownloadAndInstall.
+Function that is called asynchronously to clean up old installers that have been downloaded with UserInteractionMode.DownloadNoInstall or UserInteractionMode.DownloadAndInstall.
 
 ### NetSparkle.Configuration Configuration { get; set; }
 
@@ -428,7 +428,7 @@ Defines if the application needs to be relaunched after executing the downloaded
 
 WinForms only. If true, tries to run UI code on the main thread using System.Threading.SynchronizationContext.
 
-### NetSparkle.Sparkle.SilentModeTypes SilentMode { get; set; }
+### NetSparkle.Sparkle.UserInteractionMode SilentMode { get; set; }
 
 Set the silent mode type for Sparkle to use when there is a valid update for the software
 

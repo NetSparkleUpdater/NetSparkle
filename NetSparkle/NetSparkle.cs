@@ -263,7 +263,7 @@ namespace NetSparkle
             // set the url
             _appCastUrl = appcastUrl;
             LogWriter.PrintMessage("Using the following url: {0}", _appCastUrl);
-            SilentMode = SilentModeTypes.NotSilent;
+            UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
             HideSkipButton = false;
             HideRemindMeLaterButton = false;
@@ -313,33 +313,9 @@ namespace NetSparkle
         public Uri SystemProfileUrl { get; private set; }
 
         /// <summary>
-        /// Allows for updating the application with or without user interaction.
+        /// Set the user interaction mode for Sparkle to use when there is a valid update for the software
         /// </summary>
-        public enum SilentModeTypes
-        {
-            /// <summary>
-            /// Shows the change log UI automatically (this is the default)
-            /// </summary>
-            NotSilent,
-            /// <summary>
-            /// Downloads the latest update file and changelog automatically, but does not
-            /// show any UI until asked to show UI.
-            /// </summary>
-            DownloadNoInstall,
-            /// <summary>
-            /// Downloads the latest update file and automatically runs it as an installer file.
-            /// <para>WARNING: if you don't tell the user that the application is about to quit
-            /// to update/run an installer, this setting might be quite the shock to the user!
-            /// Make sure to implement AboutToExitForInstallerRun or AboutToExitForInstallerRunAsync
-            /// so that you can show your users what is about to happen.</para>
-            /// </summary>
-            DownloadAndInstall,
-        }
-
-        /// <summary>
-        /// Set the silent mode type for Sparkle to use when there is a valid update for the software
-        /// </summary>
-        public SilentModeTypes SilentMode { get; set; }
+        public UserInteractionMode UserInteractionMode { get; set; }
 
         /// <summary>
         /// If set, downloads files to this path. If the folder doesn't already exist, creates
@@ -1071,9 +1047,9 @@ namespace NetSparkle
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 ProgressWindow = null;
             }
-            if (ProgressWindow == null && !isDownloadingSilently())
+            if (ProgressWindow == null && !IsDownloadingSilently())
             {
-                if (!isDownloadingSilently() && ProgressWindow == null)
+                if (!IsDownloadingSilently() && ProgressWindow == null)
                 {
                     // create the form
                     Action<object> showSparkleDownloadUI = (state) =>
@@ -1165,9 +1141,9 @@ namespace NetSparkle
         /// <summary>
         /// True if the user has silent updates enabled; false otherwise.
         /// </summary>
-        private bool isDownloadingSilently()
+        private bool IsDownloadingSilently()
         {
-            return SilentMode != SilentModeTypes.NotSilent;
+            return UserInteractionMode != UserInteractionMode.NotSilent;
         }
 
         /// <summary>
@@ -1501,7 +1477,7 @@ namespace NetSparkle
             if (updates == null)
                 return;
 
-            if (isDownloadingSilently())
+            if (IsDownloadingSilently())
             {
                 await InitDownloadAndInstallProcess(updates[0]); // install only latest
             }
@@ -1563,7 +1539,7 @@ namespace NetSparkle
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
-                if (SilentMode == SilentModeTypes.DownloadNoInstall && File.Exists(_downloadTempFileName))
+                if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
                 {
                     // Binary should already be downloaded. Run it!
                     ProgressWindowCompleted(this, new DownloadInstallArgs(true));
@@ -1666,7 +1642,7 @@ namespace NetSparkle
                                     case NextUpdateAction.PerformUpdateUnattended:
                                         {
                                             LogWriter.PrintMessage("Unattended update desired from consumer");
-                                            SilentMode = SilentModeTypes.DownloadAndInstall;
+                                            UserInteractionMode = UserInteractionMode.DownloadAndInstall;
                                             OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                                             break;
                                         }
@@ -1775,7 +1751,7 @@ namespace NetSparkle
         /// <param name="e">used to determine if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
-            bool shouldShowUIItems = !isDownloadingSilently();
+            bool shouldShowUIItems = !IsDownloadingSilently();
 
             if (e.Cancelled)
             {
@@ -1854,7 +1830,7 @@ namespace NetSparkle
                 FinishedDownloading?.Invoke(_downloadTempFileName);
                 LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                bool shouldInstallAndRelaunch = SilentMode == SilentModeTypes.DownloadAndInstall;
+                bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
                     ProgressWindowCompleted(this, new DownloadInstallArgs(true));

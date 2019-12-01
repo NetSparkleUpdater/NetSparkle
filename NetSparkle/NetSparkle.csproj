@@ -131,6 +131,7 @@
     <Compile Include="Enums\SecurityMode.cs" />
     <Compile Include="Enums\UpdateAvailableResult.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
+    <Compile Include="Enums\UserInteractionMode.cs" />
     <Compile Include="Enums\ValidationResult.cs" />
     <Compile Include="Events\DownloadInstallArgs.cs" />
     <Compile Include="Events\UpdateResponseArgs.cs" />
