@@ -148,7 +148,6 @@
     <Compile Include="AssemblyAccessor.cs" />
     <Compile Include="AssemblyDiagnosticsAccessor.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="DeviceInventory.cs" />
     <Compile Include="DSAChecker.cs" />
     <Compile Include="NetSparkleDelegates.cs" />
     <Compile Include="NetSparkleException.cs" />

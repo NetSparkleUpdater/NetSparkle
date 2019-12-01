@@ -14,11 +14,6 @@ using System.Net.Http;
 using NetSparkle.Events;
 using System.Collections.Generic;
 
-// TODO: resume downloads if the download didn't finish but the software was killed
-// instead of restarting the entire download
-// TODO: Refactor a bunch of events to an interface instead?
-// TODO: That loop thing for the background worker needs to be reworked to have no goto and such.
-
 namespace NetSparkle
 {
     /// <summary>
@@ -237,7 +232,7 @@ namespace NetSparkle
             }
             TrustEverySSLConnection = false;
             // configure ssl cert link
-            ServicePointManager.ServerCertificateValidationCallback += RemoteCertificateValidation;
+            ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             // init UI
             UIFactory?.Init();
             _appReferenceAssembly = null;
@@ -287,10 +282,6 @@ namespace NetSparkle
         }
 
         #region Properties
-        /// <summary>
-        /// Enables system profiling against a profile server. URL to submit to is stored in <see cref="SystemProfileUrl"/>
-        /// </summary>
-        public bool EnableSystemProfiling { get; private set; }
 
         /// <summary>
         /// Hides the release notes view when an update is found.
@@ -306,11 +297,6 @@ namespace NetSparkle
         /// Hides the remind me later button when an update is found.
         /// </summary>
         public bool HideRemindMeLaterButton { get; set; }
-
-        /// <summary>
-        /// If <see cref="EnableSystemProfiling"/> is true, system profile information is sent to this URL
-        /// </summary>
-        public Uri SystemProfileUrl { get; private set; }
 
         /// <summary>
         /// Set the user interaction mode for Sparkle to use when there is a valid update for the software
@@ -612,7 +598,7 @@ namespace NetSparkle
         /// </summary>
         private void UnregisterEvents()
         {
-            ServicePointManager.ServerCertificateValidationCallback -= RemoteCertificateValidation;
+            ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
             _cancelTokenSource.Cancel();
 
             if (_webDownloadClient != null)
@@ -635,72 +621,6 @@ namespace NetSparkle
             {
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 ProgressWindow = null;
-            }
-
-        }
-
-        /// <summary>
-        /// This method updates the profile information which can be sent to the server if enabled.
-        /// Called automatically when checking for updates.
-        /// </summary>
-        /// <param name="config">the configuration</param>
-        private void UpdateSystemProfileInformation(Configuration config)
-        {
-            // check if profile data is enabled
-            if (!EnableSystemProfiling)
-                return;
-
-            // check if we need an update
-            if (DateTime.Now - config.LastProfileUpdate < new TimeSpan(7, 0, 0, 0))
-                return;
-
-            // touch the profile update time
-            config.TouchProfileTime();
-
-            // start the profile thread
-            Thread t = new Thread(ProfileDataThreadStart);
-            t.Start(config);
-        }
-
-        /// <summary>
-        /// Profile data thread
-        /// </summary>
-        /// <param name="obj">the configuration object</param>
-        private void ProfileDataThreadStart(object obj)
-        {
-            try
-            {
-                if (SystemProfileUrl != null)
-                {
-                    // get the config
-                    Configuration config = obj as Configuration;
-
-                    // collect data
-                    DeviceInventory inv = new DeviceInventory(config);
-                    inv.CollectInventory();
-
-                    // build url
-                    string requestUrl = inv.BuildRequestUrl(SystemProfileUrl + "?");
-
-                    // perform the webrequest
-                    if (WebRequest.Create(requestUrl) is HttpWebRequest request)
-                    {
-                        //request.ServerCertificateValidationCallback += 
-                        request.UseDefaultCredentials = true;
-                        request.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-
-                        using (WebResponse response = request.GetResponse())
-                        {
-                            // close the response 
-                            response.Close();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // No exception during data send 
-                LogWriter.PrintMessage(ex.Message);
             }
         }
 
@@ -1330,7 +1250,7 @@ namespace NetSparkle
         /// <param name="chain">the chain</param>
         /// <param name="sslPolicyErrors">how to handle policy errors</param>
         /// <returns><c>true</c> if the cert is valid</returns>
-        private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        private bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (TrustEverySSLConnection)
             {
@@ -1403,8 +1323,7 @@ namespace NetSparkle
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
-            UpdateInfo updateData = await CheckForUpdates(true);
-            return updateData;
+            return await CheckForUpdates(true);
         }
 
         /// <summary>
@@ -1423,8 +1342,6 @@ namespace NetSparkle
             }
             UpdateCheckStarted?.Invoke(this);
             Configuration config = GetApplicationConfig();
-            // update profile information as needed
-            UpdateSystemProfileInformation(config);
 
             // check if update is required
             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
@@ -1609,9 +1526,6 @@ namespace NetSparkle
                         {
                             // update the runonce feature
                             goIntoLoop = !config.DidRunOnce;
-
-                            // update profile information is needed
-                            UpdateSystemProfileInformation(config);
 
                             // check if update is required
                             if (_cancelToken.IsCancellationRequested)

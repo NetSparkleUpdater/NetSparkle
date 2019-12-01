@@ -335,7 +335,6 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - string [CustomInstallerArguments](#string-custominstallerarguments--get-set-) { get; set; }
 - NetSparkle.DSAChecker [DSAChecker](#netsparkledsachecker-dsachecker--get-set-) { get; set; }
 - NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
-- bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
 - bool [HideReleaseNotes](#bool-hidereleasenotes--get-set-) { get; set; }
 - bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
@@ -347,7 +346,6 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - bool [RelaunchAfterUpdate](#bool-relaunchafterupdate--get-set-) { get; set; }
 - bool [ShowsUIOnMainThread](#bool-showsuionmainthread--get-set-) { get; set; }
 - NetSparkle.Sparkle.UserInteractionMode [UserInteractionMode](#netsparklesparkleuserinteractionmode-silentmode--get-set-) { get; set; }
-- System.Uri [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-) { get; private set; }
 - string [TmpDownloadFilePath](#string-tmpdownloadfilepath--get-set-) { get; set; }
 - bool [TrustEverySSLConnection](#bool-trusteverysslconnection--get-set-) { get; set; }
 - NetSparkle.Interfaces.IUIFactory [UIFactory](#netsparkleinterfacesiuifactory-uifactory--get-set-) { get; set; }
@@ -383,10 +381,6 @@ The DSA checker that verifies/validates downloaded files
 ### NetSparkle.LogWriter LogWriter { get; set; }
 
 Logs diagnostic information to `Console.WriteLine` or `Debug.WriteLine` or wherever else the child class wants to report diagnostic information
-
-### bool EnableSystemProfiling { get; private set; }
-
-Enables system profiling against a profile server. URL to submit to is stored in [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-)
 
 ### string ExtraJsonData { get; set; }
 
@@ -431,10 +425,6 @@ WinForms only. If true, tries to run UI code on the main thread using System.Thr
 ### NetSparkle.Sparkle.UserInteractionMode SilentMode { get; set; }
 
 Set the silent mode type for Sparkle to use when there is a valid update for the software
-
-### System.Uri SystemProfileUrl { get; private set; }
-
-If [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) is true, system profile information is sent to this URL
 
 ### string TmpDownloadFilePath { get; set; }
 
