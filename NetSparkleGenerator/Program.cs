@@ -1,7 +1,10 @@
-﻿using System;
+﻿using NetSparkle;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Xml;
 
 namespace NetSparkleGenerator
 {
@@ -86,8 +89,7 @@ namespace NetSparkleGenerator
                 }
 
                 var productName = FileVersionInfo.GetVersionInfo(exePaths[0]).ProductName.Trim();
-                var appCastGenerator = new AppCastXMLGenerator(productName);
-
+                var items = new List<AppCastItem>(); 
                 foreach (var exePath in exePaths)
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
@@ -95,20 +97,28 @@ namespace NetSparkleGenerator
                     var dsaSignature = NetSparkle.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
                     var productVersion = versionInfo.ProductVersion.Trim();
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
-                    appCastGenerator.AddItem(
-                        new AppCastXMLItem(itemTitle,
-                        _baseUrl + Path.GetFileName(versionInfo.FileName),
-                        productVersion,
-                        fileInfo.CreationTime,
-                        length: fileInfo.Length.ToString(),
-                        dsaSignature: dsaSignature)
-                    );
+                    var remoteUpdateFile = _baseUrl + fileInfo.Name;
+                    var item = new AppCastItem()
+                    {
+                        Title = itemTitle,
+                        DownloadLink = remoteUpdateFile,
+                        Version = productVersion,
+                        ShortVersion = productVersion.Substring(0, productVersion.LastIndexOf('.')),
+                        PublicationDate = fileInfo.CreationTime,
+                        UpdateSize = fileInfo.Length,
+                        DownloadDSASignature = dsaSignature,
+                        OperatingSystemString = "windows",
+                        MIMEType = "application/octet-stream"
+                    };
+
+                    items.Add(item);
                 }
 
-                var appcastXmlDocument = appCastGenerator.GenerateAppCast();
-                appcastXmlDocument.Save("appcast.xml");
-
+                var appcastXmlDocument = AppCast.GenerateAppCastXml(items, productName);
                 var appcastXmlPath = Path.Combine(Environment.CurrentDirectory, "appcast.xml");
+                using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n" }))
+                    appcastXmlDocument.Save(w);
+                
                 var signature = NetSparkle.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
