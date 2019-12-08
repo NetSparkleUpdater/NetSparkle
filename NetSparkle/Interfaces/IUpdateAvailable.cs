@@ -13,7 +13,7 @@ namespace NetSparkle.Interfaces
         /// Event fired when the user has responded to the 
         /// skip, later, install question.
         /// </summary>
-        event EventHandler UserResponded;
+        event UserRespondedToUpdate UserResponded;
 
         /// <summary>
         /// Show the UI

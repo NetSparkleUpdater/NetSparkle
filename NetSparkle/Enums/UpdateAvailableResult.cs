@@ -11,17 +11,17 @@ namespace NetSparkle.Enums
         None = 0,
 
         /// <summary>
-        /// User chose to install the update immediatelly.
+        /// User chose to install the update immediately.
         /// </summary>
         InstallUpdate,
 
         /// <summary>
-        /// Used chose to skip the update.
+        /// User chose to skip the update.
         /// </summary>
         SkipUpdate,
 
         /// <summary>
-        /// User chose to remind her later.
+        /// User chose to remind them later about this update.
         /// </summary>
         RemindMeLater
     }

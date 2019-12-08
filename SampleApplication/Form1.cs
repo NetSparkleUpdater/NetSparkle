@@ -22,11 +22,13 @@ namespace SampleApplication
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkleUpdateDetector = new Sparkle(appcastUrl, icon)
             {
-                UIFactory = new NetSparkle.UI.NetFramework.WinForms.UIFactory()
+                UIFactory = new NetSparkle.UI.NetFramework.WinForms.UIFactory(),
+                //ShowsUIOnMainThread = true,
+                //UseNotificationToast = true
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkleUpdateDetector.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            _sparkleUpdateDetector.CloseApplication += _sparkleUpdateDetector_CloseApplication;
+            //_sparkleUpdateDetector.CloseApplication += _sparkleUpdateDetector_CloseApplication;
             _sparkleUpdateDetector.StartLoop(true, true);
         }
 

@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using NetSparkle.Enums;
 using System.Threading;
+using System.Collections.Generic;
+using NetSparkle.Events;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -14,14 +16,14 @@ namespace NetSparkle.UI.NetFramework.WinForms
     public partial class UpdateAvailableWindow : Form, IUpdateAvailable
     {
         private readonly Sparkle _sparkle;
-        private readonly AppCastItem[] _updates;
+        private readonly List<AppCastItem> _updates;
         private System.Windows.Forms.Timer _ensureDialogShownTimer;
 
         /// <summary>
         /// Event fired when the user has responded to the 
         /// skip, later, install question.
         /// </summary>
-        public event EventHandler UserResponded;
+        public event UserRespondedToUpdate UserResponded;
 
         /// <summary>
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
@@ -42,7 +44,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
-        public UpdateAvailableWindow(Sparkle sparkle, AppCastItem[] items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
+        public UpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;
@@ -113,7 +115,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             FormClosing += UpdateAvailableWindow_FormClosing;
         }
 
-        private async void LoadReleaseNotes(AppCastItem[] items)
+        private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotesAsHTML(items, latestVersion, _cancellationToken);
@@ -133,14 +135,16 @@ namespace NetSparkle.UI.NetFramework.WinForms
             {
                 DialogResult = DialogResult.None;
                 _didSendResponse = true;
-                UserResponded?.Invoke(this, new EventArgs());
+                UserResponded?.Invoke(this, new UpdateResponseArgs(UpdateAvailableResult.None, CurrentItem));
             }
         }
 
         /// <summary>
         /// The current item being installed
         /// </summary>
-        AppCastItem IUpdateAvailable.CurrentItem
+        AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
+
+        public AppCastItem CurrentItem
         {
             get { return _updates.Count() > 0 ? _updates[0] : null; }
         }
@@ -216,6 +220,13 @@ namespace NetSparkle.UI.NetFramework.WinForms
             Size = newSize;
         }
 
+        void SendResponse(UpdateAvailableResult response)
+        {
+            _cancellationTokenSource?.Cancel();
+            _didSendResponse = true;
+            UserResponded?.Invoke(this, new UpdateResponseArgs(response, CurrentItem));
+        }
+
         /// <summary>
         /// Event called when the skip button is clicked
         /// </summary>
@@ -227,9 +238,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.No;
 
             // close the windows
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.SkipUpdate);
         }
 
         /// <summary>
@@ -243,9 +252,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.Retry;
 
             // close the window
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.RemindMeLater);
         }
 
         /// <summary>
@@ -259,9 +266,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             DialogResult = DialogResult.Yes;
 
             // close the dialog
-            _cancellationTokenSource?.Cancel();
-            _didSendResponse = true;
-            UserResponded?.Invoke(this, new EventArgs());
+            SendResponse(UpdateAvailableResult.InstallUpdate);
         }
 
         /// <summary>

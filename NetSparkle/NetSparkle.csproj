@@ -131,13 +131,15 @@
     <Compile Include="Enums\SecurityMode.cs" />
     <Compile Include="Enums\UpdateAvailableResult.cs" />
     <Compile Include="Enums\UpdateStatus.cs" />
+    <Compile Include="Enums\UserInteractionMode.cs" />
     <Compile Include="Enums\ValidationResult.cs" />
     <Compile Include="Events\DownloadInstallArgs.cs" />
+    <Compile Include="Events\UpdateResponseArgs.cs" />
     <Compile Include="Interfaces\ICheckingForUpdates.cs" />
     <Compile Include="Interfaces\IDownloadProgress.cs" />
     <Compile Include="Interfaces\IUpdateAvailable.cs" />
     <Compile Include="Interfaces\IUIFactory.cs" />
-    <Compile Include="MarkdownSharp.cs" />
+    <Compile Include="Libraries\MarkdownSharp.cs" />
     <Compile Include="AssemblyReflectionAccessor.cs" />
     <Compile Include="Interfaces\IAssemblyAccessor.cs" />
     <Compile Include="NetSparkle.cs" />
@@ -146,8 +148,8 @@
     <Compile Include="AssemblyAccessor.cs" />
     <Compile Include="AssemblyDiagnosticsAccessor.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="DeviceInventory.cs" />
     <Compile Include="DSAChecker.cs" />
+    <Compile Include="NetSparkleDelegates.cs" />
     <Compile Include="NetSparkleException.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="RegistryConfiguration.cs" />
@@ -158,7 +160,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UpdateDetectedEventArgs.cs" />
+    <Compile Include="Events\UpdateDetectedEventArgs.cs" />
     <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <ItemGroup>

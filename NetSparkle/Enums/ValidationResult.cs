@@ -11,7 +11,7 @@ namespace NetSparkle.Enums
         Valid = 1,
 
         /// <summary>
-        /// Depending on the SecirityMode at least one of DSA public key or the signature dosn't exist or
+        /// Depending on the SecurityMode at least one of DSA public key or the signature dosn't exist or
         /// they exists but they are not valid. In this case the file will be rejected.
         /// </summary>
         Invalid = 2,

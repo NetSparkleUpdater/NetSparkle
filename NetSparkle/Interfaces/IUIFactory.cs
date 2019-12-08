@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace NetSparkle.Interfaces
@@ -15,7 +16,7 @@ namespace NetSparkle.Interfaces
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="applicationIcon">Icon</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        IUpdateAvailable CreateSparkleForm(Sparkle sparkle, AppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false);
+        IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
         /// Create download progress window
@@ -61,7 +62,7 @@ namespace NetSparkle.Interfaces
         /// <param name="updates">Appcast updates</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        void ShowToast(AppCastItem[] updates, Icon applicationIcon, Action<AppCastItem[]> clickHandler);
+        void ShowToast(List<AppCastItem> updates, Icon applicationIcon, Action<List<AppCastItem>> clickHandler);
 
         /// <summary>
         /// Show message on download error

@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using NetSparkle.Interfaces;
 using NetSparkle.Properties;
 using NetSparkle.Enums;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace NetSparkle.UI.NetFramework.WinForms
 {
@@ -19,7 +21,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <param name="updates">Sorted array of updates from latest to earliest</param>
         /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, AppCastItem[] updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
         {
             return new UpdateAvailableWindow(sparkle, updates, applicationIcon, isUpdateAlreadyDownloaded);
         }
@@ -96,17 +98,20 @@ namespace NetSparkle.UI.NetFramework.WinForms
         /// <param name="updates">Appcast updates</param>
         /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        public virtual void ShowToast(AppCastItem[] updates, Icon applicationIcon, Action<AppCastItem[]> clickHandler)
+        public virtual void ShowToast(List<AppCastItem> updates, Icon applicationIcon, Action<List<AppCastItem>> clickHandler)
         {
-            var toast = new ToastNotifier
+            Thread thread = new Thread(() =>
+            {
+                var toast = new ToastNotifier(applicationIcon)
                 {
-                    Image =
-                        {
-                            Image = applicationIcon != null ? applicationIcon.ToBitmap() : Resources.software_update_available1
-                        }
+                    ClickAction = clickHandler,
+                    Updates = updates
                 };
-            toast.ToastClicked += (sender, args) => clickHandler(updates); // TODO: this is leak
-            toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+                toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
+                Application.Run(toast);
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
         }
 
         /// <summary>

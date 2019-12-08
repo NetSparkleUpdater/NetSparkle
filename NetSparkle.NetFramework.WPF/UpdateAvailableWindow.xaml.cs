@@ -1,4 +1,5 @@
 ﻿using NetSparkle.Enums;
+using NetSparkle.Events;
 using NetSparkle.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace NetSparkle.UI.NetFramework.WPF
     public partial class UpdateAvailableWindow : Window, IUpdateAvailable
     {
         private Sparkle _sparkle;
-        private AppCastItem[] _updates;
+        private List<AppCastItem> _updates;
         private ReleaseNotesGrabber _releaseNotesGrabber;
 
         private CancellationToken _cancellationToken;
@@ -52,7 +53,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             }
         }
 
-        public void Initialize(Sparkle sparkle, AppCastItem[] items, bool isUpdateAlreadyDownloaded = false,
+        public void Initialize(Sparkle sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;
@@ -99,7 +100,7 @@ namespace NetSparkle.UI.NetFramework.WPF
             LoadReleaseNotes(items);
         }
 
-        private async void LoadReleaseNotes(AppCastItem[] items)
+        private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotesAsHTML(items, latestVersion, _cancellationToken);
@@ -111,11 +112,15 @@ namespace NetSparkle.UI.NetFramework.WPF
         }
 
         UpdateAvailableResult IUpdateAvailable.Result => _userResponse;
-        // actually the result should be sent back in the UserResponded event! that would simplify the event handling a lot)
 
-        AppCastItem IUpdateAvailable.CurrentItem => _updates.Count() > 0 ? _updates[0] : null;
+        AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
 
-        public event EventHandler UserResponded;
+        public AppCastItem CurrentItem
+        {
+            get { return _updates.Count() > 0 ? _updates[0] : null; }
+        }
+
+        public event UserRespondedToUpdate UserResponded;
 
         void IUpdateAvailable.BringToFront()
         {
@@ -190,25 +195,26 @@ namespace NetSparkle.UI.NetFramework.WPF
             }
         }
 
+        private void SendResponse(UpdateAvailableResult response)
+        {
+            _userResponse = response;
+            UserResponded?.Invoke(this, new UpdateResponseArgs(_userResponse, CurrentItem));
+            _cancellationTokenSource?.Cancel();
+        }
+
         private void SkipButton_Click(object sender, RoutedEventArgs e)
         {
-            _userResponse = UpdateAvailableResult.SkipUpdate;
-            UserResponded?.Invoke(this, new EventArgs());
-            _cancellationTokenSource?.Cancel();
+            SendResponse(UpdateAvailableResult.SkipUpdate);
         }
 
         private void RemindMeLaterButton_Click(object sender, RoutedEventArgs e)
         {
-            _userResponse = UpdateAvailableResult.RemindMeLater;
-            UserResponded?.Invoke(this, new EventArgs());
-            _cancellationTokenSource?.Cancel();
+            SendResponse(UpdateAvailableResult.RemindMeLater);
         }
 
         private void DownloadInstallButton_Click(object sender, RoutedEventArgs e)
         {
-            _userResponse = UpdateAvailableResult.InstallUpdate;
-            UserResponded?.Invoke(this, new EventArgs());
-            _cancellationTokenSource?.Cancel();
+            SendResponse(UpdateAvailableResult.InstallUpdate);
         }
     }
 }

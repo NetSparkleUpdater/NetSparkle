@@ -7,21 +7,20 @@ namespace NetSparkle.Enums
     public enum SecurityMode
     {
         /// <summary>
-        /// All files (with or without signature) will be accepted. This was the default mode before.
-        /// I strongly don't recommend this mode. It can cause critical security issues.
+        /// All files (with or without signature) will be accepted.
+        /// This mode is strongly NOT recommended. It can cause critical security issues.
         /// </summary>
         Unsafe = 1,
 
         /// <summary>
-        /// If there is an DSA public key all files has to be signed. If there isn't any DSA public key
-        /// also files without an signature will be accepted. It's an mix between Unsafe and Strict and
+        /// If there is a DSA public key, all files have to be signed. If there isn't any DSA public key
+        ///  files without a signature will also be accepted. It's an mix between Unsafe and Strict and
         /// can have some security issues if the DSA public key gets lost in the application.
         /// </summary>
         UseIfPossible = 2,
 
         /// <summary>
-        /// Every file has to be signed. This means the DSA public key must exist. I recommend this mode
-        /// to enforce the use of secure update informations. This is the default mode.
+        /// Every file has to be signed. This means the DSA public key must exist. This is the default mode.
         /// </summary>
         Strict = 3,
     }

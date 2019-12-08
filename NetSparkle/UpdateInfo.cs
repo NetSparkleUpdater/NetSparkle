@@ -19,11 +19,11 @@ namespace NetSparkle
         /// <summary>
         /// Any available updates for the product.
         /// </summary>
-        public AppCastItem[] Updates { get; set; }
+        public List<AppCastItem> Updates { get; set; }
         /// <summary>
         /// Constructor for SparkleUpdate when there are some updates available.
         /// </summary>
-        public UpdateInfo(UpdateStatus status, AppCastItem[] updates)
+        public UpdateInfo(UpdateStatus status, List<AppCastItem> updates)
         {
             Status = status;
             Updates = updates;

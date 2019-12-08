@@ -1,6 +1,6 @@
 # NetSparkle
 
-**The `develop` branch is highly unstable at the moment as major refactoring takes place for 2.0 development. You are welcome to use the `master` branch, which is stable. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place.**
+**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API, etc. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place.**
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
@@ -335,7 +335,6 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - string [CustomInstallerArguments](#string-custominstallerarguments--get-set-) { get; set; }
 - NetSparkle.DSAChecker [DSAChecker](#netsparkledsachecker-dsachecker--get-set-) { get; set; }
 - NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
-- bool [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) { get; private set; }
 - string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
 - bool [HideReleaseNotes](#bool-hidereleasenotes--get-set-) { get; set; }
 - bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
@@ -346,8 +345,7 @@ Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispo
 - NetSparkle.Interfaces.IDownloadProgress [ProgressWindow](#netsparkleinterfacesidownloadprogress-progresswindow--get-set-) { get; set; }
 - bool [RelaunchAfterUpdate](#bool-relaunchafterupdate--get-set-) { get; set; }
 - bool [ShowsUIOnMainThread](#bool-showsuionmainthread--get-set-) { get; set; }
-- NetSparkle.Sparkle.SilentModeTypes [SilentMode](#netsparklesparklesilentmodetypes-silentmode--get-set-) { get; set; }
-- System.Uri [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-) { get; private set; }
+- NetSparkle.Sparkle.UserInteractionMode [UserInteractionMode](#netsparklesparkleuserinteractionmode-silentmode--get-set-) { get; set; }
 - string [TmpDownloadFilePath](#string-tmpdownloadfilepath--get-set-) { get; set; }
 - bool [TrustEverySSLConnection](#bool-trusteverysslconnection--get-set-) { get; set; }
 - NetSparkle.Interfaces.IUIFactory [UIFactory](#netsparkleinterfacesiuifactory-uifactory--get-set-) { get; set; }
@@ -366,7 +364,7 @@ The user interface window that shows the 'Checking for Updates...' form. TODO: M
 
 ### System.Action ClearOldInstallers { get; set; }
 
-Function that is called asynchronously to clean up old installers that have been downloaded with SilentModeTypes.DownloadNoInstall or SilentModeTypes.DownloadAndInstall.
+Function that is called asynchronously to clean up old installers that have been downloaded with UserInteractionMode.DownloadNoInstall or UserInteractionMode.DownloadAndInstall.
 
 ### NetSparkle.Configuration Configuration { get; set; }
 
@@ -383,10 +381,6 @@ The DSA checker that verifies/validates downloaded files
 ### NetSparkle.LogWriter LogWriter { get; set; }
 
 Logs diagnostic information to `Console.WriteLine` or `Debug.WriteLine` or wherever else the child class wants to report diagnostic information
-
-### bool EnableSystemProfiling { get; private set; }
-
-Enables system profiling against a profile server. URL to submit to is stored in [SystemProfileUrl](#systemuri-systemprofileurl--get-private-set-)
 
 ### string ExtraJsonData { get; set; }
 
@@ -428,13 +422,9 @@ Defines if the application needs to be relaunched after executing the downloaded
 
 WinForms only. If true, tries to run UI code on the main thread using System.Threading.SynchronizationContext.
 
-### NetSparkle.Sparkle.SilentModeTypes SilentMode { get; set; }
+### NetSparkle.Sparkle.UserInteractionMode SilentMode { get; set; }
 
 Set the silent mode type for Sparkle to use when there is a valid update for the software
-
-### System.Uri SystemProfileUrl { get; private set; }
-
-If [EnableSystemProfiling](#bool-enablesystemprofiling--get-private-set-) is true, system profile information is sent to this URL
 
 ### string TmpDownloadFilePath { get; set; }
 
