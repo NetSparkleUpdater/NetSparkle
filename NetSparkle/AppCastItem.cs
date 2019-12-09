@@ -115,6 +115,15 @@ namespace NetSparkle
         private const string _defaultOperatingSystem = "windows";
         private const string _defaultType = "application/octet-stream";
 
+        /// <summary>
+        /// Parse item Xml Node to AppCastItem
+        /// </summary>
+        /// <param name="installedVersion">Currently installed version</param>
+        /// <param name="applicationName">Application name</param>
+        /// <param name="castUrl">The url of the appcast</param>
+        /// <param name="item">The item XML node</param>
+        /// <param name="logWriter">logwriter instance</param>
+        /// <returns>AppCastItem from Xml Node</returns>
         public static AppCastItem Parse(string installedVersion, string applicationName, string castUrl, XElement item, LogWriter logWriter)
         {
 
@@ -202,6 +211,10 @@ namespace NetSparkle
             return newAppCastItem;
         }
 
+        /// <summary>
+        /// Create Xml node from this instance of AppCastItem
+        /// </summary>
+        /// <returns>An XML node</returns>
         public XElement GetXElement()
         {
             var item = new XElement(_itemNode);
@@ -291,9 +304,9 @@ namespace NetSparkle
         /// <summary>
         /// Check equality of two AppCastItem instances
         /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if items are the same</returns>
         public static bool operator ==(AppCastItem left, AppCastItem right)
         {
             if (left is null) return right is null;
@@ -301,26 +314,56 @@ namespace NetSparkle
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// Check if two AppCastItem instances are different
+        /// </summary>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if items are different</returns>
         public static bool operator !=(AppCastItem left, AppCastItem right)
         {
             return !(left == right);
         }
 
+        /// <summary>
+        /// Less than comparison of version between two AppCastItem instances
+        /// </summary>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if left version is less than right version</returns>
         public static bool operator <(AppCastItem left, AppCastItem right)
         {
             return left is null ? !(right is null) : left.CompareTo(right) < 0;
         }
 
+        /// <summary>
+        /// Less than or equal to comparison of version between two AppCastItem instances
+        /// </summary>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if left version is less than or equal to right version</returns>
         public static bool operator <=(AppCastItem left, AppCastItem right)
         {
             return left is null || left.CompareTo(right) <= 0;
         }
 
+        /// <summary>
+        /// Greater than comparison of version between two AppCastItem instances
+        /// </summary>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if left version is greater than right version</returns>
         public static bool operator >(AppCastItem left, AppCastItem right)
         {
             return !(left is null) && left.CompareTo(right) > 0;
         }
 
+        /// <summary>
+        /// Greater than or equal to comparison of version between two AppCastItem instances
+        /// </summary>
+        /// <param name="left">AppCastItem to compare</param>
+        /// <param name="right">AppCastItem to compare</param>
+        /// <returns>True if left version is greater than or equal to right version</returns>
         public static bool operator >=(AppCastItem left, AppCastItem right)
         {
             return left is null ? right is null : left.CompareTo(right) >= 0;

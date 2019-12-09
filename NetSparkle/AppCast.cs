@@ -194,6 +194,10 @@ namespace NetSparkle
             return true;
         }
 
+        /// <summary>
+        /// Parse an XML memory stream build items list
+        /// </summary>
+        /// <param name="stream">The xml memory stream to parse</param>
         private void Parse(MemoryStream stream)
         {
             const string itemNode = "item";
@@ -216,144 +220,10 @@ namespace NetSparkle
             Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         }
 
-        //private void Parse(XmlReader reader)
-        //{
-        //    const string itemNode = "item";
-        //    const string enclosureNode = "enclosure";
-        //    const string sparkleEnclosureNode = "sparkle:enclosure";
-        //    const string releaseNotesLinkNode = "sparkle:releaseNotesLink";
-        //    const string descriptionNode = "description";
-        //    const string versionAttribute = "sparkle:version";
-        //    const string dsaSignature = "sparkle:dsaSignature";
-        //    const string criticalAttribute = "sparkle:criticalUpdate";
-        //    const string operatingSystemAttribute = "sparkle:os";
-        //    const string lengthAttribute = "length";
-        //    const string typeAttribute = "type";
-        //    const string urlAttribute = "url";
-        //    const string pubDateNode = "pubDate";
-
-        //    AppCastItem currentItem = null;
-
-        //    while (reader.Read())
-        //    {
-        //        if (reader.NodeType == XmlNodeType.Element)
-        //        {
-        //            switch (reader.Name)
-        //            {
-        //                case itemNode:
-        //                    currentItem = new AppCastItem()
-        //                    {
-        //                        AppVersionInstalled = _config.InstalledVersion,
-        //                        AppName = _config.ApplicationName,
-        //                        UpdateSize = 0,
-        //                        IsCriticalUpdate = false,
-        //                        OperatingSystemString = "windows",
-        //                        MIMEType = "application/octet-stream"
-        //                    };
-        //                    break;
-        //                case releaseNotesLinkNode:
-        //                    if (currentItem != null)
-        //                    {
-        //                        currentItem.ReleaseNotesDSASignature = reader.GetAttribute(dsaSignature);
-        //                        currentItem.ReleaseNotesLink = reader.ReadString().Trim();
-        //                    }
-        //                    break;
-        //                case descriptionNode:
-        //                    if (currentItem != null)
-        //                    {
-        //                        currentItem.Description = reader.ReadString().Trim();
-        //                    }
-        //                    break;
-        //                case enclosureNode:
-        //                case sparkleEnclosureNode:
-        //                    if (currentItem != null)
-        //                    {
-        //                        currentItem.Version = reader.GetAttribute(versionAttribute);
-        //                        currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
-        //                        if (!string.IsNullOrEmpty(currentItem.DownloadLink) && !currentItem.DownloadLink.Contains("/"))
-        //                        {
-        //                            // Download link contains only the filename -> complete with _castUrl
-        //                            currentItem.DownloadLink = _castUrl.Substring(0, _castUrl.LastIndexOf('/') + 1) + currentItem.DownloadLink;
-        //                        }
-
-        //                        currentItem.DownloadDSASignature = reader.GetAttribute(dsaSignature);
-        //                        string length = reader.GetAttribute(lengthAttribute);
-        //                        if (length != null)
-        //                        {
-        //                            int size = 0;
-        //                            if (int.TryParse(length, out size))
-        //                            {
-        //                                currentItem.UpdateSize = size;
-        //                            }
-        //                            else
-        //                            {
-        //                                currentItem.UpdateSize = 0;
-        //                            }
-        //                        }
-        //                        bool isCritical = false;
-        //                        string critical = reader.GetAttribute(criticalAttribute);
-        //                        if (critical != null && critical == "true" || critical == "1")
-        //                        {
-        //                            isCritical = true;
-        //                        }
-        //                        currentItem.IsCriticalUpdate = isCritical;
-
-        //                        string operatingSystem = reader.GetAttribute(operatingSystemAttribute);
-        //                        if (operatingSystem != null && operatingSystem != "")
-        //                        {
-        //                            currentItem.OperatingSystemString = operatingSystem;
-        //                        }
-
-        //                        string mimeType = reader.GetAttribute(typeAttribute);
-        //                        if (mimeType != null && mimeType != "")
-        //                        {
-        //                            currentItem.MIMEType = mimeType;
-        //                        }
-        //                    }
-        //                    break;
-        //                case pubDateNode:
-        //                    if (currentItem != null)
-        //                    {
-        //                        // "ddd, dd MMM yyyy HH:mm:ss zzz" => Standard date format
-        //                        //      e.g. "Sat, 26 Oct 2019 22:05:11 -05:00"
-        //                        // "ddd, dd MMM yyyy HH:mm:ss Z" => Check for MS AppCenter Sparkle date format which ends with GMT
-        //                        //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
-        //                        // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
-        //                        //      e.g. "Sat, 26 Oct 2019 22:05:11"
-        //                        string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", "ddd, dd MMM yyyy HH:mm:ss" };
-        //                        string dt = reader.ReadString().Trim();
-        //                        if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
-        //                        {
-        //                            _logWriter.PrintMessage("Converted '{0}' to {1}.", dt, dateValue);
-        //                            currentItem.PublicationDate = dateValue;
-        //                        }
-        //                        else
-        //                        {
-        //                            _logWriter.PrintMessage("Cannot parse item datetime {0}", dt);
-        //                        }
-        //                    }
-        //                    break;
-        //            }
-        //        }
-        //        else if (reader.NodeType == XmlNodeType.EndElement)
-        //        {
-        //            switch (reader.Name)
-        //            {
-        //                case itemNode:
-        //                    Items.Add(currentItem);
-        //                    break;
-        //            }
-        //        }
-        //    }
-
-        //    // sort versions in reverse order
-        //    Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
-        //}
-
         /// <summary>
         /// Returns sorted list of updates between current and latest. Installed is not included.
         /// </summary>
-        public AppCastItem[] GetUpdates()
+        public List<AppCastItem> GetUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = _dsaChecker.SignatureNeeded();
@@ -371,9 +241,18 @@ namespace NetSparkle
                     return false;
                 // accept everything else
                 return true;
-            }).ToArray();
+            }).ToList();
         }
 
+        /// <summary>
+        /// Create AppCast XML
+        /// </summary>
+        /// <param name="items">The AppCastItems to include in the AppCast</param>
+        /// <param name="title">AppCast application title</param>
+        /// <param name="link">AppCast link</param>
+        /// <param name="description">AppCast description</param>
+        /// <param name="language">AppCast language</param>
+        /// <returns>AppCast xml document</returns>
         public static XDocument GenerateAppCastXml(List<AppCastItem> items, string title, string link = "", string description = "", string language = "en")
         {
             var channel = new XElement("channel");
