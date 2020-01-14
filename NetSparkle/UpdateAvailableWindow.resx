@@ -231,6 +231,9 @@
   <data name="skipButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
+  <data name="skipButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="skipButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -263,6 +266,9 @@
   </data>
   <data name="buttonRemind.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
+  </data>
+  <data name="buttonRemind.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="buttonRemind.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -297,6 +303,9 @@
   <data name="updateButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="updateButton.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="updateButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -329,6 +338,24 @@
   </data>
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="ReleaseNotesBrowser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="ReleaseNotesBrowser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="ReleaseNotesBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
+  <data name="ReleaseNotesBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>40, 54</value>
+  </data>
+  <data name="ReleaseNotesBrowser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>800, 525</value>
+  </data>
+  <data name="ReleaseNotesBrowser.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="&gt;&gt;ReleaseNotesBrowser.Name" xml:space="preserve">
     <value>ReleaseNotesBrowser</value>
@@ -364,36 +391,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="ReleaseNotesBrowser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="ReleaseNotesBrowser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="ReleaseNotesBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
-  </data>
-  <data name="ReleaseNotesBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>40, 54</value>
-  </data>
-  <data name="ReleaseNotesBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>800, 525</value>
-  </data>
-  <data name="ReleaseNotesBrowser.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;ReleaseNotesBrowser.Name" xml:space="preserve">
-    <value>ReleaseNotesBrowser</value>
-  </data>
-  <data name="&gt;&gt;ReleaseNotesBrowser.Type" xml:space="preserve">
-    <value>System.Windows.Forms.WebBrowser, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ReleaseNotesBrowser.Parent" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;ReleaseNotesBrowser.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">

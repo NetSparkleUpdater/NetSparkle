@@ -19,3 +19,4 @@ _ReSharper*/
 TestAppFiles/*.txt
 TestAppFiles/*.dsa
 .vs/*
+NetSparkleGenerator/NetSparkleGenerator.csproj.user

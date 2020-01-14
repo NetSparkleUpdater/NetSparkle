@@ -1,4 +1,4 @@
-﻿namespace NetSparkle
+namespace NetSparkle
 {
     /// <summary>
     /// The main form

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -40,15 +40,6 @@ namespace NetSparkle
         private string _separatorTemplate;
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
-
-        private string getVersion(Version version)
-        {
-            if (version.Build != 0)
-                return version.ToString();
-            if (version.Revision != 0)
-                return version.ToString(3);
-            return version.ToString(2);
-        }
 
         /// <summary>
         /// Form constructor for showing release notes.
@@ -96,7 +87,7 @@ namespace NetSparkle
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
                     Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = getVersion(versionObj);
+                    versionString = NetSparkle.Utilities.GetVersionString(versionObj);
                 }
                 catch
                 {
@@ -255,10 +246,10 @@ namespace NetSparkle
                     {
                         using (cancellationToken.Register(() => webClient.CancelAsync()))
                         {
-                            return await webClient.DownloadStringTaskAsync(GetAbsoluteUrl(link));
+                            return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, _sparkle.AppcastUrl));
                         }
                     }
-                    return await webClient.DownloadStringTaskAsync(GetAbsoluteUrl(link));
+                    return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, _sparkle.AppcastUrl));
                 }
             }
             catch (WebException ex)
@@ -266,15 +257,6 @@ namespace NetSparkle
                 _sparkle.LogWriter.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";
             }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
-        /// </summary>
-        /// <param name="url">relative or absolute URL</param>
-        public Uri GetAbsoluteUrl(string url)
-        {
-            return new Uri(new Uri(_sparkle.AppcastUrl), url);
         }
 
         /// <summary>
@@ -323,7 +305,19 @@ namespace NetSparkle
         void IUpdateAvailable.Close()
         {
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
+        }
+
+        private void CloseForm()
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { Close(); });
+            }
+            else
+            {
+                Close();
+            }
         }
 
         /// <summary>
@@ -361,7 +355,7 @@ namespace NetSparkle
 
             // close the windows
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>
@@ -376,7 +370,7 @@ namespace NetSparkle
 
             // close the window
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>
@@ -391,7 +385,7 @@ namespace NetSparkle
 
             // close the dialog
             _cancellationTokenSource?.Cancel();
-            Close();
+            CloseForm();
         }
 
         /// <summary>

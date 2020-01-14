@@ -1,7 +1,8 @@
-﻿using NetSparkle.Enums;
+using NetSparkle.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -230,6 +231,12 @@ namespace NetSparkle
                             {
                                 currentItem.Version = reader.GetAttribute(versionAttribute);
                                 currentItem.DownloadLink = reader.GetAttribute(urlAttribute);
+                                if (!string.IsNullOrEmpty(currentItem.DownloadLink) && !currentItem.DownloadLink.Contains("/"))
+                                {
+                                    // Download link contains only the filename -> complete with _castUrl
+                                    currentItem.DownloadLink = _castUrl.Substring(0, _castUrl.LastIndexOf('/') + 1) + currentItem.DownloadLink;
+                                }
+
                                 currentItem.DownloadDSASignature = reader.GetAttribute(dsaSignature);
                                 string length = reader.GetAttribute(lengthAttribute);
                                 if (length != null)
@@ -268,14 +275,22 @@ namespace NetSparkle
                         case pubDateNode:
                             if (currentItem != null)
                             {
+                                // "ddd, dd MMM yyyy HH:mm:ss zzz" => Standard date format
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11 -05:00"
+                                // "ddd, dd MMM yyyy HH:mm:ss Z" => Check for MS AppCenter Sparkle date format which ends with GMT
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
+                                // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
+                                //      e.g. "Sat, 26 Oct 2019 22:05:11"
+                                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", "ddd, dd MMM yyyy HH:mm:ss" };
                                 string dt = reader.ReadString().Trim();
-                                try
+                                if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                                 {
-                                    currentItem.PublicationDate = DateTime.ParseExact(dt, "ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture);
+                                    _logWriter.PrintMessage("Converted '{0}' to {1}.", dt, dateValue);
+                                    currentItem.PublicationDate = dateValue;
                                 }
-                                catch (FormatException ex)
+                                else
                                 {
-                                    _logWriter.PrintMessage("Cannot parse item datetime {0} with message {1}", dt, ex.Message);
+                                    _logWriter.PrintMessage("Cannot parse item datetime {0}", dt);
                                 }
                             }
                             break;
@@ -304,7 +319,8 @@ namespace NetSparkle
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = _dsaChecker.SignatureNeeded();
 
-            return _items.Where((item) => {
+            return _items.Where((item) =>
+            {
                 // don't allow non-windows updates
                 if (!item.IsWindowsUpdate)
                     return false;

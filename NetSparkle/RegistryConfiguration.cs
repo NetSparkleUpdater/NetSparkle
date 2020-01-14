@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using Microsoft.Win32;
 
@@ -106,7 +106,7 @@ namespace NetSparkle
         /// This function build a valid registry path in dependecy to the 
         /// assembly information
         /// </summary>
-        private String BuildRegistryPath()
+        public virtual String BuildRegistryPath()
         {
             if (!string.IsNullOrEmpty(_registryPath))
             {
