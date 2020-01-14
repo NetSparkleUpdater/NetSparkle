@@ -48,6 +48,7 @@ namespace NetSparkle
             // lblHeader
             // 
             resources.ApplyResources(this.lblHeader, "lblHeader");
+            this.lblHeader.AutoEllipsis = true;
             this.lblHeader.Name = "lblHeader";
             // 
             // lblInfoText
