@@ -13,7 +13,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- New `CheckServerFileName` so you can disable the checking of download file names with the server. Defaults to `true`.
+- `CheckServerFileName` property lets you disable the checking of download file names with the server. Defaults to `true`.
+- New function `IsDownloadingItem` lets you see if an item is currently being downloaded
 
 ### Changed
 

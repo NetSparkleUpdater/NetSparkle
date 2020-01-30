@@ -1015,7 +1015,7 @@ namespace NetSparkle
         /// <param name="item">The item that you want to generate a download path for</param>
         /// <returns>The download path for an app cast item if item is not null and has valid download link
         /// Otherwise returns null.</returns>
-        public string DownloadPathForAppCastItem(AppCastItem item)
+        public async Task<string> DownloadPathForAppCastItem(AppCastItem item)
         {
             if (item != null && item.DownloadLink != null)
             {
@@ -1026,7 +1026,7 @@ namespace NetSparkle
                 {
                     try
                     {
-                        filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
+                        filename = await RetrieveDestinationFileNameAsync(item);
                     }
                     catch (Exception)
                     {
@@ -1064,7 +1064,7 @@ namespace NetSparkle
         /// Starts the download process
         /// </summary>
         /// <param name="item">the appcast item to download</param>
-        private void InitDownloadAndInstallProcess(AppCastItem item)
+        private async void InitDownloadAndInstallProcess(AppCastItem item)
         {
             // TODO: is this a good idea? What if it's a user initiated request,
             // and they want to watch progress instead of it being a silent download?
@@ -1074,7 +1074,7 @@ namespace NetSparkle
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
-            _downloadTempFileName = DownloadPathForAppCastItem(item);
+            _downloadTempFileName = await DownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // DSA signature checks out, don't redownload the file!
             bool needsToDownload = true;
@@ -1149,6 +1149,10 @@ namespace NetSparkle
                 StartedDownloading?.Invoke(_downloadTempFileName);
                 showProgressWindow();
             }
+            else
+            {
+                _itemBeingDownloaded = null;
+            }
         }
 
         private void initializeProgressWindow(AppCastItem castItem)
@@ -1196,7 +1200,7 @@ namespace NetSparkle
             bool needToReenableDownloadButton = true;
             if (await AskApplicationToSafelyCloseUp())
             {
-                var path = DownloadPathForAppCastItem(item);
+                var path = await DownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
                     var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
@@ -1210,6 +1214,11 @@ namespace NetSparkle
             {
                 ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
             }
+        }
+
+        public bool IsDownloadingItem(AppCastItem item)
+        {
+            return _itemBeingDownloaded?.DownloadDSASignature == item.DownloadDSASignature;
         }
 
         /// <summary>
@@ -1914,6 +1923,7 @@ namespace NetSparkle
                     OnProgressWindowInstallAndRelaunch(this, new EventArgs());
                 }
             }
+            _itemBeingDownloaded = null;
         }
 
         /// <summary>
