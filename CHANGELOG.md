@@ -206,7 +206,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/2701e54...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/28ceb84...develop
+[0.19.0]: https://github.com/Deadpikle/NetSparkle/compare/2701e54...28ceb84
 [0.18.2]: https://github.com/Deadpikle/NetSparkle/compare/592fc70...2701e54
 [0.18.1]: https://github.com/Deadpikle/NetSparkle/compare/af0c797...592fc70
 [0.18.0]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...af0c797
