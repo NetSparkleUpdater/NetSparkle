@@ -44,6 +44,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             // lblHeader
             // 
             resources.ApplyResources(this.lblHeader, "lblHeader");
+            this.lblHeader.AutoEllipsis = true;
             this.lblHeader.Name = "lblHeader";
             // 
             // progressDownload
@@ -77,7 +78,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // NetSparkleDownloadProgress
+            // DownloadProgressWindow
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -89,7 +90,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             this.Controls.Add(this.lblHeader);
             this.Controls.Add(this.imgAppIcon);
             this.MaximizeBox = false;
-            this.Name = "NetSparkleDownloadProgress";
+            this.Name = "DownloadProgressWindow";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
             this.ResumeLayout(false);

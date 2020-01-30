@@ -12,6 +12,18 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.18.1]
+
+### Changed
+
+- Set AutoEllipsis to True for App Captions in dialog windows (@Mostlypyjamas) -- #78 (Issue), #79 (PR)
+
+## [0.18.0]
+
+### Changed
+
+- `RegistryConfiguration.BuildRegistryInfo()` is now `public virtual` rather than `private`
+
 ## [0.17.0]
 
 ### Added
@@ -180,8 +192,10 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...develop
-[0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...bc91f54
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/592fc70...develop
+[0.18.1]: https://github.com/Deadpikle/NetSparkle/compare/af0c797...592fc70
+[0.18.0]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...af0c797
+[0.17.0]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...bc91f54
 [0.16.2]: https://github.com/Deadpikle/NetSparkle/compare/b1bb3d1...a3df35b
 [0.16.1]: https://github.com/Deadpikle/NetSparkle/compare/9298e3c...b1bb3d1
 [0.16.0]: https://github.com/Deadpikle/NetSparkle/compare/6b30321...9298e3c

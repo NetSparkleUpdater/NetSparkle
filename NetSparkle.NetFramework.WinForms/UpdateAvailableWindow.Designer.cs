@@ -48,6 +48,7 @@ namespace NetSparkle.UI.NetFramework.WinForms
             // lblHeader
             // 
             resources.ApplyResources(this.lblHeader, "lblHeader");
+            this.lblHeader.AutoEllipsis = true;
             this.lblHeader.Name = "lblHeader";
             // 
             // lblInfoText
