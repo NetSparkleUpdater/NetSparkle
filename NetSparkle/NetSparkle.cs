@@ -1275,7 +1275,7 @@ namespace NetSparkle
                     if !counter! == 90 (
                         goto :afterinstall
                     )
-                    tasklist | find ""{processID}"" > nul
+                    tasklist | find "" {processID} "" > nul
                     if not errorlevel 1 (
                         timeout /t 1 >nul
                         goto :loop
