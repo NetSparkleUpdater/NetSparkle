@@ -12,6 +12,23 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.19.0]
+
+### Added
+
+- `CheckServerFileName` property lets you disable the checking of download file names with the server. Defaults to `true`.
+- New function `IsDownloadingItem` lets you see if an item is currently being downloaded
+
+### Changed
+
+- Fixed bug with threading and `HttpClient` by using `ConfigureAwait(false)`. See also https://stackoverflow.com/a/10351400/3938401.
+
+## [0.18.2] (and 0.18.3 because Deadpikle failed)
+
+### Changed
+
+- Fixed bug where process IDs were sometimes not matched properly (@kenjiuno ) -- #80 (PR)
+
 ## [0.18.1]
 
 ### Changed
@@ -192,7 +209,9 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/592fc70...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/28ceb84...develop
+[0.19.0]: https://github.com/Deadpikle/NetSparkle/compare/2701e54...28ceb84
+[0.18.2]: https://github.com/Deadpikle/NetSparkle/compare/592fc70...2701e54
 [0.18.1]: https://github.com/Deadpikle/NetSparkle/compare/af0c797...592fc70
 [0.18.0]: https://github.com/Deadpikle/NetSparkle/compare/bc91f54...af0c797
 [0.17.0]: https://github.com/Deadpikle/NetSparkle/compare/a3df35b...bc91f54
