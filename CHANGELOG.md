@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-## [0.18.2]
+## [0.18.2] (and 0.18.3 because Deadpikle failed)
 
 ### Changed
 
