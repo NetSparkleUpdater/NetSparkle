@@ -9,6 +9,16 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.19.0]
+
+### Added
+
+- New `CheckServerFileName` so you can disable the checking of download file names with the server. Defaults to `true`.
+
+### Changed
+
+- Fixed bug with threading and `HttpClient` by using `ConfigureAwait(false)`. See also https://stackoverflow.com/a/10351400/3938401.
+
 ## [0.18.2] (and 0.18.3 because Deadpikle failed)
 
 ### Changed
