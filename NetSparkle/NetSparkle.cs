@@ -238,6 +238,7 @@ namespace NetSparkle
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
         private UpdateInfo _latestDownloadedUpdateInfo;
+        private bool _checkServerFileName = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
@@ -567,6 +568,16 @@ namespace NetSparkle
             {
                 _logWriter = value;
             }
+        }
+
+        /// <summary>
+        /// Whether or not to check with the online server to verify download
+        /// file names.
+        /// </summary>
+        public bool CheckServerFileName
+        {
+            get { return _checkServerFileName; }
+            set { _checkServerFileName = value; }
         }
 
         /// <summary>
@@ -971,20 +982,29 @@ namespace NetSparkle
 
         private async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
-            var httpClient = new HttpClient { Timeout = TimeSpan.FromDays(1) };
-
-            using (var response =
-                await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead))
+            var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+            LogWriter.PrintMessage("Getting file name from server for app cast item. Download link is {0}", item.DownloadLink);
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (var response =
+                    await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
                 {
-                    //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
-                    string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
+                    LogWriter.PrintMessage("Got response. Successful? {0}", response.IsSuccessStatusCode);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
+                        string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
 
-                    return Path.GetFileName(destFilename);
+                        return Path.GetFileName(destFilename);
+                    }
+                    return null;
                 }
-                return null;
             }
+            catch (Exception e)
+            {
+                LogWriter.PrintMessage("Got an exception while getting file name: {0}", e.Message);
+            }
+            return null;
         }
 
         /// <summary>
@@ -1002,13 +1022,16 @@ namespace NetSparkle
                 string filename = string.Empty;
 
                 // default to using the server's file name as the download file name
-                try
+                if (CheckServerFileName)
                 {
-                    filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
-                }
-                catch (Exception)
-                {
-                    // ignore
+                    try
+                    {
+                        filename = RetrieveDestinationFileNameAsync(item).GetAwaiter().GetResult();
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
                 }
 
                 if (string.IsNullOrEmpty(filename))
