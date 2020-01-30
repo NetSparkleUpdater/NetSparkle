@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.18.2]
+
+### Changed
+
+- Fixed bug where process IDs were sometimes not matched properly (@kenjiuno ) -- #80 (PR)
+
 ## [0.18.1]
 
 ### Changed
