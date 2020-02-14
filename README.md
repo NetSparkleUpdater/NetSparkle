@@ -595,3 +595,4 @@ An incomplete list of other projects related to software updating:
 - [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows)
 - [WinSparkle](https://github.com/vslavik/winsparkle)
 - [NAppUpdate](https://github.com/synhershko/NAppUpdate)
+- [AutoUpdater.NET](https://github.com/ravibpatel/AutoUpdater.NET)
