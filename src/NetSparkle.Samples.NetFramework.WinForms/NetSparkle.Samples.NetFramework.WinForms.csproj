@@ -35,7 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\SampleApplication\</OutputPath>
+    <OutputPath>..\bin\Debug\NetSparkle.Samples.NetFramework.WinForms\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,7 +46,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\SampleApplication\</OutputPath>
+    <OutputPath>..\bin\Release\NetSparkle.Samples.NetFramework.WinForms\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -102,7 +102,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle.NetFramework.WinForms\NetSparkle.UI.NetFramework.WinForms.csproj">
+    <ProjectReference Include="..\NetSparkle.UI.NetFramework.WinForms\NetSparkle.UI.NetFramework.WinForms.csproj">
       <Project>{45f5aadb-a39b-446f-8025-71647238bb89}</Project>
       <Name>NetSparkle.UI.NetFramework.WinForms</Name>
     </ProjectReference>

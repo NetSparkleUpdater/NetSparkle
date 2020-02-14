@@ -30,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\TestAppWPF\</OutputPath>
+    <OutputPath>..\bin\Debug\NetSparkle.Samples.NetFramework.WPF\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,7 +40,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\Release\TestAppWPF\</OutputPath>
+    <OutputPath>..\bin\Release\NetSparkle.Samples.NetFramework.WPF\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -114,7 +114,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle.NetFramework.WPF\NetSparkle.UI.NetFramework.WPF.csproj">
+    <ProjectReference Include="..\NetSparkle.UI.NetFramework.WPF\NetSparkle.UI.NetFramework.WPF.csproj">
       <Project>{6915843c-7947-4268-b569-6f5684651df4}</Project>
       <Name>NetSparkle.UI.NetFramework.WPF</Name>
     </ProjectReference>

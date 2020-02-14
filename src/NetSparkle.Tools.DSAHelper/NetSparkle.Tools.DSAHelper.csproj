@@ -12,7 +12,7 @@
     <Copyright>Portions Copyright © Dirk Eisenberg 2010, Deadpikle 2017</Copyright>
     <AssemblyVersion>0.19.0</AssemblyVersion>
     <FileVersion>0.19.0</FileVersion>
-    <OutputPath>..\bin\$(Configuration)\DSAHelper\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -23,9 +23,6 @@
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
