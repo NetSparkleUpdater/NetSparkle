@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -13,6 +12,7 @@ using NetSparkle.Enums;
 using System.Net.Http;
 using NetSparkle.Events;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace NetSparkle
 {
