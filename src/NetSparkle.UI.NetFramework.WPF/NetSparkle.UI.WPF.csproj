@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
+    <TargetFrameworks>netcoreapp3.0;net451</TargetFrameworks>
+    <UseWPF>true</UseWPF>    
+    <AssemblyTitle>NetSparkle.NetFramework.WPF</AssemblyTitle>
+    <Product>NetSparkle.NetFramework.WPF</Product>
+    <Copyright>Copyright ©  2019</Copyright>
+    <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.NetFramework.WPF\</OutputPath>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+  </ItemGroup>
+</Project>
