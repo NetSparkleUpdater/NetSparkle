@@ -1149,10 +1149,6 @@ namespace NetSparkle
                 StartedDownloading?.Invoke(_downloadTempFileName);
                 showProgressWindow();
             }
-            else
-            {
-                _itemBeingDownloaded = null;
-            }
         }
 
         private void initializeProgressWindow(AppCastItem castItem)
