@@ -981,10 +981,6 @@ namespace NetSparkle
                     CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
                 });
             }
-            else
-            {
-                _itemBeingDownloaded = null;
-            }
         }
 
         private void CreateAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready, Action actionToRunOnceCreatedBeforeShown = null)
