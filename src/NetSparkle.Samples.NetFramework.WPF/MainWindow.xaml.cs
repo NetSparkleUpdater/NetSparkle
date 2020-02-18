@@ -2,7 +2,7 @@
 using System.Windows;
 
 
-namespace NetSparkle.TestAppWPF
+namespace NetSparkle.Samples.NetFramework.WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

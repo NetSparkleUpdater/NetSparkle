@@ -1,4 +1,4 @@
-namespace SampleApplication
+namespace NetSparkle.Samples.NetFramework.WinForms
 {
     partial class Form1
     {
