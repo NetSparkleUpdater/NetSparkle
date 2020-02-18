@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using NetSparkle;
 using NetSparkle.Enums;
 
-namespace SampleApplication
+namespace NetSparkle.Samples.NetCore.WinForms
 {
     public partial class Form1 : Form
     {

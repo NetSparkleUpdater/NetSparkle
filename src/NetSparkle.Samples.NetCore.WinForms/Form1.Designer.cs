@@ -1,4 +1,4 @@
-namespace SampleApplication
+namespace NetSparkle.Samples.NetCore.WinForms
 {
     partial class Form1
     {
