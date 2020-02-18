@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+## [0.19.1]
+
+### Changed
+
+- Fixed bug with where an already-downloaded update executable did not validate properly
+
 ## [0.19.0]
 
 ### Added
@@ -206,7 +212,8 @@ Much thanks to @stephenwade for his contributions to 0.10.0
 ## Older
 For older changes, see [HISTORY.md](HISTORY.md).
 
-[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/28ceb84...develop
+[Unreleased]: https://github.com/Deadpikle/NetSparkle/compare/cb66c94...develop
+[0.19.1]: https://github.com/Deadpikle/NetSparkle/compare/28ceb84...cb66c94
 [0.19.0]: https://github.com/Deadpikle/NetSparkle/compare/2701e54...28ceb84
 [0.18.2]: https://github.com/Deadpikle/NetSparkle/compare/592fc70...2701e54
 [0.18.1]: https://github.com/Deadpikle/NetSparkle/compare/af0c797...592fc70
