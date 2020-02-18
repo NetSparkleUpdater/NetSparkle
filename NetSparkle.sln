@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WPF", "src\Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.NetCore.WPF", "src\NetSparkle.Samples.NetCore.WPF\NetSparkle.Samples.NetCore.WPF.csproj", "{4DD4076B-C086-4A11-B850-898CC9991D90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.NetCore.WinForms", "src\NetSparkle.Samples.NetCore.WinForms\NetSparkle.Samples.NetCore.WinForms.csproj", "{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		NetSparkleUtilities\NetSparkleUtilities.projitems*{74635a21-2bad-4522-ab95-e3e5703cd301}*SharedItemsImports = 4
@@ -239,6 +241,26 @@ Global
 		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x64.Build.0 = Release|Any CPU
 		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x86.ActiveCfg = Release|Any CPU
 		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x86.Build.0 = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|ARM.Build.0 = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|x64.Build.0 = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Debug|x86.Build.0 = Debug|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|ARM.Build.0 = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x64.ActiveCfg = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x64.Build.0 = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x86.ActiveCfg = Release|Any CPU
+		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
