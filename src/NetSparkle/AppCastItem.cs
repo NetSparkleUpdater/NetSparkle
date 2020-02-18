@@ -229,6 +229,11 @@ namespace NetSparkle
                 item.Add(releaseNotes);
             }
 
+            if (!string.IsNullOrEmpty(Description))
+            {
+                item.Add(new XElement(_descriptionNode) { Value = Description });
+            }
+
             if (PublicationDate != DateTime.MinValue && PublicationDate != DateTime.MaxValue)
             {
                 item.Add(new XElement(_pubDateNode) { Value = PublicationDate.ToString("ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture) });
