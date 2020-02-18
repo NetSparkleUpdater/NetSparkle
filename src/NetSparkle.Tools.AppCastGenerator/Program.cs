@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace NetSparkleGenerator
+namespace NetSparkle.Tools.AppCastGenerator
 {
     class Program
     {
@@ -22,6 +22,13 @@ namespace NetSparkleGenerator
             Console.WriteLine("   /U <base_url>");
             Console.WriteLine("     -> Base URL for the Download Links.");
             Console.WriteLine("        eg. \"/U https://www.example.com/downloads\" will result in \"https://www.example.com/downloads/fileName.exe\".");
+            Console.WriteLine("   /CL <path to changelog files>");
+            Console.WriteLine("     -> File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion).");
+            Console.WriteLine("        eg. \"/CL Installer\\MyChangeLogsDir\" scans MyChangeLogsDir for {Version}.md changelog files");
+            Console.WriteLine("   /CLURL <changelog_base_url>");
+            Console.WriteLine("     -> Base URL for the Changelog Download Links.");
+            Console.WriteLine("        eg. \"/CLURL https://www.example.com/changelogs\" will result in \"https://www.example.com/changelogs/1.0.0.0.md\".");
+            Console.WriteLine("        If not provided, will read changelogs (if available) and put them in the <description> part of the appcast.");
             Console.WriteLine();
             Console.WriteLine(" Examples:");
             Console.WriteLine("   generate_appcast .\\DirWithUpdateFiles");
@@ -44,6 +51,9 @@ namespace NetSparkleGenerator
         private static string _searchPattern = "*.exe";
         private static string _baseUrl = "";
 
+        private static string _changelogsDir = "";
+        private static string _changelogsUrl = "";
+
         static void Main(string[] args)
         {
             if (Environment.GetCommandLineArgs().Length == 1)
@@ -55,11 +65,11 @@ namespace NetSparkleGenerator
             try
             {
                 var numArgs = Environment.GetCommandLineArgs().Length;
-                if (numArgs == 2 || numArgs == 4 || numArgs == 6)
+                if (numArgs % 2 == 0)
                 {
                     Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
                 }
-                else if (numArgs == 3 || numArgs == 5 || numArgs == 7)
+                else if (numArgs >= 3 && numArgs % 2 == 1)
                 {
                     _privateKeyFilePath = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
                     Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[2]);
@@ -89,7 +99,8 @@ namespace NetSparkleGenerator
                 }
 
                 var productName = FileVersionInfo.GetVersionInfo(exePaths[0]).ProductName.Trim();
-                var items = new List<AppCastItem>(); 
+                var items = new List<AppCastItem>();
+                var usesChangelogs = !string.IsNullOrWhiteSpace(_changelogsDir) && Directory.Exists(_changelogsDir);
                 foreach (var exePath in exePaths)
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
@@ -98,6 +109,16 @@ namespace NetSparkleGenerator
                     var productVersion = versionInfo.ProductVersion.Trim();
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
                     var remoteUpdateFile = _baseUrl + fileInfo.Name;
+                    // changelog stuff
+                    var changelogFileName = productVersion + ".md";
+                    var changelogPath = Path.Combine(_changelogsDir, changelogFileName);
+                    var hasChangelogForFile = usesChangelogs && File.Exists(changelogPath);
+                    var changelogDSA = "";
+                    if (hasChangelogForFile)
+                    {
+                        changelogDSA = NetSparkle.Utilities.GetDSASignature(changelogPath, _privateKeyFilePath);
+                    }
+                    //
                     var item = new AppCastItem()
                     {
                         Title = itemTitle,
@@ -110,6 +131,18 @@ namespace NetSparkleGenerator
                         OperatingSystemString = "windows",
                         MIMEType = "application/octet-stream"
                     };
+                    if (hasChangelogForFile)
+                    {
+                        if (!string.IsNullOrWhiteSpace(_changelogsUrl))
+                        {
+                            item.ReleaseNotesDSASignature = changelogDSA;
+                            item.ReleaseNotesLink = _changelogsUrl + changelogFileName;
+                        }
+                        else
+                        {
+                            item.Description = File.ReadAllText(changelogPath);
+                        }
+                    }
 
                     items.Add(item);
                 }
@@ -117,7 +150,9 @@ namespace NetSparkleGenerator
                 var appcastXmlDocument = AppCast.GenerateAppCastXml(items, productName);
                 var appcastXmlPath = Path.Combine(Environment.CurrentDirectory, "appcast.xml");
                 using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n" }))
+                {
                     appcastXmlDocument.Save(w);
+                }
                 
                 var signature = NetSparkle.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
@@ -147,6 +182,20 @@ namespace NetSparkleGenerator
                     var url = Environment.GetCommandLineArgs()[i + 1];
                     var trailingSlash = url.EndsWith("/") ? "" : "/";
                     _baseUrl = $"{url}{trailingSlash}";
+                }
+                else if (Environment.GetCommandLineArgs()[i] == "/CL")
+                {
+                    var dir = Environment.GetCommandLineArgs()[i + 1];
+                    if (Directory.Exists(dir))
+                    {
+                        _changelogsDir = dir;
+                    }
+                }
+                else if (Environment.GetCommandLineArgs()[i] == "/CLURL")
+                {
+                    var url = Environment.GetCommandLineArgs()[i + 1];
+                    var trailingSlash = url.EndsWith("/") ? "" : "/";
+                    _changelogsUrl = $"{url}{trailingSlash}";
                 }
             }
         }
