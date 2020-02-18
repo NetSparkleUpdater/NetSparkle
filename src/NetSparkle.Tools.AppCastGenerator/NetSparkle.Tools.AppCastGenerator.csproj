@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleGenerator</RootNamespace>
     <AssemblyName>generate_appcast</AssemblyName>
-    <TargetFramework>netstandard20</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -39,10 +39,6 @@
   <PropertyGroup>
     <PostBuildEvent />
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
