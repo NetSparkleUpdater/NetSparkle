@@ -10,7 +10,7 @@ using System.Windows.Interop;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace NetSparkle.UI.NetFramework.WPF
+namespace NetSparkle.UI.WPF
 {
     /// <summary>
     /// UI factory for default interface
