@@ -1195,7 +1195,9 @@ namespace NetSparkle
                 StartInfo =
                         {
                             FileName = batchFilePath,
-                            WindowStyle = ProcessWindowStyle.Hidden
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
                         }
             };
             // start the installer process. the batch file will wait for the host app to close before starting.
