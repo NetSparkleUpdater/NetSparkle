@@ -5,7 +5,7 @@ using System.Net;
 using NetSparkle.Interfaces;
 using NetSparkle.Events;
 
-namespace NetSparkle.UI.NetFramework.WinForms
+namespace NetSparkle.UI.WinForms
 {
     /// <summary>
     /// A progress bar

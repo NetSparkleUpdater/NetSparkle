@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace NetSparkle
+namespace NetSparkle.UI.WinForms
 {
     /// <summary>
     /// Like a notification ballon, but more reliable "toast" because it slowly goes up, then down.

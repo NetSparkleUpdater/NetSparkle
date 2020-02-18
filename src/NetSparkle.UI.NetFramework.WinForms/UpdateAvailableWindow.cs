@@ -8,7 +8,7 @@ using System.Threading;
 using System.Collections.Generic;
 using NetSparkle.Events;
 
-namespace NetSparkle.UI.NetFramework.WinForms
+namespace NetSparkle.UI.WinForms
 {
     /// <summary>
     /// The main form

@@ -1,4 +1,4 @@
-namespace NetSparkle
+namespace NetSparkle.UI.WinForms
 {
 	partial class ToastNotifier
 	{
