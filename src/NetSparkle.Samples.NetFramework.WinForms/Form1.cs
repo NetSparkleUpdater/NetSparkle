@@ -22,7 +22,7 @@ namespace SampleApplication
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkleUpdateDetector = new Sparkle(appcastUrl, icon)
             {
-                UIFactory = new NetSparkle.UI.NetFramework.WinForms.UIFactory(),
+                UIFactory = new NetSparkle.UI.WinForms.UIFactory(),
                 //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true
             };

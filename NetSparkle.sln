@@ -22,9 +22,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Tests", "src\Net
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NetSparkle.Shared", "src\NetSparkle.Shared\NetSparkle.Shared.shproj", "{D9115E42-6ED7-452F-A623-81F70201578B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.WinForms", "src\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WinForms", "src\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.WPF", "src\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WPF", "src\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.NetCore.WPF", "src\NetSparkle.Samples.NetCore.WPF\NetSparkle.Samples.NetCore.WPF.csproj", "{4DD4076B-C086-4A11-B850-898CC9991D90}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -217,6 +219,26 @@ Global
 		{6915843C-7947-4268-B569-6F5684651DF4}.Release|x64.Build.0 = Release|Any CPU
 		{6915843C-7947-4268-B569-6F5684651DF4}.Release|x86.ActiveCfg = Release|Any CPU
 		{6915843C-7947-4268-B569-6F5684651DF4}.Release|x86.Build.0 = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|x64.Build.0 = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Debug|x86.Build.0 = Debug|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|ARM.Build.0 = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x64.ActiveCfg = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x64.Build.0 = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x86.ActiveCfg = Release|Any CPU
+		{4DD4076B-C086-4A11-B850-898CC9991D90}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

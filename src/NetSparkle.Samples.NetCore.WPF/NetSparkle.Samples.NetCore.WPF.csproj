@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="NetSparkle_DSA.pub" />
+    <None Remove="software-update-available.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="NetSparkle_DSA.pub" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj" />
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="software-update-available.ico" />
+  </ItemGroup>
+
+</Project>
