@@ -102,7 +102,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle.UI.NetFramework.WinForms\NetSparkle.UI.WinForms.csproj">
+    <ProjectReference Include="..\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.csproj">
       <Project>{45f5aadb-a39b-446f-8025-71647238bb89}</Project>
       <Name>NetSparkle.UI.WinForms</Name>
     </ProjectReference>
