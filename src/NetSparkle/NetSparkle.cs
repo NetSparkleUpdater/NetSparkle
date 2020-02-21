@@ -12,7 +12,6 @@ using NetSparkle.Enums;
 using System.Net.Http;
 using NetSparkle.Events;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace NetSparkle
 {
@@ -134,7 +133,6 @@ namespace NetSparkle
 
         private readonly EventWaitHandle _exitHandle;
         private readonly EventWaitHandle _loopingHandle;
-        private readonly Icon _applicationIcon;
         private TimeSpan _checkFrequency;
         private bool _useNotificationToast;
 
@@ -150,76 +148,59 @@ namespace NetSparkle
         private bool _checkServerFileName = true;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL.
-        /// </summary>
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        public Sparkle(string appcastUrl)
-            : this(appcastUrl, null)
-        { }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL
         /// and an <see cref="Icon"/> for the update UI.
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
         /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
         /// If you're invoking this from a form, this would be <c>this.Icon</c>.</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon)
-            : this(appcastUrl, applicationIcon, SecurityMode.Strict, null)
+        public Sparkle(string appcastUrl)
+            : this(appcastUrl, SecurityMode.Strict, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
-        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode)
-            : this(appcastUrl, applicationIcon, securityMode, null)
+        public Sparkle(string appcastUrl, SecurityMode securityMode)
+            : this(appcastUrl, securityMode, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
-        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey)
-            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, null)
+        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey)
+            : this(appcastUrl, securityMode, dsaPublicKey, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
-        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
-            : this(appcastUrl, applicationIcon, securityMode, dsaPublicKey, referenceAssembly, null)
+        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
+            : this(appcastUrl, securityMode, dsaPublicKey, referenceAssembly, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
-        /// If invoking this from a form, this would be <c>this.Icon</c>.</param>
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
-        public Sparkle(string appcastUrl, Icon applicationIcon, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
+        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
         {
-            _applicationIcon = applicationIcon;
             ExtraJsonData = "";
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
@@ -720,7 +701,7 @@ namespace NetSparkle
             {
                 if (_useNotificationToast)
                 {
-                    UIFactory?.ShowToast(updates, _applicationIcon, OnToastClick);
+                    UIFactory?.ShowToast(updates, OnToastClick);
                 }
                 else
                 {
@@ -772,7 +753,7 @@ namespace NetSparkle
                     // define action
                     Action<object> showSparkleUI = (state) =>
                     {
-                        UpdateAvailableWindow = UIFactory?.CreateSparkleForm(this, updates, _applicationIcon, isUpdateAlreadyDownloaded);
+                        UpdateAvailableWindow = UIFactory?.CreateSparkleForm(this, updates, isUpdateAlreadyDownloaded);
 
                         if (UpdateAvailableWindow != null)
                         {
@@ -997,7 +978,7 @@ namespace NetSparkle
                     // create the form
                     Action<object> showSparkleDownloadUI = (state) =>
                     {
-                        ProgressWindow = UIFactory?.CreateProgressWindow(castItem, _applicationIcon);
+                        ProgressWindow = UIFactory?.CreateProgressWindow(castItem);
                         ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
                         if (shouldShowAsDownloadedAlready)
                         {
@@ -1142,7 +1123,7 @@ namespace NetSparkle
             }
             catch (InvalidDataException)
             {
-                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath, _applicationIcon);
+                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath);
                 return;
             }
 
@@ -1298,7 +1279,7 @@ namespace NetSparkle
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
-            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(_applicationIcon);
+            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates();
             if (CheckingForUpdatesWindow != null)
             {
                 CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
@@ -1318,16 +1299,16 @@ namespace NetSparkle
                     {
                         case UpdateStatus.UpdateAvailable:
                             if (_useNotificationToast)
-                                UIFactory?.ShowToast(updateData.Updates, _applicationIcon, OnToastClick);
+                                UIFactory?.ShowToast(updateData.Updates, OnToastClick);
                             break;
                         case UpdateStatus.UpdateNotAvailable:
-                            UIFactory?.ShowVersionIsUpToDate(_applicationIcon);
+                            UIFactory?.ShowVersionIsUpToDate();
                             break;
                         case UpdateStatus.UserSkipped:
-                            UIFactory?.ShowVersionIsSkippedByUserRequest(_applicationIcon); // TODO: pass skipped version number
+                            UIFactory?.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory?.ShowCannotDownloadAppcast(_appCastUrl, _applicationIcon);
+                            UIFactory?.ShowCannotDownloadAppcast(_appCastUrl);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -1709,7 +1690,7 @@ namespace NetSparkle
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
                 }
                 return;
             }
@@ -1724,7 +1705,7 @@ namespace NetSparkle
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
                 }
                 return;
             }
@@ -1765,7 +1746,7 @@ namespace NetSparkle
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl, _applicationIcon);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
                 }
                 // Let the progress window handle closing itself.
             }

@@ -142,15 +142,5 @@ namespace NetSparkle.Properties {
                 return ResourceManager.GetString("DefaultUIFactory_ToastMessage", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap software_update_available1 {
-            get {
-                object obj = ResourceManager.GetObject("software_update_available1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
