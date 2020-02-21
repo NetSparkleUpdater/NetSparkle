@@ -20,9 +20,9 @@ namespace NetSparkle.Samples.NetCore.WinForms
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkleUpdateDetector = new Sparkle(appcastUrl, icon)
+            _sparkleUpdateDetector = new Sparkle(appcastUrl)
             {
-                UIFactory = new NetSparkle.UI.WinForms.UIFactory(),
+                UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon),
                 //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true
             };
@@ -46,7 +46,6 @@ namespace NetSparkle.Samples.NetCore.WinForms
                 // if update(s) are found, then we have to trigger the UI to show it gracefully
                 _sparkleUpdateDetector.ShowUpdateNeededUI();
             }
-
         }
 
         private void ExplicitUserRequestCheckButton_Click(object sender, EventArgs e)
