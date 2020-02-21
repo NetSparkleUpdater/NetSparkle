@@ -16,6 +16,10 @@ namespace NetSparkle.Tools.AppCastGenerator
             Console.WriteLine("   generate_appcast [<path_to_private_key>] <directory_with_update_files> [Options]");
             Console.WriteLine();
             Console.WriteLine(" Options:");
+            Console.WriteLine("   /O <output file path>");
+            Console.WriteLine("     -> Output to the given file. File will be overwritten if it exists. If not given, defaults to 'appcast.xml' in the directory");
+            Console.WriteLine("             with update files.");
+            Console.WriteLine("        eg. \"/O Blah\\my_app.xml\" will save the appcast file to that path and create \"Blah\" if it doesn't exist.");
             Console.WriteLine("   /S <search_pattern>");
             Console.WriteLine("     -> Only scan for .exe files that match the given search pattern.");
             Console.WriteLine("        eg. \"/S MyApp\" will only scan for \"*MyApp*.exe\" files.");
@@ -54,6 +58,8 @@ namespace NetSparkle.Tools.AppCastGenerator
         private static string _changelogsDir = "";
         private static string _changelogsUrl = "";
 
+        private static string _outputFilePath = "";
+
         static void Main(string[] args)
         {
             if (Environment.GetCommandLineArgs().Length == 1)
@@ -65,14 +71,15 @@ namespace NetSparkle.Tools.AppCastGenerator
             try
             {
                 var numArgs = Environment.GetCommandLineArgs().Length;
+                var updateFilesDir = string.Empty;
                 if (numArgs % 2 == 0)
                 {
-                    Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
+                    updateFilesDir = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
                 }
                 else if (numArgs >= 3 && numArgs % 2 == 1)
                 {
                     _privateKeyFilePath = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[1]);
-                    Environment.CurrentDirectory = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[2]);
+                    updateFilesDir = Path.Combine(Environment.CurrentDirectory, Environment.GetCommandLineArgs()[2]);
                 }
                 else
                 {
@@ -80,9 +87,17 @@ namespace NetSparkle.Tools.AppCastGenerator
                     Environment.Exit(1);
                 }
 
+                if (Directory.Exists(updateFilesDir))
+                {
+                    Console.WriteLine("Error: {0} does not exist on disk.", updateFilesDir);
+                    Console.WriteLine("");
+                    PrintUsage();
+                    Environment.Exit(1);
+                }
+
                 ParseOptions();
 
-                var exePaths = Directory.GetFiles(Environment.CurrentDirectory, _searchPattern);
+                var exePaths = Directory.GetFiles(updateFilesDir, _searchPattern);
 
                 if (exePaths.Length == 0)
                 {
@@ -148,7 +163,18 @@ namespace NetSparkle.Tools.AppCastGenerator
                 }
 
                 var appcastXmlDocument = AppCast.GenerateAppCastXml(items, productName);
-                var appcastXmlPath = Path.Combine(Environment.CurrentDirectory, "appcast.xml");
+                var appcastFileName = string.IsNullOrWhiteSpace(_outputFilePath) ? "appcast.xml" : Path.GetFileName(_outputFilePath);
+                if (string.IsNullOrWhiteSpace(appcastFileName))
+                {
+                    Console.WriteLine("Error: {0} has no valid file name", _outputFilePath);
+                    Console.WriteLine("");
+                    Environment.Exit(1);
+                }
+                var appcastXmlPath = string.IsNullOrWhiteSpace(_outputFilePath) ? Path.Combine(updateFilesDir, appcastFileName) : _outputFilePath;
+                if (!Directory.Exists(Path.GetDirectoryName(appcastXmlPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(appcastXmlPath));
+                }
                 using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n" }))
                 {
                     appcastXmlDocument.Save(w);
@@ -157,7 +183,7 @@ namespace NetSparkle.Tools.AppCastGenerator
                 var signature = NetSparkle.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
-                    File.WriteAllText("appcast.xml.dsa", signature);
+                    File.WriteAllText(appcastFileName + ".dsa", signature);
                 }
             }
             catch (Exception e)
@@ -196,6 +222,11 @@ namespace NetSparkle.Tools.AppCastGenerator
                     var url = Environment.GetCommandLineArgs()[i + 1];
                     var trailingSlash = url.EndsWith("/") ? "" : "/";
                     _changelogsUrl = $"{url}{trailingSlash}";
+                }
+                else if (Environment.GetCommandLineArgs()[i] == "/O")
+                {
+                    var path = Environment.GetCommandLineArgs()[i + 1];
+                    _outputFilePath = path;
                 }
             }
         }
