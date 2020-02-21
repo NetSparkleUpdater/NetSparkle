@@ -24,6 +24,7 @@ namespace NetSparkle.UI.WPF
         public UIFactory(ImageSource applicationIcon)
         {
             _applicationIcon = applicationIcon;
+            _applicationIcon?.Freeze();
         }
 
         /// <summary>
