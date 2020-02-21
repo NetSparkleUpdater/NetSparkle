@@ -14,35 +14,44 @@ namespace NetSparkle.UI.WinForms
     /// </summary>
     public class UIFactory : IUIFactory
     {
+        private Icon _applicationIcon = null;
+
+        public UIFactory()
+        {
+
+        }
+
+        public UIFactory(Icon applicationIcon)
+        {
+            _applicationIcon = applicationIcon;
+        }
+
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
         /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to earliest</param>
-        /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, Icon applicationIcon, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            return new UpdateAvailableWindow(sparkle, updates, applicationIcon, isUpdateAlreadyDownloaded);
+            return new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded);
         }
 
         /// <summary>
         /// Create download progress window
         /// </summary>
         /// <param name="item">Appcast item to download</param>
-        /// <param name="applicationIcon">Application icon to use</param>
-        public virtual IDownloadProgress CreateProgressWindow(AppCastItem item, Icon applicationIcon)
+        public virtual IDownloadProgress CreateProgressWindow(AppCastItem item)
         {
-            return new DownloadProgressWindow(item, applicationIcon);
+            return new DownloadProgressWindow(item, _applicationIcon);
         }
 
         /// <summary>
         /// Inform user in some way that NetSparkle is checking for updates
         /// </summary>
-        /// <param name="applicationIcon">The icon to display</param>
-        public virtual ICheckingForUpdates ShowCheckingForUpdates(Icon applicationIcon = null)
+        public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
-            return new CheckingForUpdatesWindow(applicationIcon);
+            return new CheckingForUpdatesWindow(_applicationIcon);
         }
 
         /// <summary>
@@ -59,50 +68,47 @@ namespace NetSparkle.UI.WinForms
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
         /// <param name="downloadFileName">The filename to be inserted into the message text</param>
-        /// <param name="applicationIcon">The icon to display</param>
-        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName, Icon applicationIcon = null)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, 
-                string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName), applicationIcon);
+                string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
         /// <summary>
         /// Show user that current installed version is up-to-date
         /// </summary>
-        public virtual void ShowVersionIsUpToDate(Icon applicationIcon = null)
+        public virtual void ShowVersionIsUpToDate()
         {
-            ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage, applicationIcon);
+            ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
         /// <summary>
         /// Show message that latest update was skipped by user
         /// </summary>
-        public virtual void ShowVersionIsSkippedByUserRequest(Icon applicationIcon = null)
+        public virtual void ShowVersionIsSkippedByUserRequest()
         {
-            ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage, applicationIcon);
+            ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">The icon to display</param>
-        public virtual void ShowCannotDownloadAppcast(string appcastUrl, Icon applicationIcon = null)
+        public virtual void ShowCannotDownloadAppcast(string appcastUrl)
         {
-            ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage, applicationIcon);
+            ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
         /// <param name="updates">Appcast updates</param>
-        /// <param name="applicationIcon">Icon to use in window</param>
         /// <param name="clickHandler">handler for click</param>
-        public virtual void ShowToast(List<AppCastItem> updates, Icon applicationIcon, Action<List<AppCastItem>> clickHandler)
+        public virtual void ShowToast(List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
         {
             Thread thread = new Thread(() =>
             {
-                var toast = new ToastNotifier(applicationIcon)
+                var toast = new ToastNotifier(_applicationIcon)
                 {
                     ClickAction = clickHandler,
                     Updates = updates
@@ -119,15 +125,14 @@ namespace NetSparkle.UI.WinForms
         /// </summary>
         /// <param name="message">Error message from exception</param>
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        /// <param name="applicationIcon">The icon to display</param>
-        public virtual void ShowDownloadErrorMessage(string message, string appcastUrl, Icon applicationIcon = null)
+        public virtual void ShowDownloadErrorMessage(string message, string appcastUrl)
         {
-            ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message), applicationIcon);
+            ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }
 
-        private void ShowMessage(string title, string message, Icon applicationIcon = null)
+        private void ShowMessage(string title, string message)
         {
-            var messageWindow = new MessageNotificationWindow(title, message, applicationIcon);
+            var messageWindow = new MessageNotificationWindow(title, message, _applicationIcon);
             messageWindow.StartPosition = FormStartPosition.CenterScreen;
             messageWindow.ShowDialog();
         }

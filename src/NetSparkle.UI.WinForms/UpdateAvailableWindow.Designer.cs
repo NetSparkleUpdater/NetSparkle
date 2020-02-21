@@ -97,8 +97,6 @@ namespace NetSparkle.UI.WinForms
             // 
             // imgAppIcon
             // 
-            this.imgAppIcon.Image = global::NetSparkle.Properties.Resources.software_update_available1;
-            resources.ApplyResources(this.imgAppIcon, "imgAppIcon");
             this.imgAppIcon.Name = "imgAppIcon";
             this.imgAppIcon.TabStop = false;
             // 
