@@ -16,6 +16,8 @@ jobs:
       #   uses: actions/setup-dotnet@v1
       #   with:
       #     dotnet-version: 3.1.100
+      - name: build all parts of NetSparkle in Release
+        run: dotnet build src/NetSparkle.sln --configuration Release
       
       # Publish
       - name: publish netsparkle.new on version change
