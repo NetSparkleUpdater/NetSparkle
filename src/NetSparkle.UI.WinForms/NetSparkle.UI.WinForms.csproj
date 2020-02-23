@@ -1,152 +1,169 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{45F5AADB-A39B-446F-8025-71647238BB89}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetSparkle.UI.NetFramework.WinForms</RootNamespace>
     <AssemblyName>NetSparkle.UI.NetFramework.WinForms</AssemblyName>
-    <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
-    <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
-    <Product>NetSparkle.NetFramework.WinForms</Product>
-    <Copyright>Copyright ©  2019</Copyright>
-    <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.NetFramework.WinForms\</OutputPath>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\NetSparkle.UI.NetFramework.WinForms\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\NetSparkle.UI.NetFramework.WinForms\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="CheckingForUpdatesWindow.cs">
+    <Compile Include="CheckingForUpdatesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="CheckingForUpdatesWindow.Designer.cs">
+    <Compile Include="CheckingForUpdatesWindow.Designer.cs">
       <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="DownloadProgressWindow.cs">
+    <Compile Include="DownloadProgressWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="DownloadProgressWindow.Designer.cs">
+    <Compile Include="DownloadProgressWindow.Designer.cs">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="ToastNotifier.cs">
+    <Compile Include="ToastNotifier.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="ToastNotifier.designer.cs">
+    <Compile Include="ToastNotifier.designer.cs">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
     </Compile>
-    <Compile Update="UpdateAvailableWindow.cs">
+    <Compile Include="UpdateAvailableWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="UpdateAvailableWindow.Designer.cs">
+    <Compile Include="UpdateAvailableWindow.Designer.cs">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="MessageNotificationWindow.cs">
+    <Compile Include="UIFactory.cs" />
+    <Compile Include="MessageNotificationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="MessageNotificationWindow.Designer.cs">
+    <Compile Include="MessageNotificationWindow.Designer.cs">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="CheckingForUpdatesWindow.resx">
+    <EmbeddedResource Include="CheckingForUpdatesWindow.resx">
       <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.bg.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.bg.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.de.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.de.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.es-MX.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.es-MX.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.fr.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.fr.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.it.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.it.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.lt.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.lt.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.nl.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.nl.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.pt-BR.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.pt-BR.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.ru.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.ru.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.zh-CN.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.zh-CN.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.zh-TW.resx">
+    <EmbeddedResource Include="DownloadProgressWindow.zh-TW.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="MessageNotificationWindow.resx">
+    <EmbeddedResource Include="MessageNotificationWindow.resx">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="ToastNotifier.resx">
+    <EmbeddedResource Include="ToastNotifier.resx">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.bg.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.bg.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.de.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.de.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.es-MX.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.es-MX.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.fr.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.fr.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.it.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.it.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.lt.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.lt.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.nl.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.nl.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.pt-BR.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.pt-BR.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.ru.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.ru.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.zh-CN.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.zh-CN.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.zh-TW.resx">
+    <EmbeddedResource Include="UpdateAvailableWindow.zh-TW.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj">
+      <Project>{74635a21-2bad-4522-ab95-e3e5703cd301}</Project>
+      <Name>NetSparkle</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="System.Drawing.Common">
-      <Version>4.7.0</Version>
-    </PackageReference>
-  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
