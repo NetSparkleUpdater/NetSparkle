@@ -7,7 +7,7 @@ using NetSparkle.Enums;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace NetSparkle.UI.NetFramework.WinForms
+namespace NetSparkle.UI.WinForms
 {
     /// <summary>
     /// UI factory for default interface

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NetSparkle.UI.NetFramework.WinForms
+namespace NetSparkle.UI.WinForms
 {
     /// <summary>
     /// The checking for updates window

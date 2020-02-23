@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <ProjectGuid>{45F5AADB-A39B-446F-8025-71647238BB89}</ProjectGuid>
-    <RootNamespace>NetSparkle.UI.NetFramework.WinForms</RootNamespace>
-    <AssemblyName>NetSparkle.UI.NetFramework.WinForms</AssemblyName>
+    <RootNamespace>NetSparkle.UI.WinForms</RootNamespace>
+    <AssemblyName>NetSparkle.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkle.NetFramework.WinForms</Product>
     <Copyright>Copyright ©  2019</Copyright>
-    <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.NetFramework.WinForms\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WinForms\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
