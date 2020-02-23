@@ -6,9 +6,22 @@
     <UseWindowsForms>true</UseWindowsForms>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
-    <Product>NetSparkle.NetFramework.WinForms</Product>
-    <Copyright>Copyright ©  2019</Copyright>
+    <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
+    <Copyright>Copyright © 2020</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WinForms\</OutputPath>
+    <PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>
+    <Version>2.0.0-preview20200223</Version>
+    <Authors>Deadpikle</Authors>
+    <Company>Deadpikle</Company>
+    <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -141,5 +154,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

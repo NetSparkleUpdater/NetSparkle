@@ -4,10 +4,23 @@
     <TargetFrameworks>netcoreapp3.0;net451</TargetFrameworks>
     <UseWPF>true</UseWPF>    
     <AssemblyTitle>NetSparkle.NetFramework.WPF</AssemblyTitle>
-    <Product>NetSparkle.NetFramework.WPF</Product>
-    <Copyright>Copyright ©  2019</Copyright>
+    <Product>NetSparkleUpdater.UI.WPF</Product>
+    <Copyright>Copyright © 2020</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.NetFramework.WPF\</OutputPath>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <PackageId>NetSparkleUpdater.UI.WPF</PackageId>
+    <Authors>Deadpikle</Authors>
+    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Version>2.0.0-preview20200223</Version>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <PackageIconUrl />
+    <Description>WPF UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</Description>
+    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -32,5 +45,15 @@
     <PackageReference Include="System.Drawing.Common">
       <Version>4.7.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
