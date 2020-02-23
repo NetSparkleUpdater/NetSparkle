@@ -16,7 +16,16 @@ jobs:
       #   uses: actions/setup-dotnet@v1
       #   with:
       #     dotnet-version: 3.1.100
+      - name: build NetSparkle in Release
+        run: dotnet build src/NetSparkle/NetSparkle.csproj --configuration Release
+        #run: dotnet build NetSparkle.sln --configuration Release
       
+      - name: build NetSparkle.UI.WinForms in Release
+        run: dotnet build src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj --configuration Release
+      
+      - name: build NetSparkle.UI.WPF in Release
+        run: dotnet build src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
+        
       # Publish
       - name: publish netsparkle.new on version change
         uses: rohith/publish-nuget@v2
