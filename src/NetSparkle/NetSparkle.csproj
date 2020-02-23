@@ -16,6 +16,7 @@
     <PackageIcon>software-update-available.png</PackageIcon>
     <PackageIconUrl />
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>

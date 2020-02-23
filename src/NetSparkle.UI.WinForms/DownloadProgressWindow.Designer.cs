@@ -61,6 +61,7 @@ namespace NetSparkle.UI.WinForms
             // 
             // imgAppIcon
             // 
+            resources.ApplyResources(this.imgAppIcon, "imgAppIcon");
             this.imgAppIcon.Name = "imgAppIcon";
             this.imgAppIcon.TabStop = false;
             // 

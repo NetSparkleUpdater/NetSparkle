@@ -4,11 +4,12 @@
     <RootNamespace>NetSparkle.UI.NetFramework.WinForms</RootNamespace>
     <AssemblyName>NetSparkle.UI.NetFramework.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>netcoreapp3.0;net451</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkle.NetFramework.WinForms</Product>
     <Copyright>Copyright ©  2019</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.NetFramework.WinForms\</OutputPath>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -16,11 +17,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="CheckingForUpdatesWindow.cs">
