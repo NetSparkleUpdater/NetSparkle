@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{45F5AADB-A39B-446F-8025-71647238BB89}</ProjectGuid>
+    <ProjectGuid>{DAB16394-9862-49C3-818B-6B84F22EF5FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetSparkle.UI.NetFramework.WinForms</RootNamespace>
