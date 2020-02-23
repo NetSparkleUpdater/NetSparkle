@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.0
+
       # Required for a specific dotnet version that doesn't come with ubuntu-latest / windows-latest
       # Visit bit.ly/2synnZl to see the list of SDKs that are pre-installed with ubuntu-latest / windows-latest
       # - name: Setup dotnet
@@ -20,8 +23,11 @@ jobs:
         run: dotnet build src/NetSparkle/NetSparkle.csproj --configuration Release
         #run: dotnet build NetSparkle.sln --configuration Release
       
-      - name: build NetSparkle.UI.WinForms in Release
-        run: dotnet build src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj --configuration Release
+      - name: build NetSparkle.UI.WinForms.NetCore in Release
+        run: dotnet build src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
+      
+      - name: build NetSparkle.UI.WinForms.NetFramework in Release
+        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release
       
       - name: build NetSparkle.UI.WPF in Release
         run: dotnet build src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
