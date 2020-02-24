@@ -34,7 +34,7 @@ jobs:
         
       # Publish
       - name: publish netsparkle.new on version change
-        uses: rohith/publish-nuget@v2
+        uses: Deadpikle/publish-nuget@v2.0-pr
         with:
           PROJECT_FILE_PATH: src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -42,9 +42,10 @@ jobs:
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkle.New
         
       - name: publish NetSparkleUpdater.UI.WPF on version change
-        uses: rohith/publish-nuget@v2
+        uses: Deadpikle/publish-nuget@v2.0-pr
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -52,9 +53,10 @@ jobs:
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.UI.WPF
         
       - name: publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: rohith/publish-nuget@v2
+        uses: Deadpikle/publish-nuget@v2.0-pr
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -62,3 +64,4 @@ jobs:
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
