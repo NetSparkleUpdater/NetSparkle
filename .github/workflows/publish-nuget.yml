@@ -34,7 +34,7 @@ jobs:
         
       # Publish
       - name: publish netsparkle.new on version change
-        uses: Deadpikle/publish-nuget@v2.0-pr
+        uses: Deadpikle/publish-nuget@v2.0-pr-d6fbdd3
         with:
           PROJECT_FILE_PATH: src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -45,7 +45,7 @@ jobs:
           PACKAGE_NAME: NetSparkle.New
         
       - name: publish NetSparkleUpdater.UI.WPF on version change
-        uses: Deadpikle/publish-nuget@v2.0-pr
+        uses: Deadpikle/publish-nuget@v2.0-pr-d6fbdd3
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -56,7 +56,7 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
         
       - name: publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: Deadpikle/publish-nuget@v2.0-pr
+        uses: Deadpikle/publish-nuget@v2.0-pr-d6fbdd3
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
