@@ -232,13 +232,19 @@ namespace NetSparkle
             {
                 // don't allow non-windows updates
                 if (!item.IsWindowsUpdate)
+                {
                     return false;
+                }
                 // filter smaller versions
                 if (new Version(item.Version).CompareTo(installed) <= 0)
+                {
                     return false;
+                }
                 // filter versions without signature if we need signatures. But accept version without downloads.
                 if (signatureNeeded && string.IsNullOrEmpty(item.DownloadDSASignature) && !string.IsNullOrEmpty(item.DownloadLink))
+                {
                     return false;
+                }
                 // accept everything else
                 return true;
             }).ToList();
@@ -259,10 +265,14 @@ namespace NetSparkle
             channel.Add(new XElement("title", title));
 
             if (!string.IsNullOrEmpty(link))
+            {
                 channel.Add(new XElement("link", link));
+            }
 
             if (!string.IsNullOrEmpty(description))
+            {
                 channel.Add(new XElement("description", description));
+            }
 
             channel.Add(new XElement("language", language));
 
@@ -273,8 +283,8 @@ namespace NetSparkle
 
             var document = new XDocument(
                 new XElement("rss", new XAttribute("version", "2.0"), new XAttribute(XNamespace.Xmlns + "sparkle", SparkleNamespace),
-                channel)
-                );
+                    channel)
+            );
 
             return document;
         }

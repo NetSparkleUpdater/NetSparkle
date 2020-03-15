@@ -106,7 +106,7 @@ namespace NetSparkle
         /// This function build a valid registry path in dependecy to the 
         /// assembly information
         /// </summary>
-        public virtual String BuildRegistryPath()
+        public virtual string BuildRegistryPath()
         {
             if (!string.IsNullOrEmpty(_registryPath))
             {
@@ -117,7 +117,9 @@ namespace NetSparkle
                 AssemblyAccessor accessor = new AssemblyAccessor(ReferenceAssembly, UseReflectionBasedAssemblyAccessor);
 
                 if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
+                {
                     throw new NetSparkleException("STOP: Sparkle is missing the company or productname tag in " + ReferenceAssembly);
+                }
 
                 return "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
             }
@@ -142,15 +144,17 @@ namespace NetSparkle
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
+            {
                 return false;
+            }
 
             // read out                
-            string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as String;
-            string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as String;
-            string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as String;
-            string strDidRunOnc = key.GetValue("DidRunOnce", "False") as String;
-            string strShowDiagnosticWindow = key.GetValue("ShowDiagnosticWindow", "False") as String;
-            string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as String;
+            string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as string;
+            string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
+            string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
+            string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
+            string strShowDiagnosticWindow = key.GetValue("ShowDiagnosticWindow", "False") as string;
+            string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
 
             // convert the right datatypes
             CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
@@ -186,7 +190,9 @@ namespace NetSparkle
         {
             RegistryKey key = Registry.CurrentUser.CreateSubKey(regPath);
             if (key == null)
+            { 
                 return false;
+            }
 
             // convert to regsz
             string strCheckForUpdate = CheckForUpdate.ToString();
