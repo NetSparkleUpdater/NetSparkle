@@ -20,6 +20,8 @@ namespace NetSparkle
     /// </summary>
     public class Sparkle : IDisposable
     {
+        #region Events
+
         /// <summary>
         /// Subscribe to this to get a chance to shut down gracefully before quitting.
         /// If <see cref="AboutToExitForInstallerRunAsync"/> is set, this has no effect.
@@ -120,6 +122,10 @@ namespace NetSparkle
         /// </summary>
         public event DownloadEvent DownloadError;
 
+        #endregion
+
+        #region Private Members
+
         private LogWriter _logWriter;
         private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
@@ -146,6 +152,10 @@ namespace NetSparkle
         private IUIFactory _uiFactory;
         private bool _disposed;
         private bool _checkServerFileName = true;
+
+        private Configuration _configuration;
+
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL
@@ -358,7 +368,19 @@ namespace NetSparkle
         /// <summary>
         /// The NetSparkle configuration object for the current assembly.
         /// </summary>
-        public Configuration Configuration { get; set; }
+        public Configuration Configuration 
+        { 
+            get
+            {
+                if (_configuration == null)
+                {
+                    _configuration = new RegistryConfiguration(_appReferenceAssembly);
+                }
+                _configuration.Reload();
+                return _configuration;
+            } 
+            set { _configuration = value; } 
+        }
 
         /// <summary>
         /// The DSA checker
@@ -551,6 +573,8 @@ namespace NetSparkle
             Dispose(false);
         }
 
+        #region IDisposable
+
         /// <summary>
         /// Inherited from IDisposable. Stops all background activities.
         /// </summary>
@@ -616,6 +640,8 @@ namespace NetSparkle
             }
         }
 
+        #endregion
+
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
         /// will be downloaded and checked against the reference assembly. Ensure that
@@ -675,19 +701,6 @@ namespace NetSparkle
 
             // ok we need an update
             return new UpdateInfo(UpdateStatus.UpdateAvailable, updates);
-        }
-
-        /// <summary>
-        /// Reads the local Sparkle configuration for the given reference assembly.
-        /// </summary>
-        public Configuration GetApplicationConfig()
-        {
-            if (Configuration == null)
-            {
-                Configuration = new RegistryConfiguration(_appReferenceAssembly);
-            }
-            Configuration.Reload();
-            return Configuration;
         }
 
         /// <summary>
@@ -1267,7 +1280,9 @@ namespace NetSparkle
             {
                 // verify if we talk about our app cast dll 
                 if (sender is HttpWebRequest req && req.RequestUri.Equals(new Uri(_appCastUrl)))
+                {
                     return true;
+                }
             }
 
             // check our cert                 
@@ -1352,7 +1367,7 @@ namespace NetSparkle
                 await Task.Delay(250);
             }
             UpdateCheckStarted?.Invoke(this);
-            Configuration config = GetApplicationConfig();
+            Configuration config = Configuration;
 
             // check if update is required
             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
@@ -1402,17 +1417,17 @@ namespace NetSparkle
         /// <param name="updates">updates to be installed</param>
         private async void Update(List<AppCastItem> updates)
         {
-            if (updates == null)
-                return;
-
-            if (IsDownloadingSilently())
+            if (updates != null)
             {
-                await InitDownloadAndInstallProcess(updates[0]); // install only latest
-            }
-            else
-            {
-                // show the update ui
-                ShowUpdateNeededUI(updates);
+                if (IsDownloadingSilently())
+                {
+                    await InitDownloadAndInstallProcess(updates[0]); // install only latest
+                }
+                else
+                {
+                    // show the update ui
+                    ShowUpdateNeededUI(updates);
+                }
             }
         }
 
@@ -1461,7 +1476,7 @@ namespace NetSparkle
             if (result == UpdateAvailableResult.SkipUpdate)
             {
                 // skip this version
-                Configuration config = GetApplicationConfig();
+                Configuration config = Configuration;
                 config.SetVersionToSkip(currentItem.Version);
                 CallFuncConsideringUIThreads(() => { UserSkippedVersion?.Invoke(currentItem, _downloadTempFileName); });
             }
@@ -1503,7 +1518,9 @@ namespace NetSparkle
             do
             {
                 if (_cancelToken.IsCancellationRequested)
+                {
                     break;
+                }
                 // set state
                 bool bUpdateRequired = false;
 
@@ -1518,13 +1535,15 @@ namespace NetSparkle
 
                     // read the config
                     LogWriter.PrintMessage("Reading config...");
-                    Configuration config = GetApplicationConfig();
+                    Configuration config = Configuration;
 
                     // calc CheckTasp
                     bool checkTSPInternal = checkTSP;
 
                     if (isInitialCheck && checkTSPInternal)
+                    {
                         checkTSPInternal = !_forceInitialCheck;
+                    }
 
                     // check if it's ok the recheck to software state
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
@@ -1540,14 +1559,18 @@ namespace NetSparkle
 
                             // check if update is required
                             if (_cancelToken.IsCancellationRequested)
+                            {
                                 break;
+                            }
                             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
                             if (_cancelToken.IsCancellationRequested)
+                            {
                                 break;
-                            List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
+                            }
                             bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
                             if (bUpdateRequired)
                             {
+                                List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
                                 // show the update window
                                 LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
@@ -1614,7 +1637,9 @@ namespace NetSparkle
 
                 // wait for
                 if (!goIntoLoop || _cancelToken.IsCancellationRequested)
+                {
                     break;
+                }
 
                 // build the event array
                 WaitHandle[] handles = new WaitHandle[1];
@@ -1622,10 +1647,14 @@ namespace NetSparkle
 
                 // wait for any
                 if (_cancelToken.IsCancellationRequested)
+                {
                     break;
+                }
                 int i = WaitHandle.WaitAny(handles, _checkFrequency);
                 if (_cancelToken.IsCancellationRequested)
+                {
                     break;
+                }
                 if (WaitHandle.WaitTimeout == i)
                 {
                     LogWriter.PrintMessage("{0} minutes are over", _checkFrequency.TotalMinutes);
@@ -1646,7 +1675,9 @@ namespace NetSparkle
                     checkTSP = false;
                 }
                 if (_cancelToken.IsCancellationRequested)
+                {
                     break;
+                }
             } while (goIntoLoop);
 
             // reset the islooping handle
