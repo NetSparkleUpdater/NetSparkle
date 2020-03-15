@@ -45,7 +45,9 @@ namespace NetSparkle
                 // TODO: Loading Resources don't work
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
+                {
                     data = TryGetFileResource(publicKeyFile, data);
+                }
 
 
                 if (data != null)
@@ -146,22 +148,19 @@ namespace NetSparkle
         /// <param name="signature">expected signature</param>
         /// <param name="stream">the stream of the binary</param>
         /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
-        public ValidationResult VerifyDSASignature(string signature, Stream stream)
+        public ValidationResult VerifyDSASignature(string signature, byte[] dataToVerify)
         {
             ValidationResult res = ValidationResult.Invalid;
             if (!CheckSecurityMode(signature, ref res))
+            {
                 return res;
+            }
 
             // convert signature
             byte[] bHash = Convert.FromBase64String(signature);
 
-            // read the data
-            byte[] bData = null;
-            bData = new byte[stream.Length];
-            stream.Read(bData, 0, bData.Length);
-
             // verify
-            return _provider.VerifyData(bData, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
+            return _provider.VerifyData(dataToVerify, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
         }
 
         /// <summary>
@@ -172,11 +171,18 @@ namespace NetSparkle
         /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
         public ValidationResult VerifyDSASignatureFile(string signature, string binaryPath)
         {
-            var data = string.Empty;
             using (Stream inputStream = File.OpenRead(binaryPath))
             {
-                return VerifyDSASignature(signature, inputStream);
+                return VerifyDSASignature(signature, ConvertStreamToByteArray(inputStream));
             }
+        }
+
+        public byte[] ConvertStreamToByteArray(Stream stream)
+        {
+            // read the data
+            byte[] data = new byte[stream.Length];
+            stream.Read(data, 0, data.Length);
+            return data;
         }
 
         /// <summary>
@@ -195,7 +201,7 @@ namespace NetSparkle
                 writer.Flush();
                 stream.Position = 0;
 
-                return VerifyDSASignature(signature, stream);
+                return VerifyDSASignature(signature, ConvertStreamToByteArray(stream));
             }
         }
 

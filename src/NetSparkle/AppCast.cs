@@ -182,7 +182,7 @@ namespace NetSparkle
 
             // checking signature
             var signatureNeeded = _dsaChecker.SignatureNeeded();
-            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, memorystream) == ValidationResult.Invalid)
+            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, _dsaChecker.ConvertStreamToByteArray(memorystream)) == ValidationResult.Invalid)
             {
                 _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;
