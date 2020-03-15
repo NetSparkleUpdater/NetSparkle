@@ -1,4 +1,5 @@
 using NetSparkle.Enums;
+using NetSparkle.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,10 +21,11 @@ namespace NetSparkle
         private readonly Configuration _config;
         private readonly string _castUrl;
 
-        private readonly bool _trustEverySSLConnection;
-        private readonly string _extraJSON;
         private readonly DSAChecker _dsaChecker;
         private readonly LogWriter _logWriter;
+
+        private IAppCastDataDownloader _dataDownloader;
+
 
         /// <summary>
         /// Sparkle XML namespace
@@ -54,24 +56,23 @@ namespace NetSparkle
         /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
         /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
-        public AppCast(string castUrl, bool trustEverySSLConnection, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null, string extraJSON = null)
+        public AppCast(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
         {
+            _dataDownloader = dataDownloader;
             _config = config;
             _castUrl = castUrl;
 
             Items = new List<AppCastItem>();
 
-            _trustEverySSLConnection = trustEverySSLConnection;
             _dsaChecker = dsaChecker;
             _logWriter = logWriter ?? new LogWriter();
-            _extraJSON = extraJSON;
         }
 
         private string TryReadSignature()
         {
             try
             {
-                var signaturestream = GetWebContentStream(_castUrl + ".dsa");
+                var signaturestream = _dataDownloader.DownloadAndGetContentStream(_castUrl + ".dsa");
                 var signature = string.Empty;
                 using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
                 {
@@ -85,78 +86,13 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature as a <see cref="Stream"/>.
-        /// </summary>
-        public Stream GetWebContentStream(string url)
-        {
-            var response = GetWebContentResponse(url);
-            if (response != null)
-            {
-                var ms = new MemoryStream();
-                response.GetResponseStream().CopyTo(ms);
-                response.Close();
-                ms.Position = 0;
-                return ms;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature.
-        /// </summary>
-        public WebResponse GetWebContentResponse(string url)
-        {
-            WebRequest request = WebRequest.Create(url);
-            if (request != null)
-            {
-                if (request is FileWebRequest)
-                {
-                    FileWebRequest fileRequest = request as FileWebRequest;
-                    if (fileRequest != null)
-                    {
-                        return request.GetResponse();
-                    }
-                }
-
-                if (request is HttpWebRequest)
-                {
-                    HttpWebRequest httpRequest = request as HttpWebRequest;
-                    httpRequest.UseDefaultCredentials = true;
-                    httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    if (_trustEverySSLConnection)
-                    {
-                        httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-                    }
-
-                    // http://stackoverflow.com/a/10027534/3938401
-                    if (_extraJSON != null && _extraJSON != "")
-                    {
-                        httpRequest.ContentType = "application/json";
-                        httpRequest.Method = "POST";
-
-                        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
-                        {
-                            streamWriter.Write(_extraJSON);
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                        }
-                    }
-
-                    // request the cast and build the stream
-                    return httpRequest.GetResponse();
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
         public bool Read()
         {
             try
             {
-                var inputstream = GetWebContentStream(_castUrl);
+                var inputstream = _dataDownloader.DownloadAndGetContentStream(_castUrl);
                 var signature = TryReadSignature();
                 return ReadStream(inputstream, signature);
             }
