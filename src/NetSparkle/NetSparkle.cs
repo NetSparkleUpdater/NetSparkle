@@ -12,6 +12,7 @@ using NetSparkle.Enums;
 using System.Net.Http;
 using NetSparkle.Events;
 using System.Collections.Generic;
+using NetSparkle.Downloaders;
 
 namespace NetSparkle
 {
@@ -144,7 +145,6 @@ namespace NetSparkle
 
         private string _tmpDownloadFilePath;
         private string _downloadTempFileName;
-        private WebClient _webDownloadClient;
         private Process _installerProcess;
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
@@ -154,6 +154,7 @@ namespace NetSparkle
         private bool _checkServerFileName = true;
 
         private Configuration _configuration;
+        private IUpdateDownloader _updateDownloader;
 
         #endregion
 
@@ -481,6 +482,12 @@ namespace NetSparkle
             }
         }
 
+        public IUpdateDownloader UpdateDownloader
+        {
+            get { return _updateDownloader; }
+            set { _updateDownloader = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -600,7 +607,7 @@ namespace NetSparkle
                     _cancelTokenSource?.Dispose();
                     _exitHandle?.Dispose();
                     _loopingHandle?.Dispose();
-                    _webDownloadClient?.Dispose();
+                    UpdateDownloader?.Dispose();
                     _installerProcess?.Dispose();
                 }
                 // There are no unmanaged resources to release, but
@@ -617,15 +624,7 @@ namespace NetSparkle
             ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
             _cancelTokenSource.Cancel();
 
-            if (_webDownloadClient != null)
-            {
-                if (ProgressWindow != null)
-                {
-                    _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
-                }
-                _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
-                _webDownloadClient = null;
-            }
+            CleanUpUpdateDownloader();
 
             if (UpdateAvailableWindow != null)
             {
@@ -896,7 +895,7 @@ namespace NetSparkle
         {
             // TODO: is this a good idea? What if it's a user initiated request,
             // and they want to watch progress instead of it being a silent download?
-            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            if (UpdateDownloader != null && UpdateDownloader.IsDownloading)
             {
                 return; // file is already downloading, don't do anything!
             }
@@ -945,35 +944,44 @@ namespace NetSparkle
             if (needsToDownload)
             {
 
-                if (_webDownloadClient != null)
-                {
-                    if (ProgressWindow != null)
-                    {
-                        _webDownloadClient.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
-                    }
-                    _webDownloadClient.DownloadFileCompleted -= OnDownloadFinished;
-                    _webDownloadClient.Dispose();
-                    _webDownloadClient = null;
-                }
+                CleanUpUpdateDownloader();
+                CreateUpdateDownloaderIfNeeded();
 
-                _webDownloadClient = new WebClient
-                {
-                    UseDefaultCredentials = true,
-                    Proxy = { Credentials = CredentialCache.DefaultNetworkCredentials },
-                };
                 CreateAndShowProgressWindow(item, false, () =>
                 {
                     if (ProgressWindow != null)
                     {
-                        _webDownloadClient.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+                        UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
                     }
-                    _webDownloadClient.DownloadFileCompleted += OnDownloadFinished;
+                    UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
 
                     Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
                     LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                    _webDownloadClient.DownloadFileAsync(url, _downloadTempFileName);
+                    UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
                     CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
                 });
+            }
+        }
+
+        private void CleanUpUpdateDownloader()
+        {
+            if (UpdateDownloader != null)
+            {
+                if (ProgressWindow != null)
+                {
+                    UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                }
+                UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
+                UpdateDownloader?.Dispose();
+                UpdateDownloader = null;
+            }
+        }
+
+        private void CreateUpdateDownloaderIfNeeded()
+        {
+            if (UpdateDownloader == null)
+            {
+                UpdateDownloader = new WebClientFileDownloader();
             }
         }
 
@@ -1437,9 +1445,9 @@ namespace NetSparkle
         public void CancelFileDownload()
         {
             LogWriter.PrintMessage("Canceling download...");
-            if (_webDownloadClient != null && _webDownloadClient.IsBusy)
+            if (UpdateDownloader != null && UpdateDownloader.IsDownloading)
             {
-                _webDownloadClient.CancelAsync();
+                UpdateDownloader.CancelDownload();
             }
         }
 
