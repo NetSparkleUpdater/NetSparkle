@@ -92,6 +92,50 @@ namespace NetSparkle
         }
 
         /// <summary>
+        /// True if this update is a macOS update; false otherwise.
+        /// Acceptable OS strings are: "mac", "osx", or "macos" (this is 
+        /// checked with a case-insensitive check). If not specified,
+        /// assumed to be a Windows update.
+        /// </summary>
+        public bool IsMacOSpdate
+        {
+            get
+            {
+                if (OperatingSystemString != null)
+                {
+                    var lowercasedOS = OperatingSystemString.ToLower();
+                    if (lowercasedOS == "mac" || lowercasedOS == "macos" || lowercasedOS == "osx")
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// True if this update is a macOS update; false otherwise.
+        /// Acceptable OS strings are: "linux" (this is 
+        /// checked with a case-insensitive check). If not specified,
+        /// assumed to be a Linux update.
+        /// </summary>
+        public bool IsLinuxUpdate
+        {
+            get
+            {
+                if (OperatingSystemString != null)
+                {
+                    var lowercasedOS = OperatingSystemString.ToLower();
+                    if (lowercasedOS == "linux")
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
         /// MIME type for file as specified in the closure tag. Defaults to "application/octet-stream".
         /// </summary>
         public string MIMEType { get; set; }

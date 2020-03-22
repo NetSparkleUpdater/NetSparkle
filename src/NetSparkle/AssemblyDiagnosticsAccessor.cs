@@ -38,7 +38,7 @@ namespace NetSparkle
                 productName = info.ProductName;
                 companyName = info.CompanyName;
                 legalCopyright = info.LegalCopyright;
-                fileDescription = info.FileDescription; 
+                fileDescription = info.FileDescription;
             }
         }
 

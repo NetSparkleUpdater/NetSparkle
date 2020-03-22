@@ -34,7 +34,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.UI.WinForms.NetF
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		NetSparkleUtilities\NetSparkleUtilities.projitems*{74635a21-2bad-4522-ab95-e3e5703cd301}*SharedItemsImports = 4
+		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{74635a21-2bad-4522-ab95-e3e5703cd301}*SharedItemsImports = 5
 		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{d9115e42-6ed7-452f-a623-81f70201578b}*SharedItemsImports = 13
 		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{e50ac3a5-6c63-40d7-a4c4-9b359efd5707}*SharedItemsImports = 4
 	EndGlobalSection
