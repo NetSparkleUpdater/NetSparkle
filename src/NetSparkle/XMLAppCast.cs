@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -25,7 +26,6 @@ namespace NetSparkle
         private LogWriter _logWriter;
 
         private IAppCastDataDownloader _dataDownloader;
-
 
         /// <summary>
         /// Sparkle XML namespace
@@ -64,7 +64,7 @@ namespace NetSparkle
         /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
         /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
-        public void SetupAppCast(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
+        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
@@ -74,7 +74,7 @@ namespace NetSparkle
             _logWriter = logWriter ?? new LogWriter();
         }
 
-        private string TryReadSignature()
+        private string TryReadAppCastSignature()
         {
             try
             {
@@ -94,12 +94,12 @@ namespace NetSparkle
         /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
-        public bool Read()
+        public bool DownloadAndParse()
         {
             try
             {
                 var inputstream = _dataDownloader.DownloadAndGetContentStream(_castUrl);
-                var signature = TryReadSignature();
+                var signature = TryReadAppCastSignature();
                 return ReadStream(inputstream, signature);
             }
             catch (Exception e)
@@ -165,18 +165,34 @@ namespace NetSparkle
         /// <summary>
         /// Returns sorted list of updates between current and latest. Installed is not included.
         /// </summary>
-        public List<AppCastItem> GetUpdates()
+        public virtual List<AppCastItem> GetNeededUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = _dsaChecker.SignatureNeeded();
-
             return Items.Where((item) =>
             {
+#if NETFRAMEWORK
                 // don't allow non-windows updates
                 if (!item.IsWindowsUpdate)
                 {
                     return false;
                 }
+#else
+                // check operating system and filter out ones that don't match the current
+                // operating system
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
+                {
+                    return false;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
+                {
+                    return false;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
+                {
+                    return false;
+                }
+#endif
                 // filter smaller versions
                 if (new Version(item.Version).CompareTo(installed) <= 0)
                 {

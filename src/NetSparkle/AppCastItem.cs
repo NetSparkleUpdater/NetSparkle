@@ -97,7 +97,7 @@ namespace NetSparkle
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Windows update.
         /// </summary>
-        public bool IsMacOSpdate
+        public bool IsMacOSUpdate
         {
             get
             {

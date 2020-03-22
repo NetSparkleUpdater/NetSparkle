@@ -6,8 +6,8 @@ namespace NetSparkle.Interfaces
 {
     public interface IAppCastHandler
     {
-        void SetupAppCast(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null);
-        bool Read();
-        List<AppCastItem> GetUpdates();
+        void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null);
+        bool DownloadAndParse();
+        List<AppCastItem> GetNeededUpdates();
     }
 }

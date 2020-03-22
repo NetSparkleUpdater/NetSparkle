@@ -679,14 +679,16 @@ namespace NetSparkle
             {
                 appcastHandler = AppCastHandler = new XMLAppCast();
             }
-            appcastHandler.SetupAppCast(AppCastDataDownloader, _appCastUrl, config, DSAChecker, LogWriter);
+            appcastHandler.SetupAppCastHandler(AppCastDataDownloader, _appCastUrl, config, DSAChecker, LogWriter);
             // check if any updates are available
             try
             {
                 var task = Task.Factory.StartNew(() =>
                 {
-                    if (appcastHandler.Read())
-                        updates = appcastHandler.GetUpdates();
+                    if (appcastHandler.DownloadAndParse())
+                    {
+                        updates = appcastHandler.GetNeededUpdates();
+                    }
                 });
                 await task;
             }
