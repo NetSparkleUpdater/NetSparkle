@@ -42,7 +42,7 @@ namespace NetSparkle
 
             if (string.IsNullOrEmpty(key))
             {
-                // TODO: Loading Resources don't work
+                // TODO: Loading Resources doesn't work
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {

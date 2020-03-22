@@ -156,6 +156,7 @@ namespace NetSparkle
         private Configuration _configuration;
         private IUpdateDownloader _updateDownloader;
         private IAppCastDataDownloader _appCastDataDownloader;
+        private IAppCastHandler _appCastHandler;
 
         #endregion
 
@@ -495,6 +496,12 @@ namespace NetSparkle
             set { _appCastDataDownloader = value; }
         }
 
+        public IAppCastHandler AppCastHandler
+        {
+            get { return _appCastHandler; }
+            set { _appCastHandler = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -667,14 +674,19 @@ namespace NetSparkle
             {
                 AppCastDataDownloader = new WebRequestAppCastDataDownloader(TrustEverySSLConnection, ExtraJsonData);
             }
-            AppCast cast = new AppCast(AppCastDataDownloader, _appCastUrl, config, DSAChecker, LogWriter);
+            IAppCastHandler appcastHandler = AppCastHandler;
+            if (appcastHandler == null)
+            {
+                appcastHandler = AppCastHandler = new XMLAppCast();
+            }
+            appcastHandler.SetupAppCast(AppCastDataDownloader, _appCastUrl, config, DSAChecker, LogWriter);
             // check if any updates are available
             try
             {
                 var task = Task.Factory.StartNew(() =>
                 {
-                    if (cast.Read())
-                        updates = cast.GetUpdates();
+                    if (appcastHandler.Read())
+                        updates = appcastHandler.GetUpdates();
                 });
                 await task;
             }

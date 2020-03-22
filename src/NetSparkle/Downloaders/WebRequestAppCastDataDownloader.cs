@@ -33,7 +33,7 @@ namespace NetSparkle.Downloaders
         }
 
         /// <summary>
-        /// Used by <see cref="AppCast"/> to fetch the appcast and DSA signature.
+        /// Used by <see cref="XMLAppCast"/> to fetch the appcast and DSA signature.
         /// </summary>
         public WebResponse GetWebContentResponse(string url)
         {

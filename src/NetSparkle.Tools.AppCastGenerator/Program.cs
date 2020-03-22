@@ -162,7 +162,7 @@ namespace NetSparkle.Tools.AppCastGenerator
                     items.Add(item);
                 }
 
-                var appcastXmlDocument = AppCast.GenerateAppCastXml(items, productName);
+                var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
                 var appcastFileName = string.IsNullOrWhiteSpace(_outputFilePath) ? "appcast.xml" : Path.GetFileName(_outputFilePath);
                 if (string.IsNullOrWhiteSpace(appcastFileName))
                 {

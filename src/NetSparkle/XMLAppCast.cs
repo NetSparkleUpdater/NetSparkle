@@ -14,15 +14,15 @@ using System.Xml.Linq;
 namespace NetSparkle
 {
     /// <summary>
-    /// An app-cast 
+    /// An XML-based appcast document downloader and handler
     /// </summary>
-    public class AppCast
+    public class XMLAppCast : IAppCastHandler
     {
-        private readonly Configuration _config;
-        private readonly string _castUrl;
+        private Configuration _config;
+        private string _castUrl;
 
-        private readonly DSAChecker _dsaChecker;
-        private readonly LogWriter _logWriter;
+        private DSAChecker _dsaChecker;
+        private LogWriter _logWriter;
 
         private IAppCastDataDownloader _dataDownloader;
 
@@ -50,19 +50,25 @@ namespace NetSparkle
         /// <summary>
         /// Constructor
         /// </summary>
+        public XMLAppCast()
+        {
+            Items = new List<AppCastItem>();
+        }
+
+        /// <summary>
+        /// TODO: docs
+        /// </summary>
         /// <param name="castUrl">the URL of the appcast file</param>
         /// <param name="trustEverySSLConnection">whether or not to trust every SSL connection</param>
         /// <param name="config">the current configuration</param>
         /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
         /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
-        public AppCast(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
+        public void SetupAppCast(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
             _castUrl = castUrl;
-
-            Items = new List<AppCastItem>();
 
             _dsaChecker = dsaChecker;
             _logWriter = logWriter ?? new LogWriter();
