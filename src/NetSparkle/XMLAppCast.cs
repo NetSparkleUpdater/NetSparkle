@@ -56,14 +56,14 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// TODO: docs
+        /// Sets the app cast handler up with its needed objects/parameters so that it can download
+        /// and validate an appcast
         /// </summary>
+        /// <param name="dataDownloader">object that will handle downloading the app cast file(s) from the internet</param>
         /// <param name="castUrl">the URL of the appcast file</param>
-        /// <param name="trustEverySSLConnection">whether or not to trust every SSL connection</param>
-        /// <param name="config">the current configuration</param>
+        /// <param name="config">the current configuration for checking which versions are installed, etc.</param>
         /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
-        /// <param name="extraJSON">string representation of JSON object to send along with the appcast request. nullable.</param>
         public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
         {
             _dataDownloader = dataDownloader;
