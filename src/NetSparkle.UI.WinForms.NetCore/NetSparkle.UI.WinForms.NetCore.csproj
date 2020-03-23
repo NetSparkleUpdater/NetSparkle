@@ -13,7 +13,7 @@
     <Version>2.0.0-preview20200322</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
-    <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</Description>
+    <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
     <PackageIcon>software-update-available.png</PackageIcon>

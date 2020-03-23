@@ -24,7 +24,7 @@
     <AssemblyTitle>NetSparkleGenerator</AssemblyTitle>
     <Product>NetSparkleGenerator</Product>
     <Description>Commandline tool 'generate_appcast.exe' to scan a directory for .exe files and generate appcast.xml</Description>
-    <Copyright>Copyright © ndreisg 2019</Copyright>
+    <Copyright>Copyright © ndreisg 2019, Deadpikle 2020</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PostBuildEvent />
     <PostBuildEvent />
