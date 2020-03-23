@@ -1,5 +1,7 @@
 ﻿using NetSparkle.Events;
 using NetSparkle.Interfaces;
+using NetSparkle.UI.WPF.Controls;
+using NetSparkle.UI.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,24 +24,23 @@ namespace NetSparkle.UI.WPF
     /// <summary>
     /// Interaction logic for DownloadProgressWindow.xaml
     /// </summary>
-    public partial class DownloadProgressWindow : Window, IDownloadProgress
+    public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {
-        private AppCastItem _itemToDownload;
-        private bool _isDownloading;
-        private bool _didDownloadAnything;
         private bool _didCallDownloadProcessCompletedHandler = false;
 
-        private bool _isOnMainThread;
-        private bool _hasInitiatedShutdown;
+        private DownloadProgressWindowViewModel _dataContext;
 
-        public DownloadProgressWindow()
+        public DownloadProgressWindow() : base(false)
         {
             InitializeComponent();
-            _isDownloading = true;
-            _didDownloadAnything = false;
-            ErrorMessage.Text = "";
-            ErrorMessage.Visibility = Visibility.Collapsed;
             Closing += DownloadProgressWindow_Closing;
+        }
+
+        public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel)
+        {
+            InitializeComponent();
+            Closing += DownloadProgressWindow_Closing;
+            DataContext = _dataContext = viewModel;
         }
 
         private void DownloadProgressWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -57,27 +58,6 @@ namespace NetSparkle.UI.WPF
             }
         }
 
-        public AppCastItem ItemToDownload 
-        { 
-            get { return _itemToDownload; }
-            set 
-            {
-                _itemToDownload = value;
-
-                Dispatcher.InvokeAsync(() =>
-                {
-                    if (value != null)
-                    {
-                        DownloadingTitle.Content = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
-                    }
-                    else
-                    {
-                        DownloadingTitle.Content = string.Format("Downloading...");
-                    }
-                });
-            }
-        }
-
         /// <summary>
         /// Event to fire when the download UI is complete; tells you 
         /// if the install process should happen or not
@@ -86,40 +66,29 @@ namespace NetSparkle.UI.WPF
 
         bool IDownloadProgress.DisplayErrorMessage(string errorMessage)
         {
-            Dispatcher.InvokeAsync(() =>
+            if (_dataContext != null)
             {
-                ErrorMessage.Text = errorMessage;
-                ErrorMessage.Visibility = Visibility.Visible;
-            });
+                _dataContext.ErrorMessageText = errorMessage;
+                _dataContext.IsErrorMessageVisible = true;
+            }
             return true;
         }
 
         void IDownloadProgress.FinishedDownloadingFile(bool isDownloadedFileValid)
         {
-            _isDownloading = false;
-
-            Dispatcher.InvokeAsync(() =>
+            _dataContext?.SetFinishedDownloading(isDownloadedFileValid);
+            if (!isDownloadedFileValid)
             {
-                ProgressBar.Value = 100;
-                if (!_didDownloadAnything)
+                Dispatcher.Invoke(() =>
                 {
-                    DownloadProgress.Content = string.Format("");
-                }
-                ActionButton.Content = "Install and Relaunch";
-            });
+                    this.Background = new SolidColorBrush(Colors.Tomato);
+                });
+            }
         }
 
         void IDownloadProgress.Close()
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-                Close();
-                if (!_isOnMainThread && !_hasInitiatedShutdown)
-                {
-                    _hasInitiatedShutdown = true;
-                    Dispatcher.InvokeShutdown();
-                }
-            });
+            CloseWindow();
         }
 
         /// <summary>
@@ -127,18 +96,11 @@ namespace NetSparkle.UI.WPF
         /// </summary>
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-                ProgressBar.Value = percentage;
-                DownloadProgress.Content = string.Format("({0} / {1})",
-                    Utilities.NumBytesToUserReadableString(bytesReceived),
-                    Utilities.NumBytesToUserReadableString(totalBytesToReceive));
-            });
+            _dataContext?.UpdateProgress(bytesReceived, totalBytesToReceive, percentage);
         }
 
         void IDownloadProgress.OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            _didDownloadAnything = true;
             OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
         }
 
@@ -149,30 +111,13 @@ namespace NetSparkle.UI.WPF
 
         void IDownloadProgress.Show(bool isOnMainThread)
         {
-            try
-            {
-                Show();
-                _isOnMainThread = isOnMainThread;
-                if (!isOnMainThread)
-                {
-                    // https://stackoverflow.com/questions/1111369/how-do-i-create-and-show-wpf-windows-on-separate-threads
-                    System.Windows.Threading.Dispatcher.Run();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                Close();
-                if (!isOnMainThread)
-                {
-                    Dispatcher.InvokeShutdown();
-                }
-            }
+            ShowWindow(isOnMainThread);
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(!_isDownloading));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(!(_dataContext?.IsDownloading ?? true)));
         }
     }
 }

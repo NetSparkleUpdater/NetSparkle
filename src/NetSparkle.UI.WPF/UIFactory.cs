@@ -34,7 +34,7 @@ namespace NetSparkle.UI.WPF
         /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to earliest</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateUpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var viewModel = new UpdateAvailableWindowViewModel();
             var window = new UpdateAvailableWindow(viewModel)
@@ -51,9 +51,12 @@ namespace NetSparkle.UI.WPF
         /// <param name="item">Appcast item to download</param>
         public virtual IDownloadProgress CreateProgressWindow(AppCastItem item)
         {
-            return new DownloadProgressWindow
+            var viewModel = new DownloadProgressWindowViewModel()
             {
-                ItemToDownload = item,
+                ItemToDownload = item
+            };
+            return new DownloadProgressWindow(viewModel)
+            {
                 Icon = _applicationIcon
             };
         }

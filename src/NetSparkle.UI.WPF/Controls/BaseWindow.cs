@@ -13,7 +13,15 @@ namespace NetSparkle.UI.WPF.Controls
 
         public BaseWindow()
         {
-            Closing += BaseWindow_Closing;
+
+        }
+
+        public BaseWindow(bool useClosingEvent)
+        {
+            if (useClosingEvent)
+            {
+                Closing += BaseWindow_Closing;
+            }
         }
 
         private void BaseWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -14,7 +14,7 @@ namespace NetSparkle.Interfaces
         /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
+        IUpdateAvailable CreateUpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
         /// Create download progress window

@@ -30,12 +30,12 @@ namespace NetSparkle.UI.WPF
 
         private UpdateAvailableWindowViewModel _dataContext;
 
-        public UpdateAvailableWindow() : base()
+        public UpdateAvailableWindow() : base(true)
         {
             InitializeComponent();
         }
 
-        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel) : base()
+        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel) : base(true)
         {
             InitializeComponent();
             DataContext = _dataContext = viewModel;

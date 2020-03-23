@@ -790,7 +790,7 @@ namespace NetSparkle
                     // define action
                     Action<object> showSparkleUI = (state) =>
                     {
-                        UpdateAvailableWindow = UIFactory?.CreateSparkleForm(this, updates, isUpdateAlreadyDownloaded);
+                        UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
 
                         if (UpdateAvailableWindow != null)
                         {
