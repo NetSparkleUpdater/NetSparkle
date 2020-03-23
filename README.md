@@ -1,8 +1,10 @@
 # NetSparkle
 
-**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API, etc. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place.**
+**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API, etc. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
 
-**A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF) are also on NuGet except for the .NET Framework WinForms UI.**
+**A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF) are also on NuGet except for the .NET Framework WinForms UI. The latest tooling updates, which includes even more features than the currently-on-NuGet app cast generator, are also not yet on NuGet.**
+
+**README updates for version 2.0 are pending. If you have specific questions, please file an issue. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. These extra features aren't built-in out of the box yet -- contributions are welcome!!**
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
