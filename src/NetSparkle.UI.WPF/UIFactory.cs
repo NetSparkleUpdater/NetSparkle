@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Threading;
 using System.Collections.Generic;
+using NetSparkle.UI.WPF.ViewModels;
 
 namespace NetSparkle.UI.WPF
 {
@@ -35,11 +36,12 @@ namespace NetSparkle.UI.WPF
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         public virtual IUpdateAvailable CreateSparkleForm(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            var window = new UpdateAvailableWindow()
+            var viewModel = new UpdateAvailableWindowViewModel();
+            var window = new UpdateAvailableWindow(viewModel)
             {
                 Icon = _applicationIcon
             };
-            window.Initialize(sparkle, updates, isUpdateAlreadyDownloaded);
+            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded);
             return window;
         }
 
@@ -147,10 +149,9 @@ namespace NetSparkle.UI.WPF
 
         private void ShowMessage(string title, string message)
         {
-            var messageWindow = new MessageNotificationWindow
+            var messageWindow = new MessageNotificationWindow(new MessageNotificationWindowViewModel(message))
             {
                 Title = title,
-                MessageToShow = message,
                 Icon = _applicationIcon
             };
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;

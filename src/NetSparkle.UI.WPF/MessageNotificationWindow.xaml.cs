@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetSparkle.UI.WPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,12 +24,13 @@ namespace NetSparkle.UI.WPF
         public MessageNotificationWindow()
         {
             InitializeComponent();
-            Message.Text = "";
+            DataContext = new MessageNotificationWindowViewModel();
         }
 
-        public string MessageToShow
+        public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel)
         {
-            set { Message.Text = value; }
+            InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }
