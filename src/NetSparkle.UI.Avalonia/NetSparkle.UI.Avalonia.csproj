@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>NetSparkleUpdater.UI.Avalonia</PackageId>
+    <Version>2.0.0-preview20200401</Version>
+    <Authors>Deadpikle</Authors>
+    <Company>Deadpikle</Company>
+    <Product>NetSparkleUpdater.UI.Avalonia</Product>
+    <Description>Avalonia UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
+    <Copyright>Copyright © 2020</Copyright>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CheckingForUpdatesWindow.xaml" />
+    <None Remove="DownloadProgressWindow.xaml" />
+    <None Remove="MessageNotificationWindow.xaml" />
+    <None Remove="UpdateAvailableWindow.xaml" />
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="CheckingForUpdatesWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DownloadProgressWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MessageNotificationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateAvailableWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.9.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Avalonia.HtmlRenderer">
+      <HintPath>Lib\Avalonia.HtmlRenderer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

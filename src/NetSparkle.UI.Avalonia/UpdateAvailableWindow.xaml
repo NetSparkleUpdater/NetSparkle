@@ -1,0 +1,81 @@
+﻿<cont:BaseWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:cont="clr-namespace:NetSparkle.UI.Avalonia.Controls"
+                 xmlns:html="clr-namespace:Avalonia.Controls.Html;assembly=Avalonia.HtmlRenderer"
+                 mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+                 x:Class="NetSparkle.UI.Avalonia.UpdateAvailableWindow"
+                 Title="Software Update"
+                 MinWidth="450"
+                 MinHeight="350"
+                 Width="700"
+                 Height="600">
+  <Grid Background="#EEEEEE" ColumnDefinitions="Auto, *" Name="MainGrid"
+        RowDefinitions="Auto, Auto, *, Auto">
+    <Image Grid.Row="0"
+           Grid.RowSpan="3"
+           Grid.Column="0"
+           Source="{Binding $parent[Window].Icon}"
+           VerticalAlignment="Top"
+           HorizontalAlignment="Left"
+           Width="48"
+           Height="48"
+           Margin="10,10,0,0" />
+    <TextBlock Name="TitleHeader"
+               Text="{Binding TitleHeaderText}"
+               TextWrapping="Wrap"
+               FontSize="16"
+               Margin="10,5,0,0"
+               Grid.Column="1"
+               Grid.Row="0" />
+    <TextBlock Name="InfoText"
+               Text="{Binding InfoText}"
+               FontSize="14"
+               TextWrapping="Wrap"
+               Margin="10,5,0,0"
+               Grid.Column="1"
+               Grid.Row="1" />
+    <!--<WebBrowser Name="ReleaseNotesBrowser"
+                IsVisible="{Binding AreReleaseNotesVisible}"
+                AllowDrop="False"
+                Grid.Column="1"
+                Grid.Row="2"
+                Margin="10,5,10,0" />-->
+    <ScrollViewer
+        Grid.Column="1"
+        Grid.Row="2">
+      <html:HtmlLabel Name="ChangeNotesHTMLLabel" />
+    </ScrollViewer>
+    <Button Name="SkipButton"
+            IsEnabled="{Binding IsSkipEnabled}"
+            IsVisible="{Binding IsSkipVisible}"
+            Content="Skip this version"
+            Grid.Column="1"
+            Grid.Row="3"
+            HorizontalAlignment="Left"
+            Command="{Binding Skip}"
+            Height="25"
+            Width="100" />
+    <Button Name="RemindMeLaterButton"
+            IsEnabled="{Binding IsRemindMeLaterEnabled}"
+            IsVisible="{Binding IsRemindMeLaterVisible}"
+            Content="Remind me later"
+            Grid.Column="1"
+            Grid.Row="3"
+            HorizontalAlignment="Right"
+            Command="{Binding RemindMeLater}"
+            Height="25"
+            Width="100"
+            Margin="0,0,120,0" />
+    <Button Name="DownloadInstallButton"
+            Content="Download/Install"
+            Grid.Column="1"
+            Grid.Row="3"
+            HorizontalAlignment="Right"
+            Command="{Binding DownloadInstall}"
+            Height="25"
+            Width="100"
+            Margin="0,10,10,10" />
+  </Grid>
+</cont:BaseWindow>
