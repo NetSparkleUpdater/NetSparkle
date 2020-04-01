@@ -20,3 +20,5 @@ TestAppFiles/*.txt
 TestAppFiles/*.dsa
 .vs/*
 src/NetSparkleGenerator/NetSparkleGenerator.csproj.user
+!src/NetSparkle.UI.Avalonia/Lib/*
+!src/NetSparkle.UI.Avalonia/Lib/**
