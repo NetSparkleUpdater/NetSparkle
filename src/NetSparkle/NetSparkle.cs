@@ -125,7 +125,9 @@ namespace NetSparkle
 
         #endregion
 
-        #region Private Members
+        #region Protected/Private Members
+        
+        protected Process _installerProcess;
 
         private LogWriter _logWriter;
         private readonly Task _taskWorker;
@@ -145,7 +147,6 @@ namespace NetSparkle
 
         private string _tmpDownloadFilePath;
         private string _downloadTempFileName;
-        private Process _installerProcess;
         private AppCastItem _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
         private UpdateInfo _latestDownloadedUpdateInfo;
@@ -1165,7 +1166,9 @@ namespace NetSparkle
                 installerCmd = GetInstallerCommand(downloadFilePath);
 
                 if (!string.IsNullOrEmpty(CustomInstallerArguments))
+                {
                     installerCmd += " " + CustomInstallerArguments;
+                }
             }
             catch (InvalidDataException)
             {
