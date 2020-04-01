@@ -32,5 +32,10 @@ namespace NetSparkle.UI.WPF
             InitializeComponent();
             DataContext = viewModel;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
 }
