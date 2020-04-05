@@ -31,7 +31,9 @@ namespace NetSparkle
             {
                 string absolutePath = Path.GetFullPath(assemblyName);
                 if (!File.Exists(absolutePath))
+                {
                     throw new FileNotFoundException();
+                }
                 var info = FileVersionInfo.GetVersionInfo(assemblyName);
                 fileVersion = info.FileVersion;
                 productVersion = info.ProductVersion;
@@ -51,7 +53,7 @@ namespace NetSparkle
         {
             get
             {
-                return productName;                
+                return productName ?? "";                
             }
         }
 

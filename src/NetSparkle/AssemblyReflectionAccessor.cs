@@ -41,7 +41,9 @@ namespace NetSparkle
             {
                 Attribute a = CreateAttribute(data);
                 if (a != null)
+                {
                     _assemblyAttributes.Add(a);
+                }
             }
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
