@@ -67,7 +67,7 @@ namespace NetSparkle.Interfaces
         void ShowDownloadErrorMessage(string message, string appcastUrl);
 
         /// <summary>
-        /// Shut down the UI so we can run an upate.
+        /// Shut down the UI so we can run an update.
         /// If in WPF, System.Windows.Application.Current.Shutdown().
         /// If in WinForms, Application.Exit().
         /// </summary>
