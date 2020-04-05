@@ -47,22 +47,6 @@ namespace NetSparkle.Samples.NetCore.WPF
             _sparkle.StartLoop(true, true);
         }
 
-        /// <summary>
-        /// Convert System.Drawing.Icon to System.Windows.Media.ImageSource.
-        ///  From: https://stackoverflow.com/a/6580799/3938401
-        /// </summary>
-        /// <param name="icon"></param>
-        /// <returns></returns>
-        public static ImageSource ToImageSource(System.Drawing.Icon icon)
-        {
-            if (icon == null)
-            {
-                return null;
-            }
-
-            return imageSource;
-        }
-
         private void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
         {
             _sparkle.CheckForUpdatesAtUserRequest();
