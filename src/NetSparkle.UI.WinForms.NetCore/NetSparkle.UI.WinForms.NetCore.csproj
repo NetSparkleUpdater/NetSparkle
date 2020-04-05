@@ -10,7 +10,7 @@
     <Copyright>Copyright © 2020</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WinForms\</OutputPath>
     <PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>
-    <Version>2.0.0-preview20200322</Version>
+    <Version>2.0.0-preview20200405</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
     <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
