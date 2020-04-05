@@ -733,9 +733,9 @@ namespace NetSparkle
             LogWriter.PrintMessage("Latest version on the server is {0}", updates[0].Version);
 
             // check if the available update has to be skipped
-            if (updates[0].Version.Equals(config.SkipThisVersion))
+            if (updates[0].Version.Equals(config.LastVersionSkipped))
             {
-                LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.SkipThisVersion);
+                LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.LastVersionSkipped);
                 return new UpdateInfo(UpdateStatus.UserSkipped);
             }
 

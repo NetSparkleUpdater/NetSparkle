@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Microsoft.Win32;
+using NetSparkle.AssemblyAccessors;
 
 namespace NetSparkle.Configurations
 {
@@ -56,7 +57,7 @@ namespace NetSparkle.Configurations
                 // load the values
                 LoadValuesFromPath(regPath);
             }
-            catch (NetSparkleException )
+            catch (NetSparkleException)
             {
                 // disable update checks when exception was called 
                 CheckForUpdate = false;
@@ -118,7 +119,7 @@ namespace NetSparkle.Configurations
 
                 if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
                 {
-                    throw new NetSparkleException("STOP: Sparkle is missing the company or productname tag in " + ReferenceAssembly);
+                    throw new NetSparkleException("Error: NetSparkle is missing the company or productname tag in " + ReferenceAssembly);
                 }
 
                 return "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
@@ -153,7 +154,6 @@ namespace NetSparkle.Configurations
             string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
             string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
             string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
-            string strShowDiagnosticWindow = key.GetValue("ShowDiagnosticWindow", "False") as string;
             string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
 
             // convert the right datatypes
@@ -167,7 +167,7 @@ namespace NetSparkle.Configurations
                 LastCheckTime = new DateTime(0);
             }
 
-            SkipThisVersion = strSkipThisVersion;
+            LastVersionSkipped = strSkipThisVersion;
             DidRunOnce = Convert.ToBoolean(strDidRunOnc);
             try
             {
@@ -196,7 +196,7 @@ namespace NetSparkle.Configurations
             // convert to regsz
             string strCheckForUpdate = CheckForUpdate.ToString();
             string strLastCheckTime = ConvertDateToString(LastCheckTime);
-            string strSkipThisVersion = SkipThisVersion;
+            string strSkipThisVersion = LastVersionSkipped;
             string strDidRunOnc = DidRunOnce.ToString();
             string strProfileTime = ConvertDateToString(LastConfigUpdate);
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using NetSparkle.AssemblyAccessors;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -135,7 +136,7 @@ namespace NetSparkle.Configurations
                     var data = JsonConvert.DeserializeObject<SavedConfigurationData>(json);
                     CheckForUpdate = data.CheckForUpdate;
                     LastCheckTime = data.LastCheckTime;
-                    SkipThisVersion = data.VersionToSkip;
+                    LastVersionSkipped = data.LastVersionSkipped;
                     DidRunOnce = data.DidRunOnce;
                     LastConfigUpdate = data.LastConfigUpdate;
                 }
@@ -145,7 +146,7 @@ namespace NetSparkle.Configurations
             }
             CheckForUpdate = false;
             LastCheckTime = DateTime.Now;
-            SkipThisVersion = string.Empty;
+            LastVersionSkipped = string.Empty;
             DidRunOnce = false;
             LastConfigUpdate = DateTime.Now;
             return true;
@@ -162,7 +163,7 @@ namespace NetSparkle.Configurations
             {
                 CheckForUpdate = this.CheckForUpdate,
                 LastCheckTime = this.LastCheckTime,
-                VersionToSkip = this.SkipThisVersion,
+                LastVersionSkipped = this.LastVersionSkipped,
                 DidRunOnce = this.DidRunOnce,
                 LastConfigUpdate = DateTime.Now
             };

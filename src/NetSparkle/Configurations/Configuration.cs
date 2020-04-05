@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 using System.Diagnostics;
+using NetSparkle.AssemblyAccessors;
 
 namespace NetSparkle.Configurations
 {
@@ -37,7 +38,7 @@ namespace NetSparkle.Configurations
         /// <summary>
         /// The last-skipped version number
         /// </summary>
-        public string SkipThisVersion { get; protected set; }
+        public string LastVersionSkipped { get; protected set; }
         /// <summary>
         /// The application ran once
         /// </summary>
@@ -119,7 +120,7 @@ namespace NetSparkle.Configurations
         /// <param name="version">the version to skeip</param>
         public virtual void SetVersionToSkip(String version)
         {
-            SkipThisVersion = version;
+            LastVersionSkipped = version;
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace NetSparkle.Configurations
         {
             CheckForUpdate = true;
             LastCheckTime = new DateTime(0);
-            SkipThisVersion = string.Empty;
+            LastVersionSkipped = string.Empty;
             DidRunOnce = false;
             UseReflectionBasedAssemblyAccessor = true;
         }

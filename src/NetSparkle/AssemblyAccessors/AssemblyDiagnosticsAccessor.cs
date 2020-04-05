@@ -7,7 +7,7 @@ using System.Reflection;
 using System.IO;
 using NetSparkle.Interfaces;
 
-namespace NetSparkle
+namespace NetSparkle.AssemblyAccessors
 {
     /// <summary>
     /// A diagnostic accessor

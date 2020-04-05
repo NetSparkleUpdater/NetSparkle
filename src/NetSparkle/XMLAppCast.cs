@@ -124,7 +124,7 @@ namespace NetSparkle
             memorystream.Position = 0;
 
             // checking signature
-            var signatureNeeded = _dsaChecker.SignatureNeeded();
+            var signatureNeeded = _dsaChecker.IsSignatureNeeded();
             if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, _dsaChecker.ConvertStreamToByteArray(memorystream)) == ValidationResult.Invalid)
             {
                 _logWriter.PrintMessage("Signature check of appcast failed");
@@ -169,7 +169,7 @@ namespace NetSparkle
         public virtual List<AppCastItem> GetNeededUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
-            var signatureNeeded = _dsaChecker.SignatureNeeded();
+            var signatureNeeded = _dsaChecker.IsSignatureNeeded();
             return Items.Where((item) =>
             {
 #if NETFRAMEWORK

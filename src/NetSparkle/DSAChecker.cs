@@ -19,13 +19,10 @@ namespace NetSparkle
         /// <summary>
         /// Determines if a public key exists
         /// </summary>
-        /// <returns><c>bool</c>  </returns>
-        public bool PublicKeyExists()
+        /// <returns><c>bool</c></returns>
+        public bool DoesPublicKeyExist()
         {
-            if (_provider == null)
-                return false;
-            else
-                return true;
+            return _provider != null;
         }
 
         /// <summary>
@@ -48,7 +45,6 @@ namespace NetSparkle
                 {
                     data = TryGetFileResource(publicKeyFile, data);
                 }
-
 
                 if (data != null)
                 {
@@ -76,14 +72,14 @@ namespace NetSparkle
         /// <summary>
         /// Returns if we need an signature
         /// </summary>
-        /// <returns><c>bool</c>  </returns>
-        public bool SignatureNeeded()
+        /// <returns><c>bool</c></returns>
+        public bool IsSignatureNeeded()
         {
             switch (_securityMode)
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a dsa key, we need a signature
-                    return PublicKeyExists();
+                    return DoesPublicKeyExist();
 
                 case SecurityMode.Strict:
                     // we always need a signature
@@ -103,13 +99,13 @@ namespace NetSparkle
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a DSA key, we only accept non-null signatures
-                    if (PublicKeyExists() && string.IsNullOrEmpty(signature))
+                    if (DoesPublicKeyExist() && string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
                     // if we don't have an dsa key, we accept any signature
-                    if (!PublicKeyExists())
+                    if (!DoesPublicKeyExist())
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -118,7 +114,7 @@ namespace NetSparkle
 
                 case SecurityMode.Strict:
                     // only accept if we have both a public key and a non-null signature
-                    if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
+                    if (!DoesPublicKeyExist() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
@@ -129,7 +125,7 @@ namespace NetSparkle
                     // always accept anything
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything
-                    if (!PublicKeyExists() || string.IsNullOrEmpty(signature))
+                    if (!DoesPublicKeyExist() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Unchecked;
                         return false;
