@@ -99,4 +99,4 @@ jobs:
         run: |
           cd nuget/tools
           nuget pack NetSparkle.Tools.nuspec
-          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
+          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
