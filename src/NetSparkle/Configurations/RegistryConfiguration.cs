@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Microsoft.Win32;
 
-namespace NetSparkle
+namespace NetSparkle.Configurations
 {
     /// <summary>
     /// This class handles all registry values which are used from sparkle to handle 

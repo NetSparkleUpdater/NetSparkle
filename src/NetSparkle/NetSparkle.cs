@@ -13,6 +13,7 @@ using System.Net.Http;
 using NetSparkle.Events;
 using System.Collections.Generic;
 using NetSparkle.Downloaders;
+using NetSparkle.Configurations;
 
 namespace NetSparkle
 {

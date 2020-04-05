@@ -1,3 +1,4 @@
+using NetSparkle.Configurations;
 using NetSparkle.Enums;
 using NetSparkle.Interfaces;
 using System;
