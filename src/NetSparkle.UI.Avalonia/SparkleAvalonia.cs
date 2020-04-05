@@ -62,27 +62,65 @@ namespace NetSparkle.UI.Avalonia
             : base(appcastUrl, securityMode, dsaPublicKey, referenceAssembly, factory) { }
 
 
+        private bool DoExtensionsMatch(string extension, string otherExtension)
+        {
+            return extension.Equals(otherExtension, StringComparison.CurrentCultureIgnoreCase);
+        }
+
         protected override string GetInstallerCommand(string downloadFilePath)
         {
             // get the file type
             string installerExt = Path.GetExtension(downloadFilePath);
-            if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                // build the command line 
-                return "\"" + downloadFilePath + "\"";
+                if (DoExtensionsMatch(installerExt, ".exe"))
+                {
+                    return "\"" + downloadFilePath + "\"";
+                }
+                if (DoExtensionsMatch(installerExt, ".msi"))
+                {
+                    return "msiexec /i \"" + downloadFilePath + "\"";
+                }
+                if (DoExtensionsMatch(installerExt, ".msp"))
+                {
+                    return "msiexec /p \"" + downloadFilePath + "\"";
+                }
             }
-            if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                // buid the command line
-                return "msiexec /i \"" + downloadFilePath + "\"";
+                if (DoExtensionsMatch(installerExt, ".pkg") ||
+                    DoExtensionsMatch(installerExt, ".dmg"))
+                {
+                    return "open \"" + downloadFilePath + "\"";
+                }
             }
-            if (".msp".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                // build the command line
-                return "msiexec /p \"" + downloadFilePath + "\"";
+                if (DoExtensionsMatch(installerExt, ".deb"))
+                {
+                    return "sudo apt install \"" + downloadFilePath + "\"";
+                }
+                if (DoExtensionsMatch(installerExt, ".rpm"))
+                {
+                    return "sudo rpm -i \"" + downloadFilePath + "\"";
+                }
             }
             return downloadFilePath;
         }
+
+        private bool IsZipDownload(string downloadFilePath)
+        {
+            string installerExt = Path.GetExtension(downloadFilePath);
+            bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            if ((isMacOS && DoExtensionsMatch(installerExt, ".zip")) ||
+                (isLinux && DoExtensionsMatch(installerExt, ".tar.gz")))
+            {
+                return true;
+            }
+            return false;
+        }
+
         protected override async Task RunDownloadedInstaller(string downloadFilePath)
         {
             LogWriter.PrintMessage("Running downloaded installer");
@@ -92,18 +130,17 @@ namespace NetSparkle.UI.Avalonia
 
             // generate the batch file path
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            // TODO: support .pkg install on macOS
             bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             var extension = isWindows ? ".cmd" : ".sh";
             string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + extension);
             string installerCmd;
             try
             {
                 installerCmd = GetInstallerCommand(downloadFilePath);
-
                 if (!string.IsNullOrEmpty(CustomInstallerArguments))
+                {
                     installerCmd += " " + CustomInstallerArguments;
+                }
             }
             catch (InvalidDataException)
             {
@@ -155,17 +192,6 @@ namespace NetSparkle.UI.Avalonia
                 }
                 else
                 {
-                    // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
-                    // assume .zip extraction for macOS and .tar.gz for Linux for now (TODO: this is not a good assumption)
-                    // use tar to extract
-                    var tarCommand = isMacOS ? $"tar -x -f {downloadFilePath}" : $"tar -xf {downloadFilePath} --overwrite ";
-                    string relaunchAfterUpdate = "";
-                    if (RelaunchAfterUpdate)
-                    {
-                        relaunchAfterUpdate = $@"
-                        cd {workingDir}
-                        {Process.GetCurrentProcess().MainModule.FileName}";
-                    }
                     var waitForFinish = $@"
                         COUNTER=0;
                         while ps -p {processID} > /dev/null;
@@ -177,13 +203,32 @@ namespace NetSparkle.UI.Avalonia
                             fi;
                         done;
                     ";
-                    var output = $@"
-                        {waitForFinish}
-                        cd {workingDir}
-                        cd ..
-                        {tarCommand}
-                        {relaunchAfterUpdate}";
-                    write.Write(output);
+                    string relaunchAfterUpdate = "";
+                    if (RelaunchAfterUpdate)
+                    {
+                        relaunchAfterUpdate = $@"{Process.GetCurrentProcess().MainModule.FileName}";
+                    }
+                    if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
+                    {
+                        // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
+                        // use tar to extract
+                        var tarCommand = isMacOS ? $"tar -x -f {downloadFilePath}" : $"tar -xf {downloadFilePath} --overwrite ";
+                        var output = $@"
+                            {waitForFinish}
+                            cd {workingDir}
+                            cd ..
+                            {tarCommand}
+                            {relaunchAfterUpdate}";
+                        write.Write(output);
+                    }
+                    else
+                    {
+                        var output = $@"
+                            {waitForFinish}
+                            {installerCmd}
+                            {relaunchAfterUpdate}";
+                        write.Write(output);
+                    }
                     write.Close();
                 }
             }
