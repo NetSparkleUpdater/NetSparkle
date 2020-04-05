@@ -192,6 +192,7 @@ namespace NetSparkle.UI.Avalonia
                 }
                 else
                 {
+                    // We should wait until the host process has died before starting the installer.
                     var waitForFinish = $@"
                         COUNTER=0;
                         while ps -p {processID} > /dev/null;
@@ -223,6 +224,12 @@ namespace NetSparkle.UI.Avalonia
                     }
                     else
                     {
+                        string installerExt = Path.GetExtension(downloadFilePath);
+                        if (DoExtensionsMatch(installerExt, ".pkg") ||
+                            DoExtensionsMatch(installerExt, ".dmg"))
+                        {
+                            relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
+                        }
                         var output = $@"
                             {waitForFinish}
                             {installerCmd}
@@ -240,12 +247,12 @@ namespace NetSparkle.UI.Avalonia
             _installerProcess = new Process
             {
                 StartInfo =
-                        {
-                            FileName = batchFilePath,
-                            WindowStyle = ProcessWindowStyle.Hidden,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
+                {
+                    FileName = batchFilePath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
             };
             // start the installer process. the batch file will wait for the host app to close before starting.
             _installerProcess.Start();
