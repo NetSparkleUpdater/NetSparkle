@@ -9,8 +9,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: nuget/setup-nuget@v1
+        with:
+            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-version: '5.x'
 
-      - name: Add msbuild to PATH
+      - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.0
 
       # Required for a specific dotnet version that doesn't come with ubuntu-latest / windows-latest
@@ -82,8 +86,7 @@ jobs:
           dotnet build src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/
           dotnet build src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/
 
-      - name: publish NetSparkleUpdater.Tools
-        uses: nuget/setup-nuget@v1
+      - name: Copy extra output to NetSparkleUpdater.Tools output
         run: |
           echo Create NuGet tree for tools
           mkdir nuget\tools\lib
@@ -91,9 +94,9 @@ jobs:
           mkdir nuget\tools\content\Extras
           echo Copy extra output to tools output
           xcopy /s /q /y Extras\* nuget\tools\content\Extras\
+
+      - name: publish NetSparkleUpdater.Tools
+        run: |
           cd nuget/tools
           nuget pack NetSparkle.Tools.nuspec
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
-        with:
-            nuget-api-key: ${{secrets.NUGET_API_KEY}}
-            nuget-version: '5.x'
