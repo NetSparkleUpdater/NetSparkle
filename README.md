@@ -1,12 +1,16 @@
 # NetSparkle
 
+An update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
+
 **The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API, etc. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
 
-**A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF; Avalonia) are also on NuGet except for the .NET Framework WinForms UI. The latest tooling updates, which includes even more features than the currently-on-NuGet app cast generator, are also not yet on NuGet.**
+A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF; Avalonia [cross platform UI!]) are also on NuGet except for the .NET Framework WinForms UI (see #84). There are also updated tools on NuGet at NetSparkleUpdater.Tools.
 
-**NOTE THAT THE AVALONIA UPDATER FOR macOS AND LINUX ARE UNTESTED AS OF THIS WRITING! If you want this, please help me test it out!**
+Note that the update calls for macOS and Linux are relatively untested! On macOS, we support .pkg, .dmg, and .zip. On Linux, we support .deb, .rpm, and .tar.gz. Please help me test it out!
 
-**README updates for version 2.0 are pending. If you have specific questions, please file an issue. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. These extra features aren't built-in out of the box yet -- contributions are welcome!!**
+README updates for version 2.0 are pending. If you have specific questions or need help, please file an issue. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. Some extra features aren't built-in out of the box yet -- contributions are welcome!!
+
+--------------
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
@@ -31,9 +35,12 @@ NetSparkle is a C# .NET update checker that allows you to easily download instal
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 
-**Now available on [NuGet](https://www.nuget.org/packages/NetSparkle.New/)!** Note that we will switch to the ["official" NuGet](https://www.nuget.org/packages/NetSparkle/) eventually!
+* Tools (DSA Helper, App Cast Generator): 
+[![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
+[![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
+[![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
 
-NetSparkle also offers a command line tool to automatically generate your appcast for you! It still needs a few more features to have feature parity with the macOS `generate_appcast` tool, but it can still save you a lot of time. Check it out on [NuGet](https://www.nuget.org/packages/NetSparkle.New.Tools/)!
+NetSparkle also offers a command line tool to automatically generate your appcast for you! It still needs a few more features to have feature parity with the macOS `generate_appcast` tool, but it can still save you a lot of time. Check it out on [NuGet](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)!
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
