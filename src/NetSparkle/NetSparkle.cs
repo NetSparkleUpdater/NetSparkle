@@ -14,6 +14,9 @@ using NetSparkle.Events;
 using System.Collections.Generic;
 using NetSparkle.Downloaders;
 using NetSparkle.Configurations;
+#if NETSTANDARD
+using System.Runtime.InteropServices;
+#endif
 
 namespace NetSparkle
 {
@@ -379,7 +382,18 @@ namespace NetSparkle
             {
                 if (_configuration == null)
                 {
+#if NETSTANDARD
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        _configuration = new RegistryConfiguration(_appReferenceAssembly);
+                    }
+                    else
+                    {
+                        _configuration = new JSONConfiguration(_appReferenceAssembly);
+                    }
+#else
                     _configuration = new RegistryConfiguration(_appReferenceAssembly);
+#endif
                 }
                 _configuration.Reload();
                 return _configuration;
@@ -504,7 +518,7 @@ namespace NetSparkle
             set { _appCastHandler = value; }
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Starts a NetSparkle background loop to check for updates every 24 hours.
@@ -596,7 +610,7 @@ namespace NetSparkle
             Dispose(false);
         }
 
-        #region IDisposable
+#region IDisposable
 
         /// <summary>
         /// Inherited from IDisposable. Stops all background activities.
@@ -655,7 +669,7 @@ namespace NetSparkle
             }
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// This method checks if an update is required. During this process the appcast

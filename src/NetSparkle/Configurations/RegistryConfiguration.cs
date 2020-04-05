@@ -32,7 +32,7 @@ namespace NetSparkle.Configurations
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="referenceAssembly">the name of hte reference assembly</param>
+        /// <param name="referenceAssembly">the name of the reference assembly</param>
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
         public RegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
             : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
@@ -169,14 +169,13 @@ namespace NetSparkle.Configurations
 
             SkipThisVersion = strSkipThisVersion;
             DidRunOnce = Convert.ToBoolean(strDidRunOnc);
-            ShowDiagnosticWindow = Convert.ToBoolean(strShowDiagnosticWindow);
             try
             {
-                LastProfileUpdate = ConvertStringToDate(strProfileTime);
+                LastConfigUpdate = ConvertStringToDate(strProfileTime);
             }
             catch (FormatException)
             {
-                LastProfileUpdate = new DateTime(0);
+                LastConfigUpdate = new DateTime(0);
             }
             return true;
         }
@@ -199,7 +198,7 @@ namespace NetSparkle.Configurations
             string strLastCheckTime = ConvertDateToString(LastCheckTime);
             string strSkipThisVersion = SkipThisVersion;
             string strDidRunOnc = DidRunOnce.ToString();
-            string strProfileTime = ConvertDateToString(LastProfileUpdate);
+            string strProfileTime = ConvertDateToString(LastConfigUpdate);
 
             // set the values
             key.SetValue("CheckForUpdate", strCheckForUpdate, RegistryValueKind.String);

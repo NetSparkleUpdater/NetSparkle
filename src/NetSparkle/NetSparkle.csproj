@@ -56,5 +56,8 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
   <Import Project="..\NetSparkle.Shared\NetSparkleUtilities.projitems" Label="Shared" />
 </Project>

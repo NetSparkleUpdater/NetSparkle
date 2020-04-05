@@ -21,7 +21,7 @@ namespace NetSparkle.Configurations
         /// <summary>
         /// The application name
         /// </summary>
-        public string   ApplicationName     { get; protected set; }
+        public string ApplicationName { get; protected set; }
         /// <summary>
         /// The currently-installed version
         /// </summary>
@@ -43,25 +43,21 @@ namespace NetSparkle.Configurations
         /// </summary>
         public bool DidRunOnce { get; protected set; }
         /// <summary>
-        /// Flag to indicate showing the diagnostic window
-        /// </summary>
-        public bool ShowDiagnosticWindow { get; protected set; }
-        /// <summary>
         /// Last profile update
         /// </summary>
-        public DateTime LastProfileUpdate { get; protected set; }
+        public DateTime LastConfigUpdate { get; protected set; }
 
         /// <summary>
         /// If this property is true a reflection based accessor will be used
         /// to determine the assembly name and version, otherwise a System.Diagnostics
         /// based access will be used
         /// </summary>
-        public Boolean UseReflectionBasedAssemblyAccessor { get; protected set; }
+        public bool UseReflectionBasedAssemblyAccessor { get; protected set; }
 
         /// <summary>
         /// The reference assembly name
         /// </summary>
-        protected String ReferenceAssembly { get; set; }
+        protected string ReferenceAssembly { get; set; }
 
         /// <summary>
         /// The constructor reads out all configured values
@@ -82,20 +78,20 @@ namespace NetSparkle.Configurations
             InitWithDefaultValues();
 
             // set the value
-            this.UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
+            UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
             // save the reference assembly
-            this.ReferenceAssembly = referenceAssembly;
+            ReferenceAssembly = referenceAssembly;
 
             try
             {
                 // set some value from the binary
-                AssemblyAccessor accessor = new AssemblyAccessor(referenceAssembly, this.UseReflectionBasedAssemblyAccessor);
+                AssemblyAccessor accessor = new AssemblyAccessor(referenceAssembly, UseReflectionBasedAssemblyAccessor);
                 ApplicationName = accessor.AssemblyProduct;
                 InstalledVersion = accessor.AssemblyVersion;
             }
             catch
             {
-                this.CheckForUpdate = false;
+                CheckForUpdate = false;
                 throw;
             }
 
@@ -106,7 +102,7 @@ namespace NetSparkle.Configurations
         /// </summary>
         public virtual void TouchProfileTime()
         {
-            this.LastProfileUpdate = DateTime.Now;
+            LastConfigUpdate = DateTime.Now;
         }
 
         /// <summary>
@@ -114,7 +110,7 @@ namespace NetSparkle.Configurations
         /// </summary>
         public virtual void TouchCheckTime()
         {
-            this.LastCheckTime = DateTime.Now;
+            LastCheckTime = DateTime.Now;
         }
 
         /// <summary>
@@ -123,7 +119,7 @@ namespace NetSparkle.Configurations
         /// <param name="version">the version to skeip</param>
         public virtual void SetVersionToSkip(String version)
         {
-            this.SkipThisVersion = version;
+            SkipThisVersion = version;
         }
 
         /// <summary>
@@ -138,7 +134,7 @@ namespace NetSparkle.Configurations
         {
             CheckForUpdate = true;
             LastCheckTime = new DateTime(0);
-            SkipThisVersion = String.Empty;
+            SkipThisVersion = string.Empty;
             DidRunOnce = false;
             UseReflectionBasedAssemblyAccessor = true;
         }
