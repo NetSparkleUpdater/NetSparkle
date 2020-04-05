@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <package>
  <metadata>
-   <id>NetSparkle.New.Tools</id>
-   <title>NetSparkle Tools</title>
-   <version>$version$</version>
+   <id>NetSparkleUpdater.Tools</id>
+   <title>NetSparkleUpdater Tools</title>
+   <version>2.0.0-preview20200405</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <licenseUrl>https://raw.githubusercontent.com/Deadpikle/NetSparkle/master/LICENSE</licenseUrl>
    <projectUrl>https://github.com/Deadpikle/NetSparkle</projectUrl>
    <iconUrl>https://deadpikle.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>
    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-   <summary>Tools for NetSparkle</summary>
-   <description>Tools for NetSparkle (DSA helper, etc.).  NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your C# WinForms/WPF software. You provide, somewhere on the internet, an XML appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle library then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The library can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</description>
-   <copyright>Copyright 2010 - 2018</copyright>
+   <summary>Tools for NetSparkleUpdater - DSA helper and app cast generator</summary>
+   <description>Tools for NetSparkle (DSA helper and app cast generator).  NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your C# WinForms/WPF software. You provide, somewhere on the internet, an XML appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle library then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The library can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</description>
+   <copyright>Copyright 2010 - 2020</copyright>
    <tags>Update Sparkle Autoupdate .NET Update</tags>    
    <releaseNotes>See https://github.com/Deadpikle/NetSparkle/releases for all release information and to file issues/pull requests for this project</releaseNotes>
  </metadata>
