@@ -80,7 +80,7 @@ jobs:
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
         run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net451
 
-      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
+      - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
           echo Removing NetSparkle files (will be available by project reference)
           del nuget\winformsnetframework\lib\net451\NetSparkle.dll
@@ -88,9 +88,12 @@ jobs:
           echo Copying in files...
           copy LICENSE.md nuget\winformsnetframework\LICENSE.md
           copy src\NetSparkle\ArtWork\software-update-available.png nuget\winformsnetframework\software-update-available.png
+          
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
+        run: |
           cd nuget/winformsnetframework
-          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
-          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
+          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed
+          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
           cd ../../
 
       - name: Build NetSparkleUpdater.Tools
