@@ -10,15 +10,15 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <PackageId>NetSparkleUpdater.UI.WPF</PackageId>
     <Authors>Deadpikle</Authors>
-    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <Version>2.0.0-preview20200405</Version>
     <PackageIcon>software-update-available.png</PackageIcon>
     <PackageIconUrl />
-    <Description>WPF UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
-    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+    <Description>WPF UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/NetSparkleUpdater/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
+    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/NetSparkleUpdater/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+ <metadata>
+   <id>NetSparkleUpdater.UI.WinForms.NetFramework</id>
+   <title>NetSparkleUpdater WinForms .NET Framework UI</title>
+   <version>2.0.0-preview20200405</version>
+   <authors>Deadpikle, Dirk Eisenberg</authors>
+   <owners>Deadpikle</owners>
+   <licenseUrl>https://raw.githubusercontent.com/NetSparkleUpdater/NetSparkle/master/LICENSE</licenseUrl>
+   <projectUrl>https://github.com/NetSparkleUpdater/NetSparkle</projectUrl>
+   <iconUrl>https://netsparkleupdater.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>
+   <requireLicenseAcceptance>false</requireLicenseAcceptance>
+   <summary>WinForms .NET Framework UI for NetSparkleUpdater/NetSparkle</summary>
+   <description>WinForms .NET Framework UI for the NetSparkleUpdater/NetSparkle app updater framework. Please visit https://github.com/NetSparkleUpdater/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</description>
+   <copyright>Copyright 2010 - 2020</copyright>
+   <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms</tags>    
+   <releaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project</releaseNotes>
+ </metadata>
+</package>

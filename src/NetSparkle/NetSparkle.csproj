@@ -6,10 +6,10 @@
     <PackageId>NetSparkle.New</PackageId>
     <Version>2.0.0-preview20200405</Version>
     <Authors>Deadpikle, Dirk Eisenberg</Authors>
-    <Description>(This NuGet package is the latest fork of NetSparkle; it will soon be moved to a new package ID) NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your C# WinForms/WPF software. You provide, somewhere on the internet, an appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle library then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The library can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</Description>
+    <Description>(This NuGet package is the latest fork of NetSparkle; it will soon be moved to a new package ID under NetSparkleUpdater) NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your C# WinForms/WPF software. You provide, somewhere on the internet, an appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle library then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The library can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</Description>
     <Copyright>Copyright 2010 - 2020</Copyright>
-    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <PackageTags>sparkle, netsparkle, update, software, updater</PackageTags>
     <RepositoryType>git</RepositoryType>
     <Product>NetSparkle.New</Product>

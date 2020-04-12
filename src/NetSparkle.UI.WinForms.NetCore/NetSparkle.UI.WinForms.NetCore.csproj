@@ -13,14 +13,14 @@
     <Version>2.0.0-preview20200405</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
-    <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/Deadpikle/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
+    <Description>WinForms UI for the NetSparkle/NetSparkleUpdater app updater framework. Please visit https://github.com/NetSparkleUpdater/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/Deadpikle/NetSparkle</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
     <PackageIcon>software-update-available.png</PackageIcon>
     <PackageIconUrl />
-    <RepositoryUrl>https://github.com/Deadpikle/NetSparkle.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/Deadpikle/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+    <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/NetSparkleUpdater/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

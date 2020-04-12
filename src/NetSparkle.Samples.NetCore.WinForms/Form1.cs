@@ -16,7 +16,7 @@ namespace NetSparkle.Samples.NetCore.WinForms
         {
             InitializeComponent();
 
-            var appcastUrl = "https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml";
+            var appcastUrl = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml";
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);

@@ -25,7 +25,7 @@ namespace NetSparkle.Samples.NetFramework.WPF
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkle = new Sparkle("https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
                 UIFactory = new NetSparkle.UI.WPF.UIFactory(NetSparkle.UI.WPF.IconUtilities.ToImageSource(icon)),
                 ShowsUIOnMainThread = false
