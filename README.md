@@ -14,13 +14,18 @@ README updates for version 2.0 are pending. If you have specific questions or ne
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
-* Core NetSparkle: 
+* Core NetSparkle (use if you don't want a UI): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
-[![Issues](https://img.shields.io/github/issues/Deadpikle/NetSparkle.svg?style=flat-square)](https://github.com/Deadpikle/NetSparkle/issues)
+[![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-* WinForms UI: 
+* WinForms UI (.NET Framework): 
+[![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
+[![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
+[![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
+
+* WinForms UI (.NET Core): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
@@ -35,7 +40,7 @@ NetSparkle is a C# .NET update checker that allows you to easily download instal
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 
-* Tools (DSA Helper, App Cast Generator): 
+* Tools (DSA Helper, App Cast Generator) -- executables to help you generate keys and create your appcast: 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)
@@ -64,7 +69,9 @@ _sparkle = new Sparkle(
     this.Icon,
     SecurityMode.Strict,
     "<DSAKeyValue>...</DSAKeyValue>",
-);
+) {
+    UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon) // or choose some other UI factory or build your own!
+};
 _sparkle.CheckOnFirstApplicationIdle();
 ```
 
@@ -104,16 +111,16 @@ NetSparkle uses Sparkle-compatible appcasts. Here is a sample appcast:
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>NetSparkle Test App</title>
-        <link>https://deadpikle.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
         <description>Most recent changes with links to updates.</description>
         <language>en</language>
         <item>
             <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
             <sparkle:releaseNotesLink>
-            https://deadpikle.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
             </sparkle:releaseNotesLink>
             <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
-            <enclosure url="https://deadpikle.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
+            <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
                        sparkle:version="2.0"
                        length="12288"
                        type="application/octet-stream"
