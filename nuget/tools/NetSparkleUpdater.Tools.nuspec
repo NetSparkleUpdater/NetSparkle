@@ -6,7 +6,9 @@
    <version>2.0.0-preview20200405</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
-   <licenseUrl>https://raw.githubusercontent.com/Deadpikle/NetSparkle/master/LICENSE</licenseUrl>
+   <license type="file">LICENSE.md</license>
+   <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+   <icon>software-update-available.png</icon>
    <projectUrl>https://github.com/Deadpikle/NetSparkle</projectUrl>
    <iconUrl>https://deadpikle.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>
    <requireLicenseAcceptance>false</requireLicenseAcceptance>

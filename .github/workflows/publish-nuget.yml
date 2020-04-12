@@ -78,14 +78,17 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=nuget/winforms-netframework/lib/net451
+        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net451
 
       - name: Public NetSparkleUpdater.UI.WinForms.NetFramework
         run: |
           echo Removing NetSparkle files (will be available by project reference)
-          rm nuget/winforms-netframework/lib/net451/NetSparkle.dll
-          rm nuget/winforms-netframework/lib/net451/NetSparkle.pdb
-          cd nuget/winforms-netframework
+          del nuget\winformsnetframework\lib\net451\NetSparkle.dll
+          del nuget\winformsnetframework\lib\net451\NetSparkle.pdb
+          echo Copying in files...
+          copy LICENSE.md nuget\winformsnetframework\LICENSE.md
+          copy src\NetSparkle\ArtWork\software-update-available.png nuget\winformsnetframework\software-update-available.png
+          cd nuget/winformsnetframework
           nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
           cd ../../
@@ -103,6 +106,9 @@ jobs:
           mkdir nuget\tools\content\Extras
           echo Copy extra output to tools output
           xcopy /s /q /y Extras\* nuget\tools\content\Extras\
+          echo Copying in files...
+          copy LICENSE.md nuget\tools\LICENSE.md
+          copy src\NetSparkle\ArtWork\software-update-available.png nuget\tools\software-update-available.png
 
       - name: Publish NetSparkleUpdater.Tools
         run: |
