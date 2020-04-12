@@ -15,5 +15,10 @@
    <copyright>Copyright 2010 - 2020</copyright>
    <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms</tags>    
    <releaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project</releaseNotes>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="NetSparkle.New" version="2.0.0-preview20200405" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
  </metadata>
 </package>

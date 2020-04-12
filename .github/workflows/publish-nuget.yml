@@ -29,9 +29,6 @@ jobs:
       - name: Build NetSparkle.UI.WinForms.NetCore in Release
         run: dotnet build src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
       
-      - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release
-      
       - name: Build NetSparkle.UI.WPF in Release
         run: dotnet build src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
         
@@ -80,6 +77,19 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
 
+      - name: Build NetSparkle.UI.WinForms.NetFramework in Release
+        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=nuget/winforms-netframework/lib/net451
+
+      - name: Public NetSparkleUpdater.UI.WinForms.NetFramework
+        run: |
+          echo Removing NetSparkle files (will be available by project reference)
+          rm nuget/winforms-netframework/lib/net451/NetSparkle.dll
+          rm nuget/winforms-netframework/lib/net451/NetSparkle.pdb
+          cd nuget/winforms-netframework
+          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
+          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
+          cd ../../
+
       - name: Build NetSparkleUpdater.Tools
         run: |
           dotnet build src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/
@@ -99,3 +109,4 @@ jobs:
           cd nuget/tools
           nuget pack NetSparkleUpdater.Tools.nuspec
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
+          cd ../../
