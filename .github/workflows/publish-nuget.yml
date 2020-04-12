@@ -1,11 +1,11 @@
-name: publish to nuget
+name: Publish to NuGet
 on:
   push:
     branches:
       - develop # Your default release branch
 jobs:
   publish:
-    name: list on nuget
+    name: List on NuGet
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -80,7 +80,7 @@ jobs:
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
         run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net451
 
-      - name: Public NetSparkleUpdater.UI.WinForms.NetFramework
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
         run: |
           echo Removing NetSparkle files (will be available by project reference)
           del nuget\winformsnetframework\lib\net451\NetSparkle.dll
