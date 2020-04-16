@@ -4,7 +4,9 @@
 
 An update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
 
-**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API, etc. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
+**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API and has a WinForms UI built in to the core NetSparkle.New DLL. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
+
+Deadpikle is currently working on fixing things so that no UI factory is necessary. See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues/) for more info.
 
 A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF; Avalonia [cross platform UI!]) are also on NuGet except for the .NET Framework WinForms UI (see #84). There are also updated tools on NuGet at NetSparkleUpdater.Tools.
 
