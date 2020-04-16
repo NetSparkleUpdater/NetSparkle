@@ -1382,10 +1382,6 @@ namespace NetSparkle
                 };
                 CallFuncConsideringUIThreads(() => UIAction(null));
             }
-            else
-            {
-                return null;
-            }
 
             return updateData;// in this case, we've already shown UI talking about the new version
         }
