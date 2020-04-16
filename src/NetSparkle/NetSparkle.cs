@@ -932,7 +932,7 @@ namespace NetSparkle
         /// Starts the download process
         /// </summary>
         /// <param name="item">the appcast item to download</param>
-        private async Task InitDownloadAndInstallProcess(AppCastItem item)
+        public async Task StartDownloadingUpdate(AppCastItem item)
         {
             // TODO: is this a good idea? What if it's a user initiated request,
             // and they want to watch progress instead of it being a silent download?
@@ -1468,7 +1468,7 @@ namespace NetSparkle
             {
                 if (IsDownloadingSilently())
                 {
-                    await InitDownloadAndInstallProcess(updates[0]); // install only latest
+                    await StartDownloadingUpdate(updates[0]); // install only latest
                 }
                 else
                 {
@@ -1537,7 +1537,7 @@ namespace NetSparkle
                 else
                 {
                     // download the binaries
-                    await InitDownloadAndInstallProcess(currentItem);
+                    await StartDownloadingUpdate(currentItem);
                 }
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
