@@ -23,7 +23,9 @@ tl;dr for choosing a package:
 * reference the core NetSparkle build if you don't care about having a built in UI and can manage things yourself
 * choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
 
-* NetSparkle with Core NetSparkle (use if you don't want a UI): 
+--------------
+
+* Core NetSparkle (use for no UI or 100% custom UI): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
