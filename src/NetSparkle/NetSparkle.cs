@@ -125,12 +125,17 @@ namespace NetSparkle
         /// <summary>
         /// Called when the download has downloaded but has an error other than corruption
         /// </summary>
-        public event DownloadEvent DownloadError;
+        public event DownloadErrorEvent DownloadError;
+        /// <summary>
+        /// Called when the download has made some progress. Also sent to the progress window
+        /// if one is available.
+        /// </summary>
+        public event DownloadProgressChangedEventHandler DownloadMadeProgress;
 
         #endregion
 
         #region Protected/Private Members
-        
+
         protected Process _installerProcess;
 
         private LogWriter _logWriter;
@@ -359,19 +364,19 @@ namespace NetSparkle
         /// The user interface window that shows the release notes and
         /// asks the user to skip, remind me later, or update
         /// </summary>
-        public IUpdateAvailable UpdateAvailableWindow { get; set; }
+        private IUpdateAvailable UpdateAvailableWindow { get; set; }
 
         /// <summary>
         /// The user interface window that shows a download progress bar,
         /// and then asks to install and relaunch the application
         /// </summary>
-        public IDownloadProgress ProgressWindow { get; set; }
+        private IDownloadProgress ProgressWindow { get; set; }
 
         /// <summary>
         /// The user interface window that shows the 'Checking for Updates...'
         /// form.
         /// </summary>
-        public ICheckingForUpdates CheckingForUpdatesWindow { get; set; }
+        private ICheckingForUpdates CheckingForUpdatesWindow { get; set; }
 
         /// <summary>
         /// The NetSparkle configuration object for the current assembly.
@@ -929,10 +934,14 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// Starts the download process
+        /// Starts the download process by grabbing the download path for
+        /// the app cast item (asynchronous so that it can get the server's
+        /// download name in case there is a redirect; cancel this by setting
+        /// CheckServerFileName to false), then beginning the download
+        /// process if the download file doesn't already exist
         /// </summary>
         /// <param name="item">the appcast item to download</param>
-        public async Task StartDownloadingUpdate(AppCastItem item)
+        public async Task InitAndBeginDownload(AppCastItem item)
         {
             // TODO: is this a good idea? What if it's a user initiated request,
             // and they want to watch progress instead of it being a silent download?
@@ -957,6 +966,8 @@ namespace NetSparkle
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
                     CreateAndShowProgressWindow(item, true);
+                    CallFuncConsideringUIThreads(() => { FinishedDownloading?.Invoke(_downloadTempFileName); });
+                    CallFuncConsideringUIThreads(() => { DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
@@ -975,6 +986,11 @@ namespace NetSparkle
                         // we won't be able to download anyway since we couldn't delete the file :( we'll try next time the
                         // update loop goes around.
                         needsToDownload = false;
+                        CallFuncConsideringUIThreads(() => 
+                        {
+                            DownloadError?.Invoke(item, _downloadTempFileName, 
+                                new Exception(string.Format("Unable to delete old download at {0}", _downloadTempFileName)));
+                        });
                     }
                 }
                 else
@@ -988,20 +1004,24 @@ namespace NetSparkle
                 CleanUpUpdateDownloader();
                 CreateUpdateDownloaderIfNeeded();
 
-                CreateAndShowProgressWindow(item, false, () =>
+                CreateAndShowProgressWindow(item, false);
+                if (ProgressWindow != null)
                 {
-                    if (ProgressWindow != null)
-                    {
-                        UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-                    }
-                    UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
+                    UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+                }
+                UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
+                UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
 
-                    Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
-                    LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                    UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
-                    CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
-                });
+                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
+                LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
+                UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
+                CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
             }
+        }
+
+        private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            CallFuncConsideringUIThreads(() => { DownloadMadeProgress?.Invoke(sender, e); });
         }
 
         private void CleanUpUpdateDownloader()
@@ -1012,6 +1032,7 @@ namespace NetSparkle
                 {
                     UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
                 }
+                UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
                 UpdateDownloader?.Dispose();
                 UpdateDownloader = null;
@@ -1026,14 +1047,14 @@ namespace NetSparkle
             }
         }
 
-        private void CreateAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready, Action actionToRunOnceCreatedBeforeShown = null)
+        private void CreateAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready)
         {
             if (ProgressWindow != null)
             {
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 ProgressWindow = null;
             }
-            if (ProgressWindow == null && !IsDownloadingSilently())
+            if (ProgressWindow == null && UIFactory != null && !IsDownloadingSilently())
             {
                 if (!IsDownloadingSilently() && ProgressWindow == null)
                 {
@@ -1041,14 +1062,15 @@ namespace NetSparkle
                     Action<object> showSparkleDownloadUI = (state) =>
                     {
                         ProgressWindow = UIFactory?.CreateProgressWindow(castItem);
-                        ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
-                        if (shouldShowAsDownloadedAlready)
+                        if (ProgressWindow != null)
                         {
-                            ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Post((state2) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                            ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
+                            if (shouldShowAsDownloadedAlready)
+                            {
+                                ProgressWindow?.FinishedDownloadingFile(true);
+                                _syncContext.Post((state2) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                            }
                         }
-
-                        actionToRunOnceCreatedBeforeShown?.Invoke();
                     };
                     Thread thread = new Thread(() =>
                     {
@@ -1105,13 +1127,14 @@ namespace NetSparkle
         /// signature is valid before running. It will also utilize the
         /// AboutToExitForInstallerRun event to ensure that the application can close.
         /// </summary>
-        /// <param name="item"></param>
-        public async void RunUpdate(AppCastItem item)
+        /// <param name="item">AppCastItem to install</param>
+        /// <param name="installPath">Install path to the executable. If not provided, will ask the server for the download path.</param>
+        public async void InstallUpdate(AppCastItem item, string installPath = null)
         {
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
-                var path = await DownloadPathForAppCastItem(item);
+                var path = installPath != null && File.Exists(installPath) ? installPath : await DownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
                     var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
@@ -1468,7 +1491,7 @@ namespace NetSparkle
             {
                 if (IsDownloadingSilently())
                 {
-                    await StartDownloadingUpdate(updates[0]); // install only latest
+                    await InitAndBeginDownload(updates[0]); // install only latest
                 }
                 else
                 {
@@ -1537,7 +1560,7 @@ namespace NetSparkle
                 else
                 {
                     // download the binaries
-                    await StartDownloadingUpdate(currentItem);
+                    await InitAndBeginDownload(currentItem);
                 }
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
@@ -1774,7 +1797,7 @@ namespace NetSparkle
             }
             if (e.Error != null)
             {
-                DownloadError?.Invoke(_downloadTempFileName);
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
                 // Clean temp files on error too
                 if (File.Exists(_downloadTempFileName))
                 {
@@ -1802,7 +1825,9 @@ namespace NetSparkle
                     string absolutePath = Path.GetFullPath(_downloadTempFileName);
                     if (!File.Exists(absolutePath))
                     {
-                        throw new FileNotFoundException();
+                        var message = "File not found even though it was reported as downloading successfully!";
+                        LogWriter.PrintMessage(message);
+                        DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
                     }
 
                     // check the DSA signature
