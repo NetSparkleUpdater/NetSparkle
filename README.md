@@ -1,45 +1,49 @@
 # NetSparkle
 
- [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
+ [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
 An update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
 
 **The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API and has a WinForms UI built in to the core NetSparkle.New DLL. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
 
-Deadpikle is currently working on fixing things so that no UI factory is necessary. See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues/) for more info.
+Deadpikle is currently working on changing the API to various things and stabilizing things so that a beta period for 2.0 can start. See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues/) for more info.
 
-A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WPF; Avalonia [cross platform UI!]) are also on NuGet except for the .NET Framework WinForms UI (see #84). There are also updated tools on NuGet at NetSparkleUpdater.Tools.
+A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WinForms/WPF; Avalonia [cross platform UI!]) are also on NuGet. There are also updated tools on NuGet at NetSparkleUpdater.Tools.
 
 Note that the update calls for macOS and Linux are relatively untested! On macOS, we support .pkg, .dmg, and .zip. On Linux, we support .deb, .rpm, and .tar.gz. Please help me test it out!
 
-README updates for version 2.0 are pending. If you have specific questions or need help, please file an issue. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. Some extra features aren't built-in out of the box yet -- contributions are welcome!!
+README updates for version 2.0 are pending. If you have specific questions or need help, please file an issue or message me on Gitter. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. Some extra features aren't built-in out of the box yet -- contributions are welcome!!
 
 --------------
 
 NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
 
-* Core NetSparkle (use if you don't want a UI): 
+tl;dr for choosing a package:
+
+* reference the core NetSparkle build if you don't care about having a built in UI and can manage things yourself
+* choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
+
+* NetSparkle with Core NetSparkle (use if you don't want a UI): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/)
-[![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-* WinForms UI (.NET Framework): 
+* NetSparkle with WinForms UI (.NET Framework): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/)
 
-* WinForms UI (.NET Core): 
+* NetSparkle with WinForms UI (.NET Core): 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/)
 
-* WPF UI: 
+* NetSparkle with WPF UI: 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WPF.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/)
 
-* Avalonia UI: 
+* NetSparkle with Avalonia UI: 
 [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
 [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/)
@@ -74,7 +78,7 @@ _sparkle = new Sparkle(
     SecurityMode.Strict,
     "<DSAKeyValue>...</DSAKeyValue>",
 ) {
-    UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon) // or choose some other UI factory or build your own!
+    UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon) // or null or choose some other UI factory or build your own!
 };
 _sparkle.CheckOnFirstApplicationIdle();
 ```
@@ -104,7 +108,7 @@ _sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
 
 **Warning!** 
 
-The .bat file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
+The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
 ## Appcast
 
