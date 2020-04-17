@@ -31,6 +31,16 @@
                         Width="200"
                         Margin="50,0,0,0"
                         HorizontalAlignment="Left" />
+                <TextBlock Name="DownloadInfo"
+                           FontStyle="Italic"
+                           TextWrapping="Wrap" />
+                <Label Content="Step 3: Install the update" />
+                <Button Content="Click me to install the update"
+                        Name="InstallUpdateButton"
+                        Click="InstallUpdateButton_Click"
+                        Width="200"
+                        Margin="50,0,0,0"
+                        HorizontalAlignment="Left" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

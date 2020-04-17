@@ -23,6 +23,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
     {
         private Sparkle _sparkle;
         private UpdateInfo _updateInfo;
+        private string _downloadPath = null;
 
         public MainWindow()
         {
@@ -36,6 +37,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
 
             // get sparkle ready
             DownloadUpdateButton.IsEnabled = false;
+            InstallUpdateButton.IsEnabled = false;
 
             _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
@@ -47,6 +49,8 @@ namespace NetSparkle.Samples.HandleEventsYourself
 
         private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
+            InstallUpdateButton.IsEnabled = false;
+            UpdateInfo.Content = "Checking for updates...";
             _updateInfo = await _sparkle.CheckForUpdatesAtUserRequest();
             // use _sparkle.CheckForUpdatesQuietly() if you don't want the user to know you are checking for updates!
             // if you use CheckForUpdatesAtUserRequest() and are using a UI, then handling things yourself is rather silly
@@ -78,15 +82,54 @@ namespace NetSparkle.Samples.HandleEventsYourself
         private async void DownloadUpdate_Click(object sender, RoutedEventArgs e)
         {
             // this is async so that it can grab the download file name from the server
+            _sparkle.StartedDownloading -= _sparkle_StartedDownloading;
+            _sparkle.StartedDownloading += _sparkle_StartedDownloading;
+
             _sparkle.FinishedDownloading -= _sparkle_FinishedDownloading;
             _sparkle.FinishedDownloading += _sparkle_FinishedDownloading;
-            await _sparkle.StartDownloadingUpdate(_updateInfo.Updates.First());
+
+            _sparkle.DownloadError -= _sparkle_DownloadError;
+            _sparkle.DownloadError += _sparkle_DownloadError;
+
+            _sparkle.DownloadMadeProgress += _sparkle_DownloadMadeProgress;
+
+            await _sparkle.InitAndBeginDownload(_updateInfo.Updates.First());
             // ok, the file is downloading now
+        }
+
+        private void _sparkle_DownloadMadeProgress(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        {
+            DownloadInfo.Text = string.Format("The download made some progress! {0}% done.", e.ProgressPercentage);
+        }
+
+        private void _sparkle_DownloadError(AppCastItem item, string path, Exception exception)
+        {
+            DownloadInfo.Text = "We had an error during the download process :( -- " + exception.Message;
+            InstallUpdateButton.IsEnabled = false;
+        }
+
+        private void _sparkle_StartedDownloading(string path)
+        {
+            DownloadInfo.Text = "Started downloading...";
+            InstallUpdateButton.IsEnabled = false;
         }
 
         private void _sparkle_FinishedDownloading(string path)
         {
-            MessageBox.Show("Done downloading!");
+            DownloadInfo.Text = "Done downloading!";
+            InstallUpdateButton.IsEnabled = true;
+            _downloadPath = path;
+        }
+
+        private void InstallUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            _sparkle.CloseApplication += _sparkle_CloseApplication;
+            _sparkle.InstallUpdate(_updateInfo.Updates.First(), _downloadPath);
+        }
+
+        private void _sparkle_CloseApplication()
+        {
+            System.Windows.Application.Current.Shutdown();
         }
     }
 }
