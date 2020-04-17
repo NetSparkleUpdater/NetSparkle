@@ -100,4 +100,9 @@ namespace NetSparkle
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An UpdateResponse object that contains the event data.</param>
     public delegate void UserRespondedToUpdate(object sender, UpdateResponseArgs e);
+
+    /// <summary>
+    /// A delegate for a download error
+    /// </summary>
+    public delegate void DownloadErrorEvent(AppCastItem item, string path, Exception exception);
 }
