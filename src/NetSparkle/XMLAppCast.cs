@@ -79,7 +79,7 @@ namespace NetSparkle
         {
             try
             {
-                var signaturestream = _dataDownloader.DownloadAndGetContentStream(_castUrl + ".dsa");
+                var signaturestream = _dataDownloader.DownloadAndGetAppCastStream(_castUrl + ".dsa");
                 var signature = string.Empty;
                 using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
                 {
@@ -99,7 +99,7 @@ namespace NetSparkle
         {
             try
             {
-                var inputstream = _dataDownloader.DownloadAndGetContentStream(_castUrl);
+                var inputstream = _dataDownloader.DownloadAndGetAppCastStream(_castUrl);
                 var signature = TryReadAppCastSignature();
                 return ReadStream(inputstream, signature);
             }

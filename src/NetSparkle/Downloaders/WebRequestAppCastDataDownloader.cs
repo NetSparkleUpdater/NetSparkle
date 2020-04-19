@@ -18,7 +18,7 @@ namespace NetSparkle.Downloaders
             _extraJSONData = extraJSONData;
         }
 
-        public Stream DownloadAndGetContentStream(string url)
+        public Stream DownloadAndGetAppCastStream(string url)
         {
             var response = GetWebContentResponse(url);
             if (response != null)

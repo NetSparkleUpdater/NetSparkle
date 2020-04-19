@@ -7,6 +7,6 @@ namespace NetSparkle.Interfaces
 {
     public interface IAppCastDataDownloader
     {
-        Stream DownloadAndGetContentStream(string url);
+        Stream DownloadAndGetAppCastStream(string url);
     }
 }
