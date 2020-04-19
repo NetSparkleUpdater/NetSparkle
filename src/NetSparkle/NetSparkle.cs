@@ -145,8 +145,8 @@ namespace NetSparkleUpdater
             _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
             // set the url
-            AppcastUrl = appcastUrl;
-            LogWriter.PrintMessage("Using the following url: {0}", AppcastUrl);
+            AppCastUrl = appcastUrl;
+            LogWriter.PrintMessage("Using the following url: {0}", AppCastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
         }
@@ -278,7 +278,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Gets or sets the appcast URL
         /// </summary>
-        public string AppcastUrl { get; set; }
+        public string AppCastUrl { get; set; }
 
         /// <summary>
         /// Specifies if you want to use the notification toast
@@ -534,7 +534,7 @@ namespace NetSparkleUpdater
             {
                 AppCastHandler = new XMLAppCast();
             }
-            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppcastUrl, config, SignatureVerifier, LogWriter);
+            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
             // check if any updates are available
             try
             {
@@ -805,7 +805,7 @@ namespace NetSparkleUpdater
                 UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
 
-                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
+                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                 LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
                 CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(item, _downloadTempFileName); });
@@ -931,7 +931,7 @@ namespace NetSparkleUpdater
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
                 }
                 DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 return;
@@ -947,7 +947,7 @@ namespace NetSparkleUpdater
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppcastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppCastUrl);
                 }
                 DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
@@ -991,7 +991,7 @@ namespace NetSparkleUpdater
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
                 }
                 DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
             }
@@ -1360,7 +1360,7 @@ namespace NetSparkleUpdater
                             UIFactory?.ShowVersionIsSkippedByUserRequest(); // they can get skipped version from Configuration
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory?.ShowCannotDownloadAppcast(AppcastUrl);
+                            UIFactory?.ShowCannotDownloadAppcast(AppCastUrl);
                             break;
                     }
                 });
