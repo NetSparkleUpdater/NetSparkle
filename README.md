@@ -2,24 +2,23 @@
 
  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-A software update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
+NetSparkle is a software update framework for C# that is compatible with .NET Core, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an app cast with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
-**The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API and has a WinForms UI built in to the core NetSparkle.New DLL. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
+The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more! No more big changes to the API are planned, but smaller API changes may occur if bugs are found between now and the official 2.0 release.
 
-Deadpikle is currently working on changing the API to various things and stabilizing things so that a beta period for 2.0 can start. See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues/) for more info.
+Supported update download types:
+* Windows -- .exe, .msi, .msp
+* macOS -- .zip, .pkg, .dmg
+* Linux -- .tar.gz, .deb, .rpm
 
-README updates for version 2.0 are pending. If you have specific questions or need help, please file an issue or message me on Gitter. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. Some extra features aren't built-in out of the box yet -- contributions are welcome!!
+_README and other documentation updates for version 2.0 are in progress. If you have specific questions or need help even after looking at the samples, please file an issue or message me on [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle). You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, using your own file signature verification method, etc. are all now possible. Some extra features aren't built-in out of the box yet, such as JSON app cast feeds -- contributions are welcome and benefit the whole community!_
 
---------------
+## Installing NetSparkle
 
-NetSparkle is a C# .NET update checker that allows you to easily download installer files and update your WinForms or C# WPF software. You provide, somewhere on the internet, an XML appcast with version information, along with release notes in Markdown or HTML format. This library then checks for an update in the background, shows the user the release notes, and offers to download the new installer. The original NetSparkle library can be found at [dei79/netsparkle](https://github.com/dei79/netsparkle).
+NetSparkle is available via NuGet. To choose a NuGet package to use:
 
-tl;dr for choosing a package:
-
-* reference the core NetSparkle build if you don't care about having a built in UI and can manage things yourself
-* choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
-
---------------
+* Reference the core NetSparkle build if you don't care about having a built-in UI and can manage things yourself
+* Choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
 
 | Package | Use Case | Release | Preview | Downloads |
 | ------- | -------- | ------- | ------- | --------- |
@@ -30,14 +29,11 @@ tl;dr for choosing a package:
 | [Avalonia](https://github.com/AvaloniaUI/Avalonia) UI | NetSparkle with built-in Avalonia UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) |
 | Command Line Tools | DSA helper; AppCast generator (includes NetSparkle) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) |
 
-
-NetSparkle also offers a command line tool to automatically generate your appcast for you! It still needs a few more features to have feature parity with the macOS `generate_appcast` tool, but it can still save you a lot of time. Check it out on [NuGet](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)!
-
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
 - [Basic Usage](#basic-usage)
 - [Appcast](#appcast)
-- Sparkle class
+- SparkleUpdater class
     - [Public Methods](#public-methods)
     - [Public Properties](#public-properties)
     - [Public Events](#public-events)
@@ -45,58 +41,67 @@ All notable changes to this project will be documented in the [changelog](CHANGE
 - [Requirements](#requirements)
 - [Other Options](#other-options)
 
-I highly recommend checking out [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows), which is a more Chrome-like software updater. You could also check out [WinSparkle](https://github.com/vslavik/winsparkle), but there isn't a merged .NET binding yet.
-
 ## Basic Usage
 
 ```csharp
 _sparkle = new SparkleUpdater(
-    "http://example.com/appcast.xml",
-    this.Icon,
-    SecurityMode.Strict,
-    "<DSAKeyValue>...</DSAKeyValue>",
+    "http://example.com/appcast.xml", // link to your app cast file
+    SecurityMode.Strict, // security mode
+    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key
 ) {
-    UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon) // or null or choose some other UI factory or build your own!
+    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
 };
-_sparkle.CheckOnFirstApplicationIdle();
+_sparkle.StartLoop(true); // `true` to run an initial check online
 ```
 
-On the first Application.Idle event, your appcast.xml will be read and compared to the currently running version. If it's newer, the user will be notified with a little "toast" box if enabled, otherwise with the update dialog containing your release notes (if defined). The user can then ignore the update, ask to be reminded later, or download it now.
+On the first Application.Idle event, your App Cast XML file will be downloaded, read, and compared to the currently running version. If it has a software update inside, the user will be notified with a little toast notification (if supported by the UI and enabled) or with an update dialog containing your release notes. The user can then ignore the update, ask to be reminded later, or download/install it now.
 
-If you want to add a manual update in the background, do
+If you want to check for an update in the background without the user seeing anything, use
 
 ```csharp
 _sparkle.CheckForUpdatesQuietly();
 ```
 
-If you want to have a menu item for the user to check for updates, use
+If you want to have a menu item for the user to check for updates so the user can see the UI while NetSparkle looks for updates, use
 
 ```csharp
 _sparkle.CheckForUpdatesAtUserRequest();
 ```
 
-If you have files that need saving, subscribe to the AboutToExitForInstallerRun event:
+If you have files that need saving, subscribe to the PreparingToExit event:
 
 ```csharp
-_sparkle.AboutToExitForInstallerRun += ((x, cancellable) =>
+_sparkle.PreparingToExit += ((x, cancellable) =>
 {
 	// ask the user to save, whatever else is needed to close down gracefully
 });
 ```
 
-**Warning!** 
+Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 
-The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
+The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
+## Updating from 0.X or 1.X
 
-Supported update download types:
-* Windows -- .exe, .msi, .msp
-* macOS -- .zip, .pkg, .dmg
-* Linux -- .tar.gz, .deb, .rpm
+This section is still WIP, but major changes include:
 
-## Appcast
+* Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
+* `Sparkle` renamed to `SparkleUpdater` for clarity
+* UIs are now in different namespaces. If you want to use a UI, you must pass in a `UIFactory` that implements `IUIFactory` and handles showing/handling all user interface elements
+  * `SparkleUpdater` no longer holds its own `Icon`
+  * `HideReleaseNotes`, `HideRemindMeLaterButton`, and `HideSkipButton` are all handled by the `UIFactory` objects
+* Most `NetSparkle` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and downloading
+* Samples have been updated and improved
+  * Sample apps for Avalonia, WinForms, and WPF UIs
+  * Sample app to demonstrate how to handle events yourself
+* Many delegates, events, and functions have been renamed and tweaked for clarity and better use
+  * `DownloadEvent` now has the `AppCastItem` that is being downloaded rather than being just the download path
+  * `AboutToExitForInstallerRun`/`AboutToExitForInstallerRunAsync` has been renamed to `PreparingToExit`/``PreparingToExitAsync`, respectively
+* The `FinishedDownloading`/`DownloadedFileReady` events have been replaced and superceded by `DownloadFinished`
 
-NetSparkle uses Sparkle-compatible appcasts. Here is a sample appcast:
+## App Cast
+
+NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts. Here is a sample app cast:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -134,7 +139,7 @@ The important tags in each `<item>` are:
     - The URL to an HTML or Markdown document describing the update.
     - If the `<description>` tag is present, it will be used instead.
     - **Attributes**:
-        - `sparkle:dsaSignature`, optional: the DSA signature of the document; if present, notes will only be displayed if the DSA signature is valid
+        - `sparkle:dsaSignature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you, but you verify changelog DSA signatures if you like
 - `<pubDate>`
     - The date this update was published
 - `<enclosure>`
@@ -148,12 +153,14 @@ The important tags in each `<item>` are:
         - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
         - `sparkle:os`: Operating system for the app cast item. Defaults to Windows if not supplied. For Windows, use "win" or "windows"; for macOS, use "macos" or "osx"; for Linux, use "linux".
 
-By default, you need 2 DSA signatures (DSA Strict mode):
+By default, you need 2 DSA signatures (`SecurityMode.Strict`):
 
-1. One in the enclosure tag for your download file (`sparkle:dsaSignature="..."`)
-1. Another on your web server to secure the actual appcast file. **This file must be located at [CastURL].dsa**. In other words, if the appcast URL is http://example.com/awesome-software.xml, you need a valid DSA signature for that file at http://example.com/awesome-software.xml.dsa.
+1. One in the enclosure tag for the update file (`sparkle:dsaSignature="..."`)
+1. Another on your web server to secure the actual app cast file. **This file must be located at [CastURL].dsa**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid DSA signature for that file at http://example.com/awesome-software.xml.dsa.
 
 ## Public Methods
+
+**These need to be updated for 2.0 still!**
 
 - [Sparkle(string appcastUrl)](#sparklestring-appcasturl)
 - [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon)](#sparklestring-appcasturl-systemdrawingicon-applicationicon)
@@ -179,7 +186,7 @@ By default, you need 2 DSA signatures (DSA Strict mode):
 - void [StartLoop(bool doInitialCheck, System.TimeSpan checkFrequency)](#void-startloopbool-doinitialcheck-systemtimespan-checkfrequency)
 - void [StopLoop()](#void-stoploop)
 
-### Sparkle(string appcastUrl)
+### SparkleUpdater(string appcastUrl)
 
 Initializes a new instance of the Sparkle class with the given appcast URL.
 
@@ -187,7 +194,7 @@ Initializes a new instance of the Sparkle class with the given appcast URL.
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
 
-### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon)
+### SparkleUpdater(string appcastUrl, System.Drawing.Icon applicationIcon)
 
 Initializes a new instance of the Sparkle class with the given appcast URL and an Icon for the update UI.
 
@@ -617,7 +624,13 @@ NetSparkle is available under the [MIT License](LICENSE).
 
 ## Requirements
 
-- .NET 4.5
+- .NET Framework 4.5.1+ OR .NET Core 3+
+
+## Acknowledgements
+
+* The original NetSparkle library, found at [dei79/netsparkle](https://github.com/dei79/netsparkle)
+* A function for finding the base directory was taken from MIT-licensed [WalletWasabi](https://github.com/zkSNACKs/WalletWasabi/)
+* MarkdownSharp is from [here](https://github.com/StackExchange/MarkdownSharp)
 
 ## Other Options
 
