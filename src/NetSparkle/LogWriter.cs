@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// A simple class to handle log information for NetSparkle.
+    /// A simple class to handle log information for NetSparkleUPdater.
     /// Make sure to do any setup for this class that you want
-    /// to do before calling StartLoop on your NetSparkle object.
+    /// to do before calling StartLoop on your SparkleUpdater object.
     /// </summary>
     public class LogWriter
     {
@@ -27,7 +27,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// SparkleLog constructor that takes a bool to determine
+        /// LogWriter constructor that takes a bool to determine
         /// the value for printDiagnosticToConsole
         /// </summary>
         /// <param name="printDiagnosticToConsole">Whether this object should print via Debug.WriteLine or Console.WriteLine</param>
