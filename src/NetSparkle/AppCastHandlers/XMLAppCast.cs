@@ -3,14 +3,8 @@ using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace NetSparkleUpdater.AppCastHandlers
@@ -84,10 +78,10 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
                 var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
-                bool didVerify = VerifyAppcast(appcast, signature);
+                bool didVerify = VerifyAppCast(appcast, signature);
                 if (didVerify)
                 {
-                    ParseAppcast(appcast);
+                    ParseAppCast(appcast);
                     return true;
                 }
             }
@@ -98,7 +92,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             return false;
         }
 
-        private bool VerifyAppcast(string appcast, string signature)
+        private bool VerifyAppCast(string appcast, string signature)
         {
             if (appcast == null)
             {
@@ -121,7 +115,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Parse an XML memory stream build items list
         /// </summary>
         /// <param name="stream">The xml memory stream to parse</param>
-        private void ParseAppcast(string appcast)
+        private void ParseAppCast(string appcast)
         {
             const string itemNode = "item";
             Items.Clear();
