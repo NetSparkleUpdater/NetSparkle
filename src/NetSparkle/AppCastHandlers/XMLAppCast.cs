@@ -84,16 +84,21 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
                 var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
-                return VerifyAppcastAndParse(appcast, signature);
+                bool didVerify = VerifyAppcast(appcast, signature);
+                if (didVerify)
+                {
+                    ParseAppcast(appcast);
+                    return true;
+                }
             }
             catch (Exception e)
             {
                 _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
-                return false;
             }
+            return false;
         }
 
-        private bool VerifyAppcastAndParse(string appcast, string signature)
+        private bool VerifyAppcast(string appcast, string signature)
         {
             if (appcast == null)
             {
@@ -109,9 +114,6 @@ namespace NetSparkleUpdater.AppCastHandlers
                 _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;
             }
-
-            // parse xml
-            Parse(appcast);
             return true;
         }
 
@@ -119,7 +121,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Parse an XML memory stream build items list
         /// </summary>
         /// <param name="stream">The xml memory stream to parse</param>
-        private void Parse(string appcast)
+        private void ParseAppcast(string appcast)
         {
             const string itemNode = "item";
             Items.Clear();
