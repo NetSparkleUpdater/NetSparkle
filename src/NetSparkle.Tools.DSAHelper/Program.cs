@@ -106,7 +106,8 @@ namespace NetSparkleUpdater.DSAHelper
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
 
-                            NetSparkleUpdater.DSAChecker dsaVerif = new NetSparkleUpdater.DSAChecker(SecurityMode.UseIfPossible, null, pubKeyFile);
+                            NetSparkleUpdater.SignatureVerifiers.DSAChecker dsaVerif = 
+                                new NetSparkleUpdater.SignatureVerifiers.DSAChecker(SecurityMode.UseIfPossible, null, pubKeyFile);
                             switch (dsaVerif.VerifySignatureOfFile(sign, binary))
                             {
                                 case ValidationResult.Valid:

@@ -14,6 +14,8 @@ using NetSparkleUpdater.Events;
 using System.Collections.Generic;
 using NetSparkleUpdater.Downloaders;
 using NetSparkleUpdater.Configurations;
+using NetSparkleUpdater.SignatureVerifiers;
+using NetSparkleUpdater.AppCastHandlers;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #endif
@@ -53,6 +55,8 @@ namespace NetSparkleUpdater
         private Configuration _configuration;
 
         #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkleUpdater"/> class with the given appcast URL
@@ -147,6 +151,10 @@ namespace NetSparkleUpdater
             TmpDownloadFilePath = "";
         }
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// The security protocol used by NetSparkle. Setting this property will also set this 
         /// for the current AppDomain of the caller. Needs to be set to 
@@ -163,8 +171,6 @@ namespace NetSparkleUpdater
                 ServicePointManager.SecurityProtocol = value;
             }
         }
-
-        #region Properties
 
         /// <summary>
         /// Set the user interaction mode for Sparkle to use when there is a valid update for the software
@@ -280,7 +286,9 @@ namespace NetSparkleUpdater
         public bool UseNotificationToast { get; set; }
 
         /// <summary>
-        /// WinForms only. If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
+        /// WinForms/WPF only. 
+        /// If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
+        /// Must be set to true if using NetSparkleUpdater from Avalonia.
         /// </summary>
         public bool ShowsUIOnMainThread { get; set; }
 
@@ -522,23 +530,21 @@ namespace NetSparkleUpdater
             {
                 AppCastDataDownloader = new WebRequestAppCastDataDownloader();
             }
-            IAppCastHandler appcastHandler = AppCastHandler;
-            if (appcastHandler == null)
+            if (AppCastHandler == null)
             {
-                appcastHandler = AppCastHandler = new XMLAppCast();
+                AppCastHandler = new XMLAppCast();
             }
-            appcastHandler.SetupAppCastHandler(AppCastDataDownloader, AppcastUrl, config, SignatureVerifier, LogWriter);
+            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppcastUrl, config, SignatureVerifier, LogWriter);
             // check if any updates are available
             try
             {
-                var task = Task.Factory.StartNew(() =>
+                await Task.Factory.StartNew(() =>
                 {
-                    if (appcastHandler.DownloadAndParse())
+                    if (AppCastHandler.DownloadAndParse())
                     {
-                        updates = appcastHandler.GetAvailableUpdates();
+                        updates = AppCastHandler.GetAvailableUpdates();
                     }
                 });
-                await task;
             }
             catch (Exception e)
             {
@@ -675,7 +681,7 @@ namespace NetSparkleUpdater
         /// <param name="item">The item that you want to generate a download path for</param>
         /// <returns>The download path for an app cast item if item is not null and has valid download link
         /// Otherwise returns null.</returns>
-        public async Task<string> DownloadPathForAppCastItem(AppCastItem item)
+        public async Task<string> GetDownloadPathForAppCastItem(AppCastItem item)
         {
             if (item != null && item.DownloadLink != null)
             {
@@ -738,7 +744,7 @@ namespace NetSparkleUpdater
             _itemBeingDownloaded = item;
             CleanUpUpdateDownloader();
             CreateUpdateDownloaderIfNeeded();
-            _downloadTempFileName = await DownloadPathForAppCastItem(item);
+            _downloadTempFileName = await GetDownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // DSA signature checks out, don't redownload the file!
             bool needsToDownload = true;
@@ -1019,7 +1025,7 @@ namespace NetSparkleUpdater
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
-                var path = installPath != null && File.Exists(installPath) ? installPath : await DownloadPathForAppCastItem(item);
+                var path = installPath != null && File.Exists(installPath) ? installPath : await GetDownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
                     var result = SignatureVerifier.VerifySignatureOfFile(item.DownloadDSASignature, path);
@@ -1481,7 +1487,7 @@ namespace NetSparkleUpdater
             {
                 // we need the download file name in order to tell the user the skipped version
                 // file path and/or to run the installer
-                _downloadTempFileName = await DownloadPathForAppCastItem(currentItem);
+                _downloadTempFileName = await GetDownloadPathForAppCastItem(currentItem);
             }
             if (result == UpdateAvailableResult.SkipUpdate)
             {

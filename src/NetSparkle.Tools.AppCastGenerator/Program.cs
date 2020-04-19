@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml;
+using NetSparkleUpdater.AppCastHandlers;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {

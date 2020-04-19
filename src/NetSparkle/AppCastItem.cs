@@ -1,3 +1,4 @@
+using NetSparkleUpdater.AppCastHandlers;
 using System;
 using System.Globalization;
 using System.Xml.Linq;

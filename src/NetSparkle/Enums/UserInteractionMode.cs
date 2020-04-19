@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.Enums
     public enum UserInteractionMode
     {
         /// <summary>
-        /// Shows the change log UI automatically (this is the default)
+        /// Shows the changelog UI automatically (this is the default)
         /// </summary>
         NotSilent,
         /// <summary>

@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 
-namespace NetSparkleUpdater
+namespace NetSparkleUpdater.SignatureVerifiers
 {
     /// <summary>
     /// Class to verify a DSA signature

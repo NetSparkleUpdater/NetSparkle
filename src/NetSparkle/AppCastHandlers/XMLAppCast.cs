@@ -13,7 +13,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace NetSparkleUpdater
+namespace NetSparkleUpdater.AppCastHandlers
 {
     /// <summary>
     /// An XML-based appcast document downloader and handler
