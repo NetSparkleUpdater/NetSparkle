@@ -14,7 +14,6 @@ namespace NetSparkleUpdater
     /// </summary>
     public class DSAChecker : ISignatureVerifier
     {
-        private SecurityMode _securityMode;
         private DSACryptoServiceProvider _cryptoProvider;
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace NetSparkleUpdater
         /// <param name="publicKeyFile">the public key file</param>
         public DSAChecker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
         {
-            _securityMode = mode;
+            SecurityMode = mode;
 
             string key = publicKey;
 
@@ -70,15 +69,11 @@ namespace NetSparkleUpdater
             }
         }
 
-        public SecurityMode SecurityMode
-        {
-            get => _securityMode;
-            set => _securityMode = value;
-        }
+        public SecurityMode SecurityMode { get; set; }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
         {
-            switch (_securityMode)
+            switch (SecurityMode)
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a DSA key, we only accept non-null signatures
