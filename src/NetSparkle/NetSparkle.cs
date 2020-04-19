@@ -23,113 +23,8 @@ namespace NetSparkle
     /// <summary>
     /// Class to communicate with a sparkle-based appcast
     /// </summary>
-    public class Sparkle : IDisposable
+    public partial class Sparkle : IDisposable
     {
-        #region Events
-
-        /// <summary>
-        /// Subscribe to this to get a chance to shut down gracefully before quitting.
-        /// If <see cref="AboutToExitForInstallerRunAsync"/> is set, this has no effect.
-        /// </summary>
-        public event CancelEventHandler AboutToExitForInstallerRun;
-
-        /// <summary>
-        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitting.
-        /// This overrides <see cref="AboutToExitForInstallerRun"/>.
-        /// </summary>
-        public event CancelEventHandlerAsync AboutToExitForInstallerRunAsync;
-
-        /// <summary>
-        /// This event will be raised when a check loop will be started
-        /// </summary>
-        public event LoopStartedOperation CheckLoopStarted;
-
-        /// <summary>
-        /// This event will be raised when a check loop is finished
-        /// </summary>
-        public event LoopFinishedOperation CheckLoopFinished;
-
-        /// <summary>
-        /// This event can be used to override the standard user interface
-        /// process when an update is detected
-        /// </summary>
-        public event UpdateDetected UpdateDetected;
-
-        /// <summary>
-        /// Event for custom shutdown logic. If this is set, it is called instead of
-        /// Application.Current.Shutdown or Application.Exit.
-        /// If <see cref="CloseApplicationAsync"/> is set, this has no effect.
-        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
-        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
-        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRun"/>.</para>
-        /// </summary>
-        public event CloseApplication CloseApplication;
-
-        /// <summary>
-        /// Event for asynchronous custom shutdown logic. If this is set, it is called instead of
-        /// Application.Current.Shutdown or Application.Exit.
-        /// This overrides <see cref="CloseApplication"/>.
-        /// <para>Warning: The batch file that launches your executable only waits for 90 seconds before
-        /// giving up! Make sure that your software closes within 90 seconds if you implement this event!
-        /// If you need an event that can be canceled, use <see cref="AboutToExitForInstallerRunAsync"/>.</para>
-        /// </summary>
-        public event CloseApplicationAsync CloseApplicationAsync;
-
-        /// <summary>
-        /// Called when update check has just started
-        /// </summary>
-        public event UpdateCheckStarted UpdateCheckStarted;
-
-        /// <summary>
-        /// Called when update check is all done. May or may not have called <see cref="UpdateDetected"/> in the middle.
-        /// </summary>
-        public event UpdateCheckFinished UpdateCheckFinished;
-
-        /// <summary>
-        /// Called when the downloaded file is fully downloaded and verified regardless of the value for
-        /// SilentMode. Note that if you are installing fully silently, this will be called before the
-        /// install file is executed, so don't manually initiate the file or anything.
-        /// </summary>
-        public event DownloadedFileReady DownloadFileIsReady;
-
-        /// <summary>
-        /// Called when the downloaded file is downloaded (or at least partially on disk) and the DSA
-        /// signature doesn't match. When this is called, Sparkle is not taking any further action to
-        /// try to download the install file during this instance of the software. In order to make Sparkle
-        /// try again, you must delete the file off disk yourself. Sparkle will try again after the software
-        /// is restarted.
-        /// </summary>
-        public event DownloadedFileIsCorrupt DownloadedFileIsCorrupt;
-
-        /// <summary>
-        /// Called when the user skips some version of the application.
-        /// </summary>
-        public event UserSkippedVersion UserSkippedVersion;
-        /// <summary>
-        /// Called when the user skips some version of the application by clicking
-        /// the 'Remind Me Later' button.
-        /// </summary>
-        public event RemindMeLaterSelected RemindMeLaterSelected;
-        /// <summary>
-        /// Called when the download has just started
-        /// </summary>
-        public event DownloadEvent StartedDownloading;
-        /// <summary>
-        /// Called when the download has been canceled
-        /// </summary>
-        public event DownloadEvent DownloadCanceled;
-        /// <summary>
-        /// Called when the download has downloaded but has an error other than corruption
-        /// </summary>
-        public event DownloadErrorEvent DownloadError;
-        /// <summary>
-        /// Called when the download has made some progress. Also sent to the progress window
-        /// if one is available.
-        /// </summary>
-        public event DownloadProgressChangedEventHandler DownloadMadeProgress;
-
-        #endregion
-
         #region Protected/Private Members
 
         protected Process _installerProcess;
@@ -937,7 +832,7 @@ namespace NetSparkle
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
                     CreateAndShowProgressWindow(item, true);
-                    CallFuncConsideringUIThreads(() => { DownloadFileIsReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
+                    CallFuncConsideringUIThreads(() => { DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
                     bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                     if (shouldInstallAndRelaunch)
                     {
@@ -986,7 +881,7 @@ namespace NetSparkle
                 Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
                 LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
-                CallFuncConsideringUIThreads(() => { StartedDownloading?.Invoke(_downloadTempFileName); });
+                CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(_downloadTempFileName); });
             }
         }
 
@@ -1392,16 +1287,16 @@ namespace NetSparkle
             {
                 // In case the user has shut the window that started this Sparkle window/instance, don't crash and burn.
                 // If you have better ideas on how to figure out if they've shut all other windows, let me know...
-                if (AboutToExitForInstallerRunAsync != null)
+                if (PreparingToExitAsync != null)
                 {
                     var args = new CancelEventArgs();
-                    await AboutToExitForInstallerRunAsync(this, args);
+                    await PreparingToExitAsync(this, args);
                     return !args.Cancel;
                 }
-                else if (AboutToExitForInstallerRun != null)
+                else if (PreparingToExit != null)
                 {
                     var args = new CancelEventArgs();
-                    AboutToExitForInstallerRun(this, args);
+                    PreparingToExit(this, args);
                     return !args.Cancel;
                 }
             }
@@ -1637,7 +1532,7 @@ namespace NetSparkle
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
             {
-                CallFuncConsideringUIThreads(() => { RemindMeLaterSelected?.Invoke(currentItem); });
+                CallFuncConsideringUIThreads(() => { UserSelectedRemindMeLater?.Invoke(currentItem); });
             }
             UpdateAvailableWindow?.Close();
             UpdateAvailableWindow = null; // done using the window so don't hold onto reference
@@ -1667,7 +1562,7 @@ namespace NetSparkle
                 bool bUpdateRequired = false;
 
                 // notify
-                CheckLoopStarted?.Invoke(this);
+                LoopStarted?.Invoke(this);
 
                 // report status
                 if (doInitialCheck)
@@ -1772,7 +1667,7 @@ namespace NetSparkle
                 isInitialCheck = false;
 
                 // notify
-                CheckLoopFinished?.Invoke(this, bUpdateRequired);
+                LoopFinished?.Invoke(this, bUpdateRequired);
 
                 // report wait statement
                 LogWriter.PrintMessage("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
@@ -1930,7 +1825,7 @@ namespace NetSparkle
             else
             {
                 LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
-                DownloadFileIsReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {

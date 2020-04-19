@@ -2,7 +2,7 @@
 
  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-An update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
+A software update framework for C# that has built in UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), allows for custom UIs, and is compatible with .NET Core!
 
 **The `develop` branch is having rapid changes at the moment as major refactoring takes place for 2.0 development. Things should work, but be warned that names of classes, etc. may change any day. You are welcome to use the `master` branch, which is stable in terms of API and has a WinForms UI built in to the core NetSparkle.New DLL. When the develop branch is more stable, this message will be updated to let you know that non-production testing can take place. Basically, 2.0 brings the ability to customize a whole lot more of NetSparkle -- custom UIs are easier, you can have custom app cast downloaders and handlers, and more!**
 

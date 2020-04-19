@@ -83,11 +83,11 @@ namespace NetSparkle.Samples.HandleEventsYourself
         private async void DownloadUpdate_Click(object sender, RoutedEventArgs e)
         {
             // this is async so that it can grab the download file name from the server
-            _sparkle.StartedDownloading -= _sparkle_StartedDownloading;
-            _sparkle.StartedDownloading += _sparkle_StartedDownloading;
+            _sparkle.DownloadStarted -= _sparkle_StartedDownloading;
+            _sparkle.DownloadStarted += _sparkle_StartedDownloading;
 
-            _sparkle.DownloadFileIsReady -= _sparkle_FinishedDownloading;
-            _sparkle.DownloadFileIsReady += _sparkle_FinishedDownloading;
+            _sparkle.DownloadFinished -= _sparkle_FinishedDownloading;
+            _sparkle.DownloadFinished += _sparkle_FinishedDownloading;
 
             _sparkle.DownloadError -= _sparkle_DownloadError;
             _sparkle.DownloadError += _sparkle_DownloadError;
@@ -138,8 +138,8 @@ namespace NetSparkle.Samples.HandleEventsYourself
             _sparkle.UserInteractionMode = Enums.UserInteractionMode.DownloadAndInstall;
             RunFullUpdateUpdateStatusLabel.Text = "Checking for update...";
             _sparkle.UpdateDetected += _sparkle_FullUpdate_UpdateDetected;
-            _sparkle.StartedDownloading += _sparkle_FullUpdate_StartedDownloading;
-            _sparkle.DownloadFileIsReady += _sparkle_FullUpdate_DownloadFileIsReady;
+            _sparkle.DownloadStarted += _sparkle_FullUpdate_StartedDownloading;
+            _sparkle.DownloadFinished += _sparkle_FullUpdate_DownloadFileIsReady;
             _sparkle.CloseApplication += _sparkle_FullUpdate_CloseApplication;
             await _sparkle.CheckForUpdatesQuietly();
         }
