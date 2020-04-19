@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Html;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NetSparkle.Enums;
 using NetSparkle.Events;
@@ -28,9 +29,14 @@ namespace NetSparkle.UI.Avalonia
 #endif
         }
 
-        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel) : base(true)
+        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, IBitmap iconBitmap) : base(true)
         {
             this.InitializeComponent();
+            var imageControl = this.FindControl<Image>("AppIcon");
+            if (imageControl != null)
+            {
+                imageControl.Source = iconBitmap;
+            }
 #if DEBUG
             this.AttachDevTools();
 #endif

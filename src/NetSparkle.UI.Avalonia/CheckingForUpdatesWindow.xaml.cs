@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using NetSparkle.Interfaces;
 using System;
 
@@ -18,6 +19,20 @@ namespace NetSparkle.UI.Avalonia
             this.AttachDevTools();
 #endif
             Closing += CheckingForUpdatesWindow_Closing;
+        }
+
+        public CheckingForUpdatesWindow(IBitmap iconBitmap)
+        {
+            this.InitializeComponent();
+#if DEBUG
+            this.AttachDevTools();
+#endif
+            Closing += CheckingForUpdatesWindow_Closing;
+            var imageControl = this.FindControl<Image>("AppIcon");
+            if (imageControl != null)
+            {
+                imageControl.Source = iconBitmap;
+            }
         }
 
         private void CheckingForUpdatesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

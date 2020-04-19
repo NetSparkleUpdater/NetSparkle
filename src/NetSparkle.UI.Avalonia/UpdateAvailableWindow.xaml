@@ -16,7 +16,7 @@
     <Image Grid.Row="0"
            Grid.RowSpan="3"
            Grid.Column="0"
-           Source="{Binding $parent[Window].Icon}"
+           x:Name="AppIcon"
            VerticalAlignment="Top"
            HorizontalAlignment="Left"
            Width="48"

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NetSparkle.Events;
 using NetSparkle.Interfaces;
@@ -29,7 +30,7 @@ namespace NetSparkle.UI.Avalonia
             Closing += DownloadProgressWindow_Closing;
         }
 
-        public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel)
+        public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel, IBitmap iconBitmap)
         {
             InitializeComponent();
 #if DEBUG
@@ -37,6 +38,11 @@ namespace NetSparkle.UI.Avalonia
 #endif
             Closing += DownloadProgressWindow_Closing;
             DataContext = _dataContext = viewModel;
+            var imageControl = this.FindControl<Image>("AppIcon");
+            if (imageControl != null)
+            {
+                imageControl.Source = iconBitmap;
+            }
         }
 
         private void InitializeComponent()

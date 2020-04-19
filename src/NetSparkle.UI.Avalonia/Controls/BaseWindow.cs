@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using System;
 using System.Collections.Generic;

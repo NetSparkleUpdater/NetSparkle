@@ -1,11 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
 using NetSparkle.Interfaces;
 using NetSparkle.Properties;
 using NetSparkle.UI.Avalonia.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace NetSparkle.UI.Avalonia
@@ -19,6 +21,8 @@ namespace NetSparkle.UI.Avalonia
         private string _releaseNotesSeparatorTemplate;
         private string _releaseNotesHeadAddition;
 
+        private Bitmap _iconBitmap;
+
         public UIFactory()
         {
 
@@ -27,6 +31,12 @@ namespace NetSparkle.UI.Avalonia
         public UIFactory(WindowIcon applicationIcon, string releaseNotesSeparatorTemplate = "", string releaseNotesHeadAddition = "")
         {
             _applicationIcon = applicationIcon;
+            using (var stream = new MemoryStream())
+            {
+                applicationIcon?.Save(stream);
+                stream.Position = 0;
+                _iconBitmap = new Bitmap(stream);
+            }
             _releaseNotesSeparatorTemplate = releaseNotesSeparatorTemplate;
             _releaseNotesHeadAddition = releaseNotesHeadAddition;
         }
@@ -40,7 +50,7 @@ namespace NetSparkle.UI.Avalonia
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var viewModel = new UpdateAvailableWindowViewModel();
-            var window = new UpdateAvailableWindow(viewModel)
+            var window = new UpdateAvailableWindow(viewModel, _iconBitmap)
             {
                 Icon = _applicationIcon
             };
@@ -58,7 +68,7 @@ namespace NetSparkle.UI.Avalonia
             {
                 ItemToDownload = item
             };
-            return new DownloadProgressWindow(viewModel)
+            return new DownloadProgressWindow(viewModel, _iconBitmap)
             {
                 Icon = _applicationIcon
             };
@@ -69,7 +79,10 @@ namespace NetSparkle.UI.Avalonia
         /// </summary>
         public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
-            return new CheckingForUpdatesWindow { Icon = _applicationIcon };
+            return new CheckingForUpdatesWindow(_iconBitmap)
+            { 
+                Icon = _applicationIcon
+            };
         }
 
         /// <summary>
@@ -140,7 +153,7 @@ namespace NetSparkle.UI.Avalonia
 
         private void ShowMessage(string title, string message)
         {
-            var messageWindow = new MessageNotificationWindow(new MessageNotificationWindowViewModel(message))
+            var messageWindow = new MessageNotificationWindow(new MessageNotificationWindowViewModel(message), _iconBitmap)
             {
                 Title = title,
                 Icon = _applicationIcon

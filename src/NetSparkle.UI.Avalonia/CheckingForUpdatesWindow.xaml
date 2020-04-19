@@ -11,7 +11,7 @@
         MaxHeight="145">
   <Grid ColumnDefinitions="*" RowDefinitions="Auto, Auto, Auto">
     <Image Grid.Row="0" Grid.RowSpan="2"
-           Source="{Binding $parent[Window].Icon}"
+           x:Name="AppIcon"
            VerticalAlignment="Top"
            HorizontalAlignment="Left" 
            Width="48" 

@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using NetSparkle.UI.Avalonia.ViewModels;
 
 namespace NetSparkle.UI.Avalonia
@@ -16,13 +17,18 @@ namespace NetSparkle.UI.Avalonia
             DataContext = new MessageNotificationWindowViewModel();
         }
 
-        public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel)
+        public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel, IBitmap iconBitmap)
         {
             this.InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
 #endif
             DataContext = viewModel;
+            /*var imageControl = this.FindControl<Image>("AppIcon");
+            if (imageControl != null)
+            {
+                imageControl.Source = iconBitmap;
+            }*/
         }
 
         private void InitializeComponent()
