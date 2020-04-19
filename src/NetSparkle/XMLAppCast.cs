@@ -104,7 +104,7 @@ namespace NetSparkleUpdater
             // checking signature
             var signatureNeeded = _dsaChecker.IsSignatureNeeded();
             var appcastBytes = _dataDownloader.GetAppCastEncoding().GetBytes(appcast);
-            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, appcastBytes) == ValidationResult.Invalid)
+            if (signatureNeeded && _dsaChecker.VerifySignature(signature, appcastBytes) == ValidationResult.Invalid)
             {
                 _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;

@@ -743,7 +743,7 @@ namespace NetSparkleUpdater
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                ValidationResult result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, _downloadTempFileName);
+                ValidationResult result = DSAChecker.VerifySignatureOfFile(item.DownloadDSASignature, _downloadTempFileName);
                 if (result == ValidationResult.Valid)
                 {
                     LogWriter.PrintMessage("File is already downloaded");
@@ -923,7 +923,7 @@ namespace NetSparkleUpdater
                 var path = installPath != null && File.Exists(installPath) ? installPath : await DownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
-                    var result = DSAChecker.VerifyDSASignatureFile(item.DownloadDSASignature, path);
+                    var result = DSAChecker.VerifySignatureOfFile(item.DownloadDSASignature, path);
                     if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                     {
                         await RunDownloadedInstaller(path);
@@ -1694,7 +1694,7 @@ namespace NetSparkleUpdater
                     }
 
                     // check the DSA signature
-                    validationRes = DSAChecker.VerifyDSASignatureFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
+                    validationRes = DSAChecker.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
                 }
             }
 

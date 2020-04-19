@@ -125,5 +125,13 @@ namespace NetSparkleUpdater
             return System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
 #endif
         }
+
+        public static byte[] ConvertStreamToByteArray(Stream stream)
+        {
+            // read the data
+            byte[] data = new byte[stream.Length];
+            stream.Read(data, 0, data.Length);
+            return data;
+        }
     }
 }

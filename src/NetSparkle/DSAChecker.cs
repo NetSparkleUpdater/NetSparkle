@@ -137,7 +137,7 @@ namespace NetSparkleUpdater
         /// <param name="signature">expected signature</param>
         /// <param name="stream">the stream of the binary</param>
         /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
-        public ValidationResult VerifyDSASignature(string signature, byte[] dataToVerify)
+        public ValidationResult VerifySignature(string signature, byte[] dataToVerify)
         {
             ValidationResult res = ValidationResult.Invalid;
             if (!CheckSecurityMode(signature, ref res))
@@ -158,20 +158,12 @@ namespace NetSparkleUpdater
         /// <param name="signature">expected signature</param>
         /// <param name="binaryPath">the path to the binary</param>
         /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
-        public ValidationResult VerifyDSASignatureFile(string signature, string binaryPath)
+        public ValidationResult VerifySignatureOfFile(string signature, string binaryPath)
         {
             using (Stream inputStream = File.OpenRead(binaryPath))
             {
-                return VerifyDSASignature(signature, ConvertStreamToByteArray(inputStream));
+                return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
             }
-        }
-
-        public byte[] ConvertStreamToByteArray(Stream stream)
-        {
-            // read the data
-            byte[] data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
-            return data;
         }
 
         /// <summary>
@@ -180,7 +172,7 @@ namespace NetSparkleUpdater
         /// <param name="signature">expected signature</param>
         /// <param name="data">the data</param>
         /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
-        public ValidationResult VerifyDSASignatureOfString(string signature, string data)
+        public ValidationResult VerifySignatureOfString(string signature, string data)
         {
             // creating stream from string
             using (var stream = new MemoryStream())
@@ -190,7 +182,7 @@ namespace NetSparkleUpdater
                 writer.Flush();
                 stream.Position = 0;
 
-                return VerifyDSASignature(signature, ConvertStreamToByteArray(stream));
+                return VerifySignature(signature, Utilities.ConvertStreamToByteArray(stream));
             }
         }
 
