@@ -52,7 +52,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
         {
             InstallUpdateButton.IsEnabled = false;
             UpdateInfo.Content = "Checking for updates...";
-            _updateInfo = await _sparkle.CheckForUpdatesAtUserRequest();
+            _updateInfo = await _sparkle.CheckForUpdatesQuietly();
             // use _sparkle.CheckForUpdatesQuietly() if you don't want the user to know you are checking for updates!
             // if you use CheckForUpdatesAtUserRequest() and are using a UI, then handling things yourself is rather silly
             // as it will show a UI for things
