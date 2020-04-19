@@ -115,10 +115,6 @@ namespace NetSparkle
         /// </summary>
         public event DownloadEvent StartedDownloading;
         /// <summary>
-        /// Called when the download has finished successfully
-        /// </summary>
-        public event DownloadEvent FinishedDownloading;
-        /// <summary>
         /// Called when the download has been canceled
         /// </summary>
         public event DownloadEvent DownloadCanceled;
@@ -966,7 +962,6 @@ namespace NetSparkle
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
                     CreateAndShowProgressWindow(item, true);
-                    CallFuncConsideringUIThreads(() => { FinishedDownloading?.Invoke(_downloadTempFileName); });
                     CallFuncConsideringUIThreads(() => { DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
                 }
                 else if (!_hasAttemptedFileRedownload)
@@ -1793,6 +1788,7 @@ namespace NetSparkle
                 {
                     UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
                 }
+                DownloadCanceled?.Invoke(_downloadTempFileName);
                 return;
             }
             if (e.Error != null)
@@ -1808,6 +1804,7 @@ namespace NetSparkle
                 {
                     UIFactory?.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
                 }
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
             }
             // test the item for DSA signature
@@ -1851,11 +1848,10 @@ namespace NetSparkle
                 {
                     UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
                 }
-                // Let the progress window handle closing itself.
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
             }
             else
             {
-                FinishedDownloading?.Invoke(_downloadTempFileName);
                 LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
                 DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
