@@ -19,7 +19,7 @@ namespace NetSparkleUpdater
         private string _separatorTemplate;
         private string _initialHTML;
 
-        private Sparkle _sparkle;
+        private SparkleUpdater _sparkle;
 
         /// <summary>
         /// List of supported extensions for markdown files (.md, .mkdn, .mkd, .markdown)
@@ -32,7 +32,7 @@ namespace NetSparkleUpdater
         /// <param name="separatorTemplate">Template to use for separating each item in the HTML</param>
         /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
         /// <param name="sparkle">Sparkle updater being used</param>
-        public ReleaseNotesGrabber(string separatorTemplate, string htmlHeadAddition, Sparkle sparkle)
+        public ReleaseNotesGrabber(string separatorTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
         {
             _separatorTemplate =
                 !string.IsNullOrEmpty(separatorTemplate) ?
@@ -80,7 +80,7 @@ namespace NetSparkleUpdater
             return sb.ToString();
         }
 
-        private async Task<string> GetHTMLReleaseNotes(AppCastItem item, Sparkle sparkle, CancellationToken cancellationToken)
+        private async Task<string> GetHTMLReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
@@ -151,7 +151,7 @@ namespace NetSparkleUpdater
             return notes;
         }
 
-        private async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, Sparkle sparkle)
+        private async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
         {
             try
             {

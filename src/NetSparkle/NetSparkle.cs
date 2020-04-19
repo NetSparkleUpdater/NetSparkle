@@ -23,7 +23,7 @@ namespace NetSparkleUpdater
     /// <summary>
     /// Class to communicate with a sparkle-based appcast
     /// </summary>
-    public partial class Sparkle : IDisposable
+    public partial class SparkleUpdater : IDisposable
     {
         #region Protected/Private Members
 
@@ -54,13 +54,13 @@ namespace NetSparkleUpdater
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sparkle"/> class with the given appcast URL
+        /// Initializes a new instance of the <see cref="SparkleUpdater"/> class with the given appcast URL
         /// and an <see cref="Icon"/> for the update UI.
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
         /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
         /// If you're invoking this from a form, this would be <c>this.Icon</c>.</param>
-        public Sparkle(string appcastUrl)
+        public SparkleUpdater(string appcastUrl)
             : this(appcastUrl, SecurityMode.Strict, null)
         { }
 
@@ -69,7 +69,7 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        public Sparkle(string appcastUrl, SecurityMode securityMode)
+        public SparkleUpdater(string appcastUrl, SecurityMode securityMode)
             : this(appcastUrl, securityMode, null)
         { }
 
@@ -80,7 +80,7 @@ namespace NetSparkleUpdater
         /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
-        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey)
+        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey)
             : this(appcastUrl, securityMode, dsaPublicKey, null)
         { }
 
@@ -92,7 +92,7 @@ namespace NetSparkleUpdater
         /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
+        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
             : this(appcastUrl, securityMode, dsaPublicKey, referenceAssembly, null)
         { }
 
@@ -105,7 +105,7 @@ namespace NetSparkleUpdater
         /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
-        public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
+        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
@@ -455,7 +455,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Finalizer
         /// </summary>
-        ~Sparkle()
+        ~SparkleUpdater()
         {
             Dispose(false);
         }

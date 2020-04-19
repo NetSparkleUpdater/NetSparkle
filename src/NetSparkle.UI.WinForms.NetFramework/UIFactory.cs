@@ -29,10 +29,10 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Create sparkle form implementation
         /// </summary>
-        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to earliest</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        public virtual IUpdateAvailable CreateUpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             return new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded);
         }

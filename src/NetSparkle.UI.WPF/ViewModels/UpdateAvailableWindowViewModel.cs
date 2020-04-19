@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
 {
     public class UpdateAvailableWindowViewModel : ChangeNotifier
     {
-        private Sparkle _sparkle;
+        private SparkleUpdater _sparkle;
         private List<AppCastItem> _updates;
         private ReleaseNotesGrabber _releaseNotesGrabber;
 
@@ -119,7 +119,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             Cancel();
         }
 
-        public void Initialize(Sparkle sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
+        public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;

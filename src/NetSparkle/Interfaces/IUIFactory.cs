@@ -11,10 +11,10 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Create sparkle form implementation. This is the form that tells the user that an update is available, shows changelogs if necessary, etc.
         /// </summary>
-        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        IUpdateAvailable CreateUpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
+        IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
         /// Create download progress window

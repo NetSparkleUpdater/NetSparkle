@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Sparkle _sparkle;
+        private SparkleUpdater _sparkle;
 
         public MainWindow()
         {
@@ -36,7 +36,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
                 ShowsUIOnMainThread = false

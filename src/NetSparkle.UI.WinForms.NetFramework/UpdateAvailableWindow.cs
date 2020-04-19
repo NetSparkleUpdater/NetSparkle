@@ -15,7 +15,7 @@ namespace NetSparkleUpdater.UI.WinForms
     /// </summary>
     public partial class UpdateAvailableWindow : Form, IUpdateAvailable
     {
-        private readonly Sparkle _sparkle;
+        private readonly SparkleUpdater _sparkle;
         private readonly List<AppCastItem> _updates;
         private System.Windows.Forms.Timer _ensureDialogShownTimer;
 
@@ -38,13 +38,13 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Form constructor for showing release notes.
         /// </summary>
-        /// <param name="sparkle">The <see cref="Sparkle"/> instance to use</param>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
         /// <param name="items">List of updates to show. Should contain at least one item.</param>
         /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
-        public UpdateAvailableWindow(Sparkle sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
+        public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
             string separatorTemplate = "", string headAddition = "")
         {
             _sparkle = sparkle;

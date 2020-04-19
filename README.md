@@ -54,7 +54,7 @@ I highly recommend checking out [Squirrel.Windows](https://github.com/Squirrel/S
 ## Basic Usage
 
 ```csharp
-_sparkle = new Sparkle(
+_sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml",
     this.Icon,
     SecurityMode.Strict,

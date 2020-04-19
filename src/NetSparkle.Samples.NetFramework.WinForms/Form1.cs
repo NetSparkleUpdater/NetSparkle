@@ -10,7 +10,7 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
 {
     public partial class Form1 : Form
     {
-        private Sparkle _sparkleUpdateDetector;
+        private SparkleUpdater _sparkleUpdateDetector;
 
         public Form1()
         {
@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkleUpdateDetector = new Sparkle(appcastUrl)
+            _sparkleUpdateDetector = new SparkleUpdater(appcastUrl)
             {
                 UIFactory = new NetSparkleUpdater.UI.WinForms.UIFactory(icon),
                 //ShowsUIOnMainThread = true,

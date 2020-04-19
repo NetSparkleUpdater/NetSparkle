@@ -22,7 +22,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Sparkle _sparkle;
+        private SparkleUpdater _sparkle;
         private UpdateInfo _updateInfo;
         private string _downloadPath = null;
 
@@ -40,7 +40,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             DownloadUpdateButton.IsEnabled = false;
             InstallUpdateButton.IsEnabled = false;
 
-            _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
                 UIFactory = null,
             };

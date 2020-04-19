@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NetSparkleUpdater
 {
-    public partial class Sparkle : IDisposable
+    public partial class SparkleUpdater : IDisposable
     {
         /// <summary>
         /// This event will be raised when a check loop will be started

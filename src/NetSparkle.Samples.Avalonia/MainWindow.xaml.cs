@@ -10,7 +10,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
 {
     public class MainWindow : Window
     {
-        private Sparkle _sparkle;
+        private SparkleUpdater _sparkle;
 
         public MainWindow()
         {
@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
 #endif
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
-            _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
