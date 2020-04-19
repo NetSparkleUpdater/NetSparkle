@@ -21,7 +21,8 @@ using System.Runtime.InteropServices;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// Class to communicate with a sparkle-based appcast
+    /// Class to communicate with a sparkle-based appcast to download
+    /// and install updates to an application
     /// </summary>
     public partial class SparkleUpdater : IDisposable
     {
@@ -904,6 +905,104 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
+        /// Called when the installer is downloaded
+        /// </summary>
+        /// <param name="sender">not used.</param>
+        /// <param name="e">used to determine if the download was successful.</param>
+        private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
+        {
+            bool shouldShowUIItems = !IsDownloadingSilently();
+
+            if (e.Cancelled)
+            {
+                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                _hasAttemptedFileRedownload = false;
+                if (File.Exists(_downloadTempFileName))
+                {
+                    File.Delete(_downloadTempFileName);
+                }
+                LogWriter.PrintMessage("Download was canceled");
+                string errorMessage = "Download canceled";
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                {
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
+                }
+                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                return;
+            }
+            if (e.Error != null)
+            {
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
+                // Clean temp files on error too
+                if (File.Exists(_downloadTempFileName))
+                {
+                    File.Delete(_downloadTempFileName);
+                }
+                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                {
+                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppcastUrl);
+                }
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                return;
+            }
+            // test the item for DSA signature
+            var validationRes = ValidationResult.Invalid;
+            if (!e.Cancelled && e.Error == null)
+            {
+                LogWriter.PrintMessage("Fully downloaded file exists at {0}", _downloadTempFileName);
+
+                LogWriter.PrintMessage("Performing DSA check");
+
+                // get the assembly
+                if (File.Exists(_downloadTempFileName))
+                {
+                    // check if the file was downloaded successfully
+                    string absolutePath = Path.GetFullPath(_downloadTempFileName);
+                    if (!File.Exists(absolutePath))
+                    {
+                        var message = "File not found even though it was reported as downloading successfully!";
+                        LogWriter.PrintMessage(message);
+                        DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
+                    }
+
+                    // check the DSA signature
+                    validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
+                }
+            }
+
+            bool isSignatureInvalid = validationRes == ValidationResult.Invalid; // if Unchecked, we accept download as valid
+            if (shouldShowUIItems)
+            {
+                ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);
+            }
+            // signature of file isn't valid so exit with error
+            if (isSignatureInvalid)
+            {
+                LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
+                string errorMessage = "Downloaded file has invalid signature!";
+                DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                {
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
+                }
+                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+            }
+            else
+            {
+                LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
+                DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
+                if (shouldInstallAndRelaunch)
+                {
+                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
+                }
+            }
+            _itemBeingDownloaded = null;
+        }
+
+        /// <summary>
         /// Run the provided app cast item update regardless of what else is going on.
         /// Note that a more up to date download may be taking place, so if you don't
         /// want to run a potentially out-of-date installer, don't use this. This should
@@ -1271,6 +1370,8 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
+        /// Basically, this checks for updates without showing a UI. However, if a UIFactory is set and an update
+        /// is found, an update UI will be shown!
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
@@ -1316,7 +1417,7 @@ namespace NetSparkleUpdater
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.ShowStandardUserInterface:
-                            LogWriter.PrintMessage("Showing Standard Update UI");
+                            LogWriter.PrintMessage("Showing standard update UI");
                             OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                             break;
                     }
@@ -1332,26 +1433,6 @@ namespace NetSparkleUpdater
             }
             UpdateCheckFinished?.Invoke(this, _latestDownloadedUpdateInfo.Status);
             return _latestDownloadedUpdateInfo;
-        }
-
-        /// <summary>
-        /// Updates from appcast
-        /// </summary>
-        /// <param name="updates">updates to be installed</param>
-        private async void Update(List<AppCastItem> updates)
-        {
-            if (updates != null)
-            {
-                if (IsDownloadingSilently())
-                {
-                    await InitAndBeginDownload(updates[0]); // install only latest
-                }
-                else
-                {
-                    // show the update ui
-                    ShowUpdateNeededUI(updates);
-                }
-            }
         }
 
         /// <summary>
@@ -1529,7 +1610,7 @@ namespace NetSparkleUpdater
                                         }
                                     default:
                                         {
-                                            LogWriter.PrintMessage("Showing Standard Update UI");
+                                            LogWriter.PrintMessage("Preparing to show standard update UI");
                                             OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
                                             break;
                                         }
@@ -1613,14 +1694,18 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// This method will be notified
+        /// This method will be notified by the SparkleUpdater loop when
+        /// some update info has been downloaded. If the info has been 
+        /// downloaded fully (e.ProgressPercentage == 1), the UI
+        /// for downloading updates will be shown (if not downloading silently)
+        /// or the download will be performed (if downloading silently).
         /// </summary>
         private void OnWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             switch (e.ProgressPercentage)
             {
                 case 1:
-                    Update(e.UserState as List<AppCastItem>);
+                    UpdatesHaveBeenDownloaded(e.UserState as List<AppCastItem>);
                     break;
                 case 0:
                     LogWriter.PrintMessage(e.UserState.ToString());
@@ -1629,101 +1714,23 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Called when the installer is downloaded
+        /// Updates from appcast have been downloaded from the server
         /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">used to determine if the download was successful.</param>
-        private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
+        /// <param name="updates">updates to be installed</param>
+        private async void UpdatesHaveBeenDownloaded(List<AppCastItem> updates)
         {
-            bool shouldShowUIItems = !IsDownloadingSilently();
-
-            if (e.Cancelled)
+            if (updates != null)
             {
-                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                _hasAttemptedFileRedownload = false;
-                if (File.Exists(_downloadTempFileName))
+                if (IsDownloadingSilently())
                 {
-                    File.Delete(_downloadTempFileName);
+                    await InitAndBeginDownload(updates[0]); // install only latest
                 }
-                LogWriter.PrintMessage("Download was canceled");
-                string errorMessage = "Download canceled";
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                else
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
-                }
-                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                return;
-            }
-            if (e.Error != null)
-            {
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
-                // Clean temp files on error too
-                if (File.Exists(_downloadTempFileName))
-                {
-                    File.Delete(_downloadTempFileName);
-                }
-                LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
-                {
-                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppcastUrl);
-                }
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
-                return;
-            }
-            // test the item for DSA signature
-            var validationRes = ValidationResult.Invalid;
-            if (!e.Cancelled && e.Error == null)
-            {
-                LogWriter.PrintMessage("Fully downloaded file exists at {0}", _downloadTempFileName);
-
-                LogWriter.PrintMessage("Performing DSA check");
-
-                // get the assembly
-                if (File.Exists(_downloadTempFileName))
-                {
-                    // check if the file was downloaded successfully
-                    string absolutePath = Path.GetFullPath(_downloadTempFileName);
-                    if (!File.Exists(absolutePath))
-                    {
-                        var message = "File not found even though it was reported as downloading successfully!";
-                        LogWriter.PrintMessage(message);
-                        DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
-                    }
-
-                    // check the DSA signature
-                    validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
+                    // show the update UI
+                    ShowUpdateNeededUI(updates);
                 }
             }
-
-            bool isSignatureInvalid = validationRes == ValidationResult.Invalid; // if Unchecked, we accept download as valid
-            if (shouldShowUIItems)
-            {
-                ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);
-            }
-            // signature of file isn't valid so exit with error
-            if (isSignatureInvalid)
-            {
-                LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
-                string errorMessage = "Downloaded file has invalid signature!";
-                DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
-                {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
-                }
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
-            }
-            else
-            {
-                LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
-                DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
-                if (shouldInstallAndRelaunch)
-                {
-                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
-                }
-            }
-            _itemBeingDownloaded = null;
         }
     }
 }
