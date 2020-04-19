@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 namespace NetSparkle
@@ -97,6 +98,30 @@ namespace NetSparkle
                 return numBytesDecimal.ToString("F2") + " KB";
             }
             return numBytes.ToString();
+        }
+
+
+
+        // From WalletWasabi:
+        // https://github.com/zkSNACKs/WalletWasabi/blob/8d42bce976605cca3326ea6c998b2294494900e6/WalletWasabi/Helpers/EnvironmentHelpers.cs
+        public static string GetFullBaseDirectory()
+        {
+#if NETCORE
+            var fullBaseDirectory = Path.GetFullPath(AppContext.BaseDirectory);
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (!fullBaseDirectory.StartsWith("/"))
+                {
+                    fullBaseDirectory = fullBaseDirectory.Insert(0, "/");
+                }
+            }
+
+            return fullBaseDirectory;
+#else
+            // https://stackoverflow.com/a/837501/3938401
+            return System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+#endif
         }
     }
 }

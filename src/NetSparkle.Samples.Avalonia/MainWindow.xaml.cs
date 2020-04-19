@@ -24,7 +24,7 @@ namespace NetSparkle.Samples.Avalonia
             MemoryStream iconStream = new MemoryStream();
             icon.Save(iconStream);
             iconStream.Seek(0, SeekOrigin.Begin); // TODO: this icon does not look right
-            _sparkle = new SparkleAvalonia("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
                 UIFactory = new NetSparkle.UI.Avalonia.UIFactory(new WindowIcon(iconStream)),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972

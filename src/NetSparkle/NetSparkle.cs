@@ -1131,49 +1131,99 @@ namespace NetSparkle
             return UserInteractionMode != UserInteractionMode.NotSilent;
         }
 
-        /// <summary>
-        /// Return installer runner command. May throw InvalidDataException
-        /// </summary>
+        protected bool DoExtensionsMatch(string extension, string otherExtension)
+        {
+            return extension.Equals(otherExtension, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        protected virtual string GetWindowsInstallerCommand(string downloadFilePath)
+        {
+            string installerExt = Path.GetExtension(downloadFilePath);
+            if (DoExtensionsMatch(installerExt, ".exe"))
+            {
+                return "\"" + downloadFilePath + "\"";
+            }
+            if (DoExtensionsMatch(installerExt, ".msi"))
+            {
+                return "msiexec /i \"" + downloadFilePath + "\"";
+            }
+            if (DoExtensionsMatch(installerExt, ".msp"))
+            {
+                return "msiexec /p \"" + downloadFilePath + "\"";
+            }
+            return downloadFilePath;
+        }
+
         protected virtual string GetInstallerCommand(string downloadFilePath)
         {
             // get the file type
+#if NETFRAMEWORK
+            return GetWindowsInstallerCommand(downloadFilePath);
+#else
             string installerExt = Path.GetExtension(downloadFilePath);
-            if (".exe".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                // build the command line 
-                return "\"" + downloadFilePath + "\"";
+                return GetWindowsInstallerCommand(downloadFilePath);
             }
-            if (".msi".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                // buid the command line
-                return "msiexec /i \"" + downloadFilePath + "\"";
+                if (DoExtensionsMatch(installerExt, ".pkg") ||
+                    DoExtensionsMatch(installerExt, ".dmg"))
+                {
+                    return "open \"" + downloadFilePath + "\"";
+                }
             }
-            if (".msp".Equals(installerExt, StringComparison.CurrentCultureIgnoreCase))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                // build the command line
-                return "msiexec /p \"" + downloadFilePath + "\"";
+                if (DoExtensionsMatch(installerExt, ".deb"))
+                {
+                    return "sudo apt install \"" + downloadFilePath + "\"";
+                }
+                if (DoExtensionsMatch(installerExt, ".rpm"))
+                {
+                    return "sudo rpm -i \"" + downloadFilePath + "\"";
+                }
             }
-
-            throw new InvalidDataException("Unknown installer format");
+            return downloadFilePath;
+#endif
         }
 
-        /// <summary>
-        /// Runs the downloaded installer
-        /// </summary>
+        private bool IsZipDownload(string downloadFilePath)
+        {
+#if NETCORE
+            string installerExt = Path.GetExtension(downloadFilePath);
+            bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            if ((isMacOS && DoExtensionsMatch(installerExt, ".zip")) ||
+                (isLinux && DoExtensionsMatch(installerExt, ".tar.gz")))
+            {
+                return true;
+            }
+#endif
+            return false;
+        }
+
         protected virtual async Task RunDownloadedInstaller(string downloadFilePath)
         {
             LogWriter.PrintMessage("Running downloaded installer");
             // get the commandline 
             string cmdLine = Environment.CommandLine;
-            string workingDir = Environment.CurrentDirectory;
+            string workingDir = Utilities.GetFullBaseDirectory();
 
             // generate the batch file path
-            string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".cmd");
+#if NETFRAMEWORK
+            bool isWindows = true;
+            bool isMacOS = false;
+#else
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#endif
+            var extension = isWindows ? ".cmd" : ".sh";
+            string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + extension);
             string installerCmd;
             try
             {
                 installerCmd = GetInstallerCommand(downloadFilePath);
-
                 if (!string.IsNullOrEmpty(CustomInstallerArguments))
                 {
                     installerCmd += " " + CustomInstallerArguments;
@@ -1188,41 +1238,92 @@ namespace NetSparkle
             // generate the batch file                
             LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
+            string processID = Process.GetCurrentProcess().Id.ToString();
+
             using (StreamWriter write = new StreamWriter(batchFilePath))
             {
-                write.WriteLine("@echo off");
-                // We should wait until the host process has died before starting the installer.
-                // This way, any DLLs or other items can be replaced properly.
-                // Code from: http://stackoverflow.com/a/22559462/3938401
-                string processID = Process.GetCurrentProcess().Id.ToString();
-                string relaunchAfterUpdate = "";
-                if (RelaunchAfterUpdate)
+                if (isWindows)
                 {
-                    relaunchAfterUpdate = $@"
+                    write.WriteLine("@echo off");
+                    // We should wait until the host process has died before starting the installer.
+                    // This way, any DLLs or other items can be replaced properly.
+                    // Code from: http://stackoverflow.com/a/22559462/3938401
+                    string relaunchAfterUpdate = "";
+                    if (RelaunchAfterUpdate)
+                    {
+                        relaunchAfterUpdate = $@"
                         cd {workingDir}
                         {cmdLine}";
-                }
+                    }
 
-                string output = $@"
-                    set /A counter=0                       
-                    setlocal ENABLEDELAYEDEXPANSION
-                    :loop
-                    set /A counter=!counter!+1
-                    if !counter! == 90 (
-                        goto :afterinstall
-                    )
-                    tasklist | findstr ""\<{processID}\>"" > nul
-                    if not errorlevel 1 (
-                        timeout /t 1 > nul
-                        goto :loop
-                    )
-                    :install
-                    {installerCmd}
-                    {relaunchAfterUpdate}
-                    :afterinstall
-                    endlocal";
-                write.Write(output);
-                write.Close();
+                    string output = $@"
+                        set /A counter=0                       
+                        setlocal ENABLEDELAYEDEXPANSION
+                        :loop
+                        set /A counter=!counter!+1
+                        if !counter! == 90 (
+                            goto :afterinstall
+                        )
+                        tasklist | findstr ""\<{processID}\>"" > nul
+                        if not errorlevel 1 (
+                            timeout /t 1 > nul
+                            goto :loop
+                        )
+                        :install
+                        {installerCmd}
+                        {relaunchAfterUpdate}
+                        :afterinstall
+                        endlocal";
+                    write.Write(output);
+                    write.Close();
+                }
+                else
+                {
+                    // We should wait until the host process has died before starting the installer.
+                    var waitForFinish = $@"
+                        COUNTER=0;
+                        while ps -p {processID} > /dev/null;
+                            do sleep 1;
+                            COUNTER=$((++COUNTER));
+                            if [ $COUNTER -eq 90 ] 
+                            then
+                                exit -1;
+                            fi;
+                        done;
+                    ";
+                    string relaunchAfterUpdate = "";
+                    if (RelaunchAfterUpdate)
+                    {
+                        relaunchAfterUpdate = $@"{Process.GetCurrentProcess().MainModule.FileName}";
+                    }
+                    if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
+                    {
+                        // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
+                        // use tar to extract
+                        var tarCommand = isMacOS ? $"tar -x -f {downloadFilePath} -C \"{workingDir}\"" 
+                            : $"tar -xf {downloadFilePath} -C \"{workingDir}\" --overwrite ";
+                        var output = $@"
+                            {waitForFinish}
+                            {tarCommand}
+                            {relaunchAfterUpdate}";
+                        write.Write(output);
+                    }
+                    else
+                    {
+                        string installerExt = Path.GetExtension(downloadFilePath);
+                        if (DoExtensionsMatch(installerExt, ".pkg") ||
+                            DoExtensionsMatch(installerExt, ".dmg"))
+                        {
+                            relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
+                        }
+                        var output = $@"
+                            {waitForFinish}
+                            {installerCmd}
+                            {relaunchAfterUpdate}";
+                        write.Write(output);
+                    }
+                    write.Close();
+                }
             }
 
             // report
@@ -1232,12 +1333,12 @@ namespace NetSparkle
             _installerProcess = new Process
             {
                 StartInfo =
-                        {
-                            FileName = batchFilePath,
-                            WindowStyle = ProcessWindowStyle.Hidden,
-                            UseShellExecute = false,
-                            CreateNoWindow = true
-                        }
+                {
+                    FileName = batchFilePath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
             };
             // start the installer process. the batch file will wait for the host app to close before starting.
             _installerProcess.Start();
