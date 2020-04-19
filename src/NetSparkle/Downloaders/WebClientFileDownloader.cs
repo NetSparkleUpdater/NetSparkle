@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NetSparkle.Downloaders
 {
@@ -53,6 +56,30 @@ namespace NetSparkle.Downloaders
         public void CancelDownload()
         {
             _webClient.CancelAsync();
+        }
+
+        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        {
+            var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+            try
+            {
+                using (var response =
+                    await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
+                        string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
+
+                        return Path.GetFileName(destFilename);
+                    }
+                    return null;
+                }
+            }
+            catch
+            {
+            }
+            return null;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NetSparkle.Interfaces
 {
@@ -40,5 +41,17 @@ namespace NetSparkle.Interfaces
         /// (cancel the download if needed, etc.)
         /// </summary>
         void Dispose();
+
+        /// <summary>
+        /// Retrieve the download file name of the app cast item from the server.
+        /// This is useful if the server has any sort of redirects that take place
+        /// when starting the download process. The client will use this file name
+        /// when saving the file on disk.
+        /// NetSparkle.CheckServerFileName = false can be set to avoid this call.
+        /// </summary>
+        /// <param name="item">The AppCastItem that will be downloaded</param>
+        /// <returns>The file name of the file to download from the server 
+        /// (including file extension). Null if not found/had error/not applicable.</returns>
+        Task<string> RetrieveDestinationFileNameAsync(AppCastItem item);
     }
 }

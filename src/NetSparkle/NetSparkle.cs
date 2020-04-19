@@ -849,33 +849,6 @@ namespace NetSparkle
             thread.Start();
         }
 
-        private async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
-        {
-            var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
-            LogWriter.PrintMessage("Getting file name from server for app cast item. Download link is {0}", item.DownloadLink);
-            try
-            {
-                using (var response =
-                    await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
-                {
-                    LogWriter.PrintMessage("Got response. Successful? {0}", response.IsSuccessStatusCode);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
-                        string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
-
-                        return Path.GetFileName(destFilename);
-                    }
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                LogWriter.PrintMessage("Got an exception while getting file name: {0}", e.Message);
-            }
-            return null;
-        }
-
         /// <summary>
         /// Get the download path for a given app cast item.
         /// If any directories need to be created, this function
@@ -891,11 +864,11 @@ namespace NetSparkle
                 string filename = string.Empty;
 
                 // default to using the server's file name as the download file name
-                if (CheckServerFileName)
+                if (CheckServerFileName && UpdateDownloader != null)
                 {
                     try
                     {
-                        filename = await RetrieveDestinationFileNameAsync(item);
+                        filename = await UpdateDownloader.RetrieveDestinationFileNameAsync(item);
                     }
                     catch (Exception)
                     {
@@ -947,6 +920,8 @@ namespace NetSparkle
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
+            CleanUpUpdateDownloader();
+            CreateUpdateDownloaderIfNeeded();
             _downloadTempFileName = await DownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // DSA signature checks out, don't redownload the file!
@@ -1000,10 +975,6 @@ namespace NetSparkle
             }
             if (needsToDownload)
             {
-
-                CleanUpUpdateDownloader();
-                CreateUpdateDownloaderIfNeeded();
-
                 CreateAndShowProgressWindow(item, false);
                 if (ProgressWindow != null)
                 {
