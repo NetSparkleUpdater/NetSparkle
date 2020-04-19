@@ -24,7 +24,7 @@ namespace NetSparkle
         /// <summary>
         /// List of supported extensions for markdown files (.md, .mkdn, .mkd, .markdown)
         /// </summary>
-        public static readonly List<string> MarkDownExtensions = new List<string> { ".md", ".mkdn", ".mkd", ".markdown" };
+        public static readonly List<string> MarkdownExtensions = new List<string> { ".md", ".mkdn", ".mkd", ".markdown" };
 
         /// <summary>
         /// Base constructor for ReleaseNotesGrabber
@@ -132,7 +132,7 @@ namespace NetSparkle
 
             // process release notes
             var extension = Path.GetExtension(item.ReleaseNotesLink);
-            if (extension != null && MarkDownExtensions.Contains(extension.ToLower()))
+            if (extension != null && MarkdownExtensions.Contains(extension.ToLower()))
             {
                 try
                 {
