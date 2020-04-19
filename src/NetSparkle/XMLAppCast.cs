@@ -84,7 +84,7 @@ namespace NetSparkle
             {
                 var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
                 var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
-                return ReadStream(appcast, signature);
+                return VerifyAppcastAndParse(appcast, signature);
             }
             catch (Exception e)
             {
@@ -93,7 +93,7 @@ namespace NetSparkle
             }
         }
 
-        private bool ReadStream(string appcast, string signature)
+        private bool VerifyAppcastAndParse(string appcast, string signature)
         {
             if (appcast == null)
             {
