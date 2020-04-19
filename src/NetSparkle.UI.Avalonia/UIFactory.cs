@@ -114,6 +114,11 @@ namespace NetSparkle.UI.Avalonia
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
+        public virtual bool CanShowToastMessages()
+        {
+            return false;
+        }
+
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
@@ -121,26 +126,6 @@ namespace NetSparkle.UI.Avalonia
         /// <param name="clickHandler">handler for click</param>
         public virtual void ShowToast(List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
         {
-            /*Thread thread = new Thread(() =>
-            {
-                var toast = new ToastNotification()
-                {
-                    ClickAction = clickHandler,
-                    Updates = updates,
-                    Icon = _applicationIcon
-                };
-                try
-                {
-                    toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
-                    System.Windows.Threading.Dispatcher.Run();
-                }
-                catch (ThreadAbortException)
-                {
-                    toast.Dispatcher.InvokeShutdown();
-                }
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();*/
         }
 
         /// <summary>

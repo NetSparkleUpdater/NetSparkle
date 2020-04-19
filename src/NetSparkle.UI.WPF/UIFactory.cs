@@ -111,6 +111,11 @@ namespace NetSparkle.UI.WPF
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
+        public virtual bool CanShowToastMessages()
+        {
+            return true;
+        }
+
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>

@@ -53,6 +53,12 @@ namespace NetSparkle.Interfaces
         void ShowCannotDownloadAppcast(string appcastUrl);
 
         /// <summary>
+        /// See if this UIFactory can show toast messages
+        /// </summary>
+        /// <returns>true if the UIFactory can show for toast messages; false otherwise</returns>
+        bool CanShowToastMessages();
+
+        /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
         /// <param name="updates">Appcast updates</param>
