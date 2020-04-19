@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
+using System.Threading;
 
 namespace NetSparkle.Samples.HandleEventsYourself
 {
@@ -85,8 +86,8 @@ namespace NetSparkle.Samples.HandleEventsYourself
             _sparkle.StartedDownloading -= _sparkle_StartedDownloading;
             _sparkle.StartedDownloading += _sparkle_StartedDownloading;
 
-            _sparkle.FinishedDownloading -= _sparkle_FinishedDownloading;
-            _sparkle.FinishedDownloading += _sparkle_FinishedDownloading;
+            _sparkle.DownloadFileIsReady -= _sparkle_FinishedDownloading;
+            _sparkle.DownloadFileIsReady += _sparkle_FinishedDownloading;
 
             _sparkle.DownloadError -= _sparkle_DownloadError;
             _sparkle.DownloadError += _sparkle_DownloadError;
@@ -114,7 +115,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
             InstallUpdateButton.IsEnabled = false;
         }
 
-        private void _sparkle_FinishedDownloading(string path)
+        private void _sparkle_FinishedDownloading(AppCastItem item, string path)
         {
             DownloadInfo.Text = "Done downloading!";
             InstallUpdateButton.IsEnabled = true;
@@ -129,6 +130,39 @@ namespace NetSparkle.Samples.HandleEventsYourself
 
         private void _sparkle_CloseApplication()
         {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private async void UpdateAutomaticallyButton_Click(object sender, RoutedEventArgs e)
+        {
+            _sparkle.UserInteractionMode = Enums.UserInteractionMode.DownloadAndInstall;
+            RunFullUpdateUpdateStatusLabel.Text = "Checking for update...";
+            _sparkle.UpdateDetected += _sparkle_FullUpdate_UpdateDetected;
+            _sparkle.StartedDownloading += _sparkle_FullUpdate_StartedDownloading;
+            _sparkle.DownloadFileIsReady += _sparkle_FullUpdate_DownloadFileIsReady;
+            _sparkle.CloseApplication += _sparkle_FullUpdate_CloseApplication;
+            await _sparkle.CheckForUpdatesQuietly();
+        }
+
+        private void _sparkle_FullUpdate_UpdateDetected(object sender, Events.UpdateDetectedEventArgs e)
+        {
+            RunFullUpdateUpdateStatusLabel.Text = "Found update...";
+        }
+
+        private void _sparkle_FullUpdate_StartedDownloading(string path)
+        {
+            RunFullUpdateUpdateStatusLabel.Text = "Started downloading update...";
+        }
+
+        private void _sparkle_FullUpdate_DownloadFileIsReady(AppCastItem item, string downloadPath)
+        {
+            RunFullUpdateUpdateStatusLabel.Text = "Update is ready...";
+        }
+
+        private async void _sparkle_FullUpdate_CloseApplication()
+        {
+            RunFullUpdateUpdateStatusLabel.Text = "Closing application...";
+            await Task.Delay(2000);
             System.Windows.Application.Current.Shutdown();
         }
     }

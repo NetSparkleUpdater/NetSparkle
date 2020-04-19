@@ -9,19 +9,24 @@
         Height="450"
         Width="600">
     <Grid Margin="10">
-        <ScrollViewer>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Column="0">
             <StackPanel Orientation="Vertical"
                         Width="Auto"
                         HorizontalAlignment="Left">
-                <Label Content="Look at the code behind to see how each step works!"
-                       FontWeight="Bold" />
+                <TextBlock Text="Look at the code behind to see how each step works!"
+                           TextWrapping="Wrap"
+                           FontWeight="Bold" />
                 <Label Content="Step 0: Initialize Sparkle" />
                 <Label Content="Step 1: Check for updates" />
                 <Button Content="Click me to check for updates"
                         Click="CheckUpdates_Click"
                         Width="200"
                         Margin="50,0,0,0"
-                        HorizontalAlignment="Left"/>
+                        HorizontalAlignment="Left" />
                 <Label Name="UpdateInfo"
                        FontStyle="Italic" />
                 <Label Content="Step 2: Download the update" />
@@ -41,6 +46,19 @@
                         Width="200"
                         Margin="50,0,0,0"
                         HorizontalAlignment="Left" />
+            </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer Grid.Column="1">
+            <StackPanel Orientation="Vertical"
+                        Margin="4">
+                <TextBlock Text="Click below if all steps of the download should be done automatically and the app restarted ASAP"
+                           TextWrapping="Wrap" />
+                <Button Content="Click to start the update process" 
+                        Name="UpdateAutomaticallyButton"
+                        Click="UpdateAutomaticallyButton_Click" />
+                <TextBlock Text=""
+                           Name="RunFullUpdateUpdateStatusLabel"
+                           TextWrapping="Wrap" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
