@@ -1272,7 +1272,7 @@ namespace NetSparkle
                 CheckingForUpdatesWindow.Show();
             }
 
-            UpdateInfo updateData = await CheckForUpdates();
+            UpdateInfo updateData = await CheckForUpdates(); // handles UpdateStatus.UpdateAvailable (in terms of UI)
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1282,12 +1282,6 @@ namespace NetSparkle
                 {
                     switch (updateAvailable)
                     {
-                        case UpdateStatus.UpdateAvailable:
-                            if (UseNotificationToast && (bool)UIFactory?.CanShowToastMessages())
-                            {
-                                UIFactory?.ShowToast(updateData.Updates, OnToastClick); // main update UI is already shown
-                            }
-                            break;
                         case UpdateStatus.UpdateNotAvailable:
                             UIFactory?.ShowVersionIsUpToDate();
                             break;
