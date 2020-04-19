@@ -75,23 +75,6 @@ namespace NetSparkle
             _logWriter = logWriter ?? new LogWriter();
         }
 
-        private string TryReadAppCastSignature()
-        {
-            try
-            {
-                var signaturestream = _dataDownloader.DownloadAndGetAppCastStream(_castUrl + ".dsa");
-                var signature = string.Empty;
-                using (StreamReader reader = new StreamReader(signaturestream, Encoding.ASCII))
-                {
-                    return reader.ReadToEnd().Trim();
-                }
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
         /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
@@ -99,41 +82,36 @@ namespace NetSparkle
         {
             try
             {
-                var inputstream = _dataDownloader.DownloadAndGetAppCastStream(_castUrl);
-                var signature = TryReadAppCastSignature();
-                return ReadStream(inputstream, signature);
+                var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
+                var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                return ReadStream(appcast, signature);
             }
             catch (Exception e)
             {
-                _logWriter.PrintMessage("error reading app cast {0}: {1} ", _castUrl, e.Message);
+                _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
                 return false;
             }
         }
 
-        private bool ReadStream(Stream inputstream, string signature)
+        private bool ReadStream(string appcast, string signature)
         {
-            if (inputstream == null)
+            if (appcast == null)
             {
                 _logWriter.PrintMessage("Cannot read response from URL {0}", _castUrl);
                 return false;
             }
 
-            // inputstream needs to be copied. WebResponse can't be positioned back
-            var memorystream = new MemoryStream();
-            inputstream.CopyTo(memorystream);
-            memorystream.Position = 0;
-
             // checking signature
             var signatureNeeded = _dsaChecker.IsSignatureNeeded();
-            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, _dsaChecker.ConvertStreamToByteArray(memorystream)) == ValidationResult.Invalid)
+            var appcastBytes = _dataDownloader.GetAppCastEncoding().GetBytes(appcast);
+            if (signatureNeeded && _dsaChecker.VerifyDSASignature(signature, appcastBytes) == ValidationResult.Invalid)
             {
                 _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;
             }
-            memorystream.Position = 0;
 
             // parse xml
-            Parse(memorystream);
+            Parse(appcast);
             return true;
         }
 
@@ -141,11 +119,11 @@ namespace NetSparkle
         /// Parse an XML memory stream build items list
         /// </summary>
         /// <param name="stream">The xml memory stream to parse</param>
-        private void Parse(MemoryStream stream)
+        private void Parse(string appcast)
         {
             const string itemNode = "item";
 
-            XDocument doc = XDocument.Load(stream);
+            XDocument doc = XDocument.Parse(appcast);
             var rss = doc?.Element("rss");
             var channel = rss?.Element("channel");
 

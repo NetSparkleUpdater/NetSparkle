@@ -18,18 +18,29 @@ namespace NetSparkle.Downloaders
             _extraJSONData = extraJSONData;
         }
 
-        public Stream DownloadAndGetAppCastStream(string url)
+        public string DownloadAndGetAppCastData(string url)
         {
             var response = GetWebContentResponse(url);
             if (response != null)
             {
-                var ms = new MemoryStream();
-                response.GetResponseStream().CopyTo(ms);
-                response.Close();
-                ms.Position = 0;
-                return ms;
+                try
+                {
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
+                    {
+                        return reader.ReadToEnd().Trim();
+                    }
+                }
+                catch
+                {
+
+                }
             }
             return null;
+        }
+
+        public Encoding GetAppCastEncoding()
+        {
+            return Encoding.UTF8;
         }
 
         /// <summary>
