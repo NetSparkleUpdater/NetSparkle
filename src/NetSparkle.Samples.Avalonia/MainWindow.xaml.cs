@@ -20,16 +20,12 @@ namespace NetSparkle.Samples.Avalonia
 #endif
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
-            var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName); 
-            MemoryStream iconStream = new MemoryStream();
-            icon.Save(iconStream);
-            iconStream.Seek(0, SeekOrigin.Begin); // TODO: this icon does not look right
             _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
-                UIFactory = new NetSparkle.UI.Avalonia.UIFactory(new WindowIcon(iconStream)),
+                UIFactory = new NetSparkle.UI.Avalonia.UIFactory(Icon),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
                 ShowsUIOnMainThread = true,
-                //UseNotificationToast = true // Avalonia version doesn't yet support notification toast messages
+                //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;

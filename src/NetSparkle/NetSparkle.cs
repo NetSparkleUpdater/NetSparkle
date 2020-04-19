@@ -111,7 +111,7 @@ namespace NetSparkle
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
             DSAChecker = new DSAChecker(securityMode, dsaPublicKey);
-            // Syncronisation Context
+            // Syncronization Context
             _syncContext = SynchronizationContext.Current;
             if (_syncContext == null)
             {
@@ -151,7 +151,7 @@ namespace NetSparkle
         /// <summary>
         /// The security protocol used by NetSparkle. Setting this property will also set this 
         /// for the current AppDomain of the caller. Needs to be set to 
-        /// SecurityProtocolType.Tls12 for some cases.
+        /// SecurityProtocolType.Tls12 for some cases (such as when downloading from GitHub).
         /// </summary>
         public SecurityProtocolType SecurityProtocolType
         {
@@ -628,7 +628,6 @@ namespace NetSparkle
 
         private void ShowUpdateAvailableWindow(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            // TODO: In the future, instead of remaking the window, just send the new data to the old window
             if (UpdateAvailableWindow != null)
             {
                 // close old window
@@ -1272,8 +1271,7 @@ namespace NetSparkle
                 CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
                 CheckingForUpdatesWindow.Show();
             }
-            // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
-            // actually cancel the request using a BackgroundWorker or something
+
             UpdateInfo updateData = await CheckForUpdates();
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
@@ -1285,20 +1283,20 @@ namespace NetSparkle
                     switch (updateAvailable)
                     {
                         case UpdateStatus.UpdateAvailable:
-                            if (UseNotificationToast)
-                                UIFactory?.ShowToast(updateData.Updates, OnToastClick);
+                            if (UseNotificationToast && (bool)UIFactory?.CanShowToastMessages())
+                            {
+                                UIFactory?.ShowToast(updateData.Updates, OnToastClick); // main update UI is already shown
+                            }
                             break;
                         case UpdateStatus.UpdateNotAvailable:
                             UIFactory?.ShowVersionIsUpToDate();
                             break;
                         case UpdateStatus.UserSkipped:
-                            UIFactory?.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
+                            UIFactory?.ShowVersionIsSkippedByUserRequest(); // they can get skipped version from Configuration
                             break;
                         case UpdateStatus.CouldNotDetermine:
                             UIFactory?.ShowCannotDownloadAppcast(AppcastUrl);
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
                     }
                 };
                 CallFuncConsideringUIThreads(() => UIAction(null));
@@ -1327,7 +1325,6 @@ namespace NetSparkle
         {
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting
-            // TODO: how could we improve this?
             bool isUserManuallyCheckingForUpdates = CheckingForUpdatesWindow != null;
             if (isUserManuallyCheckingForUpdates)
             {

@@ -6,6 +6,7 @@
         x:Class="NetSparkle.Samples.Avalonia.MainWindow"
         Title="NetSparkle.Samples.Avalonia"
         Width="400"
+        Icon="avares://NetSparkle.Samples.Avalonia/Assets/software-update-available.png"
         Height="200">
   <StackPanel Spacing="4">
     <TextBlock Text="Welcome to NetSparkle Avalonia!"/>
