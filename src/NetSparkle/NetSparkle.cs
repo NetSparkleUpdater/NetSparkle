@@ -402,18 +402,17 @@ namespace NetSparkleUpdater
                 {
                     await Task.Run(ClearOldInstallers);
                 }
-                catch
+                catch (Exception e)
                 {
-                    LogWriter.PrintMessage("ClearOldInstallers threw an exception");
+                    LogWriter.PrintMessage("ClearOldInstallers threw an exception: {0}", e.Message);
                 }
             }
             // first set the event handle
             _loopingHandle.Set();
 
-            // Start the helper thread as a background worker to 
-            // get well ui interaction                        
+            // Start the helper thread as a background worker                     
 
-            // store infos
+            // store info
             _doInitialCheck = doInitialCheck;
             _forceInitialCheck = forceInitialCheck;
             _checkFrequency = checkFrequency;
@@ -730,8 +729,6 @@ namespace NetSparkleUpdater
         /// <param name="item">the appcast item to download</param>
         public async Task InitAndBeginDownload(AppCastItem item)
         {
-            // TODO: is this a good idea? What if it's a user initiated request,
-            // and they want to watch progress instead of it being a silent download?
             if (UpdateDownloader != null && UpdateDownloader.IsDownloading)
             {
                 return; // file is already downloading, don't do anything!
@@ -914,7 +911,7 @@ namespace NetSparkleUpdater
         /// installed AND the file is already downloaded.
         /// This function will verify that the file exists and that the DSA 
         /// signature is valid before running. It will also utilize the
-        /// AboutToExitForInstallerRun event to ensure that the application can close.
+        /// PreparingToExit event to ensure that the application can close.
         /// </summary>
         /// <param name="item">AppCastItem to install</param>
         /// <param name="installPath">Install path to the executable. If not provided, will ask the server for the download path.</param>
@@ -1232,7 +1229,7 @@ namespace NetSparkleUpdater
 
 
         /// <summary>
-        /// Check for updates, using UI interaction appropriate for if the user just said "check for updates".
+        /// Check for updates, using UI interaction appropriate for if the user initiated the update request
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
@@ -1289,7 +1286,7 @@ namespace NetSparkleUpdater
         private async Task<UpdateInfo> CheckForUpdates()
         {
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
-            // 'Checking for Updates...' window is very disorienting
+            // 'Checking for Updates...' window is very disorienting, so we add an artificial delay
             bool isUserManuallyCheckingForUpdates = CheckingForUpdatesWindow != null;
             if (isUserManuallyCheckingForUpdates)
             {
@@ -1411,8 +1408,7 @@ namespace NetSparkleUpdater
             if (result == UpdateAvailableResult.SkipUpdate)
             {
                 // skip this version
-                Configuration config = Configuration;
-                config.SetVersionToSkip(currentItem.Version);
+                Configuration.SetVersionToSkip(currentItem.Version);
                 CallFuncConsideringUIThreads(() => { UserSkippedVersion?.Invoke(currentItem, _downloadTempFileName); });
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
