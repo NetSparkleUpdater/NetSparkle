@@ -34,7 +34,6 @@ namespace NetSparkle
         private CancellationToken _cancelToken;
         private readonly CancellationTokenSource _cancelTokenSource;
         private readonly SynchronizationContext _syncContext;
-        private string _appCastUrl;
         private readonly string _appReferenceAssembly;
 
         private bool _doInitialCheck;
@@ -43,8 +42,6 @@ namespace NetSparkle
         private readonly EventWaitHandle _exitHandle;
         private readonly EventWaitHandle _loopingHandle;
         private TimeSpan _checkFrequency;
-        private bool _useNotificationToast;
-
         private string _tmpDownloadFilePath;
         private string _downloadTempFileName;
         private AppCastItem _itemBeingDownloaded;
@@ -52,12 +49,7 @@ namespace NetSparkle
         private UpdateInfo _latestDownloadedUpdateInfo;
         private IUIFactory _uiFactory;
         private bool _disposed;
-        private bool _checkServerFileName = true;
-
         private Configuration _configuration;
-        private IUpdateDownloader _updateDownloader;
-        private IAppCastDataDownloader _appCastDataDownloader;
-        private IAppCastHandler _appCastHandler;
 
         #endregion
 
@@ -115,7 +107,6 @@ namespace NetSparkle
         /// <param name="factory">a UI factory to use in place of the default UI</param>
         public Sparkle(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
         {
-            ExtraJsonData = "";
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
@@ -126,9 +117,6 @@ namespace NetSparkle
             {
                 _syncContext = new SynchronizationContext();
             }
-            TrustEverySSLConnection = false;
-            // configure ssl cert link
-            ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             // init UI
             UIFactory?.Init();
             _appReferenceAssembly = null;
@@ -152,8 +140,8 @@ namespace NetSparkle
             _loopingHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
             // set the url
-            _appCastUrl = appcastUrl;
-            LogWriter.PrintMessage("Using the following url: {0}", _appCastUrl);
+            AppcastUrl = appcastUrl;
+            LogWriter.PrintMessage("Using the following url: {0}", AppcastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
             HideSkipButton = false;
@@ -238,11 +226,6 @@ namespace NetSparkle
         }
 
         /// <summary>
-        /// If true, don't check the validity of SSL certificates
-        /// </summary>
-        public bool TrustEverySSLConnection { get; set; }
-
-        /// <summary>
         /// Factory for creating UI elements like progress window, etc.
         /// </summary>
         public IUIFactory UIFactory
@@ -305,30 +288,17 @@ namespace NetSparkle
         /// <summary>
         /// Gets or sets the appcast URL
         /// </summary>
-        public string AppcastUrl
-        {
-            get { return _appCastUrl; }
-            set { _appCastUrl = value; }
-        }
+        public string AppcastUrl { get; set; }
 
         /// <summary>
         /// Specifies if you want to use the notification toast
         /// </summary>
-        public bool UseNotificationToast
-        {
-            get { return _useNotificationToast; }
-            set { _useNotificationToast = value; }
-        }
+        public bool UseNotificationToast { get; set; }
 
         /// <summary>
         /// WinForms only. If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
         /// </summary>
         public bool ShowsUIOnMainThread { get; set; }
-
-        /// <summary>
-        /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
-        /// </summary>
-        public string ExtraJsonData { get; set; }
 
         /// <summary>
         /// Object that handles any diagnostic messages for NetSparkle.
@@ -357,11 +327,7 @@ namespace NetSparkle
         /// Whether or not to check with the online server to verify download
         /// file names.
         /// </summary>
-        public bool CheckServerFileName
-        {
-            get { return _checkServerFileName; }
-            set { _checkServerFileName = value; }
-        }
+        public bool CheckServerFileName { get; set; } = true;
 
         /// <summary>
         /// Returns the latest appcast items to the caller. Might be null.
@@ -396,25 +362,13 @@ namespace NetSparkle
             }
         }
 
-        public IUpdateDownloader UpdateDownloader
-        {
-            get { return _updateDownloader; }
-            set { _updateDownloader = value; }
-        }
+        public IUpdateDownloader UpdateDownloader { get; set; }
 
-        public IAppCastDataDownloader AppCastDataDownloader
-        {
-            get { return _appCastDataDownloader; }
-            set { _appCastDataDownloader = value; }
-        }
+        public IAppCastDataDownloader AppCastDataDownloader { get; set; }
 
-        public IAppCastHandler AppCastHandler
-        {
-            get { return _appCastHandler; }
-            set { _appCastHandler = value; }
-        }
+        public IAppCastHandler AppCastHandler { get; set; }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Starts a NetSparkle background loop to check for updates every 24 hours.
@@ -547,7 +501,6 @@ namespace NetSparkle
         /// </summary>
         private void UnregisterEvents()
         {
-            ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
             _cancelTokenSource.Cancel();
 
             CleanUpUpdateDownloader();
@@ -575,7 +528,7 @@ namespace NetSparkle
         /// </summary>
         /// <param name="config">the NetSparkle configuration for the reference assembly</param>
         /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
-        public async Task<UpdateInfo> GetUpdateStatus(Configuration config)
+        protected async Task<UpdateInfo> GetUpdateStatus(Configuration config)
         {
             List<AppCastItem> updates = null;
             // report
@@ -584,14 +537,14 @@ namespace NetSparkle
             // init the appcast
             if (AppCastDataDownloader == null)
             {
-                AppCastDataDownloader = new WebRequestAppCastDataDownloader(TrustEverySSLConnection, ExtraJsonData);
+                AppCastDataDownloader = new WebRequestAppCastDataDownloader();
             }
             IAppCastHandler appcastHandler = AppCastHandler;
             if (appcastHandler == null)
             {
                 appcastHandler = AppCastHandler = new XMLAppCast();
             }
-            appcastHandler.SetupAppCastHandler(AppCastDataDownloader, _appCastUrl, config, DSAChecker, LogWriter);
+            appcastHandler.SetupAppCastHandler(AppCastDataDownloader, AppcastUrl, config, DSAChecker, LogWriter);
             // check if any updates are available
             try
             {
@@ -599,7 +552,7 @@ namespace NetSparkle
                 {
                     if (appcastHandler.DownloadAndParse())
                     {
-                        updates = appcastHandler.GetNeededUpdates();
+                        updates = appcastHandler.GetAvailableUpdates();
                     }
                 });
                 await task;
@@ -648,13 +601,13 @@ namespace NetSparkle
         {
             if (updates != null)
             {
-                if (_useNotificationToast)
+                if (UseNotificationToast && (bool)UIFactory?.CanShowToastMessages())
                 {
                     UIFactory?.ShowToast(updates, OnToastClick);
                 }
                 else
                 {
-                    ShowUpdateNeededUIInner(updates, isUpdateAlreadyDownloaded);
+                    ShowUpdateAvailableWindow(updates, isUpdateAlreadyDownloaded);
                 }
             }
         }
@@ -670,10 +623,10 @@ namespace NetSparkle
 
         private void OnToastClick(List<AppCastItem> updates)
         {
-            ShowUpdateNeededUIInner(updates);
+            ShowUpdateAvailableWindow(updates);
         }
 
-        private void ShowUpdateNeededUIInner(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        private void ShowUpdateAvailableWindow(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             // TODO: In the future, instead of remaking the window, just send the new data to the old window
             if (UpdateAvailableWindow != null)
@@ -1307,31 +1260,9 @@ namespace NetSparkle
             return true;
         }
 
-        /// <summary>
-        /// Determine if the remote X509 certificate is valid
-        /// </summary>
-        /// <param name="sender">the web request</param>
-        /// <param name="certificate">the certificate</param>
-        /// <param name="chain">the chain</param>
-        /// <param name="sslPolicyErrors">how to handle policy errors</param>
-        /// <returns><c>true</c> if the cert is valid</returns>
-        private bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            if (TrustEverySSLConnection)
-            {
-                // verify if we talk about our app cast dll 
-                if (sender is HttpWebRequest req && req.RequestUri.Equals(new Uri(_appCastUrl)))
-                {
-                    return true;
-                }
-            }
-
-            // check our cert                 
-            return sslPolicyErrors == SslPolicyErrors.None && certificate is X509Certificate2 cert2 && cert2.Verify();
-        }
 
         /// <summary>
-        /// Check for updates, using interaction appropriate for if the user just said "check for updates".
+        /// Check for updates, using UI interaction appropriate for if the user just said "check for updates".
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
         {
@@ -1343,7 +1274,7 @@ namespace NetSparkle
             }
             // TODO: in the future, instead of pseudo-canceling the request and only making it appear as though it was canceled, 
             // actually cancel the request using a BackgroundWorker or something
-            UpdateInfo updateData = await CheckForUpdates(false /* toast not appropriate, since they just requested it */);
+            UpdateInfo updateData = await CheckForUpdates();
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1354,7 +1285,7 @@ namespace NetSparkle
                     switch (updateAvailable)
                     {
                         case UpdateStatus.UpdateAvailable:
-                            if (_useNotificationToast)
+                            if (UseNotificationToast)
                                 UIFactory?.ShowToast(updateData.Updates, OnToastClick);
                             break;
                         case UpdateStatus.UpdateNotAvailable:
@@ -1364,7 +1295,7 @@ namespace NetSparkle
                             UIFactory?.ShowVersionIsSkippedByUserRequest(); // TODO: pass skipped version number
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory?.ShowCannotDownloadAppcast(_appCastUrl);
+                            UIFactory?.ShowCannotDownloadAppcast(AppcastUrl);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -1386,14 +1317,13 @@ namespace NetSparkle
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
-            return await CheckForUpdates(true);
+            return await CheckForUpdates();
         }
 
         /// <summary>
         /// Does a one-off check for updates
         /// </summary>
-        /// <param name="useNotificationToast">set false if you want the big dialog to open up, without the user having the chance to ignore the popup toast notification</param>
-        private async Task<UpdateInfo> CheckForUpdates(bool useNotificationToast)
+        private async Task<UpdateInfo> CheckForUpdates()
         {
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting
@@ -1758,7 +1688,7 @@ namespace NetSparkle
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
                 }
                 DownloadCanceled?.Invoke(_downloadTempFileName);
                 return;
@@ -1774,7 +1704,7 @@ namespace NetSparkle
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, _appCastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppcastUrl);
                 }
                 DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
@@ -1818,7 +1748,7 @@ namespace NetSparkle
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, _appCastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
                 }
                 DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
             }

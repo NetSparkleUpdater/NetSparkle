@@ -15,6 +15,6 @@ namespace NetSparkle.Interfaces
         /// </summary>
         /// <returns>true if downloading and parsing succeeded; false otherwise</returns>
         bool DownloadAndParse();
-        List<AppCastItem> GetNeededUpdates();
+        List<AppCastItem> GetAvailableUpdates();
     }
 }

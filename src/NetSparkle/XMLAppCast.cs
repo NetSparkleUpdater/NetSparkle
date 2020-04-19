@@ -144,7 +144,7 @@ namespace NetSparkle
         /// <summary>
         /// Returns sorted list of updates between current and latest. Installed is not included.
         /// </summary>
-        public virtual List<AppCastItem> GetNeededUpdates()
+        public virtual List<AppCastItem> GetAvailableUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = _dsaChecker.IsSignatureNeeded();

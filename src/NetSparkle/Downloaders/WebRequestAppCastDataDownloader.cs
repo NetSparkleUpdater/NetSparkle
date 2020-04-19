@@ -3,23 +3,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace NetSparkle.Downloaders
 {
     class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
-        private bool _trustEverySSLConnection;
-        private string _extraJSONData;
+        private string _appcastUrl = "";
 
-        public WebRequestAppCastDataDownloader(bool trustEverySSLConnection, string extraJSONData)
+        public WebRequestAppCastDataDownloader()
         {
-            _trustEverySSLConnection = trustEverySSLConnection;
-            _extraJSONData = extraJSONData;
         }
+
+        /// <summary>
+        /// If true, don't check the validity of SSL certificates
+        /// </summary>
+        public bool TrustEverySSLConnection { get; set; } = false;
+
+        /// <summary>
+        /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
+        /// </summary>
+        public string ExtraJsonData { get; set; } = "";
 
         public string DownloadAndGetAppCastData(string url)
         {
+            _appcastUrl = url;
+            // configure ssl cert link
+            ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             var response = GetWebContentResponse(url);
             if (response != null)
             {
@@ -35,6 +47,7 @@ namespace NetSparkle.Downloaders
 
                 }
             }
+            ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
             return null;
         }
 
@@ -65,20 +78,20 @@ namespace NetSparkle.Downloaders
                     HttpWebRequest httpRequest = request as HttpWebRequest;
                     httpRequest.UseDefaultCredentials = true;
                     httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    if (_trustEverySSLConnection)
+                    if (TrustEverySSLConnection)
                     {
                         httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
                     }
 
                     // http://stackoverflow.com/a/10027534/3938401
-                    if (_extraJSONData != null && _extraJSONData != "")
+                    if (!string.IsNullOrWhiteSpace(ExtraJsonData))
                     {
                         httpRequest.ContentType = "application/json";
                         httpRequest.Method = "POST";
 
                         using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
                         {
-                            streamWriter.Write(_extraJSONData);
+                            streamWriter.Write(ExtraJsonData);
                             streamWriter.Flush();
                             streamWriter.Close();
                         }
@@ -89,6 +102,29 @@ namespace NetSparkle.Downloaders
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Determine if the remote X509 certificate is valid
+        /// </summary>
+        /// <param name="sender">the web request</param>
+        /// <param name="certificate">the certificate</param>
+        /// <param name="chain">the chain</param>
+        /// <param name="sslPolicyErrors">how to handle policy errors</param>
+        /// <returns><c>true</c> if the cert is valid</returns>
+        private bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (TrustEverySSLConnection)
+            {
+                // verify if we talk about our app cast dll 
+                if (sender is HttpWebRequest req && req.RequestUri.Equals(new Uri(_appcastUrl)))
+                {
+                    return true;
+                }
+            }
+
+            // check our cert                 
+            return sslPolicyErrors == SslPolicyErrors.None && certificate is X509Certificate2 cert2 && cert2.Verify();
         }
     }
 }
