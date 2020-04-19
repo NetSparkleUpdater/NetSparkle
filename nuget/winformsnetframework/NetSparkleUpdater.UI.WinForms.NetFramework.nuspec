@@ -3,7 +3,7 @@
  <metadata>
    <id>NetSparkleUpdater.UI.WinForms.NetFramework</id>
    <title>NetSparkleUpdater WinForms .NET Framework UI</title>
-   <version>2.0.0-preview20200416</version>
+   <version>2.0.0-preview20200419</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <license type="file">LICENSE.md</license>
@@ -12,14 +12,14 @@
    <projectUrl>https://github.com/NetSparkleUpdater/NetSparkle</projectUrl>
    <iconUrl>https://netsparkleupdater.github.io/NetSparkle/files/artwork/software-update-available.png</iconUrl>
    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-   <summary>WinForms .NET Framework UI for NetSparkleUpdater/NetSparkle</summary>
-   <description>WinForms .NET Framework UI for the NetSparkleUpdater/NetSparkle app updater framework. Please visit https://github.com/NetSparkleUpdater/NetSparkle to view sample code and ask for help if you need it! README updates are pending.</description>
+   <summary>NetSparkleUpdater framework with built-in WinForms .NET Framework UI</summary>
+   <description>NetSparkleUpdater/NetSparkle app updater framework with built-in WinForms .NET Framework UI. NetSparkleUpdater/NetSparkle is a C# .NET software update framework that allows you to easily download installer files and update your C# .NET Framework or .NET Core software. Built-in UIs are available for WinForms, WPF, and Avalonia. You provide, somewhere on the internet, an XML appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle framework then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The framework can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</description>
    <copyright>Copyright 2010 - 2020</copyright>
-   <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms</tags>    
-   <releaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project</releaseNotes>
+   <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms software</tags>    
+   <releaseNotes>2.0 Beta: See https://github.com/NetSparkleUpdater/NetSparkle for all beta information and to file issues/pull requests for and ask questions about this project.</releaseNotes>
     <dependencies>
       <group targetFramework=".NETFramework4.5.1">
-        <dependency id="NetSparkle.New" version="2.0.0-preview20200416" exclude="Build,Analyzers" />
+        <dependency id="NetSparkle.New" version="2.0.0-preview20200419" exclude="Build,Analyzers" />
       </group>
     </dependencies>
  </metadata>
