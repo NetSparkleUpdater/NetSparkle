@@ -61,17 +61,19 @@ namespace NetSparkle
         /// <summary>
         /// Called when the downloaded file is fully downloaded and verified regardless of the value for
         /// SilentMode. Note that if you are installing fully silently, this will be called before the
-        /// install file is executed, so don't manually initiate the file or anything.
+        /// install file is executed, so don't manually initiate the file or anything. Useful when using 
+        /// SilentModeTypes.DownloadNoInstall so you can let your user know when the downloaded
+        /// update is ready.
         /// </summary>
-        public event DownloadedFileReady DownloadFinished;
+        public event DownloadEvent DownloadFinished;
         /// <summary>
-        /// Called when the downloaded file is downloaded (or at least partially on disk) and the DSA
+        /// Called when the downloaded file is already downloaded (or at least partially on disk) and the DSA
         /// signature doesn't match. When this is called, Sparkle is not taking any further action to
         /// try to download the install file during this instance of the software. In order to make Sparkle
         /// try again, you must delete the file off disk yourself. Sparkle will try again after the software
-        /// is restarted.
+        /// is restarted. This event could allow you to tell the user what happened if updates are silent.
         /// </summary>
-        public event DownloadedFileIsCorrupt DownloadedFileIsCorrupt;
+        public event DownloadEvent DownloadedFileIsCorrupt;
 
         /// <summary>
         /// Subscribe to this to get a chance to shut down gracefully before quitting.

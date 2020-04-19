@@ -48,28 +48,9 @@ namespace NetSparkle
     public delegate Task CancelEventHandlerAsync(object sender, CancelEventArgs e);
 
     /// <summary>
-    /// Handler for when a downloaded file is ready. Useful when using 
-    /// SilentModeTypes.DownloadNoInstall so you can let your user know when the downloaded
-    /// update is ready.
-    /// </summary>
-    /// <param name="item">App cast details of the downloaded item</param>
-    /// <param name="downloadPath">Path of the downloaded software in case you want to start it yourself</param>
-    public delegate void DownloadedFileReady(AppCastItem item, string downloadPath);
-
-    /// <summary>
-    /// Called when the file is fully downloaded, but the DSA can't be verified.
-    /// This could allow you to tell the user what happened if updates are silent.
-    /// Note that silent updates will not delete the corrupted file until the next download loop.
-    /// </summary>
-    /// <param name="item">App cast details of the downloaded item</param>
-    /// <param name="downloadPath">Path of the invalid software download</param>
-    public delegate void DownloadedFileIsCorrupt(AppCastItem item, string downloadPath);
-
-    /// <summary>
     /// Delegate called when the user decides to skip a version of the application.
     /// </summary>
     /// <param name="item">Item that the user chose to skip</param>
-    /// <param name="downloadPath">Download path of the item so you can delete the download if you want</param>
     public delegate void UserSkippedVersion(AppCastItem item, string downloadPath);
 
     /// <summary>
@@ -90,7 +71,7 @@ namespace NetSparkle
     public delegate Task CloseApplicationAsync();
 
     /// <summary>
-    /// A delegate for download events (start, finished, canceled).
+    /// A delegate for download events (start, canceled).
     /// </summary>
     public delegate void DownloadEvent(AppCastItem item, string path);
 
