@@ -785,7 +785,7 @@ namespace NetSparkleUpdater
                         needsToDownload = false;
                         CallFuncConsideringUIThreads(() => 
                         {
-                            DownloadError?.Invoke(item, _downloadTempFileName, 
+                            DownloadHadError?.Invoke(item, _downloadTempFileName, 
                                 new Exception(string.Format("Unable to delete old download at {0}", _downloadTempFileName)));
                         });
                     }
@@ -938,7 +938,7 @@ namespace NetSparkleUpdater
             }
             if (e.Error != null)
             {
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
+                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
                 // Clean temp files on error too
                 if (File.Exists(_downloadTempFileName))
                 {
@@ -949,7 +949,7 @@ namespace NetSparkleUpdater
                 {
                     UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppcastUrl);
                 }
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
             }
             // test the item for DSA signature
@@ -969,7 +969,7 @@ namespace NetSparkleUpdater
                     {
                         var message = "File not found even though it was reported as downloading successfully!";
                         LogWriter.PrintMessage(message);
-                        DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
+                        DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
                     }
 
                     // check the DSA signature
@@ -993,7 +993,7 @@ namespace NetSparkleUpdater
                 {
                     UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
                 }
-                DownloadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
             }
             else
             {

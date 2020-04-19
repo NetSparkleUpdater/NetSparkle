@@ -52,7 +52,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Called when the download has downloaded but has an error other than corruption
         /// </summary>
-        public event DownloadErrorEvent DownloadError;
+        public event DownloadErrorEvent DownloadHadError;
         /// <summary>
         /// Called when the download has made some progress. Also sent to the progress window
         /// if one is available.

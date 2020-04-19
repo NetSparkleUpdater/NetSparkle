@@ -89,8 +89,8 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             _sparkle.DownloadFinished -= _sparkle_FinishedDownloading;
             _sparkle.DownloadFinished += _sparkle_FinishedDownloading;
 
-            _sparkle.DownloadError -= _sparkle_DownloadError;
-            _sparkle.DownloadError += _sparkle_DownloadError;
+            _sparkle.DownloadHadError -= _sparkle_DownloadError;
+            _sparkle.DownloadHadError += _sparkle_DownloadError;
 
             _sparkle.DownloadMadeProgress += _sparkle_DownloadMadeProgress;
 
