@@ -90,7 +90,7 @@ namespace NetSparkle
         /// SilentMode. Note that if you are installing fully silently, this will be called before the
         /// install file is executed, so don't manually initiate the file or anything.
         /// </summary>
-        public event DownloadedFileReady DownloadedFileReady;
+        public event DownloadedFileReady DownloadFileIsReady;
 
         /// <summary>
         /// Called when the downloaded file is downloaded (or at least partially on disk) and the DSA
@@ -962,7 +962,7 @@ namespace NetSparkle
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
                     CreateAndShowProgressWindow(item, true);
-                    CallFuncConsideringUIThreads(() => { DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
+                    CallFuncConsideringUIThreads(() => { DownloadFileIsReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
@@ -1853,7 +1853,7 @@ namespace NetSparkle
             else
             {
                 LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
-                DownloadedFileReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                DownloadFileIsReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
