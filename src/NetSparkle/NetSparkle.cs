@@ -1244,11 +1244,9 @@ namespace NetSparkleUpdater
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
-                UpdateStatus updateAvailable = updateData.Status;
-
-                Action<object> UIAction = (state) =>
+                CallFuncConsideringUIThreads(() => 
                 {
-                    switch (updateAvailable)
+                    switch (updateData.Status)
                     {
                         case UpdateStatus.UpdateNotAvailable:
                             UIFactory?.ShowVersionIsUpToDate();
@@ -1260,8 +1258,7 @@ namespace NetSparkleUpdater
                             UIFactory?.ShowCannotDownloadAppcast(AppcastUrl);
                             break;
                     }
-                };
-                CallFuncConsideringUIThreads(() => UIAction(null));
+                });
             }
 
             return updateData;// in this case, we've already shown UI talking about the new version
