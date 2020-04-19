@@ -963,6 +963,11 @@ namespace NetSparkle
                     // so that the user can actually perform the install
                     CreateAndShowProgressWindow(item, true);
                     CallFuncConsideringUIThreads(() => { DownloadFileIsReady?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
+                    bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
+                    if (shouldInstallAndRelaunch)
+                    {
+                        CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallArgs(true)); });
+                    }
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
