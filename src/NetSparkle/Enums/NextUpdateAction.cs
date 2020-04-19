@@ -1,7 +1,7 @@
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Everytime when NetSparkle detects an update the
+    /// Everytime when NetSparkleUpdater detects an update, the
     /// consumer can decide what should happen next with the help
     /// of the <see cref="UpdateDetected"/> event
     /// </summary>

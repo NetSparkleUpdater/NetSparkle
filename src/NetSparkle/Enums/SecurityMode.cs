@@ -1,8 +1,8 @@
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Controls the Mode in which situations which files has to be signed with the DSA private key.
-    /// If an DSA public key and an signature is preset they allways has to be valid.
+    /// Controls the situations where files have to be signed with the DSA private key.
+    /// If both a DSA public key and a signature are present, they always have to be valid.
     /// </summary>
     public enum SecurityMode
     {
@@ -13,14 +13,15 @@ namespace NetSparkleUpdater.Enums
         Unsafe = 1,
 
         /// <summary>
-        /// If there is a DSA public key, all files have to be signed. If there isn't any DSA public key
-        ///  files without a signature will also be accepted. It's an mix between Unsafe and Strict and
-        /// can have some security issues if the DSA public key gets lost in the application.
+        /// If there is a DSA public key, the app cast and download file have to be signed. 
+        /// If there isn't a DSA public key, files without a signature will also be accepted. 
+        /// This mode is a mix between Unsafe and Strict and can have some security issues if the 
+        /// DSA public key gets lost in the application.
         /// </summary>
         UseIfPossible = 2,
 
         /// <summary>
-        /// Every file has to be signed. This means the DSA public key must exist. This is the default mode.
+        /// The app cast and download file have to be signed. This means the DSA public key must exist. This is the default mode.
         /// </summary>
         Strict = 3,
     }

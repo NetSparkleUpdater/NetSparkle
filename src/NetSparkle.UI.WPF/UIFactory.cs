@@ -19,14 +19,34 @@ namespace NetSparkleUpdater.UI.WPF
 
         public UIFactory()
         {
-
+            HideReleaseNotes = false;
+            HideRemindMeLaterButton = false;
+            HideSkipButton = false;
         }
 
         public UIFactory(ImageSource applicationIcon)
         {
             _applicationIcon = applicationIcon;
             _applicationIcon?.Freeze();
+            HideReleaseNotes = false;
+            HideRemindMeLaterButton = false;
+            HideSkipButton = false;
         }
+
+        /// <summary>
+        /// Hides the release notes view when an update is found.
+        /// </summary>
+       public bool HideReleaseNotes { get; set; }
+
+        /// <summary>
+        /// Hides the skip this update button when an update is found.
+        /// </summary>
+        public bool HideSkipButton { get; set; }
+
+        /// <summary>
+        /// Hides the remind me later button when an update is found.
+        /// </summary>
+        public bool HideRemindMeLaterButton { get; set; }
 
         /// <summary>
         /// Create sparkle form implementation
@@ -41,6 +61,18 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 Icon = _applicationIcon
             };
+            if (HideReleaseNotes)
+            {
+                (window as IUpdateAvailable).HideReleaseNotes();
+            }
+            if (HideSkipButton)
+            {
+                (window as IUpdateAvailable).HideSkipButton();
+            }
+            if (HideRemindMeLaterButton)
+            {
+                (window as IUpdateAvailable).HideRemindMeLaterButton();
+            }
             viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded);
             return window;
         }

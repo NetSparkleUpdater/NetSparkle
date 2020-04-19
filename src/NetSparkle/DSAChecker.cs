@@ -40,7 +40,6 @@ namespace NetSparkleUpdater
 
             if (string.IsNullOrEmpty(key))
             {
-                // TODO: Loading Resources doesn't work
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {

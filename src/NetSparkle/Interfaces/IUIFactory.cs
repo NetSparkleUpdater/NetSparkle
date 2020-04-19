@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
-    /// Universal interface for creating UI utilized by Sparkle
+    /// Universal interface for creating UI utilized by SparkleUpdater
     /// </summary>
     public interface IUIFactory
     {
@@ -78,5 +78,20 @@ namespace NetSparkleUpdater.Interfaces
         /// If in WinForms, Application.Exit().
         /// </summary>
         void Shutdown();
+
+        /// <summary>
+        /// Hides the release notes view when an update is found.
+        /// </summary>
+        bool HideReleaseNotes { get; set; }
+
+        /// <summary>
+        /// Hides the skip this update button when an update is found.
+        /// </summary>
+        bool HideSkipButton { get; set; }
+
+        /// <summary>
+        /// Hides the remind me later button when an update is found.
+        /// </summary>
+        bool HideRemindMeLaterButton { get; set; }
     }
 }

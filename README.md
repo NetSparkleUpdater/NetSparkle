@@ -8,10 +8,6 @@ A software update framework for C# that has built in UIs for .NET Framework (Win
 
 Deadpikle is currently working on changing the API to various things and stabilizing things so that a beta period for 2.0 can start. See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues/) for more info.
 
-A preview version for 2.0 is now up on NuGet! The UIs (.NET Core WinForms/WPF; .NET Framework WinForms/WPF; Avalonia [cross platform UI!]) are also on NuGet. There are also updated tools on NuGet at NetSparkleUpdater.Tools.
-
-Note that the update calls for macOS and Linux are relatively untested! On macOS, we support .pkg, .dmg, and .zip. On Linux, we support .deb, .rpm, and .tar.gz. Please help me test it out!
-
 README updates for version 2.0 are pending. If you have specific questions or need help, please file an issue or message me on Gitter. You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, etc. are all now possible. Some extra features aren't built-in out of the box yet -- contributions are welcome!!
 
 --------------

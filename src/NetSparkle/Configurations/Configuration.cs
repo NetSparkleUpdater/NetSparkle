@@ -93,7 +93,6 @@ namespace NetSparkleUpdater.Configurations
             catch
             {
                 CheckForUpdate = false;
-                throw;
             }
 
         }

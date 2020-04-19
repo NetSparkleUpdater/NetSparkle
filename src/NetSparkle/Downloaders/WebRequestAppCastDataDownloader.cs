@@ -66,7 +66,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 if (request is FileWebRequest)
                 {
-                    FileWebRequest fileRequest = request as FileWebRequest;
+                    var fileRequest = request as FileWebRequest;
                     if (fileRequest != null)
                     {
                         return request.GetResponse();

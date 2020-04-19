@@ -55,9 +55,13 @@ namespace NetSparkleUpdater
         public virtual void PrintMessage(string message, params object[] arguments)
         {
             if (PrintDiagnosticToConsole)
+            {
                 Console.WriteLine(tag + " " + message, arguments);
+            }
             else
+            {
                 Debug.WriteLine(tag + " " + message, arguments);
+            }
         }
     }
 }

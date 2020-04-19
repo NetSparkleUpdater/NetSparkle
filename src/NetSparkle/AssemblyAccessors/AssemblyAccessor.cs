@@ -22,10 +22,14 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <param name="isReflectionAccesorUsed"><c>true</c> if reflection is used to access the attributes.</param>
         public AssemblyAccessor(string assemblyName, bool isReflectionAccesorUsed)
         {
-            if ( isReflectionAccesorUsed )
+            if (isReflectionAccesorUsed)
+            {
                 _internalAccessor = new AssemblyReflectionAccessor(assemblyName);
+            }
             else
+            {
                 _internalAccessor = new AssemblyDiagnosticsAccessor(assemblyName);
+            }
         }
 
         #region IAssemblyAccessor Members

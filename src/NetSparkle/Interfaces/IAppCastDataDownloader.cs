@@ -14,6 +14,12 @@ namespace NetSparkleUpdater.Interfaces
         /// <returns></returns>
         string DownloadAndGetAppCastData(string url);
 
+        /// <summary>
+        /// Get the string encoding (e.g. UTF8 or ASCII) of the 
+        /// app cast file so that it can be converted to bytes.
+        /// (WebRequestAppCastDataDownloader defaults to UTF8.)
+        /// </summary>
+        /// <returns></returns>
         Encoding GetAppCastEncoding();
     }
 }

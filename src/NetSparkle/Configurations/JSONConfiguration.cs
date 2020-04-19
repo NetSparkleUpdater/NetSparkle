@@ -108,7 +108,7 @@ namespace NetSparkleUpdater.Configurations
 
                 if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
                 {
-                    throw new NetSparkleException("STOP: Sparkle is missing the company or productname tag in " + ReferenceAssembly);
+                    throw new NetSparkleException("Error: SparkleUpdater is missing the company or productname tag in " + ReferenceAssembly);
                 }
                 var applicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
                 var saveFolder = Path.Combine(applicationFolder, accessor.AssemblyCompany, accessor.AssemblyProduct, "NetSparkleUpdater");

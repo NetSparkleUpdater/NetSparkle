@@ -144,8 +144,6 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Using the following url: {0}", AppcastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
-            HideSkipButton = false;
-            HideRemindMeLaterButton = false;
         }
 
         /// <summary>
@@ -166,21 +164,6 @@ namespace NetSparkleUpdater
         }
 
         #region Properties
-
-        /// <summary>
-        /// Hides the release notes view when an update is found.
-        /// </summary>
-        public bool HideReleaseNotes { get; set; }
-
-        /// <summary>
-        /// Hides the skip this update button when an update is found.
-        /// </summary>
-        public bool HideSkipButton { get; set; }
-
-        /// <summary>
-        /// Hides the remind me later button when an update is found.
-        /// </summary>
-        public bool HideRemindMeLaterButton { get; set; }
 
         /// <summary>
         /// Set the user interaction mode for Sparkle to use when there is a valid update for the software
@@ -658,18 +641,6 @@ namespace NetSparkleUpdater
 
                         if (UpdateAvailableWindow != null)
                         {
-                            if (HideReleaseNotes)
-                            {
-                                UpdateAvailableWindow.HideReleaseNotes();
-                            }
-                            if (HideSkipButton)
-                            {
-                                UpdateAvailableWindow.HideSkipButton();
-                            }
-                            if (HideRemindMeLaterButton)
-                            {
-                                UpdateAvailableWindow.HideRemindMeLaterButton();
-                            }
 
                             // clear if already set.
                             UpdateAvailableWindow.UserResponded += OnUserWindowUserResponded;

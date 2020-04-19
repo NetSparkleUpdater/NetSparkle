@@ -23,17 +23,23 @@ namespace NetSparkleUpdater.AssemblyAccessors
         public AssemblyReflectionAccessor(string assemblyName)
         {
             if (assemblyName == null)
+            {
                 _assembly = Assembly.GetEntryAssembly();
+            }
             else
             {
                 string absolutePath = Path.GetFullPath(assemblyName);
                 if (!File.Exists(absolutePath))
+                {
                     throw new FileNotFoundException();
+                }
 
                 _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath);
 
                 if (_assembly == null)
+                {
                     throw new ArgumentNullException("Unable to load assembly " + absolutePath);                
+                }
             }
 
             // read the attributes            
@@ -47,7 +53,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
+            {
                 throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + _assembly.FullName);                                    
+            }
         }
 
         /// <summary>
@@ -94,10 +102,12 @@ namespace NetSparkleUpdater.AssemblyAccessors
             foreach (Attribute attr in _assemblyAttributes)
             {
                 if (attr.GetType().Equals(AttributeType))
+                {
                     return attr;                                
+                }
             }
 
-            throw new Exception("Attribute of type " + AttributeType.ToString() + " does not exists in the assembly " + _assembly.FullName);
+            return null;
         }
 
         #region Assembly Attribute Accessors
@@ -110,7 +120,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 AssemblyTitleAttribute a = FindAttribute(typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
-                return a.Title;                
+                return a?.Title ?? "";                
             }
         }
 
@@ -133,7 +143,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 AssemblyDescriptionAttribute a = FindAttribute(typeof(AssemblyDescriptionAttribute)) as AssemblyDescriptionAttribute;
-                return a.Description;                                
+                return a?.Description ?? "";                                
             }
         }
 
@@ -145,7 +155,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 AssemblyProductAttribute a = FindAttribute(typeof(AssemblyProductAttribute)) as AssemblyProductAttribute;
-                return a.Product;                                
+                return a?.Product ?? "";                                
             }
         }
 
@@ -157,7 +167,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 AssemblyCopyrightAttribute a = FindAttribute(typeof(AssemblyCopyrightAttribute)) as AssemblyCopyrightAttribute;
-                return a.Copyright;                                                
+                return a?.Copyright ?? "";                                                
             }
         }
 
@@ -169,7 +179,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 AssemblyCompanyAttribute a = FindAttribute(typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
-                return a.Company;                  
+                return a?.Company ?? "";                  
             }
         }
         #endregion
