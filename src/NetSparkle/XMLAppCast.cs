@@ -122,6 +122,7 @@ namespace NetSparkle
         private void Parse(string appcast)
         {
             const string itemNode = "item";
+            Items.Clear();
 
             XDocument doc = XDocument.Parse(appcast);
             var rss = doc?.Element("rss");
