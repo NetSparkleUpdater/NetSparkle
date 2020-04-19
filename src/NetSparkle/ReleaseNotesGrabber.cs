@@ -47,7 +47,7 @@ namespace NetSparkleUpdater
         /// Generates the text to display while release notes are loading
         /// </summary>
         /// <returns>HTML to show to the user while release notes are loading</returns>
-        public string GetLoadingText()
+        public virtual string GetLoadingText()
         {
             return _initialHTML + "<p><em>Loading release notes...</em></p></body></html>"; ;
         }
@@ -59,7 +59,7 @@ namespace NetSparkleUpdater
         /// <param name="latestVersion">The latest version (most current version) of your releases</param>
         /// <param name="cancellationToken">Token to cancel the async download requests</param>
         /// <returns></returns>
-        public async Task<string> DownloadAllReleaseNotesAsHTML(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
+        public virtual async Task<string> DownloadAllReleaseNotesAsHTML(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
             StringBuilder sb = new StringBuilder(_initialHTML);
@@ -80,7 +80,7 @@ namespace NetSparkleUpdater
             return sb.ToString();
         }
 
-        private async Task<string> GetHTMLReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
+        protected virtual async Task<string> GetHTMLReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
@@ -151,7 +151,7 @@ namespace NetSparkleUpdater
             return notes;
         }
 
-        private async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
+        protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
         {
             try
             {
