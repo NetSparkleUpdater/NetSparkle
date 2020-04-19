@@ -109,7 +109,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
             InstallUpdateButton.IsEnabled = false;
         }
 
-        private void _sparkle_StartedDownloading(string path)
+        private void _sparkle_StartedDownloading(AppCastItem item, string path)
         {
             DownloadInfo.Text = "Started downloading...";
             InstallUpdateButton.IsEnabled = false;
@@ -149,7 +149,7 @@ namespace NetSparkle.Samples.HandleEventsYourself
             RunFullUpdateUpdateStatusLabel.Text = "Found update...";
         }
 
-        private void _sparkle_FullUpdate_StartedDownloading(string path)
+        private void _sparkle_FullUpdate_StartedDownloading(AppCastItem item, string path)
         {
             RunFullUpdateUpdateStatusLabel.Text = "Started downloading update...";
         }

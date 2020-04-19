@@ -833,7 +833,7 @@ namespace NetSparkle
                 Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppcastUrl);
                 LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                 UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
-                CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(_downloadTempFileName); });
+                CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(item, _downloadTempFileName); });
             }
         }
 
@@ -1669,7 +1669,7 @@ namespace NetSparkle
 
             if (e.Cancelled)
             {
-                DownloadCanceled?.Invoke(_downloadTempFileName);
+                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 _hasAttemptedFileRedownload = false;
                 if (File.Exists(_downloadTempFileName))
                 {
@@ -1681,7 +1681,7 @@ namespace NetSparkle
                 {
                     UIFactory?.ShowDownloadErrorMessage(errorMessage, AppcastUrl);
                 }
-                DownloadCanceled?.Invoke(_downloadTempFileName);
+                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 return;
             }
             if (e.Error != null)

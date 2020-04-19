@@ -92,7 +92,7 @@ namespace NetSparkle
     /// <summary>
     /// A delegate for download events (start, finished, canceled).
     /// </summary>
-    public delegate void DownloadEvent(string path);
+    public delegate void DownloadEvent(AppCastItem item, string path);
 
     /// <summary>
     /// A handler called when the user responsed to an available update

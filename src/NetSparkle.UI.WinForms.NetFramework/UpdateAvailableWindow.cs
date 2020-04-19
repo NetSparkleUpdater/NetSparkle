@@ -82,7 +82,8 @@ namespace NetSparkle.UI.WinForms
                 {
                     versionString = "?";
                 }
-                lblInfoText.Text = string.Format("{0} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, downloadInstallText);
+                lblInfoText.Text = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, 
+                    downloadInstallText, item.Version);
             }
             else
             {
