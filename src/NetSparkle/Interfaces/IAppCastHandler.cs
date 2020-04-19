@@ -16,7 +16,8 @@ namespace NetSparkleUpdater.Interfaces
         /// (user skipped versions, etc.)</param>
         /// <param name="dsaChecker">Object to check DSA signatures</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null);
+        void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config,
+            ISignatureVerifier dsaChecker, LogWriter logWriter = null);
         /// <summary>
         /// Download the app cast file via an IAppCastDataDownloader object and parse it.
         /// If this function is successful, NetSparkle will call GetNeededUpdates() to

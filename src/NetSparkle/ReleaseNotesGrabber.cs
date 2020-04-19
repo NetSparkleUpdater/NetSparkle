@@ -126,7 +126,7 @@ namespace NetSparkleUpdater
             // check dsa of release notes
             if (!string.IsNullOrEmpty(item.ReleaseNotesDSASignature))
             {
-                if (sparkle.DSAChecker.VerifySignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                if (sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
                     return null;
             }
 

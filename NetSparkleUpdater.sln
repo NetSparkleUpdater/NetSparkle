@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Tests", "src\Net
 		{74635A21-2BAD-4522-AB95-E3E5703CD301} = {74635A21-2BAD-4522-AB95-E3E5703CD301}
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NetSparkle.Shared", "src\NetSparkle.Shared\NetSparkle.Shared.shproj", "{D9115E42-6ED7-452F-A623-81F70201578B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WinForms.NetCore", "src\NetSparkle.UI.WinForms.NetCore\NetSparkle.UI.WinForms.NetCore.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WPF", "src\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
@@ -36,14 +34,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.Avalonia", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia", "src\NetSparkle.Samples.Avalonia\NetSparkle.Samples.Avalonia.csproj", "{1DBD011C-C437-4126-9F12-A9D0BDEA3AA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.HandleEventsYourself", "src\NetSparkle.Samples.HandleEventsYourself\NetSparkle.Samples.HandleEventsYourself.csproj", "{DD69D6C4-B732-458E-BE2D-6B5059342315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.HandleEventsYourself", "src\NetSparkle.Samples.HandleEventsYourself\NetSparkle.Samples.HandleEventsYourself.csproj", "{DD69D6C4-B732-458E-BE2D-6B5059342315}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{74635a21-2bad-4522-ab95-e3e5703cd301}*SharedItemsImports = 5
-		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{d9115e42-6ed7-452f-a623-81f70201578b}*SharedItemsImports = 13
-		src\NetSparkle.Shared\NetSparkleUtilities.projitems*{e50ac3a5-6c63-40d7-a4c4-9b359efd5707}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM

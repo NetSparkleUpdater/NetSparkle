@@ -5,13 +5,14 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUpdater
 {
     /// <summary>
     /// Class to verify a DSA signature
     /// </summary>
-    public class DSAChecker
+    public class DSAChecker : ISignatureVerifier
     {
         private SecurityMode _securityMode;
         private DSACryptoServiceProvider _cryptoProvider;
@@ -20,7 +21,7 @@ namespace NetSparkleUpdater
         /// Determines if a public key exists
         /// </summary>
         /// <returns><c>bool</c></returns>
-        public bool DoesPublicKeyExist()
+        public bool HasValidKeyInformation()
         {
             return _cryptoProvider != null;
         }
@@ -69,24 +70,10 @@ namespace NetSparkleUpdater
             }
         }
 
-        /// <summary>
-        /// Returns if we need an signature
-        /// </summary>
-        /// <returns><c>bool</c></returns>
-        public bool IsSignatureNeeded()
+        public SecurityMode SecurityMode
         {
-            switch (_securityMode)
-            {
-                case SecurityMode.UseIfPossible:
-                    // if we have a dsa key, we need a signature
-                    return DoesPublicKeyExist();
-                case SecurityMode.Strict:
-                    // we always need a signature
-                    return true;
-                case SecurityMode.Unsafe:
-                    return false;
-            }
-            return false;
+            get => _securityMode;
+            set => _securityMode = value;
         }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
@@ -95,13 +82,13 @@ namespace NetSparkleUpdater
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a DSA key, we only accept non-null signatures
-                    if (DoesPublicKeyExist() && string.IsNullOrEmpty(signature))
+                    if (HasValidKeyInformation() && string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
                     // if we don't have an dsa key, we accept any signature
-                    if (!DoesPublicKeyExist())
+                    if (!HasValidKeyInformation())
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -110,7 +97,7 @@ namespace NetSparkleUpdater
 
                 case SecurityMode.Strict:
                     // only accept if we have both a public key and a non-null signature
-                    if (!DoesPublicKeyExist() || string.IsNullOrEmpty(signature))
+                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
@@ -121,7 +108,7 @@ namespace NetSparkleUpdater
                     // always accept anything
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything
-                    if (!DoesPublicKeyExist() || string.IsNullOrEmpty(signature))
+                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Unchecked;
                         return false;

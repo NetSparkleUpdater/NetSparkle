@@ -23,7 +23,7 @@ namespace NetSparkleUpdater
         private Configuration _config;
         private string _castUrl;
 
-        private DSAChecker _dsaChecker;
+        private ISignatureVerifier _signatureVerifier;
         private LogWriter _logWriter;
 
         private IAppCastDataDownloader _dataDownloader;
@@ -63,15 +63,15 @@ namespace NetSparkleUpdater
         /// <param name="dataDownloader">object that will handle downloading the app cast file(s) from the internet</param>
         /// <param name="castUrl">the URL of the appcast file</param>
         /// <param name="config">the current configuration for checking which versions are installed, etc.</param>
-        /// <param name="dsaChecker">class to verify that DSA hashes are accurate</param>
+        /// <param name="signatureVerifier">class to verify that DSA hashes are accurate</param>
         /// <param name="logWriter">object to write any log statements to</param>
-        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, DSAChecker dsaChecker, LogWriter logWriter = null)
+        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier signatureVerifier, LogWriter logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
             _castUrl = castUrl;
 
-            _dsaChecker = dsaChecker;
+            _signatureVerifier = signatureVerifier;
             _logWriter = logWriter ?? new LogWriter();
         }
 
@@ -102,9 +102,9 @@ namespace NetSparkleUpdater
             }
 
             // checking signature
-            var signatureNeeded = _dsaChecker.IsSignatureNeeded();
+            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
             var appcastBytes = _dataDownloader.GetAppCastEncoding().GetBytes(appcast);
-            if (signatureNeeded && _dsaChecker.VerifySignature(signature, appcastBytes) == ValidationResult.Invalid)
+            if (signatureNeeded && _signatureVerifier.VerifySignature(signature, appcastBytes) == ValidationResult.Invalid)
             {
                 _logWriter.PrintMessage("Signature check of appcast failed");
                 return false;
@@ -148,7 +148,7 @@ namespace NetSparkleUpdater
         public virtual List<AppCastItem> GetAvailableUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
-            var signatureNeeded = _dsaChecker.IsSignatureNeeded();
+            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
             return Items.Where((item) =>
             {
 #if NETFRAMEWORK
