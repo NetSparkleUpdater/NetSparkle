@@ -32,7 +32,7 @@ namespace NetSparkleUpdater
         }
         
         /// <summary>
-        /// Signs a file with the given private key.
+        /// Gets the signature of a file with the given DSA private key.
         /// </summary>
         /// <param name="fileToSignPath">Path to the file you want to sign</param>
         /// <param name="privateKeyFilePath">Path to the private key file</param>
@@ -81,7 +81,7 @@ namespace NetSparkleUpdater
         /// <param name="numBytes">Number of bytes to convert</param>
         /// <returns>A string that represents the number of bytes in KB, MB, or GB if numBytes > 1024.
         /// If numBytes is less than 1024, returns numBytes.</returns>
-        public static string NumBytesToUserReadableString(long numBytes)
+        public static string ConvertNumBytesToUserReadableString(long numBytes)
         {
             if (numBytes > 1024)
             {

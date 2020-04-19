@@ -127,8 +127,8 @@ namespace NetSparkleUpdater.UI.WinForms
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
             progressDownload.Value = percentage;
-            downloadProgressLbl.Text = "(" + Utilities.NumBytesToUserReadableString(bytesReceived) + " / " +
-                Utilities.NumBytesToUserReadableString(totalBytesToReceive) + ")";
+            downloadProgressLbl.Text = "(" + Utilities.ConvertNumBytesToUserReadableString(bytesReceived) + " / " +
+                Utilities.ConvertNumBytesToUserReadableString(totalBytesToReceive) + ")";
         }
 
         /// <summary>

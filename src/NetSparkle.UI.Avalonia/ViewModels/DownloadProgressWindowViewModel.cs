@@ -132,8 +132,8 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             DidDownloadAnything = true;
             DownloadProgress = percentage;
             UserReadableDownloadProgress = string.Format("({0} / {1})",
-                Utilities.NumBytesToUserReadableString(bytesReceived),
-                Utilities.NumBytesToUserReadableString(totalBytesToReceive));
+                Utilities.ConvertNumBytesToUserReadableString(bytesReceived),
+                Utilities.ConvertNumBytesToUserReadableString(totalBytesToReceive));
         }
 
     }
