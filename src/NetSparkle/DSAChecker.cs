@@ -4,9 +4,9 @@ using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// Class to verify a DSA signature
@@ -14,7 +14,7 @@ namespace NetSparkle
     public class DSAChecker
     {
         private SecurityMode _securityMode;
-        private DSACryptoServiceProvider _provider;
+        private DSACryptoServiceProvider _cryptoProvider;
 
         /// <summary>
         /// Determines if a public key exists
@@ -22,14 +22,15 @@ namespace NetSparkle
         /// <returns><c>bool</c></returns>
         public bool DoesPublicKeyExist()
         {
-            return _provider != null;
+            return _cryptoProvider != null;
         }
 
         /// <summary>
-        /// Constructor
+        /// Create a DSAChecker object from the given parameters
         /// </summary>
-        /// <param name="mode">The security mode of the validator. Control what parts has to be exist</param>
-        /// <param name="publicKey">the public key as string (will be prefered before the file)</param>
+        /// <param name="mode">The security mode of the validator. Controls what needs to be set in order to validate
+        /// an app cast and its items.</param>
+        /// <param name="publicKey">the public key as string (will be preferred before the file)</param>
         /// <param name="publicKeyFile">the public key file</param>
         public DSAChecker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
         {
@@ -59,12 +60,12 @@ namespace NetSparkle
             {
                 try
                 {
-                    _provider = new DSACryptoServiceProvider();
-                    _provider.FromXmlString(key);
+                    _cryptoProvider = new DSACryptoServiceProvider();
+                    _cryptoProvider.FromXmlString(key);
                 }
                 catch
                 {
-                    _provider = null;
+                    _cryptoProvider = null;
                 }
             }
         }
@@ -80,17 +81,13 @@ namespace NetSparkle
                 case SecurityMode.UseIfPossible:
                     // if we have a dsa key, we need a signature
                     return DoesPublicKeyExist();
-
                 case SecurityMode.Strict:
                     // we always need a signature
                     return true;
-
                 case SecurityMode.Unsafe:
                     return false;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
+            return false;
         }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
@@ -131,9 +128,6 @@ namespace NetSparkle
                         return false;
                     }
                     break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
             return true;
         }
@@ -156,7 +150,7 @@ namespace NetSparkle
             byte[] bHash = Convert.FromBase64String(signature);
 
             // verify
-            return _provider.VerifyData(dataToVerify, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
+            return _cryptoProvider.VerifyData(dataToVerify, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
         }
 
         /// <summary>
@@ -233,7 +227,6 @@ namespace NetSparkle
                 }
                 catch (NotSupportedException)
                 {
-                    Debug.WriteLine("Skipped assembly {0}", asm.FullName);
                     continue;
                 }
                 var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);

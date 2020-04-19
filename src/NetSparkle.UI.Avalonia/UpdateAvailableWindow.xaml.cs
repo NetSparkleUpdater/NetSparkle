@@ -4,15 +4,15 @@ using Avalonia.Controls.Html;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using NetSparkle.Enums;
-using NetSparkle.Events;
-using NetSparkle.Interfaces;
-using NetSparkle.UI.Avalonia.Controls;
-using NetSparkle.UI.Avalonia.Interfaces;
-using NetSparkle.UI.Avalonia.ViewModels;
+using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Events;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.UI.Avalonia.Controls;
+using NetSparkleUpdater.UI.Avalonia.Interfaces;
+using NetSparkleUpdater.UI.Avalonia.ViewModels;
 using System.Linq;
 
-namespace NetSparkle.UI.Avalonia
+namespace NetSparkleUpdater.UI.Avalonia
 {
     public class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesUpdater, IUserRespondedToUpdateCheck
     {

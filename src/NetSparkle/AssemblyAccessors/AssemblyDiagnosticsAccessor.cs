@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.IO;
-using NetSparkle.Interfaces;
+using NetSparkleUpdater.Interfaces;
 
-namespace NetSparkle.AssemblyAccessors
+namespace NetSparkleUpdater.AssemblyAccessors
 {
     /// <summary>
     /// A diagnostic accessor

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Security.Cryptography;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 
-namespace NetSparkle.DSAHelper
+namespace NetSparkleUpdater.DSAHelper
 {
     class Program
     {
@@ -86,7 +86,7 @@ namespace NetSparkle.DSAHelper
                                 return;
                             }
 
-                            Console.WriteLine(NetSparkle.Utilities.GetDSASignature(binary, privKey));
+                            Console.WriteLine(NetSparkleUpdater.Utilities.GetDSASignature(binary, privKey));
                         }
                         break;
                     case "/verify_update":
@@ -106,7 +106,7 @@ namespace NetSparkle.DSAHelper
                             sign = sign.TrimStart('"');
                             sign = sign.TrimEnd('"');
 
-                            NetSparkle.DSAChecker dsaVerif = new NetSparkle.DSAChecker(SecurityMode.UseIfPossible, null, pubKeyFile);
+                            NetSparkleUpdater.DSAChecker dsaVerif = new NetSparkleUpdater.DSAChecker(SecurityMode.UseIfPossible, null, pubKeyFile);
                             switch (dsaVerif.VerifyDSASignatureFile(sign, binary))
                             {
                                 case ValidationResult.Valid:

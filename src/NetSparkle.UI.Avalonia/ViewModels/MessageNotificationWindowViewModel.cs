@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NetSparkle.UI.Avalonia.Helpers;
-using NetSparkle.UI.Avalonia.Interfaces;
+using NetSparkleUpdater.UI.Avalonia.Helpers;
+using NetSparkleUpdater.UI.Avalonia.Interfaces;
 
-namespace NetSparkle.UI.Avalonia.ViewModels
+namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
     public class MessageNotificationWindowViewModel : ChangeNotifier
     {

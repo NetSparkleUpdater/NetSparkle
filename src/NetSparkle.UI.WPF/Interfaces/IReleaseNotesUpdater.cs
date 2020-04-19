@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetSparkle.UI.WPF.Interfaces
+namespace NetSparkleUpdater.UI.WPF.Interfaces
 {
     public interface IReleaseNotesUpdater
     {

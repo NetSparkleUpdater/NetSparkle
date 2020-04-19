@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetSparkle.Configurations
+namespace NetSparkleUpdater.Configurations
 {
     /// <summary>
     /// Configuration data for this software and NetSparkle instance.

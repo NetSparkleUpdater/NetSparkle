@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NetSparkle.Samples.NetCore.WinForms
+namespace NetSparkleUpdater.Samples.NetCore.WinForms
 {
     static class Program
     {

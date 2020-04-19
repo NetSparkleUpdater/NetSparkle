@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 
-namespace NetSparkle.UI.WPF.Controls
+namespace NetSparkleUpdater.UI.WPF.Controls
 {
     public class BaseWindow : Window
     {

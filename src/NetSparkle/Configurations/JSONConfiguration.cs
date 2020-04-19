@@ -1,4 +1,4 @@
-﻿using NetSparkle.AssemblyAccessors;
+﻿using NetSparkleUpdater.AssemblyAccessors;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace NetSparkle.Configurations
+namespace NetSparkleUpdater.Configurations
 {
     class JSONConfiguration : Configuration
     {

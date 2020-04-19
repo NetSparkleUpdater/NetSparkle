@@ -2,15 +2,15 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
-using NetSparkle.Interfaces;
-using NetSparkle.Properties;
-using NetSparkle.UI.Avalonia.ViewModels;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Properties;
+using NetSparkleUpdater.UI.Avalonia.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace NetSparkle.UI.Avalonia
+namespace NetSparkleUpdater.UI.Avalonia
 {
     /// <summary>
     /// UI factory for default interface

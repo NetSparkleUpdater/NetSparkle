@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging.Serilog;
 
-namespace NetSparkle.Samples.Avalonia
+namespace NetSparkleUpdater.Samples.Avalonia
 {
     class Program
     {

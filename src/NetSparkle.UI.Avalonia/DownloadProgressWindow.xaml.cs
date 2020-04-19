@@ -5,13 +5,13 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using NetSparkle.Events;
-using NetSparkle.Interfaces;
-using NetSparkle.UI.Avalonia.Controls;
-using NetSparkle.UI.Avalonia.ViewModels;
+using NetSparkleUpdater.Events;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.UI.Avalonia.Controls;
+using NetSparkleUpdater.UI.Avalonia.ViewModels;
 using System.Net;
 
-namespace NetSparkle.UI.Avalonia
+namespace NetSparkleUpdater.UI.Avalonia
 {
     public class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {

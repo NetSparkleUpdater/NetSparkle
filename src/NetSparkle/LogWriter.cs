@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// A simple class to handle log information for NetSparkle.

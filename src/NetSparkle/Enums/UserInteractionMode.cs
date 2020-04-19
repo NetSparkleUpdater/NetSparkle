@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.Enums
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Allows for updating the application with or without user interaction.

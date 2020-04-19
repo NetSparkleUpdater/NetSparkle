@@ -1,5 +1,5 @@
-﻿using NetSparkle.Enums;
-using NetSparkle.Events;
+﻿using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// The operation has started

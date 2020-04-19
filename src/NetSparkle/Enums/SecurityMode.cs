@@ -1,4 +1,4 @@
-namespace NetSparkle.Enums
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Controls the Mode in which situations which files has to be signed with the DSA private key.

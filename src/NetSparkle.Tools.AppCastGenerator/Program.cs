@@ -1,4 +1,4 @@
-﻿using NetSparkle;
+﻿using NetSparkleUpdater;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace NetSparkle.Tools.AppCastGenerator
+namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
     class Program
     {
@@ -120,7 +120,7 @@ namespace NetSparkle.Tools.AppCastGenerator
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(exePath);
                     var fileInfo = new FileInfo(exePath);
-                    var dsaSignature = NetSparkle.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
+                    var dsaSignature = NetSparkleUpdater.Utilities.GetDSASignature(exePath, _privateKeyFilePath);
                     var productVersion = versionInfo.ProductVersion.Trim();
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
                     var remoteUpdateFile = _baseUrl + fileInfo.Name;
@@ -131,7 +131,7 @@ namespace NetSparkle.Tools.AppCastGenerator
                     var changelogDSA = "";
                     if (hasChangelogForFile)
                     {
-                        changelogDSA = NetSparkle.Utilities.GetDSASignature(changelogPath, _privateKeyFilePath);
+                        changelogDSA = NetSparkleUpdater.Utilities.GetDSASignature(changelogPath, _privateKeyFilePath);
                     }
                     //
                     var item = new AppCastItem()
@@ -180,7 +180,7 @@ namespace NetSparkle.Tools.AppCastGenerator
                     appcastXmlDocument.Save(w);
                 }
                 
-                var signature = NetSparkle.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
+                var signature = NetSparkleUpdater.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
                     File.WriteAllText(appcastFileName + ".dsa", signature);

@@ -16,6 +16,7 @@
     <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/NetSparkleUpdater/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
+    <RootNamespace>NetSparkleUpdater.UI.Avalonia</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

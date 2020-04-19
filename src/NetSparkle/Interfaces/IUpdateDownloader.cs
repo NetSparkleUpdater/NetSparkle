@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     public interface IUpdateDownloader
     {

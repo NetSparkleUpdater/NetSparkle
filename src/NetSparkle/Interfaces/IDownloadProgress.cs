@@ -1,8 +1,8 @@
 using System.Net;
 using System;
-using NetSparkle.Events;
+using NetSparkleUpdater.Events;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for UI element that shows the progress bar

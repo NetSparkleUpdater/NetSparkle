@@ -1,9 +1,9 @@
-﻿using NetSparkle.Enums;
+﻿using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetSparkle.UI.Avalonia.Interfaces
+namespace NetSparkleUpdater.UI.Avalonia.Interfaces
 {
     public interface IUserRespondedToUpdateCheck
     {

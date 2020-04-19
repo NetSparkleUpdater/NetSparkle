@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Windows;
 
-namespace NetSparkle.UI.WPF
+namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
     /// Interaction logic for ToastNotification.xaml

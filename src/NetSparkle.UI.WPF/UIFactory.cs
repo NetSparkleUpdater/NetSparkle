@@ -1,14 +1,14 @@
 using System;
 using System.Drawing;
-using NetSparkle.Interfaces;
-using NetSparkle.Properties;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Properties;
 using System.Windows.Media;
 using System.Windows;
 using System.Threading;
 using System.Collections.Generic;
-using NetSparkle.UI.WPF.ViewModels;
+using NetSparkleUpdater.UI.WPF.ViewModels;
 
-namespace NetSparkle.UI.WPF
+namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
     /// UI factory for default interface

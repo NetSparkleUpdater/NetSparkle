@@ -3,10 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using NetSparkle.Interfaces;
+using NetSparkleUpdater.Interfaces;
 using System;
 
-namespace NetSparkle.UI.Avalonia
+namespace NetSparkleUpdater.UI.Avalonia
 {
     public class CheckingForUpdatesWindow : Window, ICheckingForUpdates
     {

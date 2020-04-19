@@ -3,6 +3,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
+    <RootNamespace>NetSparkleUpdater.Samples.Avalonia</RootNamespace>
+    <AssemblyName>NetSparkleUpdater.Samples.Avalonia</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -11,7 +13,7 @@
     <AvaloniaResource Include="**\*.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <AvaloniaResource Include="Assets\*"/>
+    <AvaloniaResource Include="Assets\*" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="NetSparkle_DSA.pub" />

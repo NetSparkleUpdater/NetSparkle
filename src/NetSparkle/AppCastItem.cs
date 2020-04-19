@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Xml.Linq;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// Item from a Sparkle AppCast file
@@ -31,7 +31,7 @@ namespace NetSparkle
         /// </summary>
         public string ShortVersion { get; set; }
         /// <summary>
-        /// The release notes linke
+        /// The release notes link
         /// </summary>
         public string ReleaseNotesLink { get; set; }
         /// <summary>
@@ -243,12 +243,12 @@ namespace NetSparkle
                 string dt = pubDateElement.Value.Trim();
                 if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                 {
-                    logWriter?.PrintMessage("Converted '{0}' to {1}.", dt, dateValue);
+                    logWriter?.PrintMessage("While parsing app cast item, converted '{0}' to {1}.", dt, dateValue);
                     newAppCastItem.PublicationDate = dateValue;
                 }
                 else
                 {
-                    logWriter?.PrintMessage("Cannot parse item datetime {0}", dt);
+                    logWriter?.PrintMessage("Cannot parse item's DateTime: {0}", dt);
                 }
             }
 
@@ -269,7 +269,9 @@ namespace NetSparkle
             {
                 var releaseNotes = new XElement(XMLAppCast.SparkleNamespace + _releaseNotesLinkNode) { Value = ReleaseNotesLink };
                 if (!string.IsNullOrEmpty(ReleaseNotesDSASignature))
+                {
                     releaseNotes.Add(new XAttribute(XMLAppCast.SparkleNamespace + _dsaSignature, ReleaseNotesDSASignature));
+                }
                 item.Add(releaseNotes);
             }
 
@@ -334,10 +336,14 @@ namespace NetSparkle
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (!(obj is AppCastItem item)) return false;
-
-            if (ReferenceEquals(this, item)) return true;
-
+            if (!(obj is AppCastItem item))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, item))
+            {
+                return true;
+            }
             return AppName.Equals(item.AppName) && CompareTo(item) == 0;
         }
 
@@ -358,8 +364,10 @@ namespace NetSparkle
         /// <returns>True if items are the same</returns>
         public static bool operator ==(AppCastItem left, AppCastItem right)
         {
-            if (left is null) return right is null;
-
+            if (left is null)
+            {
+                return right is null;
+            }
             return left.Equals(right);
         }
 

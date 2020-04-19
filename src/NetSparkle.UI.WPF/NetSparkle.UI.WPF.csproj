@@ -21,6 +21,7 @@
     <PackageReleaseNotes>This is in PREVIEW and currently relies on NetSparkle.New (which will move to NetSparkleUpdater eventually). Please visit https://github.com/NetSparkleUpdater/NetSparkle and ask for help if you need it!</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RootNamespace>NetSparkleUpdater.UI.WPF</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 
-namespace NetSparkle.UI.Avalonia.Controls
+namespace NetSparkleUpdater.UI.Avalonia.Controls
 {
     public class BaseWindow : Window
     {

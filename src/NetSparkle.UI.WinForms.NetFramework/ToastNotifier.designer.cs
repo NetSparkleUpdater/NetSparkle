@@ -1,4 +1,4 @@
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
 	partial class ToastNotifier
 	{

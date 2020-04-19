@@ -1,9 +1,9 @@
-using NetSparkle.Configurations;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Configurations;
+using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
 
-namespace NetSparkle.Events
+namespace NetSparkleUpdater.Events
 {
     /// <summary>
     /// Contains all information for the update detected event

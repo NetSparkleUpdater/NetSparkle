@@ -1,4 +1,4 @@
-namespace NetSparkle.Enums
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Possibilities for the status of an update request

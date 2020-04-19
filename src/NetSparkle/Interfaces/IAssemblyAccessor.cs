@@ -1,5 +1,5 @@
 using System;
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     interface IAssemblyAccessor
     {

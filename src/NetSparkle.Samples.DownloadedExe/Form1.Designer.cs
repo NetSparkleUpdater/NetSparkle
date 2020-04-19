@@ -1,4 +1,4 @@
-namespace NetSparkle.Samples.UpdateExe
+namespace NetSparkleUpdater.Samples.UpdateExe
 {
     partial class Form1
     {

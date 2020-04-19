@@ -1,4 +1,4 @@
-using NetSparkle.Interfaces;
+using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NetSparkle.UI.WinForms
+namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// The checking for updates window

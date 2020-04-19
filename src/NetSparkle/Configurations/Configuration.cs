@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Win32;
 using System.Diagnostics;
-using NetSparkle.AssemblyAccessors;
+using NetSparkleUpdater.AssemblyAccessors;
 
-namespace NetSparkle.Configurations
+namespace NetSparkleUpdater.Configurations
 {
     /// <summary>
     /// Abstract class to handle 

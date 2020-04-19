@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Universal interface for creating UI utilized by Sparkle

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace NetSparkle.Samples.NetCore.WPF
+namespace NetSparkleUpdater.Samples.NetCore.WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml

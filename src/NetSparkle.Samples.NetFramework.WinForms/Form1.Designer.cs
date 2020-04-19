@@ -1,4 +1,4 @@
-namespace NetSparkle.Samples.NetFramework.WinForms
+namespace NetSparkleUpdater.Samples.NetFramework.WinForms
 {
     partial class Form1
     {

@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
 
-namespace NetSparkle.Samples.HandleEventsYourself
+namespace NetSparkleUpdater.Samples.HandleEventsYourself
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

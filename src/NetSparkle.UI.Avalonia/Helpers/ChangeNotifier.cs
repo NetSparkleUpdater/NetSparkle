@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.UI.Avalonia.Helpers
+namespace NetSparkleUpdater.UI.Avalonia.Helpers
 {
     // https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged?view=netframework-4.7.2
     public class ChangeNotifier : INotifyPropertyChanged

@@ -1,4 +1,4 @@
-namespace NetSparkle.Enums
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Possible Result values for IUpdateAvailable implementation.

@@ -3,10 +3,10 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using NetSparkle;
-using NetSparkle.Enums;
+using NetSparkleUpdater;
+using NetSparkleUpdater.Enums;
 
-namespace NetSparkle.Samples.NetFramework.WinForms
+namespace NetSparkleUpdater.Samples.NetFramework.WinForms
 {
     public partial class Form1 : Form
     {
@@ -22,7 +22,7 @@ namespace NetSparkle.Samples.NetFramework.WinForms
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkleUpdateDetector = new Sparkle(appcastUrl)
             {
-                UIFactory = new NetSparkle.UI.WinForms.UIFactory(icon),
+                UIFactory = new NetSparkleUpdater.UI.WinForms.UIFactory(icon),
                 //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true
             };

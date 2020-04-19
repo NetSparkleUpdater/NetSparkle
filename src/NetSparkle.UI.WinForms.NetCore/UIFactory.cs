@@ -1,13 +1,13 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using NetSparkle.Interfaces;
-using NetSparkle.Properties;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Properties;
+using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
 
-namespace NetSparkle.UI.WinForms
+namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// UI factory for default interface

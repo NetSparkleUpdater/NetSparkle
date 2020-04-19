@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NetSparkle.UI.WinForms
+namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// An alert box

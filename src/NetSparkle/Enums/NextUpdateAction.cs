@@ -1,4 +1,4 @@
-namespace NetSparkle.Enums
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Everytime when NetSparkle detects an update the

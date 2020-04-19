@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.IO;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 using System.Net;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// Grabs release notes formatted as Markdown from the server and allows you to view them as HTML

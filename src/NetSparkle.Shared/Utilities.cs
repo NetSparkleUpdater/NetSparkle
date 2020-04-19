@@ -5,7 +5,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// Provides commonly used utility functions.
@@ -20,9 +20,13 @@ namespace NetSparkle
         public static string GetVersionString(Version version)
         {
             if (version.Revision != 0)
+            {
                 return version.ToString();
+            }
             if (version.Build != 0)
+            {
                 return version.ToString(3);
+            }
             return version.ToString(2);
         }
         
@@ -99,8 +103,6 @@ namespace NetSparkle
             }
             return numBytes.ToString();
         }
-
-
 
         // From WalletWasabi:
         // https://github.com/zkSNACKs/WalletWasabi/blob/8d42bce976605cca3326ea6c998b2294494900e6/WalletWasabi/Helpers/EnvironmentHelpers.cs

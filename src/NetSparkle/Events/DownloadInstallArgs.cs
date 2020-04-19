@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.Events
+namespace NetSparkleUpdater.Events
 {
     /// <summary>
     /// Event called when the download/install window closes

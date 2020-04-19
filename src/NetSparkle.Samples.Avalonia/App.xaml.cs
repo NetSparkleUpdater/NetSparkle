@@ -2,7 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace NetSparkle.Samples.Avalonia
+namespace NetSparkleUpdater.Samples.Avalonia
 {
     public class App : Application
     {

@@ -2,10 +2,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Net;
-using NetSparkle.Interfaces;
-using NetSparkle.Events;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Events;
 
-namespace NetSparkle.UI.WinForms
+namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// A progress bar

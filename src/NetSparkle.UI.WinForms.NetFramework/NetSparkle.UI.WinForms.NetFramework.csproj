@@ -7,7 +7,7 @@
     <ProjectGuid>{DAB16394-9862-49C3-818B-6B84F22EF5FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetSparkle.UI.WinForms</RootNamespace>
+    <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkle.UI.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

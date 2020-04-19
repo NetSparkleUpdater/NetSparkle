@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for UIs that tell the user that NetSparkle is checking for updates

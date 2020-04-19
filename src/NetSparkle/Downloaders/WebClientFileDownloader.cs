@@ -1,4 +1,4 @@
-﻿using NetSparkle.Interfaces;
+﻿using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle.Downloaders
+namespace NetSparkleUpdater.Downloaders
 {
     class WebClientFileDownloader : IUpdateDownloader, IDisposable
     {

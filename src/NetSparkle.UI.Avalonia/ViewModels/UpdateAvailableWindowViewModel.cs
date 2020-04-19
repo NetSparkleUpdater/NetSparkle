@@ -1,6 +1,6 @@
-﻿using NetSparkle.Enums;
-using NetSparkle.UI.Avalonia.Helpers;
-using NetSparkle.UI.Avalonia.Interfaces;
+﻿using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.UI.Avalonia.Helpers;
+using NetSparkleUpdater.UI.Avalonia.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Input;
 
-namespace NetSparkle.UI.Avalonia.ViewModels
+namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
     public class UpdateAvailableWindowViewModel : ChangeNotifier
     {
@@ -140,7 +140,7 @@ namespace NetSparkle.UI.Avalonia.ViewModels
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
                     Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = NetSparkle.Utilities.GetVersionString(versionObj);
+                    versionString = NetSparkleUpdater.Utilities.GetVersionString(versionObj);
                 }
                 catch
                 {

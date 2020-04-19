@@ -1,9 +1,9 @@
 using System;
 using System.Globalization;
 using Microsoft.Win32;
-using NetSparkle.AssemblyAccessors;
+using NetSparkleUpdater.AssemblyAccessors;
 
-namespace NetSparkle.Configurations
+namespace NetSparkleUpdater.Configurations
 {
     /// <summary>
     /// This class handles all registry values which are used from sparkle to handle 

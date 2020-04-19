@@ -1,7 +1,7 @@
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 using System;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for UI element that shows the release notes, 

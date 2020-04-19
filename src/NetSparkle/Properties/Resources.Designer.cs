@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NetSparkle.Properties {
+namespace NetSparkleUpdater.Properties {
     using System;
     
     

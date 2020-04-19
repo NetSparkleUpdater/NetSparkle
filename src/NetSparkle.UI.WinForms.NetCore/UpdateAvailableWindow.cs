@@ -2,13 +2,13 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using NetSparkle.Interfaces;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
-using NetSparkle.Events;
+using NetSparkleUpdater.Events;
 
-namespace NetSparkle.UI.WinForms
+namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// The main form
@@ -76,7 +76,7 @@ namespace NetSparkle.UI.WinForms
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
                     Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = NetSparkle.Utilities.GetVersionString(versionObj);
+                    versionString = NetSparkleUpdater.Utilities.GetVersionString(versionObj);
                 }
                 catch
                 {

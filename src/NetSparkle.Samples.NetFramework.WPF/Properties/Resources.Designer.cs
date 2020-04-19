@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NetSparkle.Samples.NetFramework.WPF.Properties {
+namespace NetSparkleUpdater.Samples.NetFramework.WPF.Properties {
     using System;
     
     

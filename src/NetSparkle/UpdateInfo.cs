@@ -1,11 +1,11 @@
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// A simple class to hold information on potential updates to a software product.

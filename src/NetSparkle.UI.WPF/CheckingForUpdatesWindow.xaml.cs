@@ -1,4 +1,4 @@
-﻿using NetSparkle.Interfaces;
+﻿using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NetSparkle.UI.WPF
+namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
     /// Interaction logic for CheckingForUpdatesWindow.xaml

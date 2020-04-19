@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{19F0D329-2127-4788-8AFA-DDEDA4B70F88}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>NetSparkleGenerator</RootNamespace>
+    <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
     <AssemblyName>generate_appcast</AssemblyName>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

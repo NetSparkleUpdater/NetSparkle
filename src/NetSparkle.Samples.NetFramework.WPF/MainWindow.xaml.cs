@@ -2,7 +2,7 @@
 using System.Windows;
 
 
-namespace NetSparkle.Samples.NetFramework.WPF
+namespace NetSparkleUpdater.Samples.NetFramework.WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,7 +27,7 @@ namespace NetSparkle.Samples.NetFramework.WPF
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
             _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
-                UIFactory = new NetSparkle.UI.WPF.UIFactory(NetSparkle.UI.WPF.IconUtilities.ToImageSource(icon)),
+                UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
                 ShowsUIOnMainThread = false
                 //UseNotificationToast = true
             };

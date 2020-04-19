@@ -3,10 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using NetSparkle.UI.Avalonia;
+using NetSparkleUpdater.UI.Avalonia;
 using System.IO;
 
-namespace NetSparkle.Samples.Avalonia
+namespace NetSparkleUpdater.Samples.Avalonia
 {
     public class MainWindow : Window
     {
@@ -22,7 +22,7 @@ namespace NetSparkle.Samples.Avalonia
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             _sparkle = new Sparkle("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
             {
-                UIFactory = new NetSparkle.UI.Avalonia.UIFactory(Icon),
+                UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
                 ShowsUIOnMainThread = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages

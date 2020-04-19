@@ -2,9 +2,9 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using NetSparkle.UI.Avalonia.ViewModels;
+using NetSparkleUpdater.UI.Avalonia.ViewModels;
 
-namespace NetSparkle.UI.Avalonia
+namespace NetSparkleUpdater.UI.Avalonia
 {
     public class MessageNotificationWindow : Window
     {

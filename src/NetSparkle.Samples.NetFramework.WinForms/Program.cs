@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace NetSparkle.Samples.NetFramework.WinForms
+namespace NetSparkleUpdater.Samples.NetFramework.WinForms
 {
     static class Program
     {

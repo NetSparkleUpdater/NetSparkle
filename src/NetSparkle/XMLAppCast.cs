@@ -1,6 +1,6 @@
-using NetSparkle.Configurations;
-using NetSparkle.Enums;
-using NetSparkle.Interfaces;
+using NetSparkleUpdater.Configurations;
+using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// An XML-based appcast document downloader and handler

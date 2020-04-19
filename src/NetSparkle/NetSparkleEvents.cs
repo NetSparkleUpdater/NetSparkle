@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Text;
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     public partial class Sparkle : IDisposable
     {

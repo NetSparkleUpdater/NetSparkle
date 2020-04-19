@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WPFTemplate.Helpers;
 
-namespace NetSparkle.UI.WPF.ViewModels
+namespace NetSparkleUpdater.UI.WPF.ViewModels
 {
     public class DownloadProgressWindowViewModel : ChangeNotifier
     {

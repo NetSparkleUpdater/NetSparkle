@@ -4,21 +4,21 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using NetSparkle.Interfaces;
+using NetSparkleUpdater.Interfaces;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using NetSparkle.Enums;
+using NetSparkleUpdater.Enums;
 using System.Net.Http;
-using NetSparkle.Events;
+using NetSparkleUpdater.Events;
 using System.Collections.Generic;
-using NetSparkle.Downloaders;
-using NetSparkle.Configurations;
+using NetSparkleUpdater.Downloaders;
+using NetSparkleUpdater.Configurations;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #endif
 
-namespace NetSparkle
+namespace NetSparkleUpdater
 {
     /// <summary>
     /// Class to communicate with a sparkle-based appcast

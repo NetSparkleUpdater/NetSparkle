@@ -1,9 +1,9 @@
-﻿using NetSparkle.Enums;
-using NetSparkle.Events;
-using NetSparkle.Interfaces;
-using NetSparkle.UI.WPF.Controls;
-using NetSparkle.UI.WPF.Interfaces;
-using NetSparkle.UI.WPF.ViewModels;
+﻿using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Events;
+using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.UI.WPF.Controls;
+using NetSparkleUpdater.UI.WPF.Interfaces;
+using NetSparkleUpdater.UI.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NetSparkle.UI.WPF
+namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
     /// Interaction logic for UpdateAvailableWindow.xaml

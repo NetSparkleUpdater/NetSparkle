@@ -1,9 +1,9 @@
-﻿using NetSparkle.Configurations;
+﻿using NetSparkleUpdater.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetSparkle.Interfaces
+namespace NetSparkleUpdater.Interfaces
 {
     public interface IAppCastHandler
     {
