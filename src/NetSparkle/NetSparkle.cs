@@ -540,8 +540,10 @@ namespace NetSparkleUpdater
             {
                 await Task.Factory.StartNew(() =>
                 {
+                    LogWriter.PrintMessage("About to start downloading the app cast...");
                     if (AppCastHandler.DownloadAndParse())
                     {
+                        LogWriter.PrintMessage("App cast successfully downloaded and parsed. Getting available updates...");
                         updates = AppCastHandler.GetAvailableUpdates();
                     }
                 });
