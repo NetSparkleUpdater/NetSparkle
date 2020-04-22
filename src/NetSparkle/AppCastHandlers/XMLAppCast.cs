@@ -76,11 +76,19 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             try
             {
+                _logWriter.PrintMessage("Downloading app cast data...");
                 var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-                var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
-                bool didVerify = VerifyAppCast(appcast, signature);
-                if (didVerify)
+                var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
+                bool isValidAppcast = true;
+                if (signatureNeeded)
                 {
+                    _logWriter.PrintMessage("Downloading app cast signature data...");
+                    var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                    isValidAppcast = VerifyAppCast(appcast, signature);
+                }
+                if (isValidAppcast)
+                {
+                    _logWriter.PrintMessage("Appcast is valid! Parsing...");
                     ParseAppCast(appcast);
                     return true;
                 }
@@ -89,6 +97,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
             }
+            _logWriter.PrintMessage("Appcast is not valid");
             return false;
         }
 
