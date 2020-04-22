@@ -55,8 +55,8 @@
             Grid.Row="3"
             HorizontalAlignment="Left"
             Command="{Binding Skip}"
-            Height="25"
-            Width="100" />
+            Margin="10,10,0,10"
+            Padding="5" />
     <Button Name="RemindMeLaterButton"
             IsEnabled="{Binding IsRemindMeLaterEnabled}"
             IsVisible="{Binding IsRemindMeLaterVisible}"
@@ -65,17 +65,15 @@
             Grid.Row="3"
             HorizontalAlignment="Right"
             Command="{Binding RemindMeLater}"
-            Height="25"
-            Width="100"
-            Margin="0,0,120,0" />
+            Margin="0,10,120,10"
+            Padding="5" />
     <Button Name="DownloadInstallButton"
             Content="Download/Install"
             Grid.Column="1"
             Grid.Row="3"
             HorizontalAlignment="Right"
             Command="{Binding DownloadInstall}"
-            Height="25"
-            Width="100"
-            Margin="0,10,10,10" />
+            Margin="0,10,10,10"
+            Padding="5" />
   </Grid>
 </cont:BaseWindow>
