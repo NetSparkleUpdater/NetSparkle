@@ -8,7 +8,9 @@ namespace NetSparkleUpdater.Interfaces
     public interface IAppCastDataDownloader
     {
         /// <summary>
-        /// Used for both downloading app cast and the app cast's .dsa file
+        /// Used for both downloading app cast and the app cast's .dsa file.
+        /// Note that you must handle your own exceptions if they occur. Otherwise, SparkleUpdater
+        /// will act as though the appcast failed to download.
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>

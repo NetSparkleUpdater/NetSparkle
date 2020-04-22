@@ -22,6 +22,8 @@ namespace NetSparkleUpdater.Interfaces
         /// Download the app cast file via an IAppCastDataDownloader object and parse it.
         /// If this function is successful, NetSparkle will call GetNeededUpdates() to
         /// get the AppCastItem information.
+        /// Note that you must handle your own exceptions if they occur. Otherwise, SparkleUpdater
+        /// will act as though the appcast failed to download.
         /// </summary>
         /// <returns>true if downloading and parsing succeeded; false otherwise</returns>
         bool DownloadAndParse();
