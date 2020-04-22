@@ -66,7 +66,8 @@
             Grid.ColumnSpan="2"
             Content="{Binding ActionButtonTitle}"
             FontSize="16"
-            Width="175"
+            HorizontalAlignment="Center"
+            Padding="10,5,10,5"
             Margin="0,10,0,10"
             Click="ActionButton_Click" />
   </Grid>
