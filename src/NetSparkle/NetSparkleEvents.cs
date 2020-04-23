@@ -26,11 +26,13 @@ namespace NetSparkleUpdater
         /// process when an update is detected
         /// </summary>
         public event UpdateDetected UpdateDetected;
+
+        // TODO: update these next events into 1 single event
+
         /// <summary>
         /// Called when update check is all done. May or may not have called <see cref="UpdateDetected"/> in the middle.
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
-
         /// <summary>
         /// Called when the user skips some version of the application.
         /// </summary>
