@@ -19,7 +19,7 @@ namespace NetSparkleUpdater
         private string _separatorTemplate;
         private string _initialHTML;
 
-        private SparkleUpdater _sparkle;
+        protected SparkleUpdater _sparkle;
 
         /// <summary>
         /// List of supported extensions for markdown files (.md, .mkdn, .mkd, .markdown)
