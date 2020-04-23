@@ -1,10 +1,15 @@
 ﻿using NetSparkleUpdater.AssemblyAccessors;
+#if NET451
 using Newtonsoft.Json;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+#if NETSTANDARD
+using System.Text.Json;
+#endif
 
 namespace NetSparkleUpdater.Configurations
 {
@@ -133,7 +138,11 @@ namespace NetSparkleUpdater.Configurations
                 try
                 {
                     string json = File.ReadAllText(saveLocation);
+#if NETSTANDARD
+                    var data = JsonSerializer.Deserialize<SavedConfigurationData>(json);
+#else
                     var data = JsonConvert.DeserializeObject<SavedConfigurationData>(json);
+#endif
                     CheckForUpdate = data.CheckForUpdate;
                     LastCheckTime = data.LastCheckTime;
                     LastVersionSkipped = data.LastVersionSkipped;
@@ -169,7 +178,11 @@ namespace NetSparkleUpdater.Configurations
             };
             LastConfigUpdate = savedConfig.LastConfigUpdate;
 
+#if NETSTANDARD
+            string json = JsonSerializer.Serialize(savedConfig);
+#else
             string json = JsonConvert.SerializeObject(savedConfig);
+#endif
             try
             {
                 File.WriteAllText(savePath, json);
