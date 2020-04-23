@@ -119,7 +119,7 @@ namespace NetSparkleUpdater.UI.WinForms
         private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
-            string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotesAsHTML(items, latestVersion, _cancellationToken);
+            string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
             ReleaseNotesBrowser.Invoke((MethodInvoker)delegate
             {
                 // see https://stackoverflow.com/a/15209861/3938401

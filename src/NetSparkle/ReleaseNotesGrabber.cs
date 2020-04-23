@@ -59,7 +59,7 @@ namespace NetSparkleUpdater
         /// <param name="latestVersion">The latest version (most current version) of your releases</param>
         /// <param name="cancellationToken">Token to cancel the async download requests</param>
         /// <returns></returns>
-        public virtual async Task<string> DownloadAllReleaseNotesAsHTML(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
+        public virtual async Task<string> DownloadAllReleaseNotes(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
             StringBuilder sb = new StringBuilder(_initialHTML);
@@ -67,7 +67,7 @@ namespace NetSparkleUpdater
             {
                 _sparkle.LogWriter.PrintMessage("Initializing release notes for {0}", castItem.Version);
                 // TODO: could we optimize this by doing multiple downloads at once?
-                var releaseNotes = await GetHTMLReleaseNotes(castItem, _sparkle, cancellationToken);
+                var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
                 sb.Append(string.Format(_separatorTemplate,
                                         castItem.Version,
                                         castItem.PublicationDate.ToString("D"), // was dd MMM yyyy
@@ -80,7 +80,7 @@ namespace NetSparkleUpdater
             return sb.ToString();
         }
 
-        protected virtual async Task<string> GetHTMLReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
+        protected virtual async Task<string> GetReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
