@@ -1283,24 +1283,24 @@ namespace NetSparkleUpdater
                                 // If you have better ideas on how to figure out if they've shut all other windows, let me know...
             try
             {
-                if (CloseApplicationAsync != null)
+                await CallFuncConsideringUIThreadsAsync(new Func<Task>(async () =>
                 {
-                    await CloseApplicationAsync.Invoke();
-                }
-                else if (CloseApplication != null)
-                {
-                    CloseApplication.Invoke();
-                }
-                else
-                {
-                    // Because the download/install window is usually on a separate thread,
-                    // send dual shutdown messages via both the sync context (kills "main" app)
-                    // and the current thread (kills current thread)
-                    _syncContext?.Post((state) =>
-                        UIFactory?.Shutdown(),
-                    null);
-                    UIFactory?.Shutdown();
-                }
+                    if (CloseApplicationAsync != null)
+                    {
+                        await CloseApplicationAsync.Invoke();
+                    }
+                    else if (CloseApplication != null)
+                    {
+                        CloseApplication.Invoke();
+                    }
+                    else
+                    {
+                        // Because the download/install window is usually on a separate thread,
+                        // send dual shutdown messages via both the sync context (kills "main" app)
+                        // and the current thread (kills current thread)
+                        UIFactory?.Shutdown();
+                    }
+                }));
             }
             catch (Exception e)
             {
@@ -1477,6 +1477,27 @@ namespace NetSparkleUpdater
             else
             {
                 _syncContext.Post((state) => action?.Invoke(), null);
+            }
+        }
+
+        /// <summary>
+        /// Events should always be fired on the thread that started the Sparkle object.
+        /// Used for events that are fired after coming from an update available window
+        /// or the download progress window.
+        /// Basically, if ShowsUIOnMainThread, just invokes the action. Otherwise,
+        /// uses the SynchronizationContext to call the action. Ensures that the action
+        /// is always on the main thread.
+        /// </summary>
+        /// <param name="action"></param>
+        private async Task CallFuncConsideringUIThreadsAsync(Func<Task> action)
+        {
+            if (ShowsUIOnMainThread)
+            {
+                await action?.Invoke();
+            }
+            else
+            {
+                _syncContext.Post(async (state) => await action?.Invoke(), null);
             }
         }
 
