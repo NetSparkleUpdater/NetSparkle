@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
+using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater.Samples.HandleEventsYourself
 {
@@ -98,7 +99,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             // ok, the file is downloading now
         }
 
-        private void _sparkle_DownloadMadeProgress(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        private void _sparkle_DownloadMadeProgress(object sender, ItemDownloadProgressEventArgs e)
         {
             DownloadInfo.Text = string.Format("The download made some progress! {0}% done.", e.ProgressPercentage);
         }

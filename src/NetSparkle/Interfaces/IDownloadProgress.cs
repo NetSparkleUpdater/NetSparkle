@@ -33,8 +33,8 @@ namespace NetSparkleUpdater.Interfaces
         /// Called when the download progress changes
         /// </summary>
         /// <param name="sender">not used.</param>
-        /// <param name="e">used to resolve the progress of the download. Also contains the total size of the download</param>
-        void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e);
+        /// <param name="e">used to resolve the progress of the download. Also contains the total size of the download (TODO: docs update)</param>
+        void OnDownloadProgressChanged(object sender, ItemDownloadProgressEventArgs args);
 
         /// <summary>
         /// Close the UI

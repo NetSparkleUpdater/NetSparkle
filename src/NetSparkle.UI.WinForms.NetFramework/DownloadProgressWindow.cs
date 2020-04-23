@@ -134,7 +134,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// 
         /// </summary>
-        public void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        public void OnDownloadProgressChanged(object sender, ItemDownloadProgressEventArgs e)
         {
             OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
         }

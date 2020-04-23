@@ -27,7 +27,8 @@ namespace NetSparkleUpdater.Downloaders
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            DownloadProgressChanged?.Invoke(sender, e);
+            DownloadProgressChanged?.Invoke(sender, 
+                new Events.ItemDownloadProgressEventArgs(e.ProgressPercentage, e.UserState, e.BytesReceived, e.TotalBytesToReceive));
         }
 
         private void WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -40,7 +41,7 @@ namespace NetSparkleUpdater.Downloaders
             get => _webClient.IsBusy;
         }
 
-        public event DownloadProgressChangedEventHandler DownloadProgressChanged;
+        public event DownloadProgressEvent DownloadProgressChanged;
         public event AsyncCompletedEventHandler DownloadFileCompleted;
 
         public void Dispose()

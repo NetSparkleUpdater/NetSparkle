@@ -99,7 +99,7 @@ namespace NetSparkleUpdater.UI.WPF
             _dataContext?.UpdateProgress(bytesReceived, totalBytesToReceive, percentage);
         }
 
-        void IDownloadProgress.OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        void IDownloadProgress.OnDownloadProgressChanged(object sender, ItemDownloadProgressEventArgs e)
         {
             OnDownloadProgressChanged(sender, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
         }

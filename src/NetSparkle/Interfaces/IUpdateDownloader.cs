@@ -17,7 +17,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Event to call when some progress has been made on the download
         /// </summary>
-        event DownloadProgressChangedEventHandler DownloadProgressChanged;
+        event DownloadProgressEvent DownloadProgressChanged;
 
         /// <summary>
         /// Event to call when the download of the update file has been completed
