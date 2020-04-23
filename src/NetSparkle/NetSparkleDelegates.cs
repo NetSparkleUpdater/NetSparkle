@@ -79,9 +79,16 @@ namespace NetSparkleUpdater
     /// A delegate for download progress events (TODO: docs update)
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="item"></param>
     /// <param name="args"></param>
     public delegate void DownloadProgressEvent(object sender, ItemDownloadProgressEventArgs args);
+
+    /// <summary>
+    /// A delegate for download progress events for a given item (TODO: docs update)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="item"></param>
+    /// <param name="args"></param>
+    public delegate void ItemDownloadProgressEvent(object sender, AppCastItem item, ItemDownloadProgressEventArgs args);
 
     /// <summary>
     /// A handler called when the user responsed to an available update

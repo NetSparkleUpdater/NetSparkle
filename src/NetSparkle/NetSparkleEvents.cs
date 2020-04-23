@@ -57,7 +57,7 @@ namespace NetSparkleUpdater
         /// Called when the download has made some progress. Also sent to the progress window
         /// if one is available.
         /// </summary>
-        public event DownloadProgressEvent DownloadMadeProgress;
+        public event ItemDownloadProgressEvent DownloadMadeProgress;
         /// <summary>
         /// Called when the downloaded file is fully downloaded and verified regardless of the value for
         /// SilentMode. Note that if you are installing fully silently, this will be called before the

@@ -820,7 +820,7 @@ namespace NetSparkleUpdater
 
         private void OnDownloadProgressChanged(object sender, ItemDownloadProgressEventArgs args)
         {
-            CallFuncConsideringUIThreads(() => { DownloadMadeProgress?.Invoke(sender, args); });
+            CallFuncConsideringUIThreads(() => { DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args); });
         }
 
         private void CleanUpUpdateDownloader()

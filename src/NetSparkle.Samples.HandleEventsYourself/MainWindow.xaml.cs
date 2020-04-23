@@ -99,7 +99,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             // ok, the file is downloading now
         }
 
-        private void _sparkle_DownloadMadeProgress(object sender, ItemDownloadProgressEventArgs e)
+        private void _sparkle_DownloadMadeProgress(object sender, AppCastItem item, ItemDownloadProgressEventArgs e)
         {
             DownloadInfo.Text = string.Format("The download made some progress! {0}% done.", e.ProgressPercentage);
         }
