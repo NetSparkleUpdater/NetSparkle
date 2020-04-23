@@ -744,7 +744,6 @@ namespace NetSparkleUpdater
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
-            CleanUpUpdateDownloader();
             CreateUpdateDownloaderIfNeeded();
             _downloadTempFileName = await GetDownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
@@ -799,9 +798,14 @@ namespace NetSparkleUpdater
             }
             if (needsToDownload)
             {
+                // remove any old event handlers so we don't fire 2x
+                UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
+                UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
+
                 CreateAndShowProgressWindow(item, false);
                 if (ProgressWindow != null)
                 {
+                    UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
                     UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
                 }
                 UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
