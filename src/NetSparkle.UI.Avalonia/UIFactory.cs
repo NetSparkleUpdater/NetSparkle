@@ -33,11 +33,14 @@ namespace NetSparkleUpdater.UI.Avalonia
         public UIFactory(WindowIcon applicationIcon, string releaseNotesSeparatorTemplate = "", string releaseNotesHeadAddition = "")
         {
             _applicationIcon = applicationIcon;
-            using (var stream = new MemoryStream())
+            if (applicationIcon != null)
             {
-                applicationIcon?.Save(stream);
-                stream.Position = 0;
-                _iconBitmap = new Bitmap(stream);
+                using (var stream = new MemoryStream())
+                {
+                    applicationIcon?.Save(stream);
+                    stream.Position = 0;
+                    _iconBitmap = new Bitmap(stream);
+                }
             }
             _releaseNotesSeparatorTemplate = releaseNotesSeparatorTemplate;
             _releaseNotesHeadAddition = releaseNotesHeadAddition;
