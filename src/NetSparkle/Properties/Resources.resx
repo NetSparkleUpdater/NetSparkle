@@ -124,7 +124,7 @@
     <value>Your current version is up to date.</value>
   </data>
   <data name="DefaultUIFactory_ErrorTitle" xml:space="preserve">
-    <value>Error!!</value>
+    <value>Error!</value>
   </data>
   <data name="DefaultUIFactory_MessageTitle" xml:space="preserve">
     <value>Info</value>
