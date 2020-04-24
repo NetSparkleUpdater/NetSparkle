@@ -140,6 +140,8 @@ namespace NetSparkleUpdater.AppCastHandlers
             foreach (var item in items)
             {
                 var currentItem = AppCastItem.Parse(_config.InstalledVersion, _config.ApplicationName, _castUrl, item, _logWriter);
+                _logWriter.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
+                    currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
                 Items.Add(currentItem);
             }
 
