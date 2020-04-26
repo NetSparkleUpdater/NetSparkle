@@ -16,8 +16,8 @@ namespace NetSparkleUpdater
     /// </summary>
     public class ReleaseNotesGrabber
     {
-        private string _separatorTemplate;
-        private string _initialHTML;
+        protected string _separatorTemplate;
+        protected string _initialHTML;
 
         protected SparkleUpdater _sparkle;
 
