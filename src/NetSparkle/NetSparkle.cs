@@ -1103,7 +1103,7 @@ namespace NetSparkleUpdater
             {
                 if (DoExtensionsMatch(installerExt, ".deb"))
                 {
-                    return "sudo apt install \"" + downloadFilePath + "\"";
+                    return "sudo dpkg -i \"" + downloadFilePath + "\"";
                 }
                 if (DoExtensionsMatch(installerExt, ".rpm"))
                 {
@@ -1253,7 +1253,7 @@ namespace NetSparkleUpdater
             }
 
             // report
-            LogWriter.PrintMessage("Going to execute batch: {0}", batchFilePath);
+            LogWriter.PrintMessage("Going to execute script at path: {0}", batchFilePath);
 
             // init the installer helper
             _installerProcess = new Process
