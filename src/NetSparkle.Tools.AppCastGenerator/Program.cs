@@ -143,7 +143,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         ShortVersion = productVersion.Substring(0, productVersion.LastIndexOf('.')),
                         PublicationDate = fileInfo.CreationTime,
                         UpdateSize = fileInfo.Length,
-                        DownloadDSASignature = dsaSignature,
+                        DownloadSignature = dsaSignature,
                         OperatingSystemString = "windows",
                         MIMEType = "application/octet-stream"
                     };
@@ -151,7 +151,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     {
                         if (!string.IsNullOrWhiteSpace(_changelogsUrl))
                         {
-                            item.ReleaseNotesDSASignature = changelogDSA;
+                            item.ReleaseNotesSignature = changelogDSA;
                             item.ReleaseNotesLink = _changelogsUrl + changelogFileName;
                         }
                         else
