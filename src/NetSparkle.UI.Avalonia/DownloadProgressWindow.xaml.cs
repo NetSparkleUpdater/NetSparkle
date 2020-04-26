@@ -56,7 +56,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             if (!_didCallDownloadProcessCompletedHandler)
             {
                 _didCallDownloadProcessCompletedHandler = true;
-                DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(false));
+                DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(false));
             }
             Closing -= DownloadProgressWindow_Closing;
             if (!_isOnMainThread && !_hasInitiatedShutdown)
@@ -125,7 +125,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         public void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(!(_dataContext?.IsDownloading ?? true)));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(!(_dataContext?.IsDownloading ?? true)));
         }
     }
 }

@@ -11,12 +11,12 @@ namespace NetSparkleUpdater.Events
     /// </summary>
     /// <param name="sender">Sender of this event</param>
     /// <param name="args">DownloadInstallArgs with info on whether to install or not</param>
-    public delegate void DownloadInstallEventHandler(object sender, DownloadInstallArgs args);
+    public delegate void DownloadInstallEventHandler(object sender, DownloadInstallEventArgs args);
 
     /// <summary>
     /// Args sent via the DownloadInstallEventHandler when the download/install window closes
     /// </summary>
-    public class DownloadInstallArgs : EventArgs
+    public class DownloadInstallEventArgs : EventArgs
     {
         /// <summary>
         /// Whether or not the listener should perform the installation process
@@ -32,7 +32,7 @@ namespace NetSparkleUpdater.Events
         /// Constructor for DownloadInstallArgs
         /// </summary>
         /// <param name="shouldInstall">True if the listener should start the download process; false otherwise</param>
-        public DownloadInstallArgs(bool shouldInstall) : base()
+        public DownloadInstallEventArgs(bool shouldInstall) : base()
         {
             ShouldInstall = shouldInstall;
         }

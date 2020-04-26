@@ -96,7 +96,7 @@ namespace NetSparkleUpdater.UI.WPF
 
         public void UserRespondedToUpdateCheck(UpdateAvailableResult response)
         {
-            UserResponded?.Invoke(this, new UpdateResponseArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
+            UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
         }
 
         public void ShowReleaseNotes(string notes)

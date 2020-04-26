@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater.Events
 {
     /// <summary>
-    /// Event arguments for when a user responds to an available update
+    /// Event arguments for when a user responds to an available update UI
     /// </summary>
-    public class UpdateResponseArgs : EventArgs
+    public class UpdateResponseEventArgs : EventArgs
     {
         /// <summary>
         /// The user's response to the update
@@ -28,7 +28,7 @@ namespace NetSparkleUpdater.Events
         /// </summary>
         /// <param name="result">User's response of type UpdateAvailableResult</param>
         /// <param name="item">Item that the user is responding to an update message for</param>
-        public UpdateResponseArgs(UpdateAvailableResult result, AppCastItem item) : base()
+        public UpdateResponseEventArgs(UpdateAvailableResult result, AppCastItem item) : base()
         {
             Result = result;
             UpdateItem = item;

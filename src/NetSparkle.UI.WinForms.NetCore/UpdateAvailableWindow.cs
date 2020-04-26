@@ -136,7 +136,7 @@ namespace NetSparkleUpdater.UI.WinForms
             {
                 DialogResult = DialogResult.None;
                 _didSendResponse = true;
-                UserResponded?.Invoke(this, new UpdateResponseArgs(UpdateAvailableResult.None, CurrentItem));
+                UserResponded?.Invoke(this, new UpdateResponseEventArgs(UpdateAvailableResult.None, CurrentItem));
             }
         }
 
@@ -225,7 +225,7 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             _cancellationTokenSource?.Cancel();
             _didSendResponse = true;
-            UserResponded?.Invoke(this, new UpdateResponseArgs(response, CurrentItem));
+            UserResponded?.Invoke(this, new UpdateResponseEventArgs(response, CurrentItem));
         }
 
         /// <summary>

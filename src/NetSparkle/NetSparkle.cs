@@ -764,7 +764,7 @@ namespace NetSparkleUpdater
                     bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                     if (shouldInstallAndRelaunch)
                     {
-                        CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallArgs(true)); });
+                        CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
                     }
                 }
                 else if (!_hasAttemptedFileRedownload)
@@ -894,7 +894,7 @@ namespace NetSparkleUpdater
             }
         }
 
-        private async void ProgressWindowCompleted(object sender, DownloadInstallArgs args)
+        private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
         {
             if (args.ShouldInstall)
             {
@@ -1008,7 +1008,7 @@ namespace NetSparkleUpdater
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
-                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
+                    ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
                 }
             }
             _itemBeingDownloaded = null;
@@ -1505,7 +1505,7 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="args">Info on the user response and what update item they responded to</param>
-        private async void OnUserWindowUserResponded(object sender, UpdateResponseArgs args)
+        private async void OnUserWindowUserResponded(object sender, UpdateResponseEventArgs args)
         {
             LogWriter.PrintMessage("Update window response: {0}", args.Result);
             var currentItem = args.UpdateItem;
@@ -1520,17 +1520,17 @@ namespace NetSparkleUpdater
             {
                 // skip this version
                 Configuration.SetVersionToSkip(currentItem.Version);
-                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem)); });
+                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
                 await CallFuncConsideringUIThreadsAsync(async () => 
                 {
-                    UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem));
+                    UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
                     if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
                     {
                         // Binary should already be downloaded. Run it!
-                        ProgressWindowCompleted(this, new DownloadInstallArgs(true));
+                        ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
                     }
                     else
                     {
@@ -1541,7 +1541,7 @@ namespace NetSparkleUpdater
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
             {
-                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem)); });
+                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
             }
             UpdateAvailableWindow?.Close();
             UpdateAvailableWindow = null; // done using the window so don't hold onto reference

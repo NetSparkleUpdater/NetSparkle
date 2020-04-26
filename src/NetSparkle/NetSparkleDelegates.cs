@@ -83,7 +83,7 @@ namespace NetSparkleUpdater
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">An UpdateResponse object that contains the event data.</param>
-    public delegate void UserRespondedToUpdate(object sender, UpdateResponseArgs e);
+    public delegate void UserRespondedToUpdate(object sender, UpdateResponseEventArgs e);
 
     /// <summary>
     /// A delegate for a download error

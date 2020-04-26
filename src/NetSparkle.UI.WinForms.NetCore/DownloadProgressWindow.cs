@@ -50,7 +50,7 @@ namespace NetSparkleUpdater.UI.WinForms
             if (!_didCallDownloadProcessCompletedHandler)
             {
                 _didCallDownloadProcessCompletedHandler = true;
-                DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(_shouldLaunchInstallFileOnClose));
+                DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(_shouldLaunchInstallFileOnClose));
             }
         }
 
@@ -149,7 +149,7 @@ namespace NetSparkleUpdater.UI.WinForms
             DialogResult = DialogResult.OK;
             _shouldLaunchInstallFileOnClose = true;
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(true));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(true));
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             DialogResult = DialogResult.Cancel;
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallArgs(false));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(false));
         }
     }
 }
