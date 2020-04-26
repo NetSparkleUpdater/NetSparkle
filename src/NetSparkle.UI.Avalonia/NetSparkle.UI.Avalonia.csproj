@@ -19,6 +19,14 @@
     <RootNamespace>NetSparkleUpdater.UI.Avalonia</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>..\bin\Debug\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>..\bin\Debug\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="CheckingForUpdatesWindow.xaml" />
     <None Remove="DownloadProgressWindow.xaml" />

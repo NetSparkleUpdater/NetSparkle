@@ -25,9 +25,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
+    <DocumentationFile>..\bin\Debug\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
+    <DocumentationFile>..\bin\Release\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="CheckingForUpdatesWindow.cs">
