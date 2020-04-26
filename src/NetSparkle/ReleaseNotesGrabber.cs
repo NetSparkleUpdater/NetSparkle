@@ -27,6 +27,12 @@ namespace NetSparkleUpdater
         public static readonly List<string> MarkdownExtensions = new List<string> { ".md", ".mkdn", ".mkd", ".markdown" };
 
         /// <summary>
+        /// Whether or not to check the signature of the release notes
+        /// after they've been downloaded. Defaults to false.
+        /// </summary>
+        public bool ChecksReleaseNotesSignature { get; set; }
+
+        /// <summary>
         /// Base constructor for ReleaseNotesGrabber
         /// </summary>
         /// <param name="separatorTemplate">Template to use for separating each item in the HTML</param>
@@ -41,6 +47,7 @@ namespace NetSparkleUpdater
                     "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
             _initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + htmlHeadAddition + "</head><body>";
             _sparkle = sparkle;
+            ChecksReleaseNotesSignature = false;
         }
 
         /// <summary>
@@ -126,8 +133,13 @@ namespace NetSparkleUpdater
             // check dsa of release notes
             if (!string.IsNullOrEmpty(item.ReleaseNotesDSASignature))
             {
-                if (sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                if (ChecksReleaseNotesSignature &&
+                    _sparkle.SignatureVerifier != null &&
+                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, _sparkle.SignatureVerifier.HasValidKeyInformation()) &&
+                    sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                {
                     return null;
+                }
             }
 
             // process release notes
