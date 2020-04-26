@@ -51,14 +51,16 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// Sets the app cast handler up with its needed objects/parameters so that it can download
-        /// and validate an appcast
+        /// Setup the app cast handler info for downloading and parsing app cast information
         /// </summary>
-        /// <param name="dataDownloader">object that will handle downloading the app cast file(s) from the internet</param>
-        /// <param name="castUrl">the URL of the appcast file</param>
-        /// <param name="config">the current configuration for checking which versions are installed, etc.</param>
-        /// <param name="signatureVerifier">class to verify that DSA hashes are accurate</param>
-        /// <param name="logWriter">object to write any log statements to</param>
+        /// <param name="dataDownloader">downloader that will manage the app cast download 
+        /// (provided by <see cref="SparkleUpdater"/> via the 
+        /// <see cref="SparkleUpdater.AppCastDataDownloader"/> property.</param>
+        /// <param name="castUrl">full URL to the app cast file</param>
+        /// <param name="config">configuration for handling update intervals/checks 
+        /// (user skipped versions, etc.)</param>
+        /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
+        /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
         public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier signatureVerifier, LogWriter logWriter = null)
         {
             _dataDownloader = dataDownloader;
@@ -121,9 +123,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// Parse an XML memory stream build items list
+        /// Parse the app cast XML string into a list of <see cref="AppCastItem"/> objects.
+        /// When complete, the Items list should contain the parsed information
+        /// as <see cref="AppCastItem"/> objects.
         /// </summary>
-        /// <param name="stream">The xml memory stream to parse</param>
+        /// <param name="appcast">the non-null string XML app cast</param>
         private void ParseAppCast(string appcast)
         {
             const string itemNode = "item";
@@ -186,7 +190,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     return false;
                 }
                 // filter versions without signature if we need signatures. But accept version without downloads.
-                if (signatureNeeded && string.IsNullOrEmpty(item.DownloadDSASignature) && !string.IsNullOrEmpty(item.DownloadLink))
+                if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
                 {
                     return false;
                 }

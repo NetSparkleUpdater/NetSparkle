@@ -69,6 +69,9 @@ namespace NetSparkleUpdater.SignatureVerifiers
             }
         }
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public SecurityMode SecurityMode { get; set; }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
@@ -113,12 +116,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             return true;
         }
 
-        /// <summary>
-        /// Verifies the DSA signature
-        /// </summary>
-        /// <param name="signature">expected signature</param>
-        /// <param name="stream">the stream of the binary</param>
-        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
+        /// <inheritdoc/>
         public ValidationResult VerifySignature(string signature, byte[] dataToVerify)
         {
             ValidationResult res = ValidationResult.Invalid;
@@ -134,12 +132,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             return _cryptoProvider.VerifyData(dataToVerify, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
         }
 
-        /// <summary>
-        /// Verifies the DSA signature
-        /// </summary>
-        /// <param name="signature">expected signature</param>
-        /// <param name="binaryPath">the path to the binary</param>
-        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
+        /// <inheritdoc/>
         public ValidationResult VerifySignatureOfFile(string signature, string binaryPath)
         {
             using (Stream inputStream = File.OpenRead(binaryPath))
@@ -148,12 +141,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             }
         }
 
-        /// <summary>
-        /// Verifies the DSA signature of string data
-        /// </summary>
-        /// <param name="signature">expected signature</param>
-        /// <param name="data">the data</param>
-        /// <returns>A <c>ValidationResult</c> that corresponds to the result of the DSA signature process</returns>
+        /// <inheritdoc/>
         public ValidationResult VerifySignatureOfString(string signature, string data)
         {
             // creating stream from string

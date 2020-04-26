@@ -30,6 +30,11 @@ namespace NetSparkleUpdater
     {
         #region Protected/Private Members
 
+        /// <summary>
+        /// The <see cref="Process"/> responsible for launching the downloaded update.
+        /// Only valid once the application is about to quit and the update is going to
+        /// be launched.
+        /// </summary>
         protected Process _installerProcess;
 
         private LogWriter _logWriter;
@@ -60,11 +65,8 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SparkleUpdater"/> class with the given appcast URL
-        /// and an <see cref="Icon"/> for the update UI.
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="applicationIcon"><see cref="Icon"/> to be displayed in the update UI.
-        /// If you're invoking this from a form, this would be <c>this.Icon</c>.</param>
         public SparkleUpdater(string appcastUrl)
             : this(appcastUrl, SecurityMode.Strict, null)
         { }
@@ -354,10 +356,21 @@ namespace NetSparkleUpdater
             }
         }
 
+        /// <summary>
+        /// The object responsable for downloading update files for your application
+        /// </summary>
         public IUpdateDownloader UpdateDownloader { get; set; }
 
+        /// <summary>
+        /// The object responsible for downloading app cast and app cast signature
+        /// information for your application
+        /// </summary>
         public IAppCastDataDownloader AppCastDataDownloader { get; set; }
 
+        /// <summary>
+        /// The object responsible for parsing app cast information and checking to
+        /// see if any updates are available in a given app cast
+        /// </summary>
         public IAppCastHandler AppCastHandler { get; set; }
 
         #endregion
@@ -751,7 +764,7 @@ namespace NetSparkleUpdater
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                ValidationResult result = SignatureVerifier.VerifySignatureOfFile(item.DownloadDSASignature, _downloadTempFileName);
+                ValidationResult result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, _downloadTempFileName);
                 if (result == ValidationResult.Valid)
                 {
                     LogWriter.PrintMessage("File is already downloaded");
@@ -979,7 +992,7 @@ namespace NetSparkleUpdater
                     }
 
                     // check the DSA signature
-                    validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadDSASignature, _downloadTempFileName);
+                    validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadSignature, _downloadTempFileName);
                 }
             }
 
@@ -1034,7 +1047,7 @@ namespace NetSparkleUpdater
                 var path = installPath != null && File.Exists(installPath) ? installPath : await GetDownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
-                    var result = SignatureVerifier.VerifySignatureOfFile(item.DownloadDSASignature, path);
+                    var result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, path);
                     if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                     {
                         await RunDownloadedInstaller(path);
@@ -1044,9 +1057,14 @@ namespace NetSparkleUpdater
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
         }
 
+        /// <summary>
+        /// Checks to see
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool IsDownloadingItem(AppCastItem item)
         {
-            return _itemBeingDownloaded?.DownloadDSASignature == item.DownloadDSASignature;
+            return _itemBeingDownloaded?.DownloadSignature == item.DownloadSignature;
         }
 
         /// <summary>
@@ -1057,11 +1075,27 @@ namespace NetSparkleUpdater
             return UserInteractionMode != UserInteractionMode.NotSilent;
         }
 
+        /// <summary>
+        /// Checks to see if two extensions match (this is basically just a 
+        /// convenient string comparison). Both extensions should include the
+        /// initial . (full-stop/period) in the extension.
+        /// </summary>
+        /// <param name="extension">first extension to check</param>
+        /// <param name="otherExtension">other extension to check</param>
+        /// <returns>true if the extensions match; false otherwise</returns>
         protected bool DoExtensionsMatch(string extension, string otherExtension)
         {
             return extension.Equals(otherExtension, StringComparison.CurrentCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// Get the install command for the file at the given path. Figures out which
+        /// command to use based on the download file path's file extension.
+        /// Currently supports .exe, .msi, and .msp.
+        /// </summary>
+        /// <param name="downloadFilePath">Path to the downloaded update file</param>
+        /// <returns>the installer command if the file has one of the given 
+        /// extensions; the initial downloadFilePath if not.</returns>
         protected virtual string GetWindowsInstallerCommand(string downloadFilePath)
         {
             string installerExt = Path.GetExtension(downloadFilePath);
@@ -1080,6 +1114,16 @@ namespace NetSparkleUpdater
             return downloadFilePath;
         }
 
+        /// <summary>
+        /// Get the install command for the file at the given path. Figures out which
+        /// command to use based on the download file path's file extension.
+        /// <para>Windows: currently supports .exe, .msi, and .msp.</para>
+        /// <para>macOS: currently supports .pkg, .dmg, and .zip.</para>
+        /// <para>Linux: currently supports .tar.gz, .deb, and .rpm.</para>
+        /// </summary>
+        /// <param name="downloadFilePath">Path to the downloaded update file</param>
+        /// <returns>the installer command if the file has one of the given 
+        /// extensions; the initial downloadFilePath if not.</returns>
         protected virtual string GetInstallerCommand(string downloadFilePath)
         {
             // get the file type
@@ -1129,6 +1173,13 @@ namespace NetSparkleUpdater
             return false;
         }
 
+        /// <summary>
+        /// Updates the application via the file at the given path. Figures out which command needs
+        /// to be run, sets up the application so that it will start the downloaded file once the
+        /// main application stops, and then waits to start the downloaded update.
+        /// </summary>
+        /// <param name="downloadFilePath">path to the downloaded installer/updater</param>
+        /// <returns>the awaitable <see cref="Task"/> for the application quitting</returns>
         protected virtual async Task RunDownloadedInstaller(string downloadFilePath)
         {
             LogWriter.PrintMessage("Running downloaded installer");

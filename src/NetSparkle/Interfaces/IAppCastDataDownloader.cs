@@ -5,6 +5,11 @@ using System.Text;
 
 namespace NetSparkleUpdater.Interfaces
 {
+    /// <summary>
+    /// Interface used by objects that can download app casts from the internet.
+    /// Use this interface to provide a custom method of grabbing your app cast
+    /// from the internet or from a local file.
+    /// </summary>
     public interface IAppCastDataDownloader
     {
         /// <summary>

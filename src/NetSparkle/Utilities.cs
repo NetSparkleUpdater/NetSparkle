@@ -105,8 +105,12 @@ namespace NetSparkleUpdater
             return numBytes.ToString();
         }
 
-        // From WalletWasabi:
-        // https://github.com/zkSNACKs/WalletWasabi/blob/8d42bce976605cca3326ea6c998b2294494900e6/WalletWasabi/Helpers/EnvironmentHelpers.cs
+        /// <summary>
+        /// Get the full base (running) directory for this application including a trailing slash.
+        /// From WalletWasabi:
+        /// https://github.com/zkSNACKs/WalletWasabi/blob/8d42bce976605cca3326ea6c998b2294494900e6/WalletWasabi/Helpers/EnvironmentHelpers.cs
+        /// </summary>
+        /// <returns>the full running directory path including trailing slash for this application</returns>
         public static string GetFullBaseDirectory()
         {
 #if NETCORE
@@ -127,6 +131,11 @@ namespace NetSparkleUpdater
 #endif
         }
 
+        /// <summary>
+        /// Convert a given <see cref="Stream"/> to a byte array
+        /// </summary>
+        /// <param name="stream">the <see cref="Stream"/> to convert</param>
+        /// <returns>a byte[] array of the data in the given stream</returns>
         public static byte[] ConvertStreamToByteArray(Stream stream)
         {
             // read the data
@@ -135,6 +144,15 @@ namespace NetSparkleUpdater
             return data;
         }
 
+        /// <summary>
+        /// Checks to see whether a signature is ncessary given the provided
+        /// info on the <see cref="SecurityMode"/> and whether or not valid
+        /// key information exists at the moment.
+        /// </summary>
+        /// <param name="securityMode">the <see cref="SecurityMode"/> for the signature check</param>
+        /// <param name="doesKeyInfoExist">true if the application has appropriate key
+        /// information in order to run signature checks; false otherwise</param>
+        /// <returns>true if an item's signature needs to be checked; false otherwise</returns>
         public static bool IsSignatureNeeded(SecurityMode securityMode, bool doesKeyInfoExist)
         {
             switch (securityMode)

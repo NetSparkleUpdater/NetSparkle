@@ -16,9 +16,22 @@ namespace NetSparkleUpdater
     /// </summary>
     public class ReleaseNotesGrabber
     {
+        /// <summary>
+        /// The HTML template to use between each changelog for every update between the
+        /// most current update and the one that the user is going to install
+        /// </summary>
         protected string _separatorTemplate;
+        /// <summary>
+        /// The initial HTML to use for the changelog. This is everything before the 
+        /// body tag and includes the html and head elements/tags.
+        /// </summary>
         protected string _initialHTML;
 
+        /// <summary>
+        /// The <see cref="SparkleUpdater"/> for this ReleaseNotesGrabber. Mostly
+        /// used for logging via <see cref="LogWriter"/>, but also can be used
+        /// to grab other information about updates, etc.
+        /// </summary>
         protected SparkleUpdater _sparkle;
 
         /// <summary>
@@ -87,6 +100,16 @@ namespace NetSparkleUpdater
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Grab the release notes for the given item and return their release notes
+        /// in HTML format so that they can be displayed to the user.
+        /// </summary>
+        /// <param name="item"><see cref="AppCastItem"/>item to download the release notes for</param>
+        /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
+        /// about the release notes grabbing process (or its failures)</param>
+        /// <param name="cancellationToken">token that can be used to cancel a release notes 
+        /// grabbing operation</param>
+        /// <returns></returns>
         protected virtual async Task<string> GetReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
@@ -131,12 +154,12 @@ namespace NetSparkleUpdater
             }
 
             // check dsa of release notes
-            if (!string.IsNullOrEmpty(item.ReleaseNotesDSASignature))
+            if (!string.IsNullOrEmpty(item.ReleaseNotesSignature))
             {
                 if (ChecksReleaseNotesSignature &&
                     _sparkle.SignatureVerifier != null &&
                     Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, _sparkle.SignatureVerifier.HasValidKeyInformation()) &&
-                    sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesDSASignature, notes) == ValidationResult.Invalid)
+                    sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature, notes) == ValidationResult.Invalid)
                 {
                     return null;
                 }
@@ -163,6 +186,16 @@ namespace NetSparkleUpdater
             return notes;
         }
 
+        /// <summary>
+        /// Download the release notes at the given link. Does not do anything else
+        /// for the release notes (verification, display, etc.) -- just downloads the
+        /// release notes and passes them back as a string.
+        /// </summary>
+        /// <param name="link">string URL to the release notes to download</param>
+        /// <param name="cancellationToken">token that can be used to cancel a download operation</param>
+        /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
+        /// about the download process (or its failures)</param>
+        /// <returns></returns>
         protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
         {
             try

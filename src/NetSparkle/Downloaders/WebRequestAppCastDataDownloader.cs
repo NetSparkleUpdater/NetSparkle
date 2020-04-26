@@ -57,8 +57,15 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <summary>
-        /// Used by <see cref="XMLAppCast"/> to fetch the appcast and DSA signature.
+        /// Download the app cast from the given URL.
+        /// Performs a GET request by default. If ExtraJsonData is set,
+        /// uses a POST request and sends the JSON data along with the
+        /// request.
         /// </summary>
+        /// <param name="url">the URL to download the app cast from</param>
+        /// <returns>the response from the web server if creating the request
+        /// succeeded; null otherwise. The response is not guaranteed to have
+        /// succeeded!</returns>
         public WebResponse GetWebContentResponse(string url)
         {
             WebRequest request = WebRequest.Create(url);
