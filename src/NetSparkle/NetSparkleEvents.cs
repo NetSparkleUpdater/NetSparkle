@@ -26,22 +26,18 @@ namespace NetSparkleUpdater
         /// process when an update is detected
         /// </summary>
         public event UpdateDetected UpdateDetected;
-
-        // TODO: update these next events into 1 single event
-
         /// <summary>
         /// Called when update check is all done. May or may not have called <see cref="UpdateDetected"/> in the middle.
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
+
         /// <summary>
-        /// Called when the user skips some version of the application.
+        /// The user responded to the update UI with a given response.
+        /// This is called _after_ NetSparkle handles the response in all cases EXCEPT
+        /// when the result is UpdateAvailableResult.InstallUpdate -- in that case, this
+        /// event is called BEFORE downloading the update begins.
         /// </summary>
-        public event UserSkippedVersion UserSkippedVersion;
-        /// <summary>
-        /// Called when the user skips some version of the application by clicking
-        /// the 'Remind Me Later' button.
-        /// </summary>
-        public event RemindMeLaterSelected UserSelectedRemindMeLater;
+        public event UserRespondedToUpdate UserRespondedToUpdate;
 
         /// <summary>
         /// Called when the download has just started

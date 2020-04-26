@@ -48,18 +48,6 @@ namespace NetSparkleUpdater
     public delegate Task CancelEventHandlerAsync(object sender, CancelEventArgs e);
 
     /// <summary>
-    /// Delegate called when the user decides to skip a version of the application.
-    /// </summary>
-    /// <param name="item">Item that the user chose to skip</param>
-    public delegate void UserSkippedVersion(AppCastItem item, string downloadPath);
-
-    /// <summary>
-    /// Delegate called when the user decides to be reminded about update later.
-    /// </summary>
-    /// <param name="item">Item that the user chose to skip</param>
-    public delegate void RemindMeLaterSelected(AppCastItem item);
-
-    /// <summary>
     /// Delegate for custom application shutdown logic
     /// </summary>
     public delegate void CloseApplication();

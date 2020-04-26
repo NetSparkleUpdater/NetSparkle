@@ -1520,24 +1520,28 @@ namespace NetSparkleUpdater
             {
                 // skip this version
                 Configuration.SetVersionToSkip(currentItem.Version);
-                CallFuncConsideringUIThreads(() => { UserSkippedVersion?.Invoke(currentItem, _downloadTempFileName); });
+                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem)); });
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
-                if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
+                await CallFuncConsideringUIThreadsAsync(async () => 
                 {
-                    // Binary should already be downloaded. Run it!
-                    ProgressWindowCompleted(this, new DownloadInstallArgs(true));
-                }
-                else
-                {
-                    // download the binaries
-                    await InitAndBeginDownload(currentItem);
-                }
+                    UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem));
+                    if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
+                    {
+                        // Binary should already be downloaded. Run it!
+                        ProgressWindowCompleted(this, new DownloadInstallArgs(true));
+                    }
+                    else
+                    {
+                        // download the binaries
+                        await InitAndBeginDownload(currentItem);
+                    }
+                });
             }
             else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
             {
-                CallFuncConsideringUIThreads(() => { UserSelectedRemindMeLater?.Invoke(currentItem); });
+                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseArgs(result, currentItem)); });
             }
             UpdateAvailableWindow?.Close();
             UpdateAvailableWindow = null; // done using the window so don't hold onto reference
