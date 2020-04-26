@@ -46,8 +46,8 @@ All notable changes to this project will be documented in the [changelog](CHANGE
 ```csharp
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
-    SecurityMode.Strict, // security mode
-    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key
+    SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended or secure!!)
+    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key -- generate this with the NetSparkleUpdater.Tools DSAHelper
 ) {
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
 };
@@ -77,7 +77,7 @@ _sparkle.PreparingToExit += ((x, cancellable) =>
 });
 ```
 
-Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
+Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be executed/read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
@@ -90,14 +90,22 @@ This section is still WIP, but major changes include:
 * UIs are now in different namespaces. If you want to use a UI, you must pass in a `UIFactory` that implements `IUIFactory` and handles showing/handling all user interface elements
   * `SparkleUpdater` no longer holds its own `Icon`
   * `HideReleaseNotes`, `HideRemindMeLaterButton`, and `HideSkipButton` are all handled by the `UIFactory` objects
-* Most `NetSparkle` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and downloading
+* Added built-in UIs for [Avalonia](https://github.com/AvaloniaUI/Avalonia) and WPF
+* Localization capabilities are non-functional and are expected to come back in a later version. See [this issue](https://github.com/NetSparkleUpdater/NetSparkle/issues/92).
+* Most `SparkleUpdater` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and checking.
+  * `IAppCastDataDownloader` to implement downloading of your app cast file
+  * `IAppCastHandler` to implement your own app cast parsing
+  * `ISignatureVerifier` to implement your own download/app cast signature checking
+  * `IUIFactory` to implement your own UI
 * Samples have been updated and improved
-  * Sample apps for Avalonia, WinForms, and WPF UIs
-  * Sample app to demonstrate how to handle events yourself
-* Many delegates, events, and functions have been renamed and tweaked for clarity and better use
+  * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
+  * Sample app to demonstrate how to handle events yourself with your own UI
+* Many delegates, events, and functions have been renamed, removed, and/or tweaked for clarity and better use
   * `DownloadEvent` now has the `AppCastItem` that is being downloaded rather than being just the download path
   * `AboutToExitForInstallerRun`/`AboutToExitForInstallerRunAsync` has been renamed to `PreparingToExit`/``PreparingToExitAsync`, respectively
-* The `FinishedDownloading`/`DownloadedFileReady` events have been replaced and superceded by `DownloadFinished`
+  * The `UserSkippedVersion` event has been removed. Use `UserRespondedToUpdate` instead.
+  * The `RemindMeLaterSelected` event has been removed. Use `UserRespondedToUpdate` instead.
+  * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.
 
 ## App Cast
 
@@ -139,7 +147,7 @@ The important tags in each `<item>` are:
     - The URL to an HTML or Markdown document describing the update.
     - If the `<description>` tag is present, it will be used instead.
     - **Attributes**:
-        - `sparkle:dsaSignature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you, but you verify changelog DSA signatures if you like
+        - `sparkle:dsaSignature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog DSA signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
 - `<pubDate>`
     - The date this update was published
 - `<enclosure>`
@@ -160,14 +168,13 @@ By default, you need 2 DSA signatures (`SecurityMode.Strict`):
 
 ## Public Methods
 
-**These need to be updated for 2.0 still!**
+### This section still needs to be updated for 2.0!
 
-- [Sparkle(string appcastUrl)](#sparklestring-appcasturl)
-- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon)](#sparklestring-appcasturl-systemdrawingicon-applicationicon)
-- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode)
-- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey)
-- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly)
-- [Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)](#sparklestring-appcasturl-systemdrawingicon-applicationicon-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly-netsparkleinterfacesiuifactory-factory)
+- [Sparkle(string appcastUrl)](#sparkleupdaterstring-appcasturl)
+- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode)
+- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey)
+- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly)
+- [Sparkle(string appcastUrln, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly-netsparkleinterfacesiuifactory-factory)
 - void [CancelFileDownload()](#void-cancelfiledownload)
 - Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesAtUserRequest()](#tasknetsparklesparkleupdateinfo-checkforupdatesatuserrequest)
 - Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesQuietly()](#tasknetsparklesparkleupdateinfo-checkforupdatesquietly)
@@ -194,56 +201,43 @@ Initializes a new instance of the Sparkle class with the given appcast URL.
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
 
-### SparkleUpdater(string appcastUrl, System.Drawing.Icon applicationIcon)
+### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode)
 
-Initializes a new instance of the Sparkle class with the given appcast URL and an Icon for the update UI.
-
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
-
-### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode)
-
-Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, and the security mode for DSA signatures.
+Initializes a new instance of the Sparkle class with the given appcast URL, and the security mode for DSA signatures.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
 | securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
 
-### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey)
+### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey)
 
-Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, and the DSA public key.
+Initializes a new instance of the Sparkle class with the given appcast URL, the security mode for DSA signatures, and the DSA public key.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
 | securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
 | dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
 
-### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
+### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
 
-Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, the DSA public key, and the name of the assembly to use when comparing update versions.
+Initializes a new instance of the Sparkle class with the given appcast URL,the security mode for DSA signatures, the DSA public key, and the name of the assembly to use when comparing update versions.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
 | securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
 | dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
 | referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
 
-### Sparkle(string appcastUrl, System.Drawing.Icon applicationIcon, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
+### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
 
-Initializes a new instance of the Sparkle class with the given appcast URL, an Icon for the update UI, the security mode for DSA signatures, the DSA public key, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
+Initializes a new instance of the Sparkle class with the given appcast URL, the security mode for DSA signatures, the DSA public key, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| applicationIcon | *System.Drawing.Icon*<br>Icon to be displayed in the update UI. If you're invoking this from a form, this would be `this.Icon`. |
 | securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
 | dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
 | referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
@@ -365,6 +359,8 @@ You should only call this function when your app is initialized and shows its ma
 Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispose).
 
 ## Public Properties
+
+### This section still needs to be updated for 2.0!
 
 - string [AppcastUrl](#string-appcasturl--get-set-) { get; set; }
 - NetSparkle.CheckingForUpdatesWindow [CheckingForUpdatesWindow](#netsparklecheckingforupdateswindow-checkingforupdateswindow--get-set-) { get; set; }
@@ -493,6 +489,8 @@ The user interface window that shows the release notes and asks the user to skip
 The security protocol (`System.Net.SecurityProtocolType`) used by NetSparkle. Setting this property will also set this property for the current AppDomain of the caller. Needs to be set to `SecurityProtocolType.Tls12` for some cases, such as downloading something over HTTPS for a GitHub pages site.
 
 ## Public Events
+
+### This section still needs to be updated for 2.0!
 
 - [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)
 - [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync)
