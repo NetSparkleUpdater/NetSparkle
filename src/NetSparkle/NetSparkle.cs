@@ -266,7 +266,6 @@ namespace NetSparkleUpdater
                     _configuration = new RegistryConfiguration(_appReferenceAssembly);
 #endif
                 }
-                _configuration.Reload();
                 return _configuration;
             } 
             set { _configuration = value; } 

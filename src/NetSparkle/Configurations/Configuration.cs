@@ -32,6 +32,10 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public bool CheckForUpdate { get; protected set; }
         /// <summary>
+        /// True if this is the first time the application has been run based on save config data; false otherwise
+        /// </summary>
+        public bool IsFirstRun { get; protected set; }
+        /// <summary>
         /// Last check time
         /// </summary>
         public DateTime LastCheckTime { get; protected set; }
@@ -40,7 +44,7 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public string LastVersionSkipped { get; protected set; }
         /// <summary>
-        /// The application ran once
+        /// Whether or not the application has run at least one time
         /// </summary>
         public bool DidRunOnce { get; protected set; }
         /// <summary>
@@ -69,7 +73,7 @@ namespace NetSparkleUpdater.Configurations
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor for Configuration -- should load values by the end of the constructor!
         /// </summary>
         /// <param name="referenceAssembly">the name of the reference assembly</param>
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>

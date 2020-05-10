@@ -25,11 +25,7 @@ namespace NetSparkleUpdater.Configurations
             : this(referenceAssembly, true)
         { }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="referenceAssembly">the name of the reference assembly</param>
-        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        /// <inheritdoc/>
         public JSONConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
             : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
         { }
@@ -147,7 +143,13 @@ namespace NetSparkleUpdater.Configurations
                     LastCheckTime = data.LastCheckTime;
                     LastVersionSkipped = data.LastVersionSkipped;
                     DidRunOnce = data.DidRunOnce;
+                    IsFirstRun = !DidRunOnce;
+                    if (IsFirstRun)
+                    {
+                        SaveDidRunOnceAsTrue(saveLocation);
+                    }
                     LastConfigUpdate = data.LastConfigUpdate;
+                    return true;
                 }
                 catch (Exception) // just in case...
                 {
@@ -157,8 +159,17 @@ namespace NetSparkleUpdater.Configurations
             LastCheckTime = DateTime.Now;
             LastVersionSkipped = string.Empty;
             DidRunOnce = false;
+            IsFirstRun = true;
+            SaveDidRunOnceAsTrue(saveLocation);
             LastConfigUpdate = DateTime.Now;
             return true;
+        }
+
+        private void SaveDidRunOnceAsTrue(string saveLocation)
+        {
+            DidRunOnce = true;
+            SaveValuesToPath(saveLocation); // save it so next time we load DidRunOnce is true
+            DidRunOnce = false; // so data is correct to user of Configuration class
         }
 
         /// <summary>

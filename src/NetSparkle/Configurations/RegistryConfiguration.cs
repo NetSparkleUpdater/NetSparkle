@@ -30,11 +30,7 @@ namespace NetSparkleUpdater.Configurations
             : this(referenceAssembly, true)
         { }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="referenceAssembly">the name of the reference assembly</param>
-        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
+        /// <inheritdoc/>
         public RegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
             : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
         { }
@@ -122,7 +118,8 @@ namespace NetSparkleUpdater.Configurations
                     throw new NetSparkleException("Error: NetSparkle is missing the company or productname tag in " + ReferenceAssembly);
                 }
 
-                return "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
+                _registryPath = "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
+                return _registryPath;
             }
         }
 
@@ -146,38 +143,53 @@ namespace NetSparkleUpdater.Configurations
             RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
             {
+                SaveDidRunOnceAsTrue(regPath);
                 return false;
             }
+            else
+            {
+                // read out                
+                string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as string;
+                string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
+                string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
+                string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
+                string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
 
-            // read out                
-            string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as string;
-            string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
-            string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
-            string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
-            string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
+                // convert the right datatypes
+                CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
+                try
+                {
+                    LastCheckTime = ConvertStringToDate(strLastCheckTime);
+                }
+                catch (FormatException)
+                {
+                    LastCheckTime = new DateTime(0);
+                }
 
-            // convert the right datatypes
-            CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
-            try
-            {
-                LastCheckTime = ConvertStringToDate(strLastCheckTime);
-            }
-            catch (FormatException)
-            {
-                LastCheckTime = new DateTime(0);
-            }
-
-            LastVersionSkipped = strSkipThisVersion;
-            DidRunOnce = Convert.ToBoolean(strDidRunOnc);
-            try
-            {
-                LastConfigUpdate = ConvertStringToDate(strProfileTime);
-            }
-            catch (FormatException)
-            {
-                LastConfigUpdate = new DateTime(0);
+                LastVersionSkipped = strSkipThisVersion;
+                DidRunOnce = Convert.ToBoolean(strDidRunOnc);
+                IsFirstRun = !DidRunOnce;
+                if (IsFirstRun)
+                {
+                    SaveDidRunOnceAsTrue(regPath);
+                }
+                try
+                {
+                    LastConfigUpdate = ConvertStringToDate(strProfileTime);
+                }
+                catch (FormatException)
+                {
+                    LastConfigUpdate = new DateTime(0);
+                }
             }
             return true;
+        }
+
+        private void SaveDidRunOnceAsTrue(string regPath)
+        {
+            DidRunOnce = true;
+            SaveValuesToPath(regPath); // save it so next time we load DidRunOnce is true
+            DidRunOnce = false; // so data is correct to user of Configuration class
         }
 
         /// <summary>
