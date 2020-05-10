@@ -24,6 +24,10 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public string ApplicationName { get; protected set; }
         /// <summary>
+        /// The previous version of the software that the user ran
+        /// </summary>
+        public string PreviousVersionOfSoftwareRan { get; protected set; }
+        /// <summary>
         /// The currently-installed version
         /// </summary>
         public string InstalledVersion { get; protected set; }

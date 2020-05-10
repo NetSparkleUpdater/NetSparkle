@@ -144,11 +144,16 @@ namespace NetSparkleUpdater.Configurations
                     LastVersionSkipped = data.LastVersionSkipped;
                     DidRunOnce = data.DidRunOnce;
                     IsFirstRun = !DidRunOnce;
+                    LastConfigUpdate = data.LastConfigUpdate;
+                    PreviousVersionOfSoftwareRan = data?.PreviousVersionOfSoftwareRan ?? "";
                     if (IsFirstRun)
                     {
                         SaveDidRunOnceAsTrue(saveLocation);
                     }
-                    LastConfigUpdate = data.LastConfigUpdate;
+                    else
+                    {
+                        SaveValuesToPath(saveLocation); // so PreviousVersion is set to proper value
+                    }
                     return true;
                 }
                 catch (Exception) // just in case...
@@ -162,14 +167,16 @@ namespace NetSparkleUpdater.Configurations
             IsFirstRun = true;
             SaveDidRunOnceAsTrue(saveLocation);
             LastConfigUpdate = DateTime.Now;
+            PreviousVersionOfSoftwareRan = "";
             return true;
         }
 
         private void SaveDidRunOnceAsTrue(string saveLocation)
         {
+            var initialValue = DidRunOnce;
             DidRunOnce = true;
             SaveValuesToPath(saveLocation); // save it so next time we load DidRunOnce is true
-            DidRunOnce = false; // so data is correct to user of Configuration class
+            DidRunOnce = initialValue; // so data is correct to user of Configuration class
         }
 
         /// <summary>
@@ -185,7 +192,8 @@ namespace NetSparkleUpdater.Configurations
                 LastCheckTime = this.LastCheckTime,
                 LastVersionSkipped = this.LastVersionSkipped,
                 DidRunOnce = this.DidRunOnce,
-                LastConfigUpdate = DateTime.Now
+                LastConfigUpdate = DateTime.Now,
+                PreviousVersionOfSoftwareRan = InstalledVersion
             };
             LastConfigUpdate = savedConfig.LastConfigUpdate;
 

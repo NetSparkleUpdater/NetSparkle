@@ -154,6 +154,7 @@ namespace NetSparkleUpdater.Configurations
                 string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
                 string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
                 string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
+                string strPreviousVersion = key.GetValue("PreviousVersionRun", "") as string;
 
                 // convert the right datatypes
                 CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
@@ -169,9 +170,14 @@ namespace NetSparkleUpdater.Configurations
                 LastVersionSkipped = strSkipThisVersion;
                 DidRunOnce = Convert.ToBoolean(strDidRunOnc);
                 IsFirstRun = !DidRunOnce;
+                PreviousVersionOfSoftwareRan = strPreviousVersion;
                 if (IsFirstRun)
                 {
                     SaveDidRunOnceAsTrue(regPath);
+                }
+                else
+                {
+                    SaveValuesToPath(regPath); // so PreviousVersionRun is saved
                 }
                 try
                 {
@@ -187,9 +193,10 @@ namespace NetSparkleUpdater.Configurations
 
         private void SaveDidRunOnceAsTrue(string regPath)
         {
+            var initialValue = DidRunOnce;
             DidRunOnce = true;
             SaveValuesToPath(regPath); // save it so next time we load DidRunOnce is true
-            DidRunOnce = false; // so data is correct to user of Configuration class
+            DidRunOnce = initialValue; // so data is correct to user of Configuration class
         }
 
         /// <summary>
@@ -211,6 +218,7 @@ namespace NetSparkleUpdater.Configurations
             string strSkipThisVersion = LastVersionSkipped;
             string strDidRunOnc = DidRunOnce.ToString();
             string strProfileTime = ConvertDateToString(LastConfigUpdate);
+            string strPreviousVersion = InstalledVersion;
 
             // set the values
             key.SetValue("CheckForUpdate", strCheckForUpdate, RegistryValueKind.String);
@@ -218,6 +226,7 @@ namespace NetSparkleUpdater.Configurations
             key.SetValue("SkipThisVersion", strSkipThisVersion, RegistryValueKind.String);
             key.SetValue("DidRunOnce", strDidRunOnc, RegistryValueKind.String);
             key.SetValue("LastProfileUpdate", strProfileTime, RegistryValueKind.String);
+            key.SetValue("PreviousVersionRun", strPreviousVersion, RegistryValueKind.String);
 
             return true;
         }

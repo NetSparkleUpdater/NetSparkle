@@ -20,6 +20,10 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public DateTime LastCheckTime { get; set; }
         /// <summary>
+        /// The previous version of the software that the user ran
+        /// </summary>
+        public string PreviousVersionOfSoftwareRan { get; set; }
+        /// <summary>
         /// The last version (as a string) that the user chose
         /// to skip.
         /// Can be blank.
