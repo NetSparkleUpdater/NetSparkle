@@ -94,10 +94,14 @@ jobs:
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
           cd ../../
 
-      - name: Build NetSparkleUpdater.Tools
+      - name: Build NetSparkleUpdater.Tools for all operating systems
         run: |
-          dotnet build src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/
-          dotnet build src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/windows/ -r win-x86 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/windows/ -r win-x86 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/linux/ -r linux-x64 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/linux/ -r linux-x64 -p:PublishTrimmed=true
 
       - name: Copy extra output to NetSparkleUpdater.Tools output
         run: |
