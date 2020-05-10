@@ -21,8 +21,13 @@ namespace NetSparkleUpdater.UI.WPF
     /// </summary>
     public partial class CheckingForUpdatesWindow : Window, ICheckingForUpdates
     {
+        /// <inheritdoc/>
         public event EventHandler UpdatesUIClosing;
 
+        /// <summary>
+        /// Create the window that tells the user that SparkleUpdater is checking
+        /// for updates
+        /// </summary>
         public CheckingForUpdatesWindow()
         {
             InitializeComponent();
