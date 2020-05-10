@@ -2,16 +2,20 @@
 
  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-NetSparkle is a software update framework for C# that is compatible with .NET Core, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an app cast with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
+NetSparkle is a software update framework for C# that is compatible with .NET Core, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#appcast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
 The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more! No more big changes to the API are planned, but smaller API changes may occur if bugs are found between now and the official 2.0 release.
 
-Supported update download types:
+Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
 * macOS -- .zip, .pkg, .dmg
 * Linux -- .tar.gz, .deb, .rpm
 
 _README and other documentation updates for version 2.0 are in progress. If you have specific questions or need help even after looking at the samples, please file an issue or message me on [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle). You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, using your own file signature verification method, etc. are all now possible. Some extra features aren't built-in out of the box yet, such as JSON app cast feeds -- contributions are welcome and benefit the whole community!_
+
+## Contributing
+
+Contributions are ALWAYS welcome! If you see a new feature you'd like to add, please open an issue to talk about it first, then open a PR for that implementation. If there's a bug you find, please open a PR with the fix or file an issue! Thank you!! :) You can also join us in our [Gitter chat room](https://gitter.im/NetSparkleUpdater/NetSparkle)!
 
 ## Installing NetSparkle
 
@@ -68,9 +72,11 @@ Right now, NetSparkle **does not** help you with 1., 2., or 4. "Why not?", you m
 
 To create your app cast file, see the [appcast](#appcast) section of this document.
 
-We are open to contributions that might make the install process easier for the user. Please file an issue first with your idea before starting work so we can talk about it.
+We are open to contributions that might make the overall install/update process easier for the user. Please file an issue first with your idea before starting work so we can talk about it.
 
 ## Basic Usage
+
+**Please look at the sample projects in this repository for basic, runnable usage samples!!** There are samples on using each of the built-in UIs as well as a "do it yourself in your own UI" sample!
 
 ```csharp
 _sparkle = new SparkleUpdater(
@@ -187,8 +193,8 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 
 ### How can I make the app cast?
 
-* If you're on Windows, use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast.
-* If you're on other systems, it's not too hard to rig up a script that generates the app cast for you in python or some other scripting language. (Contributions to make AppCastGenerator work on macOS/Linux are **welcome**!)
+* If you're on Windows, use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file.
+* If you're on other systems, it's not too hard to rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing). (Contributions to make AppCastGenerator work on macOS/Linux are **welcome**!)
 * Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (DSA) signature for the app cast file manually! :)
 
 ## Updating from 0.X or 1.X
