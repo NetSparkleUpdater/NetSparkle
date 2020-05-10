@@ -6,7 +6,7 @@
     <AssemblyTitle>NetSparkle.NetFramework.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
     <Copyright>Copyright © 2020</Copyright>
-    <OutputPath>..\bin\Release\NetSparkle.UI.WPF\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WPF\</OutputPath>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <PackageId>NetSparkleUpdater.UI.WPF</PackageId>
     <Authors>Deadpikle</Authors>
