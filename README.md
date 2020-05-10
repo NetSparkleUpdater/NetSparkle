@@ -27,12 +27,14 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 | WinForms UI (.NET Core) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) |
 | WPF UI (.NET Framework and Core) | NetSparkle with built-in WPF UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WPF.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) |
 | [Avalonia](https://github.com/AvaloniaUI/Avalonia) UI | NetSparkle with built-in Avalonia UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) |
-| Command Line Tools | DSA helper; AppCast generator (includes NetSparkle) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) |
+| Command Line Tools | DSA helper; AppCast generator | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) |
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
+- [How Updates Work](#how-updates-work)
 - [Basic Usage](#basic-usage)
 - [Appcast](#appcast)
+- [Updating from 0.x or 1.x](#updating-from-0x-or-1x)
 - SparkleUpdater class
     - [Public Methods](#public-methods)
     - [Public Properties](#public-properties)
@@ -41,13 +43,40 @@ All notable changes to this project will be documented in the [changelog](CHANGE
 - [Requirements](#requirements)
 - [Other Options](#other-options)
 
+## How updates work
+
+A typical software update path for a stereotypical piece of software might look like this:
+
+1. Compile application so it can be run on other computers (e.g. `dotnet publish`)
+2. Programmer puts app in some sort of installer/zip/etc. for distribution (e.g. InnoSetup for Windows)
+3. Programmer creates app cast file (see the [appcast](#appcast) section of this document for more info on how to create this)
+4. Programmer uploads files for distribution (installer, app cast file, appcast-file.signature file) to their download site.
+5. Client opens app and is automatically notified of an available update (or the software otherwise detects there is an update)
+6. Client chooses to update (or update is downloaded if the software downloads it automatically)
+7. Update is downloaded and sitting on the user's disk
+8. User is asked to close the software so the update can run. User closes the software.
+9. Downloaded file/installer is run (or the update is otherwise performed)
+
+Right now, NetSparkle **does not** help you with 1., 2., or 4. "Why not?", you might ask:
+
+* 1. We can't compile your application for you since we don't know (or care) how you are compiling or packaging your application! :)
+* 2. A cross-platform installer package/system would be difficult and may not feel normal to end users, although a system that uses [Avalonia](https://github.com/AvaloniaUI/Avalonia) could maybe work I suppose (might take a lot of work though and make downloads large!). We do not provide support for getting your installer/distribution ready. To generate your installer/distribution, we recommend the following:
+  * Windows: [InnoSetup](https://jrsoftware.org/isinfo.php) or [NSIS](https://nsis.sourceforge.io/Main_Page) or [WiX](https://wixtoolset.org/)
+  * macOS: If you have a .app to distribute, use [dotnet-bundle](https://github.com/egramtel/dotnet-bundle) with [create-dmg](https://github.com/sindresorhus/create-dmg). If you want an installer, create a .pkg installer with [macos-installer-builder](https://github.com/KosalaHerath/macos-installer-builder) (tutorial [here](https://medium.com/swlh/the-easiest-way-to-build-macos-installer-for-your-application-34a11dd08744)), [Packages](http://s.sudre.free.fr/Software/Packages/about.html), or [your terminal](https://www.techrepublic.com/article/pro-tip-use-terminal-to-create-packages-for-software-deployment/). Otherwise, plop things in a zip file.
+  * Linux: Use [dotnet-packaging](https://github.com/qmfrederik/dotnet-packaging/) to create an rpm, deb, or tar.gz file for your users.
+* 4. We don't know where your files will live on the internet, so you need to be responsible for uploading these files and putting them online somewhere.
+
+To create your app cast file, see the [appcast](#appcast) section of this document.
+
+We are open to contributions that might make the install process easier for the user. Please file an issue first with your idea before starting work so we can talk about it.
+
 ## Basic Usage
 
 ```csharp
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
     SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended or secure!!)
-    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key -- generate this with the NetSparkleUpdater.Tools DSAHelper
+    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key -- generate this with the NetSparkleUpdater.Tools DSAHelper on Windows (.NET Core on macOS/Linux cannot generate this data for you)
 ) {
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
 };
@@ -81,6 +110,87 @@ Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplicat
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
 
+## App Cast
+
+NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses DSA signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update. We hope to [add compatibility with edDSA/ed25519 signatures at some point](https://github.com/NetSparkleUpdater/NetSparkle/issues/62).
+
+Here is a sample app cast:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
+                       sparkle:version="2.0"
+                       sparkle:os="windows"
+                       length="12288"
+                       type="application/octet-stream"
+                       sparkle:signature="NSG/eKz9BaTJrRDvKSwYEaOumYpPMtMYRq+vjsNlHqRGku/Ual3EoQ==" />
+        </item>
+    </channel>
+</rss>
+```
+
+NetSparkle reads the `<item>` tags to determine whether updates are available.
+
+The important tags in each `<item>` are:
+
+- `<description>`
+    - A description of the update in HTML or Markdown.
+    - Overrides the `<sparkle:releaseNotesLink>` tag.
+- `<sparkle:releaseNotesLink>`
+    - The URL to an HTML or Markdown document describing the update.
+    - If the `<description>` tag is present, it will be used instead.
+    - **Attributes**:
+        - `sparkle:signature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog DSA signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
+- `<pubDate>`
+    - The date this update was published
+- `<enclosure>`
+    - This tag describes the update file that NetSparkle will download.
+    - **Attributes**:
+        - `url`: URL of the update file
+        - `sparkle:version`: machine-readable version number of this update
+        - `length`, optional: (not validated) size of the update file in bytes
+        - `type`: ignored
+        - `sparkle:signature`: DSA signature of the update file
+        - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
+        - `sparkle:os`: Operating system for the app cast item. Defaults to Windows if not supplied. For Windows, use "win" or "windows"; for macOS, use "macos" or "osx"; for Linux, use "linux".
+
+By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
+
+1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
+2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA) signature for that file at http://example.com/awesome-software.xml.signature. 
+
+You can generate these signatures using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). If you need to generate a DSA public/private key, please use the same tool on Windows like this: 
+
+```
+NetSparkle.DSAHelper.exe /genkey_pair
+```
+
+This only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux.
+
+On any platform, you can use the DSAHelper to get a signature like this:
+
+```
+NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
+```
+
+### How can I make the app cast?
+
+* If you're on Windows, use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast.
+* If you're on other systems, it's not too hard to rig up a script that generates the app cast for you in python or some other scripting language. (Contributions to make AppCastGenerator work on macOS/Linux are **welcome**!)
+* Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (DSA) signature for the app cast file manually! :)
+
 ## Updating from 0.X or 1.X
 
 This section is still WIP, but major changes include:
@@ -106,65 +216,8 @@ This section is still WIP, but major changes include:
   * The `UserSkippedVersion` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `RemindMeLaterSelected` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.
-
-## App Cast
-
-NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts. Here is a sample app cast:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
-    <channel>
-        <title>NetSparkle Test App</title>
-        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
-        <description>Most recent changes with links to updates.</description>
-        <language>en</language>
-        <item>
-            <title>Version 2.0 (2 bugs fixed; 3 new features)</title>
-            <sparkle:releaseNotesLink>
-            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
-            </sparkle:releaseNotesLink>
-            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
-            <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
-                       sparkle:version="2.0"
-                       sparkle:os="windows"
-                       length="12288"
-                       type="application/octet-stream"
-                       sparkle:dsaSignature="NSG/eKz9BaTJrRDvKSwYEaOumYpPMtMYRq+vjsNlHqRGku/Ual3EoQ==" />
-        </item>
-    </channel>
-</rss>
-```
-
-NetSparkle reads the `<item>` tags to determine whether updates are available.
-
-The important tags in each `<item>` are:
-
-- `<description>`
-    - A description of the update in HTML or Markdown.
-    - Overrides the `<sparkle:releaseNotesLink>` tag.
-- `<sparkle:releaseNotesLink>`
-    - The URL to an HTML or Markdown document describing the update.
-    - If the `<description>` tag is present, it will be used instead.
-    - **Attributes**:
-        - `sparkle:dsaSignature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog DSA signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
-- `<pubDate>`
-    - The date this update was published
-- `<enclosure>`
-    - This tag describes the update file that NetSparkle will download.
-    - **Attributes**:
-        - `url`: URL of the update file
-        - `sparkle:version`: machine-readable version number of this update
-        - `length`, optional: (not validated) size of the update file in bytes
-        - `type`: ignored
-        - `sparkle:dsaSignature`: DSA signature of the update file
-        - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
-        - `sparkle:os`: Operating system for the app cast item. Defaults to Windows if not supplied. For Windows, use "win" or "windows"; for macOS, use "macos" or "osx"; for Linux, use "linux".
-
-By default, you need 2 DSA signatures (`SecurityMode.Strict`):
-
-1. One in the enclosure tag for the update file (`sparkle:dsaSignature="..."`)
-1. Another on your web server to secure the actual app cast file. **This file must be located at [CastURL].dsa**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid DSA signature for that file at http://example.com/awesome-software.xml.dsa.
+* By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
+* `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available).
 
 ## Public Methods
 
