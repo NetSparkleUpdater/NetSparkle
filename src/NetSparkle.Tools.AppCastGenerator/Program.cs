@@ -184,7 +184,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 var signature = NetSparkleUpdater.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
                 if (!string.IsNullOrEmpty(signature)) 
                 { 
-                    File.WriteAllText(appcastFileName + ".dsa", signature);
+                    File.WriteAllText(appcastFileName + ".signature", signature);
                 }
             }
             catch (Exception e)
