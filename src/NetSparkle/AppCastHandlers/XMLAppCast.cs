@@ -85,7 +85,12 @@ namespace NetSparkleUpdater.AppCastHandlers
                 if (signatureNeeded)
                 {
                     _logWriter.PrintMessage("Downloading app cast signature data...");
-                    var signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".signature");
+                    var signature = "";
+                    try
+                    {
+                        signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".signature");
+                    }
+                    catch { }
                     if (string.IsNullOrWhiteSpace(signature))
                     {
                         // legacy: check for .dsa file
