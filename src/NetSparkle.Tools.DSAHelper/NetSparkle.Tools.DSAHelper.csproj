@@ -10,8 +10,8 @@
     <Product>NetSparkle</Product>
     <Description>NetSparkle is an auto update framework for .NET developers</Description>
     <Copyright>Portions Copyright © Dirk Eisenberg 2010, Deadpikle 2020</Copyright>
-    <AssemblyVersion>0.19.0</AssemblyVersion>
-    <FileVersion>0.19.0</FileVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
     <OutputPath>..\..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
