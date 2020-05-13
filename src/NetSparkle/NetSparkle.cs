@@ -998,7 +998,7 @@ namespace NetSparkleUpdater
             bool isSignatureInvalid = validationRes == ValidationResult.Invalid; // if Unchecked, we accept download as valid
             if (shouldShowUIItems)
             {
-                ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);
+                CallFuncConsideringUIThreads(() => { ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid); });
             }
             // signature of file isn't valid so exit with error
             if (isSignatureInvalid)
@@ -1007,11 +1007,14 @@ namespace NetSparkleUpdater
                 string errorMessage = "Downloaded file has invalid signature!";
                 DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                CallFuncConsideringUIThreads(() =>
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
-                }
-                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                    {
+                        UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
+                    }
+                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                });
             }
             else
             {
@@ -1020,7 +1023,7 @@ namespace NetSparkleUpdater
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
                 {
-                    ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
+                    CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
                 }
             }
             _itemBeingDownloaded = null;
