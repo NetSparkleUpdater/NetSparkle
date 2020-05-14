@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml;
 using NetSparkleUpdater.AppCastHandlers;
+using System.Text;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
@@ -176,7 +177,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(appcastXmlPath));
                 }
-                using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n" }))
+                using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
                 {
                     appcastXmlDocument.Save(w);
                 }
