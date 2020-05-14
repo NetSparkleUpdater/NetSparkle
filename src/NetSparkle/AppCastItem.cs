@@ -211,7 +211,7 @@ namespace NetSparkleUpdater
             }
 
             newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
-            if (newAppCastItem.ReleaseNotesSignature == string.Empty)
+            if (newAppCastItem.DownloadSignature == string.Empty)
             {
                 newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
             }
