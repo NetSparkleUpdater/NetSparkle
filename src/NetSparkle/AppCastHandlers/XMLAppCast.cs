@@ -90,11 +90,21 @@ namespace NetSparkleUpdater.AppCastHandlers
                     {
                         signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".signature");
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
+                        _logWriter.PrintMessage("Error reading app cast {0}.signature: {1} ", _castUrl, e.Message);
+                    }
                     if (string.IsNullOrWhiteSpace(signature))
                     {
                         // legacy: check for .dsa file
-                        signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                        try
+                        {
+                            signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                        }
+                        catch (Exception e)
+                        {
+                            _logWriter.PrintMessage("Error reading app cast {0}.dsa: {1} ", _castUrl, e.Message);
+                        }
                     }
                     isValidAppcast = VerifyAppCast(appcast, signature);
                 }
