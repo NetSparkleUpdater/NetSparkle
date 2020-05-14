@@ -1668,10 +1668,10 @@ namespace NetSparkleUpdater
                         if (config.CheckForUpdate == true)
                         {
                             // update the runonce feature
-                            goIntoLoop = !config.DidRunOnce;
+                            goIntoLoop = !config.IsFirstRun;
 
                             // check if update is required
-                            if (_cancelToken.IsCancellationRequested)
+                            if (_cancelToken.IsCancellationRequested || !goIntoLoop)
                             {
                                 break;
                             }
