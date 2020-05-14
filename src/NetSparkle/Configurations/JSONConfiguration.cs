@@ -33,7 +33,7 @@ namespace NetSparkleUpdater.Configurations
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="referenceAssembly">the name of hte reference assembly</param>
+        /// <param name="referenceAssembly">the name of the reference assembly</param>
         /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
         /// <param name="savePath"><c>true</c> if reflection is used to access the assembly.</param>
         public JSONConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed, string savePath)

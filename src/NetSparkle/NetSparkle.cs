@@ -683,7 +683,14 @@ namespace NetSparkleUpdater
                     LogWriter.PrintMessage("Error showing sparkle form: {0}", e.Message);
                 }
             });
+#if NETFRAMEWORK
             thread.SetApartmentState(ApartmentState.STA);
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
+            }
+#endif
             thread.Start();
         }
 
@@ -900,7 +907,14 @@ namespace NetSparkleUpdater
                             ProgressWindow?.Show(ShowsUIOnMainThread);
                         }
                     });
+#if NETFRAMEWORK
                     thread.SetApartmentState(ApartmentState.STA);
+#else
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
+                    }
+#endif
                     thread.Start();
                 }
             }
