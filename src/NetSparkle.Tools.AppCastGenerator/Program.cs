@@ -89,7 +89,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Environment.Exit(1);
                 }
 
-                if (Directory.Exists(updateFilesDir))
+                if (!Directory.Exists(updateFilesDir))
                 {
                     Console.WriteLine("Error: {0} does not exist on disk.", updateFilesDir);
                     Console.WriteLine("");
@@ -173,19 +173,29 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Environment.Exit(1);
                 }
                 var appcastXmlPath = string.IsNullOrWhiteSpace(_outputFilePath) ? Path.Combine(updateFilesDir, appcastFileName) : _outputFilePath;
-                if (!Directory.Exists(Path.GetDirectoryName(appcastXmlPath)))
+                var dirName = Path.GetDirectoryName(appcastXmlPath);
+                if (!Directory.Exists(dirName))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(appcastXmlPath));
+                    Console.WriteLine("Creating {0}", dirName);
+                    Directory.CreateDirectory(dirName);
                 }
+                Console.WriteLine("Writing appcast to {0}", appcastXmlPath);
                 using (var w = XmlWriter.Create(appcastXmlPath, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
                 {
                     appcastXmlDocument.Save(w);
                 }
                 
                 var signature = NetSparkleUpdater.Utilities.GetDSASignature(appcastXmlPath, _privateKeyFilePath);
-                if (!string.IsNullOrEmpty(signature)) 
-                { 
-                    File.WriteAllText(appcastFileName + ".signature", signature);
+                if (!string.IsNullOrEmpty(signature))
+                {
+                    Console.WriteLine("Writing signature to {0}.signature", appcastXmlPath);
+                    File.WriteAllText(appcastXmlPath + ".signature", signature);
+                }
+                else
+                {
+                    Console.WriteLine("Error: Invalid signature generated. Do {0} and {1} exist?", appcastXmlPath, _privateKeyFilePath);
+                    Console.WriteLine("");
+                    Environment.Exit(1);
                 }
             }
             catch (Exception e)
