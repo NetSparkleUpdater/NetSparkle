@@ -815,11 +815,6 @@ namespace NetSparkleUpdater
                 UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
 
                 CreateAndShowProgressWindow(item, false);
-                if (ProgressWindow != null)
-                {
-                    UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
-                    UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-                }
                 UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
 
@@ -832,7 +827,10 @@ namespace NetSparkleUpdater
 
         private void OnDownloadProgressChanged(object sender, ItemDownloadProgressEventArgs args)
         {
-            CallFuncConsideringUIThreads(() => { DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args); });
+            CallFuncConsideringUIThreads(() =>
+            {
+                DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args); 
+            });
         }
 
         private void CleanUpUpdateDownloader()
@@ -863,6 +861,7 @@ namespace NetSparkleUpdater
             if (ProgressWindow != null)
             {
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
+                UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
                 ProgressWindow = null;
             }
             if (ProgressWindow == null && UIFactory != null && !IsDownloadingSilently())
@@ -876,6 +875,7 @@ namespace NetSparkleUpdater
                         if (ProgressWindow != null)
                         {
                             ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
+                            UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
                             if (shouldShowAsDownloadedAlready)
                             {
                                 ProgressWindow?.FinishedDownloadingFile(true);
