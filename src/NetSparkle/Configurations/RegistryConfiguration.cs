@@ -213,7 +213,7 @@ namespace NetSparkleUpdater.Configurations
             }
 
             // convert to regsz
-            string strCheckForUpdate = CheckForUpdate.ToString();
+            string strCheckForUpdate = true.ToString(); // always check for updates next time!
             string strLastCheckTime = ConvertDateToString(LastCheckTime);
             string strSkipThisVersion = LastVersionSkipped;
             string strDidRunOnc = DidRunOnce.ToString();

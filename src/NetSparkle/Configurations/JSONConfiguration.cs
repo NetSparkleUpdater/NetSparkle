@@ -139,7 +139,7 @@ namespace NetSparkleUpdater.Configurations
 #else
                     var data = JsonConvert.DeserializeObject<SavedConfigurationData>(json);
 #endif
-                    CheckForUpdate = data.CheckForUpdate;
+                    CheckForUpdate = true;
                     LastCheckTime = data.LastCheckTime;
                     LastVersionSkipped = data.LastVersionSkipped;
                     DidRunOnce = data.DidRunOnce;
@@ -160,7 +160,7 @@ namespace NetSparkleUpdater.Configurations
                 {
                 }
             }
-            CheckForUpdate = false;
+            CheckForUpdate = true;
             LastCheckTime = DateTime.Now;
             LastVersionSkipped = string.Empty;
             DidRunOnce = false;
@@ -188,7 +188,7 @@ namespace NetSparkleUpdater.Configurations
         {
             var savedConfig = new SavedConfigurationData()
             {
-                CheckForUpdate = this.CheckForUpdate,
+                CheckForUpdate = true,
                 LastCheckTime = this.LastCheckTime,
                 LastVersionSkipped = this.LastVersionSkipped,
                 DidRunOnce = this.DidRunOnce,
