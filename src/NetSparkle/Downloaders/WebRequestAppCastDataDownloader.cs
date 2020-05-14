@@ -37,7 +37,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 try
                 {
-                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), GetAppCastEncoding()))
                     {
                         return reader.ReadToEnd();
                     }
