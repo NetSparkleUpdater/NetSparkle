@@ -39,7 +39,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.ASCII))
                     {
-                        return reader.ReadToEnd().Trim();
+                        return reader.ReadToEnd();
                     }
                 }
                 catch
