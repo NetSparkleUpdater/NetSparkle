@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <ProjectGuid>{45F5AADB-A39B-446F-8025-71647238BB89}</ProjectGuid>
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkle.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
@@ -150,8 +149,7 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="System.Drawing.Common">
-      <Version>4.7.0</Version>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

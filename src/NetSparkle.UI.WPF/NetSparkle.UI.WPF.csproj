@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
     <TargetFrameworks>netcoreapp3.0;net451</TargetFrameworks>
     <UseWPF>true</UseWPF>    
     <AssemblyTitle>NetSparkle.NetFramework.WPF</AssemblyTitle>
@@ -48,8 +47,7 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-    <PackageReference Include="System.Drawing.Common">
-      <Version>4.7.0</Version>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

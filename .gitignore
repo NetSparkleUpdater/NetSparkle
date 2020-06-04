@@ -22,3 +22,7 @@ TestAppFiles/*.dsa
 src/NetSparkleGenerator/NetSparkleGenerator.csproj.user
 !src/NetSparkle.UI.Avalonia/Lib/*
 !src/NetSparkle.UI.Avalonia/Lib/**
+src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj.user
+
+# OS generated files #
+.DS_Store*

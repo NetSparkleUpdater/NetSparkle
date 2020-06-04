@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace NetSparkleUpdater.Downloaders
 {
-    class WebRequestAppCastDataDownloader : IAppCastDataDownloader
+    public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
         private string _appcastUrl = "";
 
