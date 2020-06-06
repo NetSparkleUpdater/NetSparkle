@@ -23,14 +23,14 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
     {
         public class Options
         {
+            [Option('a', "appcast-output-directory", Required = false, HelpText = "Directory to write appcast.xml")]
+            public string OutputDirectory { get; set; }
+
             [Option('e', "ext", SetName = "local", Required = false, HelpText = "Search for file extensions.", Default = "exe")]
             public string Extension { get; set; }
 
-            [Option('b', "binaries", SetName = "local", Required = false, HelpText = "Directory containing binaries.")]
+            [Option('b', "binaries", SetName = "local", Required = false, HelpText = "Directory containing binaries.", Default = ".")]
             public string SourceBinaryDirectory { get; set; }
-
-            [Option('a', "appcast-output-directory", Required = false, HelpText = "Directory to write appcast.xml")]
-            public string OutputDirectory { get; set; }
 
             //[Option('g', "github-atom-feed", SetName = "github", Required = false, HelpText = "Generate from Github release atom feed (signatures not supported yet)")]
             //public string GithubAtomFeed { get; set; }
@@ -42,7 +42,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public string OperatingSystem { get; set; }
 
             [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = "")]
-            public string BaseUrl { get; set; }
+            public Uri BaseUrl { get; set; }
 
             [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion).", Default = "")]
             public string ChagenLogUrl { get; set; }
@@ -50,19 +50,46 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "", Default = "")]
             public string ChangeLogPath { get; set; }
 
-            [Option('k', "private-key", Required = false, HelpText = "Private key path")]
-            public string PrivateKeyPath { get; set; }
-
-            [Option('n', "product-name", Required = true, HelpText = "Product Name")]
+            [Option('n', "product-name", Required = false, HelpText = "Product Name", Default = "Application")]
             public string ProductName { get; set; }
 
             [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url")]
             public bool PrefixVersion { get; set; }
 
+
+            #region key generation
+
+            [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys")]
+            public bool GenerateKeys { get; set; }
+
+            [Option("force", SetName = "keys", Required = false, HelpText = "Force regeneration of keys")]
+            public bool ForceRegneration { get; set; }
+
+            #endregion
+
+
+            #region signing
+
+            [Option("generate-signature", SetName = "signing", Required = false, HelpText = "Generate signature from binary")]
+            public string BinaryToSign { get; set; }
+
+            #endregion
+
+            #region
+
+            [Option("verify", SetName = "verify", Required = false, HelpText = "Binary to verify")]
+            public string BinaryToVerify { get; set; }
+
+            [Option("signature", SetName = "verify", Required = false, HelpText = "Signature")]
+            public string Signature { get; set; }
+
+            #endregion
+
         }
 
 
         private static string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
+        private static SignatureManager _signatureManager = new SignatureManager();
 
         static void Main(string[] args)
         {
@@ -79,12 +106,50 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 return;
             }*/
 
+
+            if(opts.GenerateKeys)
+            {
+                _signatureManager.Generate(opts.ForceRegneration);
+                return;
+            }
+
+            if (opts.BinaryToSign != null)
+            {
+                var signature = _signatureManager.GetSignature(new FileInfo(opts.BinaryToSign));
+
+                Console.WriteLine($"Signature: {signature}", Color.Green);
+
+                return;
+            }
+
+            if (opts.BinaryToVerify != null)
+            {
+                var result = _signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature);
+
+                if(result)
+                {
+                    Console.WriteLine($"Signature valid", Color.Green);
+                } else
+                {
+                    Console.WriteLine($"Signature invalid", Color.Red);
+                }
+
+                return;
+            }
+
+
             var search = $"*.{opts.Extension}";
+
+            if(opts.SourceBinaryDirectory == ".")
+            {
+                opts.SourceBinaryDirectory = Environment.CurrentDirectory;
+            }
+
             var binaries = Directory.GetFiles(opts.SourceBinaryDirectory, search);
 
             if (binaries.Length == 0)
             {
-                Console.WriteLine($"No files founds matching {search}");
+                Console.WriteLine($"No files founds matching {search} in {opts.SourceBinaryDirectory}", Color.Yellow);
                 Environment.Exit(1);
             }
 
@@ -133,12 +198,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     if(version == null)
                     {
                         Console.WriteLine($"Unable to determine version of binary {fileInfo.Name}, try -f parameter");
-                        Console.WriteLine();
                         Environment.Exit(1);
                     }
 
-                    
-                    var dsaSignature = Utilities.GetDSASignature(binary, opts.PrivateKeyPath);
                     var productVersion = version;
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
                     var remoteUpdateFile = $"{opts.BaseUrl}/{(opts.PrefixVersion ? $"{version}/" :"")}{HttpUtility.UrlEncode(fileInfo.Name)})";
@@ -151,7 +213,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     if (hasChangelogForFile)
                     {
-                        changelogDSA = Utilities.GetDSASignature(changelogPath, opts.PrivateKeyPath);
+                        changelogDSA = _signatureManager.GetSignature(changelogPath);
                     }
 
                     //
@@ -164,7 +226,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         PublicationDate = fileInfo.CreationTime,
                         UpdateSize = fileInfo.Length,
                         Description = "",
-                        DownloadSignature = dsaSignature,
+                        DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignature(fileInfo) : null,
                         OperatingSystemString = opts.OperatingSystem,
                         MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
                     };
@@ -204,22 +266,29 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     appcastXmlDocument.Save(w);
                 }
 
-                if (!string.IsNullOrEmpty(opts.PrivateKeyPath))
+                if (_signatureManager.KeysExist())
                 {
-                    var signature = Utilities.GetDSASignature(appcastFileName, opts.PrivateKeyPath);
-                    if (!string.IsNullOrEmpty(signature))
+                    var appcastFile = new FileInfo(appcastFileName);
+                    var signatureFile = appcastFileName + ".signature";
+                    var signature = _signatureManager.GetSignature(appcastFile);
+
+                    
+
+                    var result = _signatureManager.VerifySignature(appcastFile, signature);
+
+                    if(result)
                     {
-                        Console.WriteLine("Writing signature to {0}.signature", appcastFileName, Color.Green);
-                        File.WriteAllText(appcastFileName + ".signature", signature);
-                    }
-                    else
+                        
+                        File.WriteAllText(signatureFile, signature);
+                        Console.WriteLine($"Wrote {signatureFile}", Color.Green);
+                    } else
                     {
-                        Console.WriteLine("Error: Invalid signature generated. Do {0} and {1} exist?", appcastFileName, opts.PrivateKeyPath, Color.Red);
-                        Environment.Exit(1);
+                        Console.WriteLine($"Failed to verify {signatureFile}", Color.Red);
                     }
+
                 } else
                 {
-                    Console.WriteLine("Skipped generating signature", Color.Red);
+                    Console.WriteLine("Skipped generating signature.  Generate keys with --generate-keys", Color.Red);
                     Environment.Exit(1);
                 }
             }
@@ -231,11 +300,6 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             }
 
 
-        }
-
-        private static async Task GenerateFromAtom(Options opts)
-        {
-            //var feed = await FeedReader.ReadAsync(opts.GithubAtomFeed);
         }
 
         static void HandleParseError(IEnumerable<Error> errs)

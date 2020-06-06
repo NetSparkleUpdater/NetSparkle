@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tools.DSAHelper"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.UpdateExe", "src\NetSparkle.Samples.DownloadedExe\NetSparkle.Samples.UpdateExe.csproj", "{3FECC323-E8A1-45F9-8764-32B64871535A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tools.AppCastGenerator", "src\NetSparkle.Tools.AppCastGenerator\NetSparkle.Tools.AppCastGenerator.csproj", "{19F0D329-2127-4788-8AFA-DDEDA4B70F88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Tools.AppCastGenerator", "src\NetSparkle.Tools.AppCastGenerator\NetSparkle.Tools.AppCastGenerator.csproj", "{19F0D329-2127-4788-8AFA-DDEDA4B70F88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia", "src\NetSparkle.Samples.Avalonia\NetSparkle.Samples.Avalonia.csproj", "{1DBD011C-C437-4126-9F12-A9D0BDEA3AA2}"
 EndProject
