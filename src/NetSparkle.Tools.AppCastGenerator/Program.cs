@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Xml;
 using NetSparkleUpdater.AppCastHandlers;
@@ -14,12 +13,10 @@ using Console = Colorful.Console;
 using System.Drawing;
 using NetSparkleUpdater.AppCastGenerator;
 using System.Web;
-//using CodeHollow.FeedReader;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
-    class Program
+    internal class Program
     {
         public class Options
         {
@@ -45,7 +42,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public Uri BaseUrl { get; set; }
 
             [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion).", Default = "")]
-            public string ChagenLogUrl { get; set; }
+            public string ChangeLogUrl { get; set; }
 
             [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "", Default = "")]
             public string ChangeLogPath { get; set; }
@@ -63,7 +60,10 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public bool GenerateKeys { get; set; }
 
             [Option("force", SetName = "keys", Required = false, HelpText = "Force regeneration of keys")]
-            public bool ForceRegneration { get; set; }
+            public bool ForceRegeneration { get; set; }
+
+            [Option("export", SetName = "keys", Required = false, HelpText = "Export keys")]
+            public bool Export { get; set; }
 
             #endregion
 
@@ -106,10 +106,18 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 return;
             }*/
 
-
-            if(opts.GenerateKeys)
+            if (opts.Export)
             {
-                _signatureManager.Generate(opts.ForceRegneration);
+                Console.WriteLine("Private Key:");
+                Console.WriteLine(Convert.ToBase64String(_signatureManager.GetPrivateKey()));
+                Console.WriteLine("Public Key:");
+                Console.WriteLine(Convert.ToBase64String(_signatureManager.GetPublicKey()));
+                return;
+            }
+
+            if (opts.GenerateKeys)
+            {
+                _signatureManager.Generate(opts.ForceRegeneration);
                 return;
             }
 
@@ -233,10 +241,10 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     if (hasChangelogForFile)
                     {
-                        if (!string.IsNullOrWhiteSpace(opts.ChagenLogUrl))
+                        if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
                         {
                             item.ReleaseNotesSignature = changelogDSA;
-                            item.ReleaseNotesLink = opts.ChagenLogUrl + changelogFileName;
+                            item.ReleaseNotesLink = opts.ChangeLogUrl + changelogFileName;
                         }
                         else
                         {

@@ -31,7 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile></DocumentationFile>
@@ -40,7 +40,7 @@
     <OutputPath></OutputPath>
     <NoWarn>1701;1702</NoWarn>
     <NoWarn>1701;1702</NoWarn>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
@@ -56,7 +56,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />

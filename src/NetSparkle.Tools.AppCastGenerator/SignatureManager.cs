@@ -1,9 +1,11 @@
 using System;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using NetSparkleUpdater.Enums;
-using NSec.Cryptography;
+
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Signers;
+using Org.BouncyCastle.Security;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
@@ -13,36 +15,35 @@ namespace NetSparkleUpdater.AppCastGenerator
         private string _privateKey;
         private string _publicKey;
 
-        private KeyBlobFormat _privateKeyFormat = KeyBlobFormat.PkixPrivateKeyText;
-        private KeyBlobFormat _publicKeyFormat = KeyBlobFormat.PkixPublicKeyText;
-        private SignatureAlgorithm _algorithm = SignatureAlgorithm.Ed25519;
+        private const string _privateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
+        private const string _publicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
 
         public SignatureManager()
         {
             _storage = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
 
-            if(!Directory.Exists(_storage))
+            if (!Directory.Exists(_storage))
             {
                 Directory.CreateDirectory(_storage);
             }
 
-            _privateKey = Path.Combine(_storage, "NetSparkle_DSA.priv");
-            _publicKey = Path.Combine(_storage, "NetSparkle_DSA.pub");
+            _privateKey = Path.Combine(_storage, "NetSparkle_Ed25519.priv");
+            _publicKey = Path.Combine(_storage, "NetSparkle_Ed25519.pub");
         }
 
         public bool KeysExist()
         {
-            if (File.Exists(_privateKey) || File.Exists(_publicKey))
+            if (GetPublicKey() != null && GetPrivateKey() != null)
             {
                 return true;
-                
             }
+
             return false;
         }
 
         public void Generate(bool force = false)
         {
-            
+
             if (KeysExist() && !force)
             {
                 Console.WriteLine("Keys already exist, use --force to force regeneration");
@@ -52,26 +53,24 @@ namespace NetSparkleUpdater.AppCastGenerator
             // start key generation
             Console.WriteLine("Generating key pair...");
 
-            var algorithm = SignatureAlgorithm.Ed25519;
 
-            using var key = Key.Create(algorithm, new KeyCreationParameters
-            {
-                ExportPolicy = KeyExportPolicies.AllowPlaintextArchiving
-            });
+            var Random = new SecureRandom();
+
+            Ed25519KeyPairGenerator kpg = new Ed25519KeyPairGenerator();
+            kpg.Init(new Ed25519KeyGenerationParameters(Random));
+
+            AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
+            Ed25519PrivateKeyParameters privateKey = (Ed25519PrivateKeyParameters)kp.Private;
+            Ed25519PublicKeyParameters publicKey = (Ed25519PublicKeyParameters)kp.Public;
+
+            var privKey = privateKey.GetEncoded();
+            var pubKey = publicKey.GetEncoded();
 
 
-            File.WriteAllBytes(_privateKey, key.Export(_privateKeyFormat));
-            File.WriteAllBytes(_publicKey, key.PublicKey.Export(_publicKeyFormat));
+            File.WriteAllBytes(_privateKey, privKey);
+            File.WriteAllBytes(_publicKey, pubKey);
 
             Console.WriteLine("Storing public/private keys to " + _storage);
-
-            /*
-             * 
-            // DSACryptoServiceProvider is a thin windows only wrapper. Can't generate keys on linux / mac
-            DSACryptoServiceProvider prv = new DSACryptoServiceProvider();
-            File.WriteAllText(_privateKey, prv.ToXmlString(true));
-            File.WriteAllText(_publicKey, prv.ToXmlString(false));
-            */
         }
 
         public bool VerifySignature(string file, string signature)
@@ -87,17 +86,14 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Environment.Exit(1);
             }
 
-            var key = ImportKey();
+            
             var data = File.ReadAllBytes(file.FullName);
-            var signatureAsBytes = Convert.FromBase64String(signature);
 
-            // verify the data using the signature and the public key
-            if (_algorithm.Verify(key.PublicKey, data, signatureAsBytes))
-            {
-                return true;
-            }
+            var validator = new Ed25519Signer();
+            validator.Init(false, new Ed25519PublicKeyParameters(GetPublicKey(), 0));
+            validator.BlockUpdate(data, 0, data.Length);
 
-            return false;
+            return validator.VerifySignature(Convert.FromBase64String(signature));
         }
 
         public string GetSignature(string file)
@@ -119,18 +115,42 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Environment.Exit(1);
             }
 
-            var key = ImportKey();
-            var data = File.ReadAllBytes(file.FullName);
-            var signature = _algorithm.Sign(key, data);
 
-            return Convert.ToBase64String(signature);
+            var data = File.ReadAllBytes(file.FullName);
+
+            var signer = new Ed25519Signer();
+
+            signer.Init(true, new Ed25519PrivateKeyParameters(GetPrivateKey(), 0));
+            signer.BlockUpdate(data, 0, data.Length);
+
+            return Convert.ToBase64String(signer.GenerateSignature());
         }
 
-        private Key ImportKey()
+        public byte[] GetPrivateKey()
         {
-            var blob = File.ReadAllBytes(_privateKey);
-            var key = Key.Import(_algorithm, blob, _privateKeyFormat);
-            return key;
+            return ResolveKeyLocation(_privateKeyEnvironmentVariable, _privateKey);
+        }
+
+        public byte[] GetPublicKey()
+        {
+            return ResolveKeyLocation(_publicKeyEnvironmentVariable, _publicKey);
+        }
+
+        private byte[] ResolveKeyLocation(string environmentVariableName, string fileLocation)
+        {
+            var key = Environment.GetEnvironmentVariable(environmentVariableName);
+
+            if (key != null)
+            {
+                return Convert.FromBase64String(key);
+            }
+
+            if (!File.Exists(fileLocation))
+            {
+                return null;
+            }
+
+            return File.ReadAllBytes(fileLocation);
         }
     }
 }
