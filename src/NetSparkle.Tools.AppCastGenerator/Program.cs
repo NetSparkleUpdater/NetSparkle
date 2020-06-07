@@ -41,7 +41,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('o', "os", Required = false, HelpText = "Operating System (windows,macos,linux)", Default = "windows")]
             public string OperatingSystem { get; set; }
 
-            [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = "")]
+            [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
             public Uri BaseUrl { get; set; }
 
             [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion).", Default = "")]
