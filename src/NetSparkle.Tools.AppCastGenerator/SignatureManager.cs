@@ -72,9 +72,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             Console.WriteLine("Storing public/private keys to " + _storagePath);
         }
 
-        public bool VerifySignature(string file, string signature)
+        public bool VerifySignature(string filePath, string signature)
         {
-            return VerifySignature(new FileInfo(file), signature);
+            return VerifySignature(new FileInfo(filePath), signature);
         }
 
         public bool VerifySignature(FileInfo file, string signature)
@@ -95,12 +95,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             return validator.VerifySignature(Convert.FromBase64String(signature));
         }
 
-        public string GetSignature(string file)
+        public string GetSignatureForFile(string filePath)
         {
-            return GetSignature(new FileInfo(file));
+            return GetSignatureForFile(new FileInfo(filePath));
         }
 
-        public string GetSignature(FileInfo file)
+        public string GetSignatureForFile(FileInfo file)
         {
             if (!KeysExist())
             {

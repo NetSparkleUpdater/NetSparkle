@@ -123,7 +123,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.BinaryToSign != null)
             {
-                var signature = _signatureManager.GetSignature(new FileInfo(opts.BinaryToSign));
+                var signature = _signatureManager.GetSignatureForFile(new FileInfo(opts.BinaryToSign));
 
                 Console.WriteLine($"Signature: {signature}", Color.Green);
 
@@ -221,7 +221,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     if (hasChangelogForFile)
                     {
-                        changelogDSA = _signatureManager.GetSignature(changelogPath);
+                        changelogDSA = _signatureManager.GetSignatureForFile(changelogPath);
                     }
 
                     //
@@ -234,7 +234,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         PublicationDate = fileInfo.CreationTime,
                         UpdateSize = fileInfo.Length,
                         Description = "",
-                        DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignature(fileInfo) : null,
+                        DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(fileInfo) : null,
                         OperatingSystemString = opts.OperatingSystem,
                         MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
                     };
@@ -278,7 +278,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 {
                     var appcastFile = new FileInfo(appcastFileName);
                     var signatureFile = appcastFileName + ".signature";
-                    var signature = _signatureManager.GetSignature(appcastFile);
+                    var signature = _signatureManager.GetSignatureForFile(appcastFile);
 
                     
 
