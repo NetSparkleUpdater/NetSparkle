@@ -32,7 +32,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Verify that the given data has the same signature as the passed-in signature
         /// </summary>
-        /// <param name="signature">the signature to validate against dataToVerify's signature</param>
+        /// <param name="signature">the base 64 signature to validate against dataToVerify's signature</param>
         /// <param name="dataToVerify">the data that should be used to obtain a signature and
         /// checked against the passed-in signature</param>
         /// <returns>the <see cref="ValidationResult"/> result of the verification process</returns>
@@ -42,7 +42,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Verify that the file at the given path has the same signature as the passed-in
         /// signature
         /// </summary>
-        /// <param name="signature">the signature to validate against the signature of 
+        /// <param name="signature">the base 64 signature to validate against the signature of 
         /// the file at binaryPath</param>
         /// <param name="binaryPath">the file path to the file whose signature you want to verify</param>
         /// <returns>the <see cref="ValidationResult"/> result of the verification process</returns>
@@ -52,7 +52,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Verify that the file at the given path has the same signature as the passed-in
         /// string
         /// </summary>
-        /// <param name="signature">the signature to validate against the signature
+        /// <param name="signature">the base 64 signature to validate against the signature
         /// of the passed-in string</param>
         /// <param name="data">the string whose signature you want to verify</param>
         /// <returns>the <see cref="ValidationResult"/> result of the verification process</returns>
