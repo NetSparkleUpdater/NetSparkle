@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkle.New</PackageId>
     <Version>2.0.0-preview20200604001</Version>
@@ -23,14 +23,14 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451'">
-    <DefineConstants>NET451;NETFULL</DefineConstants>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
+    <DefineConstants>NET452;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <OutputPath>..\bin\Release\NetSparkle\</OutputPath>
     <DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net451|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
     <OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
     <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
   </PropertyGroup>
   <!-- .NET 4.5 references, compilation flags and build options -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -73,7 +73,7 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

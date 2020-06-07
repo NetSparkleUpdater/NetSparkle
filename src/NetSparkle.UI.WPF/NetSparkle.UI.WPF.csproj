@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
-    <TargetFrameworks>netcoreapp3.0;net451</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;net452</TargetFrameworks>
     <UseWPF>true</UseWPF>    
     <AssemblyTitle>NetSparkle.NetFramework.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.0|AnyCPU'">
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Drawing" />

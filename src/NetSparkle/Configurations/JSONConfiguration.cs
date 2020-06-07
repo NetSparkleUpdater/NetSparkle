@@ -1,5 +1,5 @@
 ﻿using NetSparkleUpdater.AssemblyAccessors;
-#if NET451
+#if NETFRAMEWORK
 using Newtonsoft.Json;
 #endif
 using System;
