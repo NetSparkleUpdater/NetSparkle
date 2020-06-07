@@ -1,45 +1,44 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace NetSparkleUnitTests
 {
-    [TestClass]
     public class UtilitiesTests
     {
-        [TestMethod]
+        [Fact]
         public void TestGetVersionString()
         {
             var versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(1, 0, 0, 0));
-            Assert.AreEqual("1.0", versionString);
+            Assert.Equal("1.0", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(0, 1, 0, 0));
-            Assert.AreEqual("0.1", versionString);
+            Assert.Equal("0.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(1, 1, 0, 0));
-            Assert.AreEqual("1.1", versionString);
+            Assert.Equal("1.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(0, 0, 1, 0));
-            Assert.AreEqual("0.0.1", versionString);
+            Assert.Equal("0.0.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(1, 1, 1, 1));
-            Assert.AreEqual("1.1.1.1", versionString);
+            Assert.Equal("1.1.1.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(1, 0, 0, 1));
-            Assert.AreEqual("1.0.0.1", versionString);
+            Assert.Equal("1.0.0.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(1, 0, 1, 0));
-            Assert.AreEqual("1.0.1", versionString);
+            Assert.Equal("1.0.1", versionString);
             versionString = NetSparkleUpdater.Utilities.GetVersionString(new Version(0, 0, 0, 1));
-            Assert.AreEqual("0.0.0.1", versionString);
+            Assert.Equal("0.0.0.1", versionString);
         }
 
-        [TestMethod]
+        [Fact]
         public void TestGetAbsoluteURL()
         {
             var abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("https://example.com/program.exe", "https://example.com/appcast.xml");
-            Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
+            Assert.Equal("https://example.com/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("program.exe", "https://example.com/appcast.xml");
-            Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
+            Assert.Equal("https://example.com/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("program.exe", "https://example.com/subfolder/appcast.xml");
-            Assert.AreEqual("https://example.com/subfolder/program.exe", abosluteURL.ToString());
+            Assert.Equal("https://example.com/subfolder/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("../program.exe", "https://example.com/subfolder/appcast.xml");
-            Assert.AreEqual("https://example.com/program.exe", abosluteURL.ToString());
+            Assert.Equal("https://example.com/program.exe", abosluteURL.ToString());
             abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("./program.exe", "https://example.com/subfolder/appcast.xml");
-            Assert.AreEqual("https://example.com/subfolder/program.exe", abosluteURL.ToString());
+            Assert.Equal("https://example.com/subfolder/program.exe", abosluteURL.ToString());
         }
     }
 }

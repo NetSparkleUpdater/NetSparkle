@@ -443,7 +443,12 @@ namespace NetSparkleUpdater
             // start the work
             //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             //_taskWorker.Start(scheduler);
-            _taskWorker.Start();
+            // don't allow starting the task 2x
+            if (_taskWorker.IsCompleted == false && _taskWorker.Status != TaskStatus.Running && 
+                _taskWorker.Status != TaskStatus.WaitingToRun && _taskWorker.Status != TaskStatus.WaitingForActivation)
+            {
+                _taskWorker.Start();
+            }
         }
 
         /// <summary>
