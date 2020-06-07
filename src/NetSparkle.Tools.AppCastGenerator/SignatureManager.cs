@@ -11,24 +11,24 @@ namespace NetSparkleUpdater.AppCastGenerator
 {
     public class SignatureManager
     {
-        private string _storage;
-        private string _privateKey;
-        private string _publicKey;
+        private string _storagePath;
+        private string _privateKeyFilePath;
+        private string _publicKeyFilePath;
 
         private const string _privateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
         private const string _publicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
 
         public SignatureManager()
         {
-            _storage = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
+            _storagePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
 
-            if (!Directory.Exists(_storage))
+            if (!Directory.Exists(_storagePath))
             {
-                Directory.CreateDirectory(_storage);
+                Directory.CreateDirectory(_storagePath);
             }
 
-            _privateKey = Path.Combine(_storage, "NetSparkle_Ed25519.priv");
-            _publicKey = Path.Combine(_storage, "NetSparkle_Ed25519.pub");
+            _privateKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.priv");
+            _publicKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.pub");
         }
 
         public bool KeysExist()
@@ -63,14 +63,13 @@ namespace NetSparkleUpdater.AppCastGenerator
             Ed25519PrivateKeyParameters privateKey = (Ed25519PrivateKeyParameters)kp.Private;
             Ed25519PublicKeyParameters publicKey = (Ed25519PublicKeyParameters)kp.Public;
 
-            var privKey = privateKey.GetEncoded();
-            var pubKey = publicKey.GetEncoded();
+            var privKeyBase64 = Convert.ToBase64String(privateKey.GetEncoded());
+            var pubKeyBase64 = Convert.ToBase64String(publicKey.GetEncoded());
 
+            File.WriteAllText(_privateKeyFilePath, privKeyBase64);
+            File.WriteAllText(_publicKeyFilePath, pubKeyBase64);
 
-            File.WriteAllBytes(_privateKey, privKey);
-            File.WriteAllBytes(_publicKey, pubKey);
-
-            Console.WriteLine("Storing public/private keys to " + _storage);
+            Console.WriteLine("Storing public/private keys to " + _storagePath);
         }
 
         public bool VerifySignature(string file, string signature)
@@ -128,12 +127,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public byte[] GetPrivateKey()
         {
-            return ResolveKeyLocation(_privateKeyEnvironmentVariable, _privateKey);
+            return ResolveKeyLocation(_privateKeyEnvironmentVariable, _privateKeyFilePath);
         }
 
         public byte[] GetPublicKey()
         {
-            return ResolveKeyLocation(_publicKeyEnvironmentVariable, _publicKey);
+            return ResolveKeyLocation(_publicKeyEnvironmentVariable, _publicKeyFilePath);
         }
 
         private byte[] ResolveKeyLocation(string environmentVariableName, string fileLocation)
@@ -150,7 +149,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 return null;
             }
 
-            return File.ReadAllBytes(fileLocation);
+            return Convert.FromBase64String(File.ReadAllText(fileLocation));
         }
     }
 }
