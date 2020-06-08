@@ -9,7 +9,7 @@ using System.Text;
 
 namespace NetSparkleUpdater.Downloaders
 {
-    class WebRequestAppCastDataDownloader : IAppCastDataDownloader
+    public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
         private string _appcastUrl = "";
 

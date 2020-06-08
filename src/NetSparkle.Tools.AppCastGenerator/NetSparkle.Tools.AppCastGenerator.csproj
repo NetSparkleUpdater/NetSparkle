@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{19F0D329-2127-4788-8AFA-DDEDA4B70F88}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
     <AssemblyName>generate_appcast</AssemblyName>
@@ -32,9 +31,16 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DocumentationFile></DocumentationFile>
     <DebugType>pdbonly</DebugType>
+    <OutputPath></OutputPath>
+    <OutputPath></OutputPath>
+    <NoWarn>1701;1702</NoWarn>
+    <NoWarn>1701;1702</NoWarn>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
@@ -44,6 +50,13 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Colorful.Console" Version="1.2.10" />
+    <PackageReference Include="MimeTypes" Version="2.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />

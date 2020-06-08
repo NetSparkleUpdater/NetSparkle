@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <ProjectGuid>{B4D6FCB0-1217-4AFA-A2A5-4BA5482876C0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
     <AssemblyName>NetSparkle.DSAHelper</AssemblyName>
