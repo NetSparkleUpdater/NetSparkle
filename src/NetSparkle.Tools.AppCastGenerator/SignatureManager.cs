@@ -15,8 +15,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         private string _privateKeyFilePath;
         private string _publicKeyFilePath;
 
-        private const string _privateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
-        private const string _publicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
+        public const string PrivateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
+        public const string PublicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
 
         public SignatureManager()
         {
@@ -127,12 +127,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public byte[] GetPrivateKey()
         {
-            return ResolveKeyLocation(_privateKeyEnvironmentVariable, _privateKeyFilePath);
+            return ResolveKeyLocation(PrivateKeyEnvironmentVariable, _privateKeyFilePath);
         }
 
         public byte[] GetPublicKey()
         {
-            return ResolveKeyLocation(_publicKeyEnvironmentVariable, _publicKeyFilePath);
+            return ResolveKeyLocation(PublicKeyEnvironmentVariable, _publicKeyFilePath);
         }
 
         private byte[] ResolveKeyLocation(string environmentVariableName, string fileLocation)
