@@ -120,7 +120,7 @@ The file that launches your downloaded update executable only waits for 90 secon
 
 NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
 
-_Note: if your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519._
+_Note: if your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 2.0.0-20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519._
 
 Here is a sample app cast:
 
@@ -248,6 +248,7 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 
 This section is still WIP, but major changes include:
 
+* Minimum .NET requirement is now .NET Framework 4.5.2 instead of 4.5.1
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
 * UIs are now in different namespaces. If you want to use a UI, you must pass in a `UIFactory` that implements `IUIFactory` and handles showing/handling all user interface elements
