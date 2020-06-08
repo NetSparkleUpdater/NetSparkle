@@ -117,7 +117,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.GenerateKeys)
             {
-                _signatureManager.Generate(opts.ForceRegeneration);
+                var didSucceed = _signatureManager.Generate(opts.ForceRegeneration);
+                if (didSucceed)
+                {
+                    Console.WriteLine("Keys successfully generated", Color.Green);
+                }
+                else
+                {
+                    Console.WriteLine("Keys failed to generate", Color.Red);
+                }
                 return;
             }
 
@@ -137,7 +145,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (result)
                 {
                     Console.WriteLine($"Signature valid", Color.Green);
-                } else
+                } 
+                else
                 {
                     Console.WriteLine($"Signature invalid", Color.Red);
                 }

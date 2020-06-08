@@ -46,13 +46,13 @@ namespace NetSparkleUpdater.AppCastGenerator
             return false;
         }
 
-        public void Generate(bool force = false)
+        public bool Generate(bool force = false)
         {
 
             if (KeysExist() && !force)
             {
                 Console.WriteLine("Keys already exist, use --force to force regeneration");
-                Environment.Exit(1);
+                return false;
             }
 
             // start key generation
@@ -75,6 +75,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             File.WriteAllText(_publicKeyFilePath, pubKeyBase64);
 
             Console.WriteLine("Storing public/private keys to " + _storagePath);
+            return true;
         }
 
         public bool VerifySignature(string filePath, string signature)
@@ -87,7 +88,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             if (!KeysExist())
             {
                 Console.WriteLine("Keys do not exist");
-                Environment.Exit(1);
+                return false;
+            }
+            if (signature == null)
+            {
+                Console.WriteLine("Signature at path {0} is null", file.FullName);
+                return false;
             }
 
             
@@ -110,13 +116,13 @@ namespace NetSparkleUpdater.AppCastGenerator
             if (!KeysExist())
             {
                 Console.WriteLine("Keys do not exist");
-                Environment.Exit(1);
+                return null;
             }
 
             if (!file.Exists)
             {
                 Console.Error.WriteLine("Target binary " + file.FullName + " does not exists");
-                Environment.Exit(1);
+                return null;
             }
 
 
