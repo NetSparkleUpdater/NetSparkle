@@ -34,9 +34,27 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <param name="mode">The security mode of the validator. Controls what needs to be set in order to validate
         /// an app cast and its items.</param>
         /// <param name="publicKey">the base 64 public key as a string</param>
-        public Ed25519Checker(SecurityMode mode, string publicKey = null)
+        /// <param name="publicKeyFile">the public key file</param>
+        public Ed25519Checker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_Ed25519.pub")
         {
             SecurityMode = mode;
+
+            if (string.IsNullOrEmpty(publicKey))
+            {
+                Stream data = TryGetResourceStream(publicKeyFile);
+                if (data == null)
+                {
+                    data = TryGetFileResource(publicKeyFile, data);
+                }
+
+                if (data != null)
+                {
+                    using (StreamReader reader = new StreamReader(data))
+                    {
+                        publicKey = reader.ReadToEnd();
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(publicKey))
             {
@@ -139,6 +157,53 @@ namespace NetSparkleUpdater.SignatureVerifiers
 
                 return VerifySignature(signature, Utilities.ConvertStreamToByteArray(stream));
             }
+        }
+
+        /// <summary>
+        /// Gets a file resource
+        /// </summary>
+        /// <param name="publicKey">the public key</param>
+        /// <param name="data">the data stream</param>
+        /// <returns>the data stream</returns>
+        private static Stream TryGetFileResource(string publicKey, Stream data)
+        {
+            if (File.Exists(publicKey))
+            {
+                data = File.OpenRead(publicKey);
+            }
+            return data;
+        }
+
+        /// <summary>
+        /// Get a resource stream
+        /// </summary>
+        /// <param name="publicKey">the public key</param>
+        /// <returns>a stream</returns>
+        private static Stream TryGetResourceStream(string publicKey)
+        {
+            Stream data = null;
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                string[] resources;
+                try
+                {
+                    resources = asm.GetManifestResourceNames();
+                }
+                catch (NotSupportedException)
+                {
+                    continue;
+                }
+                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
+                if (!string.IsNullOrEmpty(resourceName))
+                {
+                    data = asm.GetManifestResourceStream(resourceName);
+                    if (data != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return data;
         }
     }
 }
