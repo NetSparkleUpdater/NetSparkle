@@ -2,7 +2,7 @@
 
  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
 
-NetSparkle is a software update framework for C# that is compatible with .NET Core 3+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#appcast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
+NetSparkle is a software update framework for C# that is compatible with .NET Core 3+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), uses Ed25519 or other signatures, and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#appcast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
 The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more! No more big changes to the API are planned, but smaller API changes may occur if bugs are found between now and the official 2.0 release.
 
@@ -118,7 +118,9 @@ The file that launches your downloaded update executable only waits for 90 secon
 
 ## App Cast
 
-NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses DSA signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update. We hope to [add compatibility with edDSA/ed25519 signatures at some point](https://github.com/NetSparkleUpdater/NetSparkle/issues/62).
+NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
+
+_Note: if your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519._
 
 Here is a sample app cast:
 
@@ -177,6 +179,51 @@ By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
 1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
 2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA) signature for that file at http://example.com/awesome-software.xml.signature. 
 
+### Ed25519 Signatures
+
+You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). If you need to generate an Ed25519 keypair, use the tool like this:
+
+```bash
+generate_appcast.exe --generate-keys
+```
+
+Then you can use the tool like this:
+
+```bash
+generate_appcast.exe -a directory/for/appcast/ -e ext -b directory/with/binaries/ -o windows
+```
+
+You can use the `AppCastGenerator` tool to verify your binaries:
+
+```bash
+generate_appcast.exe --verify path/to/binary.exe --signature base_64_signature
+```
+
+If you want to make a signature for a binary, you can do so like this:
+
+```bash
+generate_appcast.exe --generate-signature path/to/binary.exe
+```
+
+By default, your Ed25519 signatures are stored on disk in your local application data folder in a subdirectory called `netsparkle`. If you want to export your keys, you can do:
+
+```bash
+generate_appcast.exe --export
+```
+
+If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
+
+If your keys are sitting on disk somewhere (`NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` -- both in base 64 and both on disk in the same folder!), you can pass in the path to these keys like this:
+
+```bash
+generate_appcast.exe --key-path path/to/keys/
+```
+
+
+### DSA Signatures
+
+DSA signatures are not recommended for 2.0. They are insecure!
+
 You can generate these signatures using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). If you need to generate a DSA public/private key, please use the same tool on Windows like this: 
 
 ```
@@ -193,8 +240,8 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 
 ### How can I make the app cast?
 
-* If you're on Windows, use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file.
-* If you're on other systems, it's not too hard to rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing). (Contributions to make AppCastGenerator work on macOS/Linux are **welcome**!)
+* Use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file.
+* Rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing).
 * Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (DSA) signature for the app cast file manually! :)
 
 ## Updating from 0.X or 1.X
@@ -211,7 +258,7 @@ This section is still WIP, but major changes include:
 * Most `SparkleUpdater` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and checking.
   * `IAppCastDataDownloader` to implement downloading of your app cast file
   * `IAppCastHandler` to implement your own app cast parsing
-  * `ISignatureVerifier` to implement your own download/app cast signature checking
+  * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkle has built-in DSA and Ed25519 signature verifiers.
   * `IUIFactory` to implement your own UI
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
@@ -224,6 +271,7 @@ This section is still WIP, but major changes include:
   * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.
 * By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
 * `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available).
+* By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool.
 
 ## Public Methods
 
