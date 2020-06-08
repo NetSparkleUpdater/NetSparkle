@@ -12,10 +12,18 @@ namespace NetSparkle.Tests.AppCastGenerator
 {
     public class SignatureManagerTests
     {
+        private SignatureManager GetSignatureManager()
+        {
+            var manager = new SignatureManager();
+            // make sure we don't overwrite user's NetSparkle keys!!
+            manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests"));
+            return manager;
+        }
+
         [Fact]
         public void TestKeysExist()
         {
-            var manager = new SignatureManager();
+            var manager = GetSignatureManager();
             manager.Generate(true);
             Assert.True(manager.KeysExist());
         }
@@ -23,7 +31,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Fact]
         public void CanGenerateKeys()
         {
-            var manager = new SignatureManager();
+            var manager = GetSignatureManager();
             manager.Generate(true);
 
             var publicKey = manager.GetPublicKey();
@@ -53,7 +61,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(File.Exists(path));
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
-            var manager = new SignatureManager();
+            var manager = GetSignatureManager();
             manager.Generate(true);
             var signature = manager.GetSignatureForFile(path);
             // verify signature
@@ -85,7 +93,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             var privKeyBase64 = Convert.ToBase64String(privateKey.GetEncoded());
             var pubKeyBase64 = Convert.ToBase64String(publicKey.GetEncoded());
 
-            var manager = new SignatureManager();
+            var manager = GetSignatureManager();
             Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, privKeyBase64);
             Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, pubKeyBase64);
 

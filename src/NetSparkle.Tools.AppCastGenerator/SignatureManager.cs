@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-
+using System.Runtime.CompilerServices;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -20,7 +20,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public SignatureManager()
         {
-            _storagePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
+            SetStorageDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle"));
+        }
+
+        public void SetStorageDirectory(string path)
+        {
+            _storagePath = path;
 
             if (!Directory.Exists(_storagePath))
             {
