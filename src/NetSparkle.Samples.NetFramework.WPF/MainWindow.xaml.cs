@@ -1,4 +1,5 @@
-    using System.Drawing;
+using NetSparkleUpdater.SignatureVerifiers;
+using System.Drawing;
 using System.Windows;
 
 
@@ -25,7 +26,7 @@ namespace NetSparkleUpdater.Samples.NetFramework.WPF
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
                 ShowsUIOnMainThread = false

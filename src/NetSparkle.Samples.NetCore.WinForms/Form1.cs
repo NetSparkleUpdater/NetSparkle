@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using NetSparkleUpdater;
 using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.SignatureVerifiers;
 
 namespace NetSparkleUpdater.Samples.NetCore.WinForms
 {
@@ -20,7 +21,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
-            _sparkleUpdateDetector = new SparkleUpdater(appcastUrl)
+            _sparkleUpdateDetector = new SparkleUpdater(appcastUrl, new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WinForms.UIFactory(icon),
                 //ShowsUIOnMainThread = true,

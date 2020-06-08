@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
 using NetSparkleUpdater.Events;
+using NetSparkleUpdater.SignatureVerifiers;
 
 namespace NetSparkleUpdater.Samples.HandleEventsYourself
 {
@@ -41,7 +42,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             DownloadUpdateButton.IsEnabled = false;
             InstallUpdateButton.IsEnabled = false;
 
-            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml")
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = null,
             };
