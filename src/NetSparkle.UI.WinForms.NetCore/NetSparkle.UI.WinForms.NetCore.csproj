@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
+    <ProjectGuid>{45F5AADB-A39B-446F-8025-71647238BB89}</ProjectGuid>
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkle.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
