@@ -81,8 +81,8 @@ We are open to contributions that might make the overall install/update process 
 ```csharp
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
-    SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended or secure!!)
-    "<DSAKeyValue>...</DSAKeyValue>", // your DSA public key -- generate this with the NetSparkleUpdater.Tools DSAHelper on Windows (.NET Core on macOS/Linux cannot generate this data for you)
+    new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended or secure!!)
+                       "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools AppCastGenerator on any OS
 ) {
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
 };

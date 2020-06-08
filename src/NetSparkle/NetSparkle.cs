@@ -64,60 +64,37 @@ namespace NetSparkleUpdater
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SparkleUpdater"/> class with the given appcast URL
-        /// </summary>
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        public SparkleUpdater(string appcastUrl)
-            : this(appcastUrl, SecurityMode.Strict, null)
-        { }
-
-        /// <summary>
         /// ctor which needs the appcast url
         /// </summary>
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        public SparkleUpdater(string appcastUrl, SecurityMode securityMode)
-            : this(appcastUrl, securityMode, null)
-        { }
-
-        /// <summary>
-        /// ctor which needs the appcast url
-        /// </summary>
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
-        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
-        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey)
-            : this(appcastUrl, securityMode, dsaPublicKey, null)
+        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
+            : this(appcastUrl, signatureVerifier, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
-        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
+        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
-            : this(appcastUrl, securityMode, dsaPublicKey, referenceAssembly, null)
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
+            : this(appcastUrl, signatureVerifier, referenceAssembly, null)
         { }
 
         /// <summary>
         /// ctor which needs the appcast url and a referenceassembly
         /// </summary>        
         /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="securityMode">the security mode to be used when checking DSA signatures</param>
-        /// <param name="dsaPublicKey">the DSA public key for checking signatures, in XML Signature (&lt;DSAKeyValue&gt;) format.
-        /// If null, a file named "NetSparkle_DSA.pub" is used instead.</param>
+        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
-        public SparkleUpdater(string appcastUrl, SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, IUIFactory factory)
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory)
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
             UIFactory = factory;
-            SignatureVerifier = new DSAChecker(securityMode, dsaPublicKey);
+            SignatureVerifier = signatureVerifier;
             // Syncronization Context
             _syncContext = SynchronizationContext.Current;
             if (_syncContext == null)
