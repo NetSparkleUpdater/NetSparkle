@@ -277,76 +277,34 @@ This section is still WIP, but major changes include:
 
 ### This section still needs to be updated for 2.0!
 
-- [Sparkle(string appcastUrl)](#sparkleupdaterstring-appcasturl)
-- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode)
-- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey)
-- [Sparkle(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly)
-- [Sparkle(string appcastUrln, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)](#sparkleupdaterstring-appcasturl-netsparklesecuritymode-securitymode-string-dsapublickey-string-referenceassembly-netsparkleinterfacesiuifactory-factory)
-- void [CancelFileDownload()](#void-cancelfiledownload)
-- Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesAtUserRequest()](#tasknetsparklesparkleupdateinfo-checkforupdatesatuserrequest)
-- Task<NetSparkle.SparkleUpdateInfo> [CheckForUpdatesQuietly()](#tasknetsparklesparkleupdateinfo-checkforupdatesquietly)
-- void [CheckOnFirstApplicationIdle()](#void-checkonfirstapplicationidle)
-- void [Dispose()](#void-dispose)
-- System.Uri [GetAbsoluteUrl(string)](#systemuri-getabsoluteurlstring)
-- NetSparkle.Configuration [GetApplicationConfig()](#netsparkleconfiguration-getapplicationconfig)
-- Task<NetSparkle.SparkleUpdateInfo> [GetUpdateStatus(NetSparkle.Configuration config)](#tasknetsparklesparkleupdateinfo-getupdatestatusnetsparkleconfiguration-config)
-- System.Net.WebResponse [GetWebContentResponse(string url)](#systemnetwebresponse-getwebcontentresponsestring-url)
-- System.IO.Stream [GetWebContentStream(string url)](#systemiostream-getwebcontentstreamstring-url)
-- void [ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)](#void-showupdateneededuibool-isupdatealreadydownloaded)
-- void [ShowUpdateNeededUI(NetSparkle.AppCastItem[], bool)](#void-showupdateneededuinetsparkleappcastitem-bool)
-- void [StartLoop(bool doInitialCheck)](#void-startloopbool-doinitialcheck)
-- void [StartLoop(bool doInitialCheck, bool forceInitialCheck)](#void-startloopbool-doinitialcheck-bool-forceinitialcheck)
-- void [StartLoop(bool doInitialCheck, bool forceInitialCheck, System.TimeSpan checkFrequency)](#void-startloopbool-doinitialcheck-bool-forceinitialcheck-systemtimespan-checkfrequency)
-- void [StartLoop(bool doInitialCheck, System.TimeSpan checkFrequency)](#void-startloopbool-doinitialcheck-systemtimespan-checkfrequency)
-- void [StopLoop()](#void-stoploop)
+### SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
 
-### SparkleUpdater(string appcastUrl)
-
-Initializes a new instance of the Sparkle class with the given appcast URL.
+Initializes a new instance of the Sparkle class with the given appcast URL and signature verifier.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
+| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
 
-### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode)
 
-Initializes a new instance of the Sparkle class with the given appcast URL, and the security mode for DSA signatures.
+### SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
 
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
-
-### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey)
-
-Initializes a new instance of the Sparkle class with the given appcast URL, the security mode for DSA signatures, and the DSA public key.
+Initializes a new instance of the Sparkle class with the given appcast URL, signature verifier, and the name of the assembly to use when comparing update versions.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
-| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
-
-### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly)
-
-Initializes a new instance of the Sparkle class with the given appcast URL,the security mode for DSA signatures, the DSA public key, and the name of the assembly to use when comparing update versions.
-
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
-| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
+| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
 | referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
 
-### SparkleUpdater(string appcastUrl, NetSparkle.SecurityMode securityMode, string dsaPublicKey, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
+### SparkleUpdater(string appcastUr, ISignatureVerifier signatureVerifier, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
 
-Initializes a new instance of the Sparkle class with the given appcast URL, the security mode for DSA signatures, the DSA public key, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
+Initializes a new instance of the Sparkle class with the given appcast URL, signature verifier, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
 
 | Name | Description |
 | ---- | ----------- |
 | appcastUrl | *System.String*<br>the URL of the appcast file |
-| securityMode | *NetSparkle.SecurityMode*<br>the security mode to be used when checking DSA signatures |
-| dsaPublicKey | *System.String*<br>the DSA public key for checking signatures, in XML Signature (`<DSAKeyValue>`) format<br>if null, a file named "NetSparkle_DSA.pub" is used instead |
+| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
 | referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
 | factory | *NetSparkle.Interfaces.IUIFactory*<br>a UI factory to use in place of the default UI |
 
