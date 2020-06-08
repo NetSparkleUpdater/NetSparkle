@@ -54,7 +54,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public bool PrefixVersion { get; set; }
 
 
-            #region key generation
+            #region Key Generation
 
             [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys")]
             public bool GenerateKeys { get; set; }
@@ -68,14 +68,14 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             #endregion
 
 
-            #region signing
+            #region Getting Signatures for Binaries
 
             [Option("generate-signature", SetName = "signing", Required = false, HelpText = "Generate signature from binary")]
             public string BinaryToSign { get; set; }
 
             #endregion
 
-            #region
+            #region Verifying Binary Signatures
 
             [Option("verify", SetName = "verify", Required = false, HelpText = "Binary to verify")]
             public string BinaryToVerify { get; set; }
@@ -94,8 +94,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
         static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
-              .WithParsed(Run)
-              .WithNotParsed(HandleParseError);
+                .WithParsed(Run)
+                .WithNotParsed(HandleParseError);
         }
         static void Run(Options opts)
         {
@@ -134,7 +134,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             {
                 var result = _signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature);
 
-                if(result)
+                if (result)
                 {
                     Console.WriteLine($"Signature valid", Color.Green);
                 } else
@@ -148,7 +148,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             var search = $"*.{opts.Extension}";
 
-            if(opts.SourceBinaryDirectory == ".")
+            if (opts.SourceBinaryDirectory == ".")
             {
                 opts.SourceBinaryDirectory = Environment.CurrentDirectory;
             }
@@ -203,7 +203,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     }
 
-                    if(version == null)
+                    if (version == null)
                     {
                         Console.WriteLine($"Unable to determine version of binary {fileInfo.Name}, try -f parameter");
                         Environment.Exit(1);
@@ -217,11 +217,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     var changelogFileName = productVersion + ".md";
                     var changelogPath = Path.Combine(opts.ChangeLogPath, changelogFileName);
                     var hasChangelogForFile = usesChangelogs && File.Exists(changelogPath);
-                    var changelogDSA = "";
+                    var changelogSignature = "";
 
                     if (hasChangelogForFile)
                     {
-                        changelogDSA = _signatureManager.GetSignatureForFile(changelogPath);
+                        changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
                     }
 
                     //
@@ -243,7 +243,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     {
                         if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
                         {
-                            item.ReleaseNotesSignature = changelogDSA;
+                            item.ReleaseNotesSignature = changelogSignature;
                             item.ReleaseNotesLink = opts.ChangeLogUrl + changelogFileName;
                         }
                         else
@@ -280,21 +280,21 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     var signatureFile = appcastFileName + ".signature";
                     var signature = _signatureManager.GetSignatureForFile(appcastFile);
 
-                    
-
                     var result = _signatureManager.VerifySignature(appcastFile, signature);
 
-                    if(result)
+                    if (result)
                     {
                         
                         File.WriteAllText(signatureFile, signature);
                         Console.WriteLine($"Wrote {signatureFile}", Color.Green);
-                    } else
+                    }
+                    else
                     {
                         Console.WriteLine($"Failed to verify {signatureFile}", Color.Red);
                     }
 
-                } else
+                } 
+                else
                 {
                     Console.WriteLine("Skipped generating signature.  Generate keys with --generate-keys", Color.Red);
                     Environment.Exit(1);
