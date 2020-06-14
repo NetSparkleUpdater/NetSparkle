@@ -190,7 +190,7 @@ generate_appcast.exe --generate-keys
 Then you can use the tool like this:
 
 ```bash
-generate_appcast.exe -a directory/for/appcast/ -e ext -b directory/with/binaries/ -o windows
+generate_appcast.exe -a directory/for/appcast/ -e exe -b directory/with/binaries/ -o windows
 ```
 
 You can use the `AppCastGenerator` tool to verify your binaries:
@@ -251,6 +251,9 @@ This section is still WIP, but major changes include:
 * Minimum .NET requirement is now .NET Framework 4.5.2 instead of 4.5.1
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
+* `SparkleUpdater` constructors now require an `ISignatureVerifier` in order to "force" you to choose your signature verification method
+* `SecurityMode` is a new enum that defines which signatures are required and which signatures are not required
+  * Added `SecurityMode.OnlyVerifySoftwareDownloads` if you want to verify only software download signatures and don't care about verifying your app cast or release notes
 * UIs are now in different namespaces. If you want to use a UI, you must pass in a `UIFactory` that implements `IUIFactory` and handles showing/handling all user interface elements
   * `SparkleUpdater` no longer holds its own `Icon`
   * `HideReleaseNotes`, `HideRemindMeLaterButton`, and `HideSkipButton` are all handled by the `UIFactory` objects
@@ -261,6 +264,7 @@ This section is still WIP, but major changes include:
   * `IAppCastHandler` to implement your own app cast parsing
   * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkle has built-in DSA and Ed25519 signature verifiers.
   * `IUIFactory` to implement your own UI
+  * `Configuration` subclasses now take an `IAssemblyAccessor` in their constructor(s) in order to define where assembly information is loaded from
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
   * Sample app to demonstrate how to handle events yourself with your own UI
@@ -271,8 +275,9 @@ This section is still WIP, but major changes include:
   * The `RemindMeLaterSelected` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.
 * By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
-* `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available).
+* `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available). If `sparkle:dsaSignature` is not found, `sparkle:edSignature` will be used (if available).
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool.
+* Removed `AssemblyAccessor` class (in lieu of `IAssemblyAccessor` implementors)
 
 ## Public Methods
 
