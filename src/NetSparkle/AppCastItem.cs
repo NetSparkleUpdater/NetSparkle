@@ -151,6 +151,7 @@ namespace NetSparkleUpdater
         private const string _versionAttribute = "version";
         private const string _shortVersionAttribute = "shortVersionString";
         private const string _dsaSignatureAttribute = "dsaSignature";
+        private const string _ed25519SignatureAttribute = "edSignature";
         private const string _signatureAttribute = "signature";
         private const string _criticalAttribute = "criticalUpdate";
         private const string _operatingSystemAttribute = "os";
@@ -193,6 +194,10 @@ namespace NetSparkleUpdater
             {
                 newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(XMLAppCast.SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
             }
+            if (newAppCastItem.ReleaseNotesSignature == string.Empty)
+            {
+                newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(XMLAppCast.SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
+            }
             newAppCastItem.ReleaseNotesLink = releaseNotesElement?.Value.Trim() ?? string.Empty;
 
             //description
@@ -214,6 +219,10 @@ namespace NetSparkleUpdater
             if (newAppCastItem.DownloadSignature == string.Empty)
             {
                 newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
+            }
+            if (newAppCastItem.DownloadSignature == string.Empty)
+            {
+                newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
             }
             string length = enclosureElement?.Attribute(_lengthAttribute)?.Value ?? string.Empty;
             if (length != null)
