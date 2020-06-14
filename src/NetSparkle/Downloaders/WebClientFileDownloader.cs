@@ -10,10 +10,19 @@ using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Downloaders
 {
-    class WebClientFileDownloader : IUpdateDownloader, IDisposable
+    /// <summary>
+    /// Class that downloads files from the internet and reports
+    /// progress on those files being downloaded. Uses a WebClient
+    /// object as its main method for downloading.
+    /// </summary>
+    public class WebClientFileDownloader : IUpdateDownloader, IDisposable
     {
         private WebClient _webClient;
 
+        /// <summary>
+        /// Default constructor for the web client file downloader.
+        /// Uses default credentials and default proxy.
+        /// </summary>
         public WebClientFileDownloader()
         {
             _webClient = new WebClient
@@ -36,29 +45,36 @@ namespace NetSparkleUpdater.Downloaders
             DownloadFileCompleted?.Invoke(sender, e);
         }
 
+        /// <inheritdoc/>
         public bool IsDownloading
         {
             get => _webClient.IsBusy;
         }
 
+        /// <inheritdoc/>
         public event DownloadProgressEvent DownloadProgressChanged;
+        /// <inheritdoc/>
         public event AsyncCompletedEventHandler DownloadFileCompleted;
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             _webClient.Dispose();
         }
 
+        /// <inheritdoc/>
         public void StartFileDownload(Uri uri, string downloadFilePath)
         {
             _webClient.DownloadFileAsync(uri, downloadFilePath);
         }
 
+        /// <inheritdoc/>
         public void CancelDownload()
         {
             _webClient.CancelAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
             var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };

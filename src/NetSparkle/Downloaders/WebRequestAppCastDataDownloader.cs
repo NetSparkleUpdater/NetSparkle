@@ -9,10 +9,18 @@ using System.Text;
 
 namespace NetSparkleUpdater.Downloaders
 {
+    /// <summary>
+    /// Class that takes care of downloading data for an app cast. Allows
+    /// you to send extra JSON with your request for the app cast information.
+    /// </summary>
     public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
         private string _appcastUrl = "";
 
+        /// <summary>
+        /// Default constructor for the app cast data downloader. Basically
+        /// does nothing. :)
+        /// </summary>
         public WebRequestAppCastDataDownloader()
         {
         }
@@ -27,6 +35,7 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public string ExtraJsonData { get; set; } = "";
 
+        /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
         {
             _appcastUrl = url;
@@ -51,6 +60,7 @@ namespace NetSparkleUpdater.Downloaders
             return null;
         }
 
+        /// <inheritdoc/>
         public Encoding GetAppCastEncoding()
         {
             return Encoding.UTF8;
