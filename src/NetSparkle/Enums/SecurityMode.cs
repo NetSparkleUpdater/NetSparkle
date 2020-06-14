@@ -5,6 +5,10 @@ namespace NetSparkleUpdater.Enums
     /// If both a public key and a signature are present, they always have to be valid.
     /// 
     /// We recommend using SecurityMode.Strict if at all possible.
+    /// 
+    /// Note that <see cref="ReleaseNotesGrabber"/> needs to have 
+    /// <see cref="ReleaseNotesGrabber.ChecksReleaseNotesSignature"/> set to true in order
+    /// to verify signatures.
     /// </summary>
     public enum SecurityMode
     {
