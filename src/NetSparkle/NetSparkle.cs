@@ -967,13 +967,13 @@ namespace NetSparkleUpdater
                 DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
             }
-            // test the item for DSA signature
+            // test the item for signature
             var validationRes = ValidationResult.Invalid;
             if (!e.Cancelled && e.Error == null)
             {
                 LogWriter.PrintMessage("Fully downloaded file exists at {0}", _downloadTempFileName);
 
-                LogWriter.PrintMessage("Performing DSA check");
+                LogWriter.PrintMessage("Performing signature check");
 
                 // get the assembly
                 if (File.Exists(_downloadTempFileName))
@@ -987,7 +987,7 @@ namespace NetSparkleUpdater
                         DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
                     }
 
-                    // check the DSA signature
+                    // check the signature
                     validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadSignature, _downloadTempFileName);
                 }
             }

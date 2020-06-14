@@ -152,19 +152,25 @@ namespace NetSparkleUpdater
         /// <param name="securityMode">the <see cref="SecurityMode"/> for the signature check</param>
         /// <param name="doesKeyInfoExist">true if the application has appropriate key
         /// information in order to run signature checks; false otherwise</param>
+        /// <param name="isCheckingSoftwareDownload">True if the caller is checking on the signature of a software
+        /// download; false if the caller is checking on the signature of something else (e.g. release notes,
+        /// app cast)</param>
         /// <returns>true if an item's signature needs to be checked; false otherwise</returns>
-        public static bool IsSignatureNeeded(SecurityMode securityMode, bool doesKeyInfoExist)
+        public static bool IsSignatureNeeded(SecurityMode securityMode, bool doesKeyInfoExist, bool isCheckingSoftwareDownload = false)
         {
             switch (securityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have a dsa key, we need a signature
+                    // if we have a public key, we need a signature
                     return doesKeyInfoExist;
                 case SecurityMode.Strict:
                     // we always need a signature
                     return true;
                 case SecurityMode.Unsafe:
                     return false;
+                case SecurityMode.OnlyVerifySoftwareDownloads:
+                    return isCheckingSoftwareDownload;
+
             }
             return false;
         }

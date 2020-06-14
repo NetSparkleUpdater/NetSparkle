@@ -80,7 +80,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 _logWriter.PrintMessage("Downloading app cast data...");
                 var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-                var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
+                var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
                 bool isValidAppcast = true;
                 if (signatureNeeded)
                 {
@@ -132,7 +132,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
 
             // checking signature
-            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
+            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
             var appcastBytes = _dataDownloader.GetAppCastEncoding().GetBytes(appcast);
             if (signatureNeeded && _signatureVerifier.VerifySignature(signature, appcastBytes) == ValidationResult.Invalid)
             {
@@ -179,7 +179,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public virtual List<AppCastItem> GetAvailableUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
-            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation());
+            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
             return Items.Where((item) =>
             {
 #if NETFRAMEWORK

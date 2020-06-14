@@ -158,7 +158,7 @@ namespace NetSparkleUpdater
             {
                 if (ChecksReleaseNotesSignature &&
                     _sparkle.SignatureVerifier != null &&
-                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, _sparkle.SignatureVerifier.HasValidKeyInformation()) &&
+                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, _sparkle.SignatureVerifier.HasValidKeyInformation(), false) &&
                     sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature, notes) == ValidationResult.Invalid)
                 {
                     return null;

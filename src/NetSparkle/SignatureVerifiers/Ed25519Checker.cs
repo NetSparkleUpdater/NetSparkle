@@ -108,7 +108,17 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 case SecurityMode.Unsafe:
                     // always accept anything
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
-                    // didn't end up checking anything
+                    // didn't end up checking anything due to a lack of public key/signature
+                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    {
+                        result = ValidationResult.Unchecked;
+                        return false;
+                    }
+                    break;
+
+                case SecurityMode.OnlyVerifySoftwareDownloads:
+                    // If we don't have a signature, make sure to note this as "Unchecked" since we
+                    // didn't end up checking anything due to a lack of public key/signature
                     if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
                     {
                         result = ValidationResult.Unchecked;
