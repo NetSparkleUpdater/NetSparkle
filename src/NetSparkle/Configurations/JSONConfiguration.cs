@@ -1,4 +1,5 @@
 ﻿using NetSparkleUpdater.AssemblyAccessors;
+using NetSparkleUpdater.Interfaces;
 #if NETFRAMEWORK
 using Newtonsoft.Json;
 #endif
@@ -18,28 +19,30 @@ namespace NetSparkleUpdater.Configurations
         private string _savePath;
 
         /// <summary>
-        /// The constructor reads out all configured values
-        /// </summary>        
-        /// <param name="referenceAssembly">the reference assembly name</param>
-        public JSONConfiguration(string referenceAssembly)
-            : this(referenceAssembly, true)
-        { }
-
-        /// <inheritdoc/>
-        public JSONConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
-            : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
+        /// Constructor for a configuration that saves and loads its configuration data to and
+        /// from a JSON file that resides on disk. This Configuration can be used on any
+        /// operating system.
+        /// </summary>
+        /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
+        /// you would like to check for updates for</param>
+        public JSONConfiguration(IAssemblyAccessor assemblyAccessor)
+            : this(assemblyAccessor, string.Empty)
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor for a configuration that saves and loads its configuration data to and
+        /// from a JSON file that resides on disk. This Configuration can be used on any
+        /// operating system.
         /// </summary>
-        /// <param name="referenceAssembly">the name of the reference assembly</param>
-        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
-        /// <param name="savePath"><c>true</c> if reflection is used to access the assembly.</param>
-        public JSONConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed, string savePath)
-            : base(referenceAssembly, isReflectionBasedAssemblyAccessorUsed)
+        /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
+        /// you would like to check for updates for</param>
+        /// <param name="savePath">location to save the JSON configuration data to; can be null or empty string.
+        /// If not null or empty string, must represent a valid path on disk (directories must already be created).
+        /// This class will take care of creating/overwriting the file at that path if necessary.</param>
+        public JSONConfiguration(IAssemblyAccessor assemblyAccessor, string savePath)
+            : base(assemblyAccessor)
         {
-            _savePath = savePath ?? GetSavePath();
+            _savePath = savePath != null && string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
             try
             {
                 // get the save path
@@ -47,11 +50,11 @@ namespace NetSparkleUpdater.Configurations
                 // load the values
                 LoadValuesFromPath(_savePath);
             }
-            catch (NetSparkleException)
+            catch (NetSparkleException e)
             {
                 // disable update checks when exception occurred -- can't read/save necessary update file 
                 CheckForUpdate = false;
-                throw;
+                throw new NetSparkleException("Can't read/save configuration data: " + e.Message);
             }
         }
 
@@ -105,14 +108,14 @@ namespace NetSparkleUpdater.Configurations
             }
             else
             {
-                AssemblyAccessor accessor = new AssemblyAccessor(ReferenceAssembly, UseReflectionBasedAssemblyAccessor);
 
-                if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
+                if (string.IsNullOrEmpty(AssemblyAccessor.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor.AssemblyProduct))
                 {
-                    throw new NetSparkleException("Error: SparkleUpdater is missing the company or productname tag in " + ReferenceAssembly);
+                    throw new NetSparkleException("Error: NetSparkleUpdater is missing the company or productname tag in the assembly accessor ("
+                        + AssemblyAccessor.GetType() + ")");
                 }
                 var applicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-                var saveFolder = Path.Combine(applicationFolder, accessor.AssemblyCompany, accessor.AssemblyProduct, "NetSparkleUpdater");
+                var saveFolder = Path.Combine(applicationFolder, AssemblyAccessor.AssemblyCompany, AssemblyAccessor.AssemblyProduct, "NetSparkleUpdater");
                 if (!Directory.Exists(saveFolder))
                 {
                     Directory.CreateDirectory(saveFolder);

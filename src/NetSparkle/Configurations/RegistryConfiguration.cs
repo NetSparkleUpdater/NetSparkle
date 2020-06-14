@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Microsoft.Win32;
 using NetSparkleUpdater.AssemblyAccessors;
+using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUpdater.Configurations
 {
@@ -23,26 +24,25 @@ namespace NetSparkleUpdater.Configurations
         private string _registryPath;
 
         /// <summary>
-        /// The constructor reads out all configured values
-        /// </summary>        
-        /// <param name="referenceAssembly">the reference assembly name</param>
-        public RegistryConfiguration(string referenceAssembly)
-            : this(referenceAssembly, true)
-        { }
-
-        /// <inheritdoc/>
-        public RegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
-            : this(referenceAssembly, isReflectionBasedAssemblyAccessorUsed, string.Empty)
+        /// Constructor for a configuration that saves and loads information from the Windows registry.
+        /// This should only be used on Windows!
+        /// </summary>
+        /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
+        /// you would like to check for updates for</param>
+        public RegistryConfiguration(IAssemblyAccessor assemblyAccessor)
+            : this(assemblyAccessor, "")
         { }
 
         /// <summary>
-        /// Constructor
+        /// Constructor for a configuration that saves and loads information from the Windows registry.
+        /// This should only be used on Windows!
         /// </summary>
-        /// <param name="referenceAssembly">the name of hte reference assembly</param>
-        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
-        /// <param name="registryPath"><c>true</c> if reflection is used to access the assembly.</param>
-        public RegistryConfiguration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed, string registryPath)
-            : base(referenceAssembly, isReflectionBasedAssemblyAccessorUsed)
+        /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
+        /// you would like to check for updates for</param>
+        /// <param name="registryPath">Location in the registry where configuration data should be stored and
+        /// loaded from</param>
+        public RegistryConfiguration(IAssemblyAccessor assemblyAccessor, string registryPath)
+            : base(assemblyAccessor)
         {
             _registryPath = registryPath;
             try
@@ -53,11 +53,11 @@ namespace NetSparkleUpdater.Configurations
                 // load the values
                 LoadValuesFromPath(regPath);
             }
-            catch (NetSparkleException)
+            catch (NetSparkleException e)
             {
-                // disable update checks when exception was called 
+                // disable update checks when exception occurred -- can't read/save necessary update file 
                 CheckForUpdate = false;
-                throw;
+                throw new NetSparkleException("Can't read/save configuration data: " + e.Message);
             }
         }
 
@@ -111,14 +111,22 @@ namespace NetSparkleUpdater.Configurations
             }
             else
             {
-                AssemblyAccessor accessor = new AssemblyAccessor(ReferenceAssembly, UseReflectionBasedAssemblyAccessor);
-
-                if (string.IsNullOrEmpty(accessor.AssemblyCompany) || string.IsNullOrEmpty(accessor.AssemblyProduct))
+                if (string.IsNullOrEmpty(AssemblyAccessor.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor.AssemblyProduct))
                 {
-                    throw new NetSparkleException("Error: NetSparkle is missing the company or productname tag in " + ReferenceAssembly);
+                    throw new NetSparkleException("Error: NetSparkleUpdater is missing the company or productname tag in the assembly accessor ("
+                        + AssemblyAccessor.GetType() + ")");
                 }
 
-                _registryPath = "Software\\" + accessor.AssemblyCompany + "\\" + accessor.AssemblyProduct + "\\AutoUpdate";
+                _registryPath = "Software\\";
+                if (!string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyCompany))
+                {
+                    _registryPath += AssemblyAccessor.AssemblyCompany + "\\";
+                }
+                if (!string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyProduct))
+                {
+                    _registryPath += AssemblyAccessor.AssemblyProduct + "\\";
+                }
+                _registryPath += "AutoUpdate";
                 return _registryPath;
             }
         }

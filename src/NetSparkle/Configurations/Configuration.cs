@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Win32;
 using System.Diagnostics;
 using NetSparkleUpdater.AssemblyAccessors;
+using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUpdater.Configurations
 {
@@ -57,46 +58,27 @@ namespace NetSparkleUpdater.Configurations
         public DateTime LastConfigUpdate { get; protected set; }
 
         /// <summary>
-        /// If this property is true a reflection based accessor will be used
-        /// to determine the assembly name and version, otherwise a System.Diagnostics
-        /// based access will be used
+        /// Object that accesses version, title, etc. info for the currently running application
+        /// (or some other application)
         /// </summary>
-        public bool UseReflectionBasedAssemblyAccessor { get; protected set; }
-
-        /// <summary>
-        /// The reference assembly name
-        /// </summary>
-        protected string ReferenceAssembly { get; set; }
-
-        /// <summary>
-        /// The constructor reads out all configured values
-        /// </summary>        
-        /// <param name="referenceAssembly">the reference assembly name</param>
-        protected Configuration(string referenceAssembly)
-            : this(referenceAssembly, true)
-        { }
+        public IAssemblyAccessor AssemblyAccessor { get; protected set; }
 
         /// <summary>
         /// Constructor for Configuration -- should load values by the end of the constructor!
         /// </summary>
-        /// <param name="referenceAssembly">the name of the reference assembly</param>
-        /// <param name="isReflectionBasedAssemblyAccessorUsed"><c>true</c> if reflection is used to access the assembly.</param>
-        protected Configuration(string referenceAssembly, bool isReflectionBasedAssemblyAccessorUsed)
+        /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
+        /// you would like to check for updates for</param>
+        public Configuration(IAssemblyAccessor assemblyAccessor)
         {
             // set default values
             InitWithDefaultValues();
 
-            // set the value
-            UseReflectionBasedAssemblyAccessor = isReflectionBasedAssemblyAccessorUsed;
-            // save the reference assembly
-            ReferenceAssembly = referenceAssembly;
-
             try
             {
                 // set some value from the binary
-                AssemblyAccessor accessor = new AssemblyAccessor(referenceAssembly, UseReflectionBasedAssemblyAccessor);
-                ApplicationName = accessor.AssemblyProduct;
-                InstalledVersion = accessor.AssemblyVersion;
+                AssemblyAccessor = assemblyAccessor;
+                ApplicationName = assemblyAccessor.AssemblyProduct;
+                InstalledVersion = assemblyAccessor.AssemblyVersion;
             }
             catch
             {
@@ -144,7 +126,6 @@ namespace NetSparkleUpdater.Configurations
             LastCheckTime = new DateTime(0);
             LastVersionSkipped = string.Empty;
             DidRunOnce = false;
-            UseReflectionBasedAssemblyAccessor = true;
         }
     }
 }

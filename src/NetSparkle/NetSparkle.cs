@@ -16,6 +16,7 @@ using NetSparkleUpdater.Downloaders;
 using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.SignatureVerifiers;
 using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.AssemblyAccessors;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #endif
@@ -233,14 +234,14 @@ namespace NetSparkleUpdater
 #if NETSTANDARD
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        _configuration = new RegistryConfiguration(_appReferenceAssembly);
+                        _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
                     }
                     else
                     {
-                        _configuration = new JSONConfiguration(_appReferenceAssembly);
+                        _configuration = new JSONConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
                     }
 #else
-                    _configuration = new RegistryConfiguration(_appReferenceAssembly);
+                    _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
 #endif
                 }
                 return _configuration;
