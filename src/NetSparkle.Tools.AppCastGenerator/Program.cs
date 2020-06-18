@@ -228,7 +228,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     var productVersion = version;
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
-                    var remoteUpdateFile = $"{opts.BaseUrl}/{(opts.PrefixVersion ? $"{version}/" :"")}{HttpUtility.UrlEncode(fileInfo.Name)})";
+                    var remoteUpdateFile = $"{opts.BaseUrl}/{(opts.PrefixVersion ? $"{version}/" :"")}{HttpUtility.UrlEncode(fileInfo.Name)}";
 
                     // changelog stuff
                     var changelogFileName = productVersion + ".md";
