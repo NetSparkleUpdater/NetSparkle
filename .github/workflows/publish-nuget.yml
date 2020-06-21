@@ -96,12 +96,12 @@ jobs:
 
       - name: Build NetSparkleUpdater.Tools for all operating systems
         run: |
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/windows/ -r win-x86 -p:PublishTrimmed=true
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/windows/ -r win-x86 -p:PublishTrimmed=true
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64 -p:PublishTrimmed=true
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64 -p:PublishTrimmed=true
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/linux/ -r linux-x64 -p:PublishTrimmed=true
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/linux/ -r linux-x64 -p:PublishTrimmed=true
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/windows/ -r win-x86
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/windows/ -r win-x86
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64
+          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/linux/ -r linux-x64
+          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/linux/ -r linux-x64
 
       - name: Copy extra output to NetSparkleUpdater.Tools output
         run: |
