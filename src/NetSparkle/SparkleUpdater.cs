@@ -38,7 +38,7 @@ namespace NetSparkleUpdater
         /// </summary>
         protected Process _installerProcess;
 
-        private LogWriter _logWriter;
+        private ILogger _logWriter;
         private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
         private readonly CancellationTokenSource _cancelTokenSource;
@@ -278,7 +278,7 @@ namespace NetSparkleUpdater
         /// Make sure to set this object before calling <see cref="StartLoop(bool)"/> to guarantee
         /// that all messages will get sent to the right place!
         /// </summary>
-        public LogWriter LogWriter
+        public ILogger LogWriter
         {
             get
             {

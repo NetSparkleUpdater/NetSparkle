@@ -264,6 +264,7 @@ This section is still WIP, but major changes include:
   * `IAppCastHandler` to implement your own app cast parsing
   * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkle has built-in DSA and Ed25519 signature verifiers.
   * `IUIFactory` to implement your own UI
+  * `ILogger` to implement your own logger class (rather than being forced to subclass `LogWriter`)
   * `Configuration` subclasses now take an `IAssemblyAccessor` in their constructor(s) in order to define where assembly information is loaded from
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
