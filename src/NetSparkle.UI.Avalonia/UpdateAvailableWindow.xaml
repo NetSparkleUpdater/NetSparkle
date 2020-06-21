@@ -7,7 +7,7 @@
                  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
                  x:Class="NetSparkleUpdater.UI.Avalonia.UpdateAvailableWindow"
                  Title="Software Update"
-                 MinWidth="450"
+                 MinWidth="500"
                  MinHeight="350"
                  Width="700"
                  Height="600">
@@ -54,26 +54,31 @@
             Grid.Column="1"
             Grid.Row="3"
             HorizontalAlignment="Left"
+            VerticalAlignment="Center"
             Command="{Binding Skip}"
             Margin="10,10,0,10"
             Padding="5" />
-    <Button Name="RemindMeLaterButton"
-            IsEnabled="{Binding IsRemindMeLaterEnabled}"
-            IsVisible="{Binding IsRemindMeLaterVisible}"
-            Content="Remind me later"
-            Grid.Column="1"
-            Grid.Row="3"
-            HorizontalAlignment="Right"
-            Command="{Binding RemindMeLater}"
-            Margin="0,10,120,10"
-            Padding="5" />
-    <Button Name="DownloadInstallButton"
-            Content="Download/Install"
-            Grid.Column="1"
-            Grid.Row="3"
-            HorizontalAlignment="Right"
-            Command="{Binding DownloadInstall}"
-            Margin="0,10,10,10"
-            Padding="5" />
+    <StackPanel Orientation="Horizontal"
+                Spacing="8"
+                Grid.Column="1"
+                Grid.Row="3"
+                HorizontalAlignment="Right"
+                Margin="0,10,4,10">
+        <Button Name="RemindMeLaterButton"
+                IsEnabled="{Binding IsRemindMeLaterEnabled}"
+                IsVisible="{Binding IsRemindMeLaterVisible}"
+                Content="Remind me later"
+                Command="{Binding RemindMeLater}"
+                Margin="0,0,0,0"
+                Padding="5" />
+        <Button Name="DownloadInstallButton"
+                Content="Download/Install"
+                Grid.Column="1"
+                Grid.Row="3"
+                HorizontalAlignment="Right"
+                Command="{Binding DownloadInstall}"
+                Margin="0,0,0,0"
+                Padding="5" />
+        </StackPanel>
   </Grid>
 </cont:BaseWindow>

@@ -8,7 +8,7 @@
                  mc:Ignorable="d"
                  x:Name="UpdateAvailableWindowControl"
                  Title="Software Update"
-                 MinWidth="450"
+                 MinWidth="500"
                  MinHeight="350"
                  Width="700"
                  Height="600" WindowStartupLocation="CenterScreen">
@@ -60,31 +60,32 @@
                 IsEnabled="{Binding IsSkipEnabled}"
                 Visibility="{Binding IsSkipVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Content="Skip this version"
-                Grid.Column="1"
-                Grid.Row="3"
-                Width="Auto"
-                Height="Auto"
-                HorizontalAlignment="Left"
                 Command="{Binding Skip}"
                 Margin="10,10,0,10"
-                Padding="5" />
-        <Button Name="RemindMeLaterButton"
-                IsEnabled="{Binding IsRemindMeLaterEnabled}"
-                Visibility="{Binding IsRemindMeLaterVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Content="Remind me later"
+                Padding="5"
                 Grid.Column="1"
                 Grid.Row="3"
-                HorizontalAlignment="Right"
-                Command="{Binding RemindMeLater}"
-                Margin="0,10,120,10"
-                Padding="5" />
-        <Button Name="DownloadInstallButton"
-                Content="Download/Install"
-                Grid.Column="1"
-                Grid.Row="3"
-                HorizontalAlignment="Right"
-                Command="{Binding DownloadInstall}"
-                Margin="0,10,10,10" 
-                Padding="5"/>
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Grid.Column="1"
+                    Grid.Row="3"
+                    Margin="0,10,4,10">
+            <Button Name="RemindMeLaterButton"
+                    IsEnabled="{Binding IsRemindMeLaterEnabled}"
+                    Visibility="{Binding IsRemindMeLaterVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Content="Remind me later"
+                    HorizontalAlignment="Right"
+                    Command="{Binding RemindMeLater}"
+                    Margin="0,0,8,0"
+                    Padding="5" />
+            <Button Name="DownloadInstallButton"
+                    Content="Download/Install"
+                    Command="{Binding DownloadInstall}"
+                    Margin="0,0,0,0"
+                    Padding="5" />
+        </StackPanel>
     </Grid>
 </cont:BaseWindow>
