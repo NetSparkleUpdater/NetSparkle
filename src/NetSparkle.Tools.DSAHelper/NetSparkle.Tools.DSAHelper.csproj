@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
     <AssemblyName>NetSparkle.DSAHelper</AssemblyName>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyTitle>NetSparkle</AssemblyTitle>
     <Product>NetSparkle</Product>
     <Description>NetSparkle is an auto update framework for .NET developers</Description>

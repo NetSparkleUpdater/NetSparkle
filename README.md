@@ -181,7 +181,7 @@ By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
 
 ### Ed25519 Signatures
 
-You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET Core Desktop Runtime to be installed.** If you need to generate an Ed25519 keypair, use the tool like this:
+You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET Core 3.1 Desktop Runtime to be installed.** If you need to generate an Ed25519 keypair, use the tool like this:
 
 ```bash
 generate_appcast.exe --generate-keys

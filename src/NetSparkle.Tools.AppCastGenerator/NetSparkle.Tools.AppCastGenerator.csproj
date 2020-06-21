@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
     <AssemblyName>generate_appcast</AssemblyName>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
