@@ -10,7 +10,8 @@
                  MinWidth="500"
                  MinHeight="350"
                  Width="700"
-                 Height="600">
+                 Height="600"
+                 WindowStartupLocation="CenterScreen">
   <Grid Background="#EEEEEE" ColumnDefinitions="Auto, *" Name="MainGrid"
         RowDefinitions="Auto, Auto, *, Auto">
     <Image Grid.Row="0"

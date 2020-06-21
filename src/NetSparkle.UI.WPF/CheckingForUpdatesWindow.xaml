@@ -13,7 +13,8 @@
         MaxHeight="175"
         Name="CheckingForUpdateWindow"
         d:DesignHeight="300"
-        d:DesignWidth="500" WindowStartupLocation="CenterScreen">
+        d:DesignWidth="500" 
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

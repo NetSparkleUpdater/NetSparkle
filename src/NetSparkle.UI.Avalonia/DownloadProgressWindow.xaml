@@ -9,7 +9,8 @@
         MaxWidth="600"
         Title="Software Update"
         CanResize="False"
-        SizeToContent="Height">
+        SizeToContent="Height"
+        WindowStartupLocation="CenterScreen">
 
   <Grid Margin="5"
         x:Name="MainGrid"

@@ -7,7 +7,8 @@
         Title="MessageNotificationWindow"
         Height="300"
         SizeToContent="Height"
-        Width="400">
+        Width="400"
+        WindowStartupLocation="CenterScreen">
   <Grid RowDefinitions="Auto, Auto">
     <TextBlock TextWrapping="Wrap" 
                Name="Message" 

@@ -8,7 +8,8 @@
         Height="175"
         Title="Software Update"
         MaxWidth="400"
-        MaxHeight="175">
+        MaxHeight="175"
+        WindowStartupLocation="CenterScreen">
   <Grid ColumnDefinitions="*" RowDefinitions="Auto, Auto, Auto">
     <Image Grid.Row="0" Grid.RowSpan="2"
            x:Name="AppIcon"

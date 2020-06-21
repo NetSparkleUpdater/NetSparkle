@@ -11,7 +11,8 @@
         ResizeMode="NoResize"
         SizeToContent="Height"
         d:DesignHeight="120"
-        d:DesignWidth="800" WindowStartupLocation="CenterScreen">
+        d:DesignWidth="800" 
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
