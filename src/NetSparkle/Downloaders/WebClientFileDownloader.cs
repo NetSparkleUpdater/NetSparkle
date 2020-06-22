@@ -81,7 +81,11 @@ namespace NetSparkleUpdater.Downloaders
             try
             {
                 using (var response =
-                    await httpClient.GetAsync(item.DownloadLink, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false))
+                    await httpClient.SendAsync(new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Head,
+                        RequestUri = new Uri(item.DownloadLink)
+                    }))
                 {
                     if (response.IsSuccessStatusCode)
                     {
