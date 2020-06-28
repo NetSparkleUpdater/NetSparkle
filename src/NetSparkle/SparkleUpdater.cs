@@ -1164,7 +1164,7 @@ namespace NetSparkleUpdater
             bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             if ((isMacOS && DoExtensionsMatch(installerExt, ".zip")) ||
-                (isLinux && DoExtensionsMatch(installerExt, ".tar.gz")))
+                (isLinux && downloadFilePath.EndsWith(".tar.gz")))
             {
                 return true;
             }
