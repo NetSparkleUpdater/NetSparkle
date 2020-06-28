@@ -71,18 +71,25 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public void FinishedDownloadingFile(bool isDownloadedFileValid)
         {
-            progressDownload.Visible = false;
-            buttonCancel.Visible = false;
-            downloadProgressLbl.Visible = false;
-            if (isDownloadedFileValid)
+            if (InvokeRequired)
             {
-                btnInstallAndReLaunch.Visible = true;
-                BackColor = Color.FromArgb(240, 240, 240);
+                Invoke((MethodInvoker)delegate () { FinishedDownloadingFile(isDownloadedFileValid); });
             }
             else
             {
-                btnInstallAndReLaunch.Visible = false;
-                BackColor = Color.Tomato;
+                progressDownload.Visible = false;
+                buttonCancel.Visible = false;
+                downloadProgressLbl.Visible = false;
+                if (isDownloadedFileValid)
+                {
+                    btnInstallAndReLaunch.Visible = true;
+                    BackColor = Color.FromArgb(240, 240, 240);
+                }
+                else
+                {
+                    btnInstallAndReLaunch.Visible = false;
+                    BackColor = Color.Tomato;
+                }
             }
         }
 
@@ -92,11 +99,18 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="errorMessage">The error message to display</param>
         public bool DisplayErrorMessage(string errorMessage)
         {
-            downloadProgressLbl.Visible = true;
-            progressDownload.Visible = false;
-            btnInstallAndReLaunch.Visible = false;
-            buttonCancel.Text = "Close";
-            downloadProgressLbl.Text = errorMessage;
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { DisplayErrorMessage(errorMessage); });
+            }
+            else
+            {
+                downloadProgressLbl.Visible = true;
+                progressDownload.Visible = false;
+                btnInstallAndReLaunch.Visible = false;
+                buttonCancel.Text = "Close";
+                downloadProgressLbl.Text = errorMessage;
+            }
             return true;
         }
 
@@ -126,9 +140,16 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         private void OnDownloadProgressChanged(object sender, long bytesReceived, long totalBytesToReceive, int percentage)
         {
-            progressDownload.Value = percentage;
-            downloadProgressLbl.Text = "(" + Utilities.ConvertNumBytesToUserReadableString(bytesReceived) + " / " +
-                Utilities.ConvertNumBytesToUserReadableString(totalBytesToReceive) + ")";
+            if (InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate () { OnDownloadProgressChanged(sender, bytesReceived, totalBytesToReceive, percentage); });
+            }
+            else
+            {
+                progressDownload.Value = percentage;
+                downloadProgressLbl.Text = "(" + Utilities.ConvertNumBytesToUserReadableString(bytesReceived) + " / " +
+                    Utilities.ConvertNumBytesToUserReadableString(totalBytesToReceive) + ")";
+            }
         }
 
         /// <summary>
@@ -146,10 +167,17 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="e">not used.</param>
         private void OnInstallAndReLaunchClick(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
-            _shouldLaunchInstallFileOnClose = true;
-            _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(true));
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate () { OnInstallAndReLaunchClick(sender, e); });
+            }
+            else
+            {
+                DialogResult = DialogResult.OK;
+                _shouldLaunchInstallFileOnClose = true;
+                _didCallDownloadProcessCompletedHandler = true;
+                DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(true));
+            }
         }
 
         /// <summary>
@@ -157,7 +185,14 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public void SetDownloadAndInstallButtonEnabled(bool shouldBeEnabled)
         {
-            btnInstallAndReLaunch.Enabled = shouldBeEnabled;
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate () { SetDownloadAndInstallButtonEnabled(shouldBeEnabled); });
+            }
+            else
+            {
+                btnInstallAndReLaunch.Enabled = shouldBeEnabled;
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
