@@ -17,6 +17,8 @@ using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.SignatureVerifiers;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.AssemblyAccessors;
+using System.Text;
+using System.Globalization;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #endif
@@ -1216,7 +1218,7 @@ namespace NetSparkleUpdater
 
             string processID = Process.GetCurrentProcess().Id.ToString();
 
-            using (StreamWriter write = new StreamWriter(batchFilePath))
+            using (StreamWriter write = new StreamWriter(batchFilePath, false, new UTF8Encoding(false)))
             {
                 if (isWindows)
                 {
