@@ -1012,7 +1012,7 @@ namespace NetSparkleUpdater
                     {
                         UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
                     }
-                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(errorMessage));
                 });
             }
             else
