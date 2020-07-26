@@ -41,10 +41,10 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
             public Uri BaseUrl { get; set; }
 
-            [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion).", Default = "")]
+            [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "Base URL to the location for your changelog files on some server for downloading", Default = "")]
             public string ChangeLogUrl { get; set; }
 
-            [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "", Default = "")]
+            [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
             public string ChangeLogPath { get; set; }
 
             [Option('n', "product-name", Required = false, HelpText = "Product Name", Default = "Application")]
