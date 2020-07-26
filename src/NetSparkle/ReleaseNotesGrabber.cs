@@ -57,8 +57,8 @@ namespace NetSparkleUpdater
                 !string.IsNullOrEmpty(separatorTemplate) ?
                     separatorTemplate :
                     "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">" +
-                    "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br>";
-            _initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>" + htmlHeadAddition + "</head><body>";
+                    "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
+            _initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>" + htmlHeadAddition + "</head><body>";
             _sparkle = sparkle;
             ChecksReleaseNotesSignature = false;
         }
@@ -94,7 +94,7 @@ namespace NetSparkleUpdater
                                         releaseNotes,
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
             }
-            sb.Append("</body>");
+            sb.Append("</body></html>");
 
             _sparkle.LogWriter.PrintMessage("Done initializing release notes!");
             return sb.ToString();
@@ -122,7 +122,7 @@ namespace NetSparkleUpdater
                 {
                     if (item.IsCriticalUpdate)
                     {
-                        item.Description = "<p><em>" + criticalUpdate + "</em></p>" + "<br>" + item.Description;
+                        item.Description = "<p><em>" + criticalUpdate + "</em></p>" + "<br/>" + item.Description;
                     }
                     return item.Description;
                 }
