@@ -56,9 +56,10 @@ namespace NetSparkleUpdater
             _separatorTemplate =
                 !string.IsNullOrEmpty(separatorTemplate) ?
                     separatorTemplate :
-                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right; display:float;\">" +
+                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right;\">" +
                     "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
-            _initialHTML = "<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>" + htmlHeadAddition + "</head><body>";
+            _initialHTML = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/><title>Sparkle</title>" + 
+                htmlHeadAddition + "</head><body>";
             _sparkle = sparkle;
             ChecksReleaseNotesSignature = false;
         }
