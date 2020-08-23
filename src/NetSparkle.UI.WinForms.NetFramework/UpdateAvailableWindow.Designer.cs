@@ -38,11 +38,13 @@ namespace NetSparkleUpdater.UI.WinForms
             this.skipButton = new System.Windows.Forms.Button();
             this.buttonRemind = new System.Windows.Forms.Button();
             this.updateButton = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.ReleaseNotesBrowser = new System.Windows.Forms.WebBrowser();
             this.imgAppIcon = new System.Windows.Forms.PictureBox();
-            this.panel1.SuspendLayout();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblHeader
@@ -82,13 +84,6 @@ namespace NetSparkleUpdater.UI.WinForms
             this.updateButton.UseVisualStyleBackColor = true;
             this.updateButton.Click += new System.EventHandler(this.OnUpdateButtonClick);
             // 
-            // panel1
-            // 
-            resources.ApplyResources(this.panel1, "panel1");
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.ReleaseNotesBrowser);
-            this.panel1.Name = "panel1";
-            // 
             // ReleaseNotesBrowser
             // 
             resources.ApplyResources(this.ReleaseNotesBrowser, "ReleaseNotesBrowser");
@@ -101,25 +96,39 @@ namespace NetSparkleUpdater.UI.WinForms
             this.imgAppIcon.Name = "imgAppIcon";
             this.imgAppIcon.TabStop = false;
             // 
+            // tableLayoutPanel1
+            // 
+            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.ReleaseNotesBrowser, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.imgAppIcon, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.lblHeader, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.lblInfoText, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 4);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            // 
+            // panel1
+            // 
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Controls.Add(this.skipButton);
+            this.panel1.Controls.Add(this.updateButton);
+            this.panel1.Controls.Add(this.buttonRemind);
+            this.panel1.Name = "panel1";
+            // 
             // UpdateAvailableWindow
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.updateButton);
-            this.Controls.Add(this.buttonRemind);
-            this.Controls.Add(this.skipButton);
-            this.Controls.Add(this.lblInfoText);
-            this.Controls.Add(this.lblHeader);
-            this.Controls.Add(this.imgAppIcon);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.Name = "UpdateAvailableWindow";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -132,7 +141,8 @@ namespace NetSparkleUpdater.UI.WinForms
         private System.Windows.Forms.Button skipButton;
         private System.Windows.Forms.Button buttonRemind;
         private System.Windows.Forms.Button updateButton;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.WebBrowser ReleaseNotesBrowser;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
     }
 }
