@@ -133,13 +133,13 @@
     <value>NoControl</value>
   </data>
   <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 18</value>
+    <value>70, 18</value>
   </data>
   <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 18, 6, 0</value>
   </data>
   <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>875, 36</value>
+    <value>911, 36</value>
   </data>
   <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -169,7 +169,7 @@
     <value>NoControl</value>
   </data>
   <data name="lblInfoText.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 70</value>
+    <value>70, 70</value>
   </data>
   <data name="lblInfoText.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -205,7 +205,7 @@
     <value>NoControl</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 112</value>
+    <value>70, 112</value>
   </data>
   <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -274,7 +274,7 @@
     <value>NoControl</value>
   </data>
   <data name="buttonRemind.Location" type="System.Drawing.Point, System.Drawing">
-    <value>423, 8</value>
+    <value>399, 8</value>
   </data>
   <data name="buttonRemind.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -310,7 +310,7 @@
     <value>NoControl</value>
   </data>
   <data name="updateButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>655, 8</value>
+    <value>631, 8</value>
   </data>
   <data name="updateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -340,7 +340,7 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="ReleaseNotesBrowser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>106, 160</value>
+    <value>70, 160</value>
   </data>
   <data name="ReleaseNotesBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
@@ -349,7 +349,7 @@
     <value>40, 54</value>
   </data>
   <data name="ReleaseNotesBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>875, 571</value>
+    <value>911, 571</value>
   </data>
   <data name="ReleaseNotesBrowser.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -365,6 +365,9 @@
   </data>
   <data name="&gt;&gt;ReleaseNotesBrowser.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="imgAppIcon.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -406,10 +409,10 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>103, 740</value>
+    <value>67, 740</value>
   </data>
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>881, 59</value>
+    <value>917, 59</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -451,7 +454,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ReleaseNotesBrowser" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="imgAppIcon" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblHeader" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblInfoText" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="panel1" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,100,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ReleaseNotesBrowser" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="imgAppIcon" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblHeader" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblInfoText" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="panel1" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,69,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

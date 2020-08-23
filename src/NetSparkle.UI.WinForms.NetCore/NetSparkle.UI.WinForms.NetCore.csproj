@@ -50,17 +50,17 @@
     <Compile Update="ToastNotifier.designer.cs">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
     </Compile>
-    <Compile Update="UpdateAvailableWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="UpdateAvailableWindow.Designer.cs">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </Compile>
     <Compile Update="MessageNotificationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="MessageNotificationWindow.Designer.cs">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="UpdateAvailableWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UpdateAvailableWindow.Designer.cs">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
