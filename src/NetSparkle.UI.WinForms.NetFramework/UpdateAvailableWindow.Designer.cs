@@ -42,9 +42,11 @@ namespace NetSparkleUpdater.UI.WinForms
             this.imgAppIcon = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblHeader
@@ -110,10 +112,16 @@ namespace NetSparkleUpdater.UI.WinForms
             // panel1
             // 
             resources.ApplyResources(this.panel1, "panel1");
-            this.panel1.Controls.Add(this.skipButton);
-            this.panel1.Controls.Add(this.updateButton);
-            this.panel1.Controls.Add(this.buttonRemind);
+            this.panel1.Controls.Add(this.tableLayoutPanel2);
             this.panel1.Name = "panel1";
+            // 
+            // tableLayoutPanel2
+            // 
+            resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
+            this.tableLayoutPanel2.Controls.Add(this.skipButton, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.updateButton, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.buttonRemind, 1, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             // 
             // UpdateAvailableWindow
             // 
@@ -127,7 +135,8 @@ namespace NetSparkleUpdater.UI.WinForms
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -144,5 +153,6 @@ namespace NetSparkleUpdater.UI.WinForms
         private System.Windows.Forms.WebBrowser ReleaseNotesBrowser;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
     }
 }
