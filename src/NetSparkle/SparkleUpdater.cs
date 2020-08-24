@@ -565,7 +565,7 @@ namespace NetSparkleUpdater
             if (updates.Count == 0)
             {
                 LogWriter.PrintMessage("Installed version is valid, no update needed ({0})", config.InstalledVersion);
-                return new UpdateInfo(UpdateStatus.UpdateNotAvailable);
+                return new UpdateInfo(UpdateStatus.UpdateNotAvailable, updates);
             }
             LogWriter.PrintMessage("Latest version on the server is {0}", updates[0].Version);
 
@@ -573,7 +573,7 @@ namespace NetSparkleUpdater
             if (updates[0].Version.Equals(config.LastVersionSkipped))
             {
                 LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.LastVersionSkipped);
-                return new UpdateInfo(UpdateStatus.UserSkipped);
+                return new UpdateInfo(UpdateStatus.UserSkipped, updates);
             }
 
             // ok we need an update
@@ -1424,7 +1424,7 @@ namespace NetSparkleUpdater
                 });
             }
 
-            return updateData;// in this case, we've already shown UI talking about the new version
+            return updateData; // in this case, we've already shown UI talking about the new version
         }
 
         private void CheckingForUpdatesWindow_Closing(object sender, EventArgs e)
