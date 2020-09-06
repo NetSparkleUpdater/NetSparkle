@@ -30,12 +30,22 @@ namespace NetSparkleUpdater.UI.WPF
 
         private DownloadProgressWindowViewModel _dataContext;
 
+        /// <summary>
+        /// Base constructor for DownloadProgressWindow. Initializes the window
+        /// and sets up the Closing event.
+        /// </summary>
         public DownloadProgressWindow() : base(false)
         {
             InitializeComponent();
             Closing += DownloadProgressWindow_Closing;
         }
 
+        /// <summary>
+        /// Constructor for DownloadProgressWindow that takes an initialized
+        /// <see cref="DownloadProgressWindowViewModel"/> view model for use
+        /// </summary>
+        /// <param name="viewModel"><see cref="DownloadProgressWindowViewModel"/> view model that
+        /// this window will bind to as its DataContext</param>
         public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel)
         {
             InitializeComponent();
