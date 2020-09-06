@@ -1006,6 +1006,7 @@ namespace NetSparkleUpdater
                     {
                         LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
                         validationRes = ValidationResult.Invalid;
+                        DownloadedFileThrewWhileCheckingSignature?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                     }
                 }
             }
@@ -1073,6 +1074,7 @@ namespace NetSparkleUpdater
                     {
                         LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
                         result = ValidationResult.Invalid;
+                        DownloadedFileThrewWhileCheckingSignature?.Invoke(item, path);
                     }
                     if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                     {

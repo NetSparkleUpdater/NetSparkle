@@ -72,6 +72,13 @@ namespace NetSparkleUpdater
         /// is restarted. This event could allow you to tell the user what happened if updates are silent.
         /// </summary>
         public event DownloadEvent DownloadedFileIsCorrupt;
+        /// <summary>
+        /// Called when the downloaded file is fully downloaded and has its signature checked, but something
+        /// went wrong during the signature check.
+        /// If you're sure the file is there, you can try verifying the file again AND triggering an install
+        /// with SparkleUpdater.InstallUpdate, but make sure to warn your users first!
+        /// </summary>
+        public event DownloadEvent DownloadedFileThrewWhileCheckingSignature;
 
         /// <summary>
         /// Subscribe to this to get a chance to shut down gracefully before quitting.
