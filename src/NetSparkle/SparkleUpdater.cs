@@ -755,7 +755,7 @@ namespace NetSparkleUpdater
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                ValidationResult result = ValidationResult.Unchecked;
+                ValidationResult result;
                 try
                 {
                     result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, _downloadTempFileName);
