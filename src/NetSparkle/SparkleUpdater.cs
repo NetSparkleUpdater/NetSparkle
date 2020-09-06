@@ -755,7 +755,16 @@ namespace NetSparkleUpdater
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
-                ValidationResult result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, _downloadTempFileName);
+                ValidationResult result = ValidationResult.Unchecked;
+                try
+                {
+                    result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, _downloadTempFileName);
+                }
+                catch (Exception exc)
+                {
+                    LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                    result = ValidationResult.Invalid;
+                }
                 if (result == ValidationResult.Valid)
                 {
                     LogWriter.PrintMessage("File is already downloaded");
@@ -990,7 +999,14 @@ namespace NetSparkleUpdater
                     }
 
                     // check the signature
-                    validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadSignature, _downloadTempFileName);
+                    try
+                    {
+                        validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadSignature, _downloadTempFileName);
+                    } catch (Exception exc)
+                    {
+                        LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                        validationRes = ValidationResult.Invalid;
+                    }
                 }
             }
 
@@ -1048,7 +1064,16 @@ namespace NetSparkleUpdater
                 var path = installPath != null && File.Exists(installPath) ? installPath : await GetDownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
-                    var result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, path);
+                    ValidationResult result;
+                    try
+                    {
+                        result = SignatureVerifier.VerifySignatureOfFile(item.DownloadSignature, path);
+                    }
+                    catch (Exception exc)
+                    {
+                        LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                        result = ValidationResult.Invalid;
+                    }
                     if (result == ValidationResult.Valid || result == ValidationResult.Unchecked)
                     {
                         await RunDownloadedInstaller(path);
