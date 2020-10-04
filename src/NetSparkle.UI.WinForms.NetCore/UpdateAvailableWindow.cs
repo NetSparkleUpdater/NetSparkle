@@ -145,6 +145,9 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
 
+        /// <summary>
+        /// The item that is being shown as the available update
+        /// </summary>
         public AppCastItem CurrentItem
         {
             get { return _updates.Count() > 0 ? _updates[0] : null; }
