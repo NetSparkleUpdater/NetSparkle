@@ -17,7 +17,9 @@ using System.Windows.Shapes;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for CheckingForUpdatesWindow.xaml
+    /// Interaction logic for CheckingForUpdatesWindow.xaml.
+    /// 
+    /// Window that shows while NetSparkle is checking for updates.
     /// </summary>
     public partial class CheckingForUpdatesWindow : Window, ICheckingForUpdates
     {

@@ -22,7 +22,10 @@ using System.Windows.Shapes;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for DownloadProgressWindow.xaml
+    /// Interaction logic for DownloadProgressWindow.xaml.
+    /// 
+    /// Window that shows while SparkleUpdater is downloading the update
+    /// for the user.
     /// </summary>
     public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {

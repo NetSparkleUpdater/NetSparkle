@@ -11,7 +11,7 @@ using NetSparkleUpdater.UI.WPF.ViewModels;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// UI factory for default interface
+    /// UI factory for WPF UI interface
     /// </summary>
     public class UIFactory : IUIFactory
     {

@@ -8,7 +8,6 @@ using System.Windows.Input;
 
 namespace WPFTemplate.Helpers
 {
-    // 
     /// <summary>
     /// Command (<see cref="Action"/>) that can be executed based on an optional
     /// function that says whether or not the command can be run. This command

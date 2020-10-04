@@ -13,6 +13,12 @@ using System.Net;
 
 namespace NetSparkleUpdater.UI.Avalonia
 {
+    /// <summary>
+    /// Interaction logic for DownloadProgressWindow.xaml.
+    /// 
+    /// Window that shows while SparkleUpdater is downloading the update
+    /// for the user.
+    /// </summary>
     public class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {
         private bool _didCallDownloadProcessCompletedHandler = false;
@@ -21,6 +27,10 @@ namespace NetSparkleUpdater.UI.Avalonia
 
         private Button _actionButton;
 
+        /// <summary>
+        /// Base constructor for DownloadProgressWindow. Initializes the window
+        /// and sets up the Closing event.
+        /// </summary>
         public DownloadProgressWindow()
         {
             this.InitializeComponent();
@@ -30,6 +40,13 @@ namespace NetSparkleUpdater.UI.Avalonia
             Closing += DownloadProgressWindow_Closing;
         }
 
+        /// <summary>
+        /// Constructor for DownloadProgressWindow that takes an initialized
+        /// <see cref="DownloadProgressWindowViewModel"/> view model for use
+        /// </summary>
+        /// <param name="viewModel"><see cref="DownloadProgressWindowViewModel"/> view model that
+        /// this window will bind to as its DataContext</param>
+        /// <param name="iconBitmap">Bitmap to use for the app's logo/graphic</param>
         public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel, IBitmap iconBitmap)
         {
             InitializeComponent();
@@ -122,6 +139,11 @@ namespace NetSparkleUpdater.UI.Avalonia
             ShowWindow(isOnMainThread);
         }
 
+        /// <summary>
+        /// Action that is invoked when the action button is clicked (e.g. for canceling or installing)
+        /// </summary>
+        /// <param name="sender">Object that invoked this action</param>
+        /// <param name="e">Routed event that has information on the event</param>
         public void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             _didCallDownloadProcessCompletedHandler = true;

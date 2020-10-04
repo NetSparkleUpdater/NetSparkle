@@ -14,6 +14,11 @@ using System.Linq;
 
 namespace NetSparkleUpdater.UI.Avalonia
 {
+    /// <summary>
+    /// Interaction logic for UpdateAvailableWindow.xaml.
+    /// 
+    /// Window that shows the list of available updates to the user
+    /// </summary>
     public class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesUpdater, IUserRespondedToUpdateCheck
     {
         private UpdateAvailableWindowViewModel _dataContext;
@@ -21,6 +26,11 @@ namespace NetSparkleUpdater.UI.Avalonia
 
         private HtmlLabel _htmlLabel;
 
+        /// <summary>
+        /// Initialize the available update window with no initial date context
+        /// (and thus no initial information on downloadable releases to show
+        /// to the user)
+        /// </summary>
         public UpdateAvailableWindow() : base(true)
         {
             this.InitializeComponent();
@@ -29,6 +39,14 @@ namespace NetSparkleUpdater.UI.Avalonia
 #endif
         }
 
+        /// <summary>
+        /// Initialize the available update window with the given view model,
+        /// which contains the information on the updates that are available to the
+        /// end user
+        /// </summary>
+        /// <param name="viewModel">View model with info on the updates that are available
+        /// to the user</param>
+        /// <param name="iconBitmap">Bitmap to use for the app's logo/graphic</param>
         public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, IBitmap iconBitmap) : base(true)
         {
             this.InitializeComponent();
@@ -58,11 +76,18 @@ namespace NetSparkleUpdater.UI.Avalonia
 
         AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
 
+        /// <summary>
+        /// The item that the user is being asked about updating to
+        /// </summary>
         public AppCastItem CurrentItem
         {
             get { return _dataContext?.Updates?.FirstOrDefault(); }
         }
 
+        /// <summary>
+        /// An event that informs its listeners how the user responded to the
+        /// software update request
+        /// </summary>
         public event UserRespondedToUpdate UserResponded;
 
         void IUpdateAvailable.BringToFront()
@@ -105,11 +130,19 @@ namespace NetSparkleUpdater.UI.Avalonia
             ShowWindow(isOnMainThread);
         }
 
+        /// <summary>
+        /// The user responded to the update check with a given response
+        /// </summary>
+        /// <param name="response">How the user responded to the update (e.g. install the update, remind me later)</param>
         public void UserRespondedToUpdateCheck(UpdateAvailableResult response)
         {
             UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
         }
 
+        /// <summary>
+        /// Show the HTML release notes to the user via the UI dispatcher
+        /// </summary>
+        /// <param name="notes">The HTML notes to show to the end user</param>
         public void ShowReleaseNotes(string notes)
         {
             Dispatcher.UIThread.InvokeAsync(() =>

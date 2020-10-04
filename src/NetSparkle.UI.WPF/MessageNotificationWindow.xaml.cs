@@ -38,7 +38,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// Construct the notification window for the message notification with the provided
         /// <seealso cref="MessageNotificationWindowViewModel"/>
         /// </summary>
-        /// <param name="viewModel"></param>
+        /// <param name="viewModel">view model that has info on the message to show to the user</param>
         public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel)
         {
             InitializeComponent();

@@ -51,6 +51,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         /// Interface object for the object that will be displaying the release notes
         /// </summary>
         public IReleaseNotesUpdater ReleaseNotesUpdater { get; set; }
+
         /// <summary>
         /// Interface object for the object that can handle user responses to the update that
         /// is being shown to the user

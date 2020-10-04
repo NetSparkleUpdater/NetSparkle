@@ -76,6 +76,8 @@ namespace NetSparkleUpdater.Interfaces
         /// Shut down the UI so we can run an update.
         /// If in WPF, System.Windows.Application.Current.Shutdown().
         /// If in WinForms, Application.Exit().
+        /// If in Avalonia, shuts down the current application lifetime if it
+        /// implements IClassicDesktopStyleApplicationLifetime.
         /// </summary>
         void Shutdown();
 

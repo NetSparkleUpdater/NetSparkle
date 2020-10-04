@@ -48,7 +48,8 @@ namespace NetSparkleUpdater.UI.WPF
         /// which contains the information on the updates that are available to the
         /// end user
         /// </summary>
-        /// <param name="viewModel"></param>
+        /// <param name="viewModel">View model with info on the updates that are available
+        /// to the user</param>
         public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel) : base(true)
         {
             InitializeComponent();

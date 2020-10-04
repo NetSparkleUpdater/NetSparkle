@@ -6,7 +6,7 @@ using WPFTemplate.Helpers;
 namespace NetSparkleUpdater.UI.WPF.ViewModels
 {
     /// <summary>
-    /// A vie wmodel for showing a single message to the user
+    /// A view model for showing a single message to the user
     /// </summary>
     public class MessageNotificationWindowViewModel : ChangeNotifier
     {
