@@ -17,16 +17,28 @@ using System.Windows.Shapes;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for MessageNotificationWindow.xaml
+    /// Interaction logic for MessageNotificationWindow.xaml.
+    /// 
+    /// Window that shows a single message to the user (usually an error) regarding
+    /// a software update.
     /// </summary>
     public partial class MessageNotificationWindow : Window
     {
+        /// <summary>
+        /// Construct the notification window for the message notification with the default
+        /// <seealso cref="MessageNotificationWindowViewModel"/>.
+        /// </summary>
         public MessageNotificationWindow()
         {
             InitializeComponent();
             DataContext = new MessageNotificationWindowViewModel();
         }
 
+        /// <summary>
+        /// Construct the notification window for the message notification with the provided
+        /// <seealso cref="MessageNotificationWindowViewModel"/>
+        /// </summary>
+        /// <param name="viewModel"></param>
         public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel)
         {
             InitializeComponent();

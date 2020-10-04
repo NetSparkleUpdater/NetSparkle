@@ -6,7 +6,11 @@ using System.Windows;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for ToastNotification.xaml
+    /// Interaction logic for ToastNotification.xaml.
+    /// 
+    /// The ToastNotification window shows in the lower right hand corner
+    /// of the screen as a toast notificaiton message to the user. This does
+    /// not use the native Windows/other notification APIs.
     /// </summary>
     public partial class ToastNotification : Window
     {
@@ -20,6 +24,10 @@ namespace NetSparkleUpdater.UI.WPF
         private double _workAreaHeight;
         private double _workAreaWidth;
 
+        /// <summary>
+        /// Construct the toast notification window. It is not shown to the user
+        /// until the <seealso cref="Show(string, string, int)"/> method is called.
+        /// </summary>
         public ToastNotification()
         {
             InitializeComponent();
@@ -58,8 +66,15 @@ namespace NetSparkleUpdater.UI.WPF
             _goUpTimer.Start();
         }
 
+        /// <summary>
+        /// The action to take when the user clicks on the toast notification window
+        /// </summary>
         public Action<List<AppCastItem>> ClickAction { get; set; }
 
+        /// <summary>
+        /// The list of updates that triggered this toast notification being shown to 
+        /// the user
+        /// </summary>
         public List<AppCastItem> Updates { get; set; }
         
         private void PauseTimerTick(object sender, EventArgs e)

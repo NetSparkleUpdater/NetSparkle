@@ -23,7 +23,9 @@ using System.Windows.Shapes;
 namespace NetSparkleUpdater.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for UpdateAvailableWindow.xaml
+    /// Interaction logic for UpdateAvailableWindow.xaml.
+    /// 
+    /// Window that shows the list of available updates to the user
     /// </summary>
     public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesUpdater, IUserRespondedToUpdateCheck
     {
@@ -31,11 +33,22 @@ namespace NetSparkleUpdater.UI.WPF
         private bool _hasFinishedNavigatingToAboutBlank = false;
         private string _notes = "";
 
+        /// <summary>
+        /// Initialize the available update window with no initial date context
+        /// (and thus no initial information on downloadable releases to show
+        /// to the user)
+        /// </summary>
         public UpdateAvailableWindow() : base(true)
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Initialize the available update window with the given view model,
+        /// which contains the information on the updates that are available to the
+        /// end user
+        /// </summary>
+        /// <param name="viewModel"></param>
         public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel) : base(true)
         {
             InitializeComponent();
@@ -49,11 +62,18 @@ namespace NetSparkleUpdater.UI.WPF
 
         AppCastItem IUpdateAvailable.CurrentItem => CurrentItem;
 
+        /// <summary>
+        /// The item that the user is being asked about updating to
+        /// </summary>
         public AppCastItem CurrentItem
         {
             get { return _dataContext?.Updates?.FirstOrDefault(); }
         }
 
+        /// <summary>
+        /// An event that informs its listeners how the user responded to the
+        /// software update request
+        /// </summary>
         public event UserRespondedToUpdate UserResponded;
 
         void IUpdateAvailable.BringToFront()
@@ -97,14 +117,22 @@ namespace NetSparkleUpdater.UI.WPF
             ShowWindow(isOnMainThread);
         }
 
+        /// <summary>
+        /// The user responded to the update check with a given response
+        /// </summary>
+        /// <param name="response">How the user responded to the update (e.g. install the update, remind me later)</param>
         public void UserRespondedToUpdateCheck(UpdateAvailableResult response)
         {
             UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
         }
 
-        // there is some bizarre thing where the WPF browser doesn't navigate to the release notes unless you successfully navigate to
-        // about:blank first. I don't know why. I feel like this is a Terrible Bad Fix, but...it works for now...
-
+        /// <summary>
+        /// Show the release notes to the end user. Release notes should be in HTML.
+        /// 
+        /// There is some bizarre thing where the WPF browser doesn't navigate to the release notes unless you successfully navigate to
+        /// about:blank first. I don't know why. I feel like this is a Terrible Bad Fix, but...it works for now...
+        /// </summary>
+        /// <param name="notes">The HTML notes to show to the end user</param>
         public void ShowReleaseNotes(string notes)
         {
             _notes = notes;
