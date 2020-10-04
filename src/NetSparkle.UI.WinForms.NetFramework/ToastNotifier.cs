@@ -46,8 +46,15 @@ namespace NetSparkleUpdater
             }
         }
 
+        /// <summary>
+        /// Action to perform when the user clicks on the toast window
+        /// </summary>
         public Action<List<AppCastItem>> ClickAction { get; set; }
 
+        /// <summary>
+        /// List of <seealso cref="AppCastItem"/> updates that the user is being
+        /// notified about in the toast message
+        /// </summary>
         public List<AppCastItem> Updates { get; set; }
 
         private void PauseTimerTick(object sender, EventArgs e)

@@ -10,12 +10,13 @@ using System.Collections.Generic;
 namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
-    /// UI factory for default interface
+    /// UI factory for WinForms .NET Framework interface
     /// </summary>
     public class UIFactory : IUIFactory
     {
         private Icon _applicationIcon = null;
 
+        /// <inheritdoc/>
         public UIFactory()
         {
             HideReleaseNotes = false;
@@ -23,6 +24,7 @@ namespace NetSparkleUpdater.UI.WinForms
             HideSkipButton = false;
         }
 
+        /// <inheritdoc/>
         public UIFactory(Icon applicationIcon)
         {
             _applicationIcon = applicationIcon;
@@ -31,27 +33,16 @@ namespace NetSparkleUpdater.UI.WinForms
             HideSkipButton = false;
         }
 
-        /// <summary>
-        /// Hides the release notes view when an update is found.
-        /// </summary>
+        /// <inheritdoc/>
         public bool HideReleaseNotes { get; set; }
 
-        /// <summary>
-        /// Hides the skip this update button when an update is found.
-        /// </summary>
+        /// <inheritdoc/>
         public bool HideSkipButton { get; set; }
 
-        /// <summary>
-        /// Hides the remind me later button when an update is found.
-        /// </summary>
+        /// <inheritdoc/>
         public bool HideRemindMeLaterButton { get; set; }
 
-        /// <summary>
-        /// Create sparkle form implementation
-        /// </summary>
-        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
-        /// <param name="updates">Sorted array of updates from latest to earliest</param>
-        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
+        /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded);
@@ -70,26 +61,19 @@ namespace NetSparkleUpdater.UI.WinForms
             return window;
         }
 
-        /// <summary>
-        /// Create download progress window
-        /// </summary>
-        /// <param name="item">Appcast item to download</param>
+        /// <inheritdoc/>
         public virtual IDownloadProgress CreateProgressWindow(AppCastItem item)
         {
             return new DownloadProgressWindow(item, _applicationIcon);
         }
 
-        /// <summary>
-        /// Inform user in some way that NetSparkle is checking for updates
-        /// </summary>
+        /// <inheritdoc/>
         public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
             return new CheckingForUpdatesWindow(_applicationIcon);
         }
 
-        /// <summary>
-        /// Initialize UI. Called when Sparkle is constructed and/or when the UIFactory is set.
-        /// </summary>
+        /// <inheritdoc/>
         public virtual void Init()
         {
             // enable visual style to ensure that we have XP style or higher
@@ -97,51 +81,38 @@ namespace NetSparkleUpdater.UI.WinForms
             Application.EnableVisualStyles();
         }
 
-        /// <summary>
-        /// Show user a message saying downloaded update format is unknown
-        /// </summary>
-        /// <param name="downloadFileName">The filename to be inserted into the message text</param>
+        /// <inheritdoc/>
         public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle,
                 string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
-        /// <summary>
-        /// Show user that current installed version is up-to-date
-        /// </summary>
+        /// <inheritdoc/>
         public virtual void ShowVersionIsUpToDate()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
-        /// <summary>
-        /// Show message that latest update was skipped by user
-        /// </summary>
+        /// <inheritdoc/>
         public virtual void ShowVersionIsSkippedByUserRequest()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
-        /// <summary>
-        /// Show message that appcast is not available
-        /// </summary>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <inheritdoc/>
         public virtual void ShowCannotDownloadAppcast(string appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
+        /// <inheritdoc/>
         public virtual bool CanShowToastMessages()
         {
             return true;
         }
 
-        /// <summary>
-        /// Show 'toast' window to notify new version is available
-        /// </summary>
-        /// <param name="updates">Appcast updates</param>
-        /// <param name="clickHandler">handler for click</param>
+        /// <inheritdoc/>
         public virtual void ShowToast(List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
         {
             Thread thread = new Thread(() =>
@@ -158,11 +129,7 @@ namespace NetSparkleUpdater.UI.WinForms
             thread.Start();
         }
 
-        /// <summary>
-        /// Show message on download error
-        /// </summary>
-        /// <param name="message">Error message from exception</param>
-        /// <param name="appcastUrl">the URL for the appcast file</param>
+        /// <inheritdoc/>
         public virtual void ShowDownloadErrorMessage(string message, string appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
@@ -175,11 +142,7 @@ namespace NetSparkleUpdater.UI.WinForms
             messageWindow.ShowDialog();
         }
 
-        /// <summary>
-        /// Shut down the UI so we can run an update.
-        /// If in WPF, System.Windows.Application.Current.Shutdown().
-        /// If in WinForms, Application.Exit().
-        /// </summary>
+        /// <inheritdoc/>
         public void Shutdown()
         {
             Application.Exit();

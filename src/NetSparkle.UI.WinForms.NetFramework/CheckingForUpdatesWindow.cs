@@ -47,7 +47,9 @@ namespace NetSparkleUpdater.UI.WinForms
             FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
-
+        /// <summary>
+        /// Event that is called when the UI for the checking for updates window is closing
+        /// </summary>
         public event EventHandler UpdatesUIClosing;
 
         void ICheckingForUpdates.Close()
