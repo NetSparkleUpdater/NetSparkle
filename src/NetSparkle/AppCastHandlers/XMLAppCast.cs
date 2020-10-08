@@ -180,6 +180,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             Version installed = new Version(_config.InstalledVersion);
             var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
+            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
             return Items.Where((item) =>
             {
 #if NETFRAMEWORK
@@ -193,28 +194,41 @@ namespace NetSparkleUpdater.AppCastHandlers
                 // operating system
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
                 {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
+                        item.ShortVersion, item.Title);
                     return false;
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
                 {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
+                        item.ShortVersion, item.Title);
                     return false;
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
                 {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
+                        item.ShortVersion, item.Title);
                     return false;
                 }
 #endif
                 // filter smaller versions
                 if (new Version(item.Version).CompareTo(installed) <= 0)
                 {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}", item.Version,
+                        item.ShortVersion, item.Title, installed);
                     return false;
                 }
                 // filter versions without signature if we need signatures. But accept version without downloads.
                 if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
                 {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
+                        "the item has no signature yet has a download link of {3}", item.Version,
+                        item.ShortVersion, item.Title, item.DownloadLink);
                     return false;
                 }
                 // accept everything else
+                _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
+                    item.ShortVersion, item.DownloadLink);
                 return true;
             }).ToList();
         }
