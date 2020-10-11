@@ -61,7 +61,7 @@ A typical software update path for a stereotypical piece of software might look 
 8. User is asked to close the software so the update can run. User closes the software.
 9. Downloaded file/installer is run (or the update is otherwise performed)
 
-Right now, NetSparkle **does not** help you with 1., 2., or 4. "Why not?", you might ask:
+Right now, NetSparkleUpdater **does not** help you with 1., 2., or 4. "Why not?", you might ask:
 
 * 1. We can't compile your application for you since we don't know (or care) how you are compiling or packaging your application! :)
 * 2. A cross-platform installer package/system would be difficult and may not feel normal to end users, although a system that uses [Avalonia](https://github.com/AvaloniaUI/Avalonia) could maybe work I suppose (might take a lot of work though and make downloads large!). We do not provide support for getting your installer/distribution ready. To generate your installer/distribution, we recommend the following:
@@ -81,7 +81,7 @@ We are open to contributions that might make the overall install/update process 
 ```csharp
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
-    new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended or secure!!)
+    new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
                        "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools AppCastGenerator on any OS
 ) {
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
@@ -255,6 +255,8 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 This section is still WIP, but major changes include:
 
 * Minimum .NET requirement is now .NET Framework 4.5.2 instead of 4.5.1
+* XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
+  * Enabled build time warnings for functions that need documentation that don't have it
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
 * `SparkleUpdater` constructors now require an `ISignatureVerifier` in order to "force" you to choose your signature verification method
@@ -263,15 +265,16 @@ This section is still WIP, but major changes include:
 * UIs are now in different namespaces. If you want to use a UI, you must pass in a `UIFactory` that implements `IUIFactory` and handles showing/handling all user interface elements
   * `SparkleUpdater` no longer holds its own `Icon`
   * `HideReleaseNotes`, `HideRemindMeLaterButton`, and `HideSkipButton` are all handled by the `UIFactory` objects
-* Added built-in UIs for [Avalonia](https://github.com/AvaloniaUI/Avalonia) and WPF
-* Localization capabilities are non-functional and are expected to come back in a later version. See [this issue](https://github.com/NetSparkleUpdater/NetSparkle/issues/92).
+* Added built-in UIs for WPF and [Avalonia](https://github.com/AvaloniaUI/Avalonia) 0.9
+* Localization capabilities are non-functional and are expected to come back in a later version. See [this issue](https://github.com/NetSparkleUpdater/NetSparkle/issues/92). (Contributions are welcome!)
 * Most `SparkleUpdater` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and checking.
   * `IAppCastDataDownloader` to implement downloading of your app cast file
   * `IAppCastHandler` to implement your own app cast parsing
-  * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkle has built-in DSA and Ed25519 signature verifiers.
+  * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkleUpdater has built-in DSA and Ed25519 signature verifiers.
   * `IUIFactory` to implement your own UI
   * `ILogger` to implement your own logger class (rather than being forced to subclass `LogWriter`)
   * `Configuration` subclasses now take an `IAssemblyAccessor` in their constructor(s) in order to define where assembly information is loaded from
+  * Many `SparkleUpdater` functions are now virtual and thus more easily overridden for your specific use case
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
   * Sample app to demonstrate how to handle events yourself with your own UI
@@ -284,417 +287,76 @@ This section is still WIP, but major changes include:
 * By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
 * `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available). If `sparkle:dsaSignature` is not found, `sparkle:edSignature` will be used (if available). This is to give us as much compatibility with old versions of `NetSparkle` as well as the macOS `Sparkle` library.
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool. You can also store these signatures in a custom location with the `--key-path` flag.
-* Removed `AssemblyAccessor` class (in lieu of `IAssemblyAccessor` implementors)
+  * You can still use DSA signatures via the DSAHelper tool and the `DSAChecker` class. This is not recommended.
+* Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
 * **We now rely on Portable.BouncyCastle** for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!
 
-## Public Methods
+## FAQ
 
-### This section still needs to be updated for 2.0!
+### Am I required to use a UI with NetSparkleUpdater?
 
-### SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
+Nope. You can just reference the core library and handle everything yourself, including any custom UI. Check out the code samples for an example of doing that!
 
-Initializes a new instance of the Sparkle class with the given appcast URL and signature verifier.
+### How can I use NetSparkleUpdater with [AppCenter](https://appcenter.ms/)?
 
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
+1. Make sure you've read over the documentation [here](https://docs.microsoft.com/en-us/appcenter/distribution/sparkleupdates)
+2. Decide if you want to generate signatures for your files. If so, make sure that works, and then use NetSparkleUpdater as normal.
+3. If you don't want to generate signatures because you trust your AppCenter builds, use `SecurityMode.Unsafe` or the following `IAppCastHandler` override:
 
+```csharp
+public bool DownloadAndParse()
+{
+    try
+    {
+        _logWriter.PrintMessage("Downloading app cast data...");
 
-### SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
+        var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
+        if (!string.IsNullOrEmpty(appcast))
+        {
+            ParseAppCast(appcast);
+            return true;
+        }
+    }
+    catch (Exception e)
+    {
+        _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
+    }
 
-Initializes a new instance of the Sparkle class with the given appcast URL, signature verifier, and the name of the assembly to use when comparing update versions.
+    return false;
+}
+```
 
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
-| referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
+### Is reverting your application version supported?
 
-### SparkleUpdater(string appcastUr, ISignatureVerifier signatureVerifier, string referenceAssembly, NetSparkle.Interfaces.IUIFactory factory)
+The answer is both yes and no. No, because that is not the default behavior. Yes, because if you use installers for each of your versions, you can use your app cast to see which previous versions are available and download those versions. If your installers are standalone, they should install an old version just fine. Just keep in mind that if you install an old version and then there is a newer version in your app cast, after opening the older software, it will ask them if they want to update to the newer version!
 
-Initializes a new instance of the Sparkle class with the given appcast URL, signature verifier, the name of the assembly to use when comparing update versions, and a UI factory to use in place of the default UI.
+Here's a summary of what you can do:
 
-| Name | Description |
-| ---- | ----------- |
-| appcastUrl | *System.String*<br>the URL of the appcast file |
-| signatureVerifier | *NetSparkle.Interfaces.ISIgnatureVerifier*<br>the object that will validate your app cast signatures |
-| referenceAssembly | *System.String*<br>the name of the assembly to use for comparison when checking update versions |
-| factory | *NetSparkle.Interfaces.IUIFactory*<br>a UI factory to use in place of the default UI |
+1. Setup your `SparkleUpdater` object
+2. Call `_updateInfo = await _sparkle.CheckForUpdatesQuietly();` (no UI) or `_sparkle.CheckForUpdatesAtUserRequest()` (shows UI). I would recommend checking quietly because the UI method will always show the latest version. You can always show your own UI.
+3. Look in `_updateInfo.Updates` for the available versions in your app cast. You can compare it with your currently installed version to see which ones are new and which ones are old.
+4. Call `await _sparkle.InitAndBeginDownload(update);` with the update you want to download. The download path is provided in the `DownloadFinished` event.
+5. When it's done downloading, call `_sparkle.InstallUpdate(update, _downloadPath);`
 
-### void CancelFileDownload()
+The "Handle Events Yourself" sample will be very helpful to you: https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself
 
-Cancels an in-progress download and deletes the temporary file.
+### Does this work with Avalonia 0.10?
 
-### Task<NetSparkle.SparkleUpdateInfo> CheckForUpdatesAtUserRequest()
+Right now, the Avalonia UI is compatible with Avalonia 0.9. Please see #122 for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
 
-Check for updates, using interaction appropriate for if the user just said "check for updates".
+### Things aren't working. Help!
 
-### Task<NetSparkle.SparkleUpdateInfo> CheckForUpdatesQuietly()
+Here are some things you can do to figure out how to get your app running:
 
-Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
+* Make sure you have enabled and debugged your application thoroughly. A great way to do this is to set `SparkleUpdater.LogWriter = new LogWriter(true)` and then watch your console output while debugging.
+* Look at the NetSparkleUpdater samples by downloading this repo and running the samples. You can even try putting your app cast URL in there and using your public key to debug with the source code!
+* Ask for help in our [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle)
+* Post an issue and wait for someone to respond with assistance
 
-### void CheckOnFirstApplicationIdle()
+### Are you accepting contributions?
 
-(WinForms only) Schedules an update check to happen on the first Application.Idle event.
-
-### void Dispose()
-
-Inherited from IDisposable. Stops all background activities.
-
-### System.Uri GetAbsoluteUrl(string)
-
-Creates a System.Uri from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
-
-| Name | Description |
-| ---- | ----------- |
-| url | *System.String*<br>relative or absolute URL |
-
-### NetSparkle.Configuration GetApplicationConfig()
-
-Reads the local Sparkle configuration for the given reference assembly.
-
-### Task<NetSparkle.SparkleUpdateInfo> GetUpdateStatus(NetSparkle.Configuration config)
-
-This method checks if an update is required. During this process the appcast will be downloaded and checked against the reference assembly. Ensure that the calling process has read access to the reference assembly. This method is also called from the background loops.
-
-| Name | Description |
-| ---- | ----------- |
-| config | *NetSparkle.Configuration*<br>the NetSparkle configuration for the reference assembly |
-
-**Returns**: NetSparkle.SparkleUpdateInfo with information on whether there is an update available or not.
-
-### System.Net.WebResponse GetWebContentResponse(string url)
-
-Used by NetSparkle.AppCast to fetch the appcast and DSA signature.
-
-### System.IO.Stream GetWebContentStream(string url)
-
-Used by NetSparkle.AppCast to fetch the appcast and DSA signature as a System.IO.Stream.
-
-### void ShowUpdateNeededUI(bool isUpdateAlreadyDownloaded)
-
-Shows the update UI with the latest downloaded update information.
-
-| Name | Description |
-| ---- | ----------- |
-| isUpdateAlreadyDownloaded | *System.Boolean*<br>If true, make sure UI text shows that the user is about to install the file instead of download it. |
-
-### void ShowUpdateNeededUI(NetSparkle.AppCastItem[], bool)
-
-Shows the update needed UI with the given set of updates.
-
-| Name | Description |
-| ---- | ----------- |
-| updates | *NetSparkle.AppCastItem[]*<br>updates to show UI for |
-| isUpdateAlreadyDownloaded | *System.Boolean*<br>If true, make sure UI text shows that the user is about to install the file instead of download it. |
-
-### void StartLoop(bool doInitialCheck)
-
-Starts a NetSparkle background loop to check for updates every 24 hours.
-
-You should only call this function when your app is initialized and shows its main window.
-
-| Name | Description |
-| ---- | ----------- |
-| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
-
-### void StartLoop(bool doInitialCheck, bool forceInitialCheck)
-
-Starts a NetSparkle background loop to check for updates every 24 hours.
-
-You should only call this function when your app is initialized and shows its main window.
-
-| Name | Description |
-| ---- | ----------- |
-| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
-| forceInitialCheck | *System.Boolean*<br>if doInitialCheck is true, whether the first check should happen even if the last check was less than 24 hours ago |
-
-### void StartLoop(bool doInitialCheck, bool forceInitialCheck, System.TimeSpan checkFrequency)
-
-Starts a NetSparkle background loop to check for updates on a given interval.
-
-You should only call this function when your app is initialized and shows its main window.
-
-| Name | Description |
-| ---- | ----------- |
-| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first period |
-| forceInitialCheck | *System.Boolean*<br>if doInitialCheck is true, whether the first check should happen even if the last check was within the last checkFrequency interval |
-| checkFrequency | *System.TimeSpan*<br>the interval to wait between update checks |
-
-### void StartLoop(bool doInitialCheck, System.TimeSpan checkFrequency)
-
-Starts a NetSparkle background loop to check for updates on a given interval.
-
-You should only call this function when your app is initialized and shows its main window.
-
-| Name | Description |
-| ---- | ----------- |
-| doInitialCheck | *System.Boolean*<br>whether the first check should happen before or after the first interval |
-| checkFrequency | *System.TimeSpan*<br>the interval to wait between update checks |
-
-### void StopLoop()
-
-Stops the Sparkle background loop. Called automatically by [Dispose](#void-dispose).
-
-## Public Properties
-
-### This section still needs to be updated for 2.0!
-
-- string [AppcastUrl](#string-appcasturl--get-set-) { get; set; }
-- NetSparkle.CheckingForUpdatesWindow [CheckingForUpdatesWindow](#netsparklecheckingforupdateswindow-checkingforupdateswindow--get-set-) { get; set; }
-- System.Action [ClearOldInstallers](#systemaction-clearoldinstallers--get-set-) { get; set; }
-- NetSparkle.Configuration [Configuration](#netsparkleconfiguration-configuration--get-set-) { get; set; }
-- string [CustomInstallerArguments](#string-custominstallerarguments--get-set-) { get; set; }
-- NetSparkle.DSAChecker [DSAChecker](#netsparkledsachecker-dsachecker--get-set-) { get; set; }
-- NetSparkle.LogWriter [LogWriter](#netsparklelogwriter-logwriter--get-set-) { get; set; }
-- string [ExtraJsonData](#string-extrajsondata--get-set-) { get; set; }
-- bool [HideReleaseNotes](#bool-hidereleasenotes--get-set-) { get; set; }
-- bool [HideRemindMeLaterButton](#bool-hideremindmelaterbutton--get-set-) { get; set; }
-- bool [HideSkipButton](#bool-hideskipbutton--get-set-) { get; set; }
-- bool [IsUpdateLoopRunning](#bool-isupdatelooprunning--get-) { get; }
-- NetSparkle.AppCastItem[] [LatestAppCastItems](#netsparkleappcastitem-latestappcastitems--get-) { get; }
-- [PrintDiagnosticToConsole](#printdiagnostictoconsole--get-set-) { get; set; }
-- NetSparkle.Interfaces.IDownloadProgress [ProgressWindow](#netsparkleinterfacesidownloadprogress-progresswindow--get-set-) { get; set; }
-- bool [RelaunchAfterUpdate](#bool-relaunchafterupdate--get-set-) { get; set; }
-- bool [ShowsUIOnMainThread](#bool-showsuionmainthread--get-set-) { get; set; }
-- NetSparkle.Sparkle.UserInteractionMode [UserInteractionMode](#netsparklesparkleuserinteractionmode-silentmode--get-set-) { get; set; }
-- string [TmpDownloadFilePath](#string-tmpdownloadfilepath--get-set-) { get; set; }
-- bool [TrustEverySSLConnection](#bool-trusteverysslconnection--get-set-) { get; set; }
-- NetSparkle.Interfaces.IUIFactory [UIFactory](#netsparkleinterfacesiuifactory-uifactory--get-set-) { get; set; }
-- bool [UpdateMarkedCritical](#bool-updatemarkedcritical--get-) { get; }
-- bool [UseNotificationToast](#bool-usenotificationtoast--get-set-) { get; set; }
-- NetSparkle.Interfaces.IUpdateAvailable [UserWindow](#netsparkleinterfacesiupdateavailable-userwindow--get-set-) { get; set; }
-- NetSparkle.SecurityProtocolType [SecurityProtocolType](#netsparklesecurityprotocoltype--get-set-) { get; set; }
-
-### string AppcastUrl { get; set; }
-
-Gets or sets the appcast URL
-
-### NetSparkle.CheckingForUpdatesWindow CheckingForUpdatesWindow { get; set; }
-
-The user interface window that shows the 'Checking for Updates...' form. TODO: Make this an interface so user can config their own UI
-
-### System.Action ClearOldInstallers { get; set; }
-
-Function that is called asynchronously to clean up old installers that have been downloaded with UserInteractionMode.DownloadNoInstall or UserInteractionMode.DownloadAndInstall.
-
-### NetSparkle.Configuration Configuration { get; set; }
-
-The NetSparkle configuration object for the current assembly.
-
-### string CustomInstallerArguments { get; set; }
-
-Run the downloaded installer with these arguments
-
-### NetSparkle.DSAChecker DSAChecker { get; set; }
-
-The DSA checker that verifies/validates downloaded files
-
-### NetSparkle.LogWriter LogWriter { get; set; }
-
-Logs diagnostic information to `Console.WriteLine` or `Debug.WriteLine` or wherever else the child class wants to report diagnostic information
-
-### string ExtraJsonData { get; set; }
-
-If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
-
-### bool HideReleaseNotes { get; set; }
-
-Hides the release notes view when an update is found.
-
-### bool HideRemindMeLaterButton { get; set; }
-
-Hides the remind me later button when an update is found.
-
-### bool HideSkipButton { get; set; }
-
-Hides the skip button view when an update is found.
-
-### bool IsUpdateLoopRunning { get; }
-
-Whether or not the update loop is running
-
-### NetSparkle.AppCastItem[] LatestAppCastItems { get; }
-
-Returns the latest appcast items to the caller. Might be null.
-
-### PrintDiagnosticToConsole { get; set; }
-
-If true, prints diagnostic messages to Console.WriteLine rather than Debug.WriteLine
-
-### NetSparkle.Interfaces.IDownloadProgress ProgressWindow { get; set; }
-
-The user interface window that shows a download progress bar, and then asks to install and relaunch the application
-
-### bool RelaunchAfterUpdate { get; set; }
-
-Defines if the application needs to be relaunched after executing the downloaded installer
-
-### bool ShowsUIOnMainThread { get; set; }
-
-WinForms only. If true, tries to run UI code on the main thread using System.Threading.SynchronizationContext.
-
-### NetSparkle.Sparkle.UserInteractionMode SilentMode { get; set; }
-
-Set the silent mode type for Sparkle to use when there is a valid update for the software
-
-### string TmpDownloadFilePath { get; set; }
-
-If set, downloads files to this path. If the folder doesn't already exist, creates the folder. Note that this variable is a path, not a full file name.
-
-### bool TrustEverySSLConnection { get; set; }
-
-If true, don't check the validity of SSL certificates
-
-### NetSparkle.Interfaces.IUIFactory UIFactory { get; set; }
-
-Factory for creating UI forms like progress window, etc.
-
-### bool UpdateMarkedCritical { get; }
-
-Loops through all of the most recently grabbed app cast items and checks if any of them are marked as critical
-
-### bool UseNotificationToast { get; set; }
-
-Specifies if you want to use the notification toast
-
-### NetSparkle.Interfaces.IUpdateAvailable UserWindow { get; set; }
-
-The user interface window that shows the release notes and asks the user to skip, later or update
-
-### NetSparkle.SecurityProtocolType { get; set; }
-
-The security protocol (`System.Net.SecurityProtocolType`) used by NetSparkle. Setting this property will also set this property for the current AppDomain of the caller. Needs to be set to `SecurityProtocolType.Tls12` for some cases, such as downloading something over HTTPS for a GitHub pages site.
-
-## Public Events
-
-### This section still needs to be updated for 2.0!
-
-- [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)
-- [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync)
-- [CloseApplication](#closeapplication)
-- [CloseApplicationAsync](#closeapplicationasync)
-- [CheckLoopFinished](#checkloopfinished)
-- [CheckLoopStarted](#checkloopstarted)
-- [DownloadCanceled](#downloadcanceled)
-- [DownloadedFileIsCorrupt](#downloadedfileiscorrupt)
-- [DownloadedFileReady](#downloadedfileready)
-- [DownloadError](#downloaderror)
-- [FinishedDownloading](#finisheddownloading)
-- [StartedDownloading](#starteddownloading)
-- [UpdateCheckFinished](#updatecheckfinished)
-- [UpdateCheckStarted](#updatecheckstarted)
-- [UpdateDetected](#updatedetected)
-- [UserSkippedVersion](#userskippedversion)
-- [RemindMeLaterSelected](#remindmelaterselected)
-
-### AboutToExitForInstallerRun
-
-**Delegate**: void System.ComponentModel.CancelEventHandler(object sender, System.ComponentModel.CancelEventArgs e)
-
-Subscribe to this to get a chance to shut down gracefully before quitting. If [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync) is set, this has no effect.
-
-### AboutToExitForInstallerRunAsync
-
-**Delegate**: Task CancelEventHandlerAsync(object sender, System.ComponentModel.CancelEventArgs e)
-
-Subscribe to this to get a chance to asynchronously shut down gracefully before quitting. This overrides [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
-
-### CloseApplication
-
-**Delegate**: void CloseApplication()
-
-Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. If [CloseApplicationAsync](#closeapplicationasync) is set, this has no effect.
-
-**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun).
-
-### CloseApplicationAsync
-
-**Delegate**: Task CloseApplicationAsync()
-
-Event for custom shutdown logic. If this is set, it is called instead of Application.Current.Shutdown or Application.Exit. This overrides [CloseApplication](#closeapplication).
-
-**Warning**: The batch file that launches your executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds if you implement this event! If you need an event that can be canceled, use [AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
-
-### CheckLoopFinished
-
-**Delegate**: void NetSparkle.LoopFinishedOperation(object sender, bool updateRequired)
-
-This event will be raised when a check loop is finished
-
-### CheckLoopStarted
-
-**Delegate**: void NetSparkle.LoopStartedOperation(object sender)
-
-This event will be raised when a check loop will be started
-
-### DownloadCanceled
-
-**Delegate**: void NetSparkle.DownloadEvent(string path)
-
-Called when the download has been canceled
-
-### DownloadedFileIsCorrupt
-
-**Delegate**: void NetSparkle.DownloadedFileIsCorrupt(NetSparkle.AppCastItem item, string downloadPath)
-
-Called when the downloaded file is downloaded (or at least partially on disk) and the DSA signature doesn't match. When this is called, Sparkle is not taking any further action to try to download the install file during this instance of the software. In order to make Sparkle try again, you must delete the file off disk yourself. Sparkle will try again after the software is restarted.
-
-### DownloadedFileReady
-
-**Delegate**: void NetSparkle.DownloadedFileReady(NetSparkle.AppCastItem item, string downloadPath)
-
-Called when the downloaded file is fully downloaded and verified regardless of the value for SilentMode. Note that if you are installing fully silently, this will be called before the install file is executed, so don't manually initiate the file or anything.
-
-### DownloadError
-
-**Delegate**: void NetSparkle.DownloadEvent(string path)
-
-Called when the download has downloaded but has an error other than corruption
-
-### FinishedDownloading
-
-**Delegate**: void NetSparkle.DownloadEvent(string path)
-
-Called when the download has finished successfully
-
-### StartedDownloading
-
-**Delegate**: void NetSparkle.DownloadEvent(string path)
-
-Called when the download has just started
-
-### UpdateCheckFinished
-
-**Delegate**: void NetSparkle.UpdateCheckFinished(object sender, NetSparkle.UpdateStatus status)
-
-Called when update check is all done. May or may not have called [UpdateDetected](#updatedetected) in the middle.
-
-### UpdateCheckStarted
-
-**Delegate**: void NetSparkle.UpdateCheckStarted(object sender)
-
-Called when update check has just started
-
-### UpdateDetected
-
-**Delegate**: void NetSparkle.UpdateDetected(object sender, NetSparkle.UpdateDetectedEventArgs e)
-
-This event can be used to override the standard user interface process when an update is detected
-
-### UserSkippedVersion
-
-**Delegate**: void NetSparkle.UserSkippedVersion(NetSparkle.AppCastItem item, string downloadPath)
-
-Called when the user skips some version of the application.
-
-### RemindMeLaterSelected
-
-**Delegate**: void NetSparkle.RemindMeLaterSelected(AppCastItem item);
-
-Called when the user skips some version of the application by clicking the 'Remind Me Later' button
+Yes! Please help us make this library awesome!
 
 ## License
 
@@ -702,7 +364,7 @@ NetSparkle is available under the [MIT License](LICENSE).
 
 ## Requirements
 
-- .NET Framework 4.5.1+ OR .NET Core 3+
+- .NET Framework 4.5.2+ OR .NET Core 3+
 
 ## Acknowledgements
 
