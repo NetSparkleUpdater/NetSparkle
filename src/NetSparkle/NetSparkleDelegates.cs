@@ -10,34 +10,36 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// The operation has started
+    /// The loop that checks for updates every now and again has started
     /// </summary>
-    /// <param name="sender">the sender</param>
+    /// <param name="sender">the object that initiated the call</param>
     public delegate void LoopStartedOperation(object sender);
+
     /// <summary>
-    /// The operation has ended
+    /// The loop that checks for updates has finished checking for updates
     /// </summary>
-    /// <param name="sender">the sender</param>
-    /// <param name="updateRequired"><c>true</c> if an update is required</param>
+    /// <param name="sender">the object that initiated the call</param>
+    /// <param name="updateRequired"><c>true</c> if an update is required; false otherwise</param>
     public delegate void LoopFinishedOperation(object sender, bool updateRequired);
 
     /// <summary>
-    /// This delegate will be used when an update was detected to allow library 
-    /// consumer to add own user interface capabilities.    
+    /// An update was detected for the user's currently running software  
     /// </summary>
+    /// <param name="sender">the object that initiated the call</param>
+    /// <param name="e">Information about the update that was detected</param>
     public delegate void UpdateDetected(object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
-    /// Update check has started.
+    /// <see cref="SparkleUpdater"/> has started checking for updates
     /// </summary>
-    /// <param name="sender">Sparkle updater that is checking for an update.</param>
+    /// <param name="sender">The <see cref="SparkleUpdater"/> instance that is checking for an update.</param>
     public delegate void UpdateCheckStarted(object sender);
 
     /// <summary>
-    /// Update check has finished.
+    /// <see cref="SparkleUpdater"/> has finished checking for updates
     /// </summary>
-    /// <param name="sender">Sparkle updater that finished checking for an update.</param>
-    /// <param name="status">Update status</param>
+    /// <param name="sender"><see cref="SparkleUpdater"/> that finished checking for an update.</param>
+    /// <param name="status">Update status (e.g. whether an update is available)</param>
     public delegate void UpdateCheckFinished(object sender, UpdateStatus status);
 
     /// <summary>
@@ -64,29 +66,36 @@ namespace NetSparkleUpdater
     public delegate void DownloadEvent(AppCastItem item, string path);
 
     /// <summary>
-    /// A delegate for download progress events (TODO: docs update)
+    /// Delegate that provides information about some download progress that has been made
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="args"></param>
+    /// <param name="sender">The object that initiated the event</param>
+    /// <param name="args">The information on how much data has been downloaded and how much
+    /// needs to be downloaded</param>
     public delegate void DownloadProgressEvent(object sender, ItemDownloadProgressEventArgs args);
 
     /// <summary>
-    /// A delegate for download progress events for a given item (TODO: docs update)
+    /// Delegate that provides information about some download progress that has been made
+    /// when downloading a specific <see cref="AppCastItem"/>.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="item"></param>
-    /// <param name="args"></param>
+    /// <param name="sender">The object that initiated the event</param>
+    /// <param name="item">The item that is being downloaded</param>
+    /// <param name="args">The information on how much data has been downloaded and how much
+    /// needs to be downloaded</param>
     public delegate void ItemDownloadProgressEvent(object sender, AppCastItem item, ItemDownloadProgressEventArgs args);
 
     /// <summary>
     /// A handler called when the user responsed to an available update
     /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">An UpdateResponse object that contains the event data.</param>
+    /// <param name="sender">The object that initiated the event</param>
+    /// <param name="e">An UpdateResponse object that contains the information on how the user
+    /// responded to the available update (e.g. skip, remind me later).</param>
     public delegate void UserRespondedToUpdate(object sender, UpdateResponseEventArgs e);
 
     /// <summary>
-    /// A delegate for a download error
+    /// A delegate for a download error that occurred for some reason
     /// </summary>
+    /// <param name="item">The item that is being downloaded</param>
+    /// <param name="path">The path to the place where the file was being downloaded</param>
+    /// <param name="exception">The <seealso cref="Exception"/> that occurred to cause the error</param>
     public delegate void DownloadErrorEvent(AppCastItem item, string path, Exception exception);
 }

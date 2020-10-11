@@ -10,16 +10,15 @@ using NetSparkleUpdater.Interfaces;
 namespace NetSparkleUpdater.SignatureVerifiers
 {
     /// <summary>
-    /// Class to verify a DSA signature
+    /// Class that allows you to verify a DSA signature of 
+    /// some text, a file, or some other item based on a 
+    /// DSA public key
     /// </summary>
     public class DSAChecker : ISignatureVerifier
     {
         private DSACryptoServiceProvider _cryptoProvider;
 
-        /// <summary>
-        /// Determines if a public key exists
-        /// </summary>
-        /// <returns><c>bool</c></returns>
+        /// <inheritdoc/>
         public bool HasValidKeyInformation()
         {
             return _cryptoProvider != null;
@@ -28,10 +27,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <summary>
         /// Create a DSAChecker object from the given parameters
         /// </summary>
-        /// <param name="mode">The security mode of the validator. Controls what needs to be set in order to validate
+        /// <param name="mode">The <see cref="SecurityMode"/> of the validator. Controls what needs to be set in order to validate
         /// an app cast and its items.</param>
-        /// <param name="publicKey">the public key as string (will be preferred before the file)</param>
-        /// <param name="publicKeyFile">the public key file</param>
+        /// <param name="publicKey">the DSA public key as a string (will be used instead of the file if available, non-null, and not blank)</param>
+        /// <param name="publicKeyFile">the public key file name (including extension)</param>
         public DSAChecker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
         {
             SecurityMode = mode;
@@ -43,7 +42,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {
-                    data = TryGetFileResource(publicKeyFile, data);
+                    data = TryGetFileResource(publicKeyFile);
                 }
 
                 if (data != null)
@@ -69,24 +68,24 @@ namespace NetSparkleUpdater.SignatureVerifiers
             }
         }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public SecurityMode SecurityMode { get; set; }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
         {
+            var hasValidKeyInformation = HasValidKeyInformation();
+            var isSignatureValid = !string.IsNullOrWhiteSpace(signature);
             switch (SecurityMode)
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a DSA key, we only accept non-null signatures
-                    if (HasValidKeyInformation() && string.IsNullOrEmpty(signature))
+                    if (hasValidKeyInformation && !isSignatureValid)
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
                     // if we don't have an dsa key, we accept any signature
-                    if (!HasValidKeyInformation())
+                    if (!hasValidKeyInformation)
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -95,7 +94,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
 
                 case SecurityMode.Strict:
                     // only accept if we have both a public key and a non-null signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!hasValidKeyInformation || !isSignatureValid)
                     {
                         result = ValidationResult.Invalid;
                         return false;
@@ -106,7 +105,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     // always accept anything
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything due to a lack of public key/signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!hasValidKeyInformation || !isSignatureValid)
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -116,7 +115,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 case SecurityMode.OnlyVerifySoftwareDownloads:
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything due to a lack of public key/signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!hasValidKeyInformation || !isSignatureValid)
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -167,13 +166,13 @@ namespace NetSparkleUpdater.SignatureVerifiers
         }
 
         /// <summary>
-        /// Gets a file resource
+        /// Gets a file resource based on a public key at a given path
         /// </summary>
-        /// <param name="publicKey">the public key</param>
-        /// <param name="data">the data stream</param>
-        /// <returns>the data stream</returns>
-        private static Stream TryGetFileResource(string publicKey, Stream data)
+        /// <param name="publicKey">the file name of the public key</param>
+        /// <returns>the data stream of the file resource if the file exists; null otherwise</returns>
+        private static Stream TryGetFileResource(string publicKey)
         {
+            Stream data = null;
             if (File.Exists(publicKey))
             {
                 data = File.OpenRead(publicKey);
@@ -182,10 +181,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
         }
 
         /// <summary>
-        /// Get a resource stream
+        /// Get a resource stream based on the public key
         /// </summary>
-        /// <param name="publicKey">the public key</param>
-        /// <returns>a stream</returns>
+        /// <param name="publicKey">the public key resource name</param>
+        /// <returns>a stream that contains the public key if found; null otherwise</returns>
         private static Stream TryGetResourceStream(string publicKey)
         {
             Stream data = null;

@@ -9,12 +9,15 @@ using System.Security.Cryptography;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// Provides commonly used utility functions.
+    /// Provides commonly used utility functions to users of NetSparkleUpdater
     /// </summary>
     public class Utilities
     {
         /// <summary>
-        /// Removes trailing 0 components from the given version.
+        /// Removes trailing 0 components from the given version.<br/>
+        /// "1.2.3.0" -> "1.2.3";<br/>
+        /// "1.2.0.0" -> "1.2";<br/>
+        /// "1.0.0.0" -> "1.0"
         /// </summary>
         /// <param name="version">Version object</param>
         /// <returns>Version string</returns>

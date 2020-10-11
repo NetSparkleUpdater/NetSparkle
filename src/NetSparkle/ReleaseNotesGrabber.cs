@@ -12,7 +12,8 @@ using System.Net;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// Grabs release notes formatted as Markdown from the server and allows you to view them as HTML
+    /// Grabs release notes formatted as Markdown (https://en.wikipedia.org/wiki/Markdown)
+    /// from the server and allows you to view them as HTML
     /// </summary>
     public class ReleaseNotesGrabber
     {
@@ -21,6 +22,7 @@ namespace NetSparkleUpdater
         /// most current update and the one that the user is going to install
         /// </summary>
         protected string _separatorTemplate;
+
         /// <summary>
         /// The initial HTML to use for the changelog. This is everything before the 
         /// body tag and includes the html and head elements/tags.
@@ -74,12 +76,12 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Download all of the release notes provided to this function and convert them to HTML
+        /// Asynchronously download all of the release notes provided to this function and convert them to HTML
         /// </summary>
         /// <param name="items">List of items that you want to display in the release notes</param>
         /// <param name="latestVersion">The latest version (most current version) of your releases</param>
         /// <param name="cancellationToken">Token to cancel the async download requests</param>
-        /// <returns></returns>
+        /// <returns>The release notes formatted as HTML and ready to display to the user</returns>
         public virtual async Task<string> DownloadAllReleaseNotes(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
@@ -110,7 +112,7 @@ namespace NetSparkleUpdater
         /// about the release notes grabbing process (or its failures)</param>
         /// <param name="cancellationToken">token that can be used to cancel a release notes 
         /// grabbing operation</param>
-        /// <returns></returns>
+        /// <returns>The release notes, formatted as HTML, for a given release of the software</returns>
         protected virtual async Task<string> GetReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
@@ -118,7 +120,7 @@ namespace NetSparkleUpdater
             if (!string.IsNullOrEmpty(item.Description))
             {
                 // check for markdown
-                Regex containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
+                var containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
                 if (containsHtmlRegex.IsMatch(item.Description))
                 {
                     if (item.IsCriticalUpdate)
@@ -196,7 +198,8 @@ namespace NetSparkleUpdater
         /// <param name="cancellationToken">token that can be used to cancel a download operation</param>
         /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
         /// about the download process (or its failures)</param>
-        /// <returns></returns>
+        /// <returns>The release notes data (file data) at the given link as a string. Typically this data
+        /// is formatted as markdown.</returns>
         protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
         {
             try

@@ -9,16 +9,16 @@ namespace NetSparkleUpdater
     public partial class SparkleUpdater : IDisposable
     {
         /// <summary>
-        /// This event will be raised when a check loop will be started
+        /// This event will be raised when an update check is about to be started
         /// </summary>
         public event LoopStartedOperation LoopStarted;
         /// <summary>
-        /// This event will be raised when a check loop is finished
+        /// This event will be raised when an update check has finished
         /// </summary>
         public event LoopFinishedOperation LoopFinished;
 
         /// <summary>
-        /// Called when update check has just started
+        /// Called when update check has just begun
         /// </summary>
         public event UpdateCheckStarted UpdateCheckStarted;
         /// <summary>
@@ -27,7 +27,8 @@ namespace NetSparkleUpdater
         /// </summary>
         public event UpdateDetected UpdateDetected;
         /// <summary>
-        /// Called when update check is all done. May or may not have called <see cref="UpdateDetected"/> in the middle.
+        /// Called when update check is all done. <see cref="UpdateDetected"/> may have been 
+        /// called between the start and end of the update check.
         /// </summary>
         public event UpdateCheckFinished UpdateCheckFinished;
 
@@ -40,20 +41,20 @@ namespace NetSparkleUpdater
         public event UserRespondedToUpdate UserRespondedToUpdate;
 
         /// <summary>
-        /// Called when the download has just started
+        /// Called when the download of an app cast file has just started
         /// </summary>
         public event DownloadEvent DownloadStarted;
         /// <summary>
-        /// Called when the download has been canceled
+        /// Called when the download of an app cast file has been canceled
         /// </summary>
         public event DownloadEvent DownloadCanceled;
         /// <summary>
-        /// Called when the download has downloaded but has an error other than corruption
+        /// Called when the download of an app cast file has downloaded but has an error other than corruption
         /// </summary>
         public event DownloadErrorEvent DownloadHadError;
         /// <summary>
-        /// Called when the download has made some progress. Also sent to the progress window
-        /// if one is available.
+        /// Called when the download of an app cast file has made some progress. 
+        /// This data is also sent to the progress window if one is available.
         /// </summary>
         public event ItemDownloadProgressEvent DownloadMadeProgress;
         /// <summary>
@@ -81,12 +82,13 @@ namespace NetSparkleUpdater
         public event DownloadEvent DownloadedFileThrewWhileCheckingSignature;
 
         /// <summary>
-        /// Subscribe to this to get a chance to shut down gracefully before quitting.
+        /// Subscribe to this event to get a chance to shut down gracefully before the application is closed.
         /// If <see cref="PreparingToExitAsync"/> is set, this has no effect.
         /// </summary>
         public event CancelEventHandler PreparingToExit;
         /// <summary>
-        /// Subscribe to this to get a chance to asynchronously shut down gracefully before quitting.
+        /// Subscribe to this event to get a chance to asynchronously shut down gracefully before the
+        /// application is closed.
         /// This overrides <see cref="PreparingToExit"/>.
         /// </summary>
         public event CancelEventHandlerAsync PreparingToExitAsync;

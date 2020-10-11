@@ -13,28 +13,34 @@ namespace NetSparkleUpdater
     public class UpdateInfo
     {
         /// <summary>
-        /// Update availability.
+        /// Create information about an update with the given status and no available update items
         /// </summary>
-        public UpdateStatus Status { get; set; }
-        /// <summary>
-        /// Any available updates for the product.
-        /// </summary>
-        public List<AppCastItem> Updates { get; set; }
-        /// <summary>
-        /// Constructor for SparkleUpdate when there are some updates available.
-        /// </summary>
-        public UpdateInfo(UpdateStatus status, List<AppCastItem> updates)
-        {
-            Status = status;
-            Updates = updates;
-        }
-        /// <summary>
-        /// Constructor for SparkleUpdate for when there aren't any updates available. Updates are automatically set to null.
-        /// </summary>
+        /// <param name="status">Information on whether an update is available</param>
         public UpdateInfo(UpdateStatus status)
         {
             Status = status;
             Updates = null;
         }
+
+        /// <summary>
+        /// Create information about an update with the given status and update items
+        /// </summary>
+        /// <param name="status">Information on whether an update is available</param>
+        /// <param name="updates">The list of updates that are available to update to</param>
+        public UpdateInfo(UpdateStatus status, List<AppCastItem> updates)
+        {
+            Status = status;
+            Updates = updates;
+        }
+
+        /// <summary>
+        /// Whether or not an update is available
+        /// </summary>
+        public UpdateStatus Status { get; set; }
+        /// <summary>
+        /// Any available updates for the product that the user could
+        /// potentially install
+        /// </summary>
+        public List<AppCastItem> Updates { get; set; }
     }
 }

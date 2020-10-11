@@ -44,7 +44,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 Stream data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {
-                    data = TryGetFileResource(publicKeyFile, data);
+                    data = TryGetFileResource(publicKeyFile);
                 }
 
                 if (data != null)
@@ -170,13 +170,13 @@ namespace NetSparkleUpdater.SignatureVerifiers
         }
 
         /// <summary>
-        /// Gets a file resource
+        /// Gets a file resource based on a public key at a given path
         /// </summary>
-        /// <param name="publicKey">the public key</param>
-        /// <param name="data">the data stream</param>
-        /// <returns>the data stream</returns>
-        private static Stream TryGetFileResource(string publicKey, Stream data)
+        /// <param name="publicKey">the file name of the public key</param>
+        /// <returns>the data stream of the file resource if the file exists; null otherwise</returns>
+        private static Stream TryGetFileResource(string publicKey)
         {
+            Stream data = null;
             if (File.Exists(publicKey))
             {
                 data = File.OpenRead(publicKey);
@@ -185,10 +185,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
         }
 
         /// <summary>
-        /// Get a resource stream
+        /// Get a resource stream based on the public key
         /// </summary>
-        /// <param name="publicKey">the public key</param>
-        /// <returns>a stream</returns>
+        /// <param name="publicKey">the public key resource name</param>
+        /// <returns>a stream that contains the public key if found; null otherwise</returns>
         private static Stream TryGetResourceStream(string publicKey)
         {
             Stream data = null;

@@ -61,7 +61,7 @@ namespace NetSparkleUpdater
         /// </summary>
         public bool IsCriticalUpdate { get; set; }
         /// <summary>
-        /// Length of update set via sparkle:length
+        /// Length of update set via sparkle:length (usually the # of bytes of the update)
         /// </summary>
         public long UpdateSize { get; set; }
 
@@ -334,7 +334,7 @@ namespace NetSparkleUpdater
         #region IComparable<AppCastItem> Members
 
         /// <summary>
-        /// Compares this instance to another
+        /// Compares this <see cref="AppCastItem"/> version to the version of another <see cref="AppCastItem"/>
         /// </summary>
         /// <param name="other">the other instance</param>
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
@@ -350,7 +350,8 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Equality check to another instance
+        /// See if this this <see cref="AppCastItem"/> version equals the version of another <see cref="AppCastItem"/>.
+        /// Also checks to make sure the application names match.
         /// </summary>
         /// <param name="obj">the instance to compare to</param>
         /// <returns></returns>
@@ -370,18 +371,18 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Derive hashcode from immutable variables
         /// </summary>
-        /// <returns></returns>
+        /// <returns>the integer haschode of this app cast item</returns>
         public override int GetHashCode()
         {
             return Version.GetHashCode() * 17 + AppName.GetHashCode();
         }
 
         /// <summary>
-        /// Check equality of two AppCastItem instances
+        /// Check the equality of two <see cref="AppCastItem"/> instances
         /// </summary>
-        /// <param name="left">AppCastItem to compare</param>
-        /// <param name="right">AppCastItem to compare</param>
-        /// <returns>True if items are the same</returns>
+        /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
+        /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
+        /// <returns>True if items are the same; false otherwise</returns>
         public static bool operator ==(AppCastItem left, AppCastItem right)
         {
             if (left is null)
@@ -392,22 +393,22 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Check if two AppCastItem instances are different
+        /// Check if two <see cref="AppCastItem"/> instances are different
         /// </summary>
-        /// <param name="left">AppCastItem to compare</param>
-        /// <param name="right">AppCastItem to compare</param>
-        /// <returns>True if items are different</returns>
+        /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
+        /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
+        /// <returns>True if items are different; false if they are the same</returns>
         public static bool operator !=(AppCastItem left, AppCastItem right)
         {
             return !(left == right);
         }
 
         /// <summary>
-        /// Less than comparison of version between two AppCastItem instances
+        /// Less than comparison of version between two <see cref="AppCastItem"/> instances
         /// </summary>
-        /// <param name="left">AppCastItem to compare</param>
-        /// <param name="right">AppCastItem to compare</param>
-        /// <returns>True if left version is less than right version</returns>
+        /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
+        /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
+        /// <returns>True if left version is less than right version; false otherwise</returns>
         public static bool operator <(AppCastItem left, AppCastItem right)
         {
             return left is null ? !(right is null) : left.CompareTo(right) < 0;
@@ -425,22 +426,22 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Greater than comparison of version between two AppCastItem instances
+        /// Greater than comparison of version between two <see cref="AppCastItem"/> instances
         /// </summary>
-        /// <param name="left">AppCastItem to compare</param>
-        /// <param name="right">AppCastItem to compare</param>
-        /// <returns>True if left version is greater than right version</returns>
+        /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
+        /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
+        /// <returns>True if left version is greater than right version; false otherwise</returns>
         public static bool operator >(AppCastItem left, AppCastItem right)
         {
             return !(left is null) && left.CompareTo(right) > 0;
         }
 
         /// <summary>
-        /// Greater than or equal to comparison of version between two AppCastItem instances
+        /// Greater than or equal to comparison of version between two <see cref="AppCastItem"/> instances
         /// </summary>
-        /// <param name="left">AppCastItem to compare</param>
-        /// <param name="right">AppCastItem to compare</param>
-        /// <returns>True if left version is greater than or equal to right version</returns>
+        /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
+        /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
+        /// <returns>True if left version is greater than or equal to right version; false otherwise</returns>
         public static bool operator >=(AppCastItem left, AppCastItem right)
         {
             return left is null ? right is null : left.CompareTo(right) >= 0;

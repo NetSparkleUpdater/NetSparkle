@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// A simple class to handle log information for NetSparkleUPdater.
+    /// A simple class to handle log information for NetSparkleUpdater.
     /// Make sure to do any setup for this class that you want
-    /// to do before calling StartLoop on your SparkleUpdater object.
+    /// to do before calling StartLoop on your <see cref="SparkleUpdater"/> object.
     /// </summary>
     public class LogWriter : ILogger
     {
@@ -20,6 +20,7 @@ namespace NetSparkleUpdater
         /// Tag to show before any log statements
         /// </summary>
         public static string tag = "netsparkle:";
+
         /// <summary>
         /// Empty constructor -> sets PrintDiagnosticToConsole to false
         /// </summary>
@@ -32,7 +33,8 @@ namespace NetSparkleUpdater
         /// LogWriter constructor that takes a bool to determine
         /// the value for printDiagnosticToConsole
         /// </summary>
-        /// <param name="printDiagnosticToConsole">Whether this object should print via Debug.WriteLine or Console.WriteLine</param>
+        /// <param name="printDiagnosticToConsole">False to print to <seealso cref="Debug.WriteLine(string)"/>;
+        /// true to print to <seealso cref="Console.WriteLine(string)"/></param>
         public LogWriter(bool printDiagnosticToConsole)
         {
             PrintDiagnosticToConsole = printDiagnosticToConsole;
@@ -41,8 +43,8 @@ namespace NetSparkleUpdater
         #region Properties
 
         /// <summary>
-        /// True if this class should print to Console.WriteLine;
-        /// false if this object should print to Debug.WriteLine.
+        /// True if this class should print to <seealso cref="Console.WriteLine(string)"/>;
+        /// false if this object should print to <seealso cref="Debug.WriteLine(string)"/>.
         /// Defaults to false.
         /// </summary>
         public bool PrintDiagnosticToConsole { get; set; }
