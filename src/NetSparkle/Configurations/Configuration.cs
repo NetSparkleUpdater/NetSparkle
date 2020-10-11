@@ -10,14 +10,9 @@ using NetSparkleUpdater.Interfaces;
 namespace NetSparkleUpdater.Configurations
 {
     /// <summary>
-    /// Abstract class to handle 
-    /// update intervals.
-    /// 
-    /// CheckForUpdate  - Boolean    - Whether NetSparkle should check for updates
-    /// LastCheckTime   - time_t     - Time of last check
-    /// SkipThisVersion - String     - If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
-    /// DidRunOnce      - Boolean    - Check only one time when the app launched
-    /// </summary>    
+    /// Abstract class to handle update intervals and know which is the currently installed version
+    /// of the software.
+    /// </summary>
     public abstract class Configuration
     {
         /// <summary>
@@ -25,11 +20,11 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public string ApplicationName { get; protected set; }
         /// <summary>
-        /// The previous version of the software that the user ran
+        /// The previous version of the software that the user ran, e.g. "1.5.2"
         /// </summary>
         public string PreviousVersionOfSoftwareRan { get; protected set; }
         /// <summary>
-        /// The currently-installed version
+        /// The currently-installed version, e.g. "1.4.3"
         /// </summary>
         public string InstalledVersion { get; protected set; }
         /// <summary>
@@ -41,11 +36,12 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public bool IsFirstRun { get; protected set; }
         /// <summary>
-        /// Last check time
+        /// <seealso cref="DateTime"/> of the last update check
         /// </summary>
         public DateTime LastCheckTime { get; protected set; }
         /// <summary>
-        /// The last-skipped version number
+        /// The version number of the update that was skipped last.
+        /// If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
         /// </summary>
         public string LastVersionSkipped { get; protected set; }
         /// <summary>
@@ -56,15 +52,16 @@ namespace NetSparkleUpdater.Configurations
         /// Last profile update
         /// </summary>
         public DateTime LastConfigUpdate { get; protected set; }
-
         /// <summary>
         /// Object that accesses version, title, etc. info for the currently running application
         /// (or some other application)
         /// </summary>
         public IAssemblyAccessor AssemblyAccessor { get; protected set; }
-
+        
         /// <summary>
-        /// Constructor for Configuration -- should load values by the end of the constructor!
+        /// Constructor for Configuration -- should load all pertinent values by the end of the constructor!
+        /// If any exception is thrown during construction of this object (e.g. from the assembly accessors),
+        /// then <see cref="CheckForUpdate"/> is set to false.
         /// </summary>
         /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
         /// you would like to check for updates for</param>
@@ -88,7 +85,7 @@ namespace NetSparkleUpdater.Configurations
         }
 
         /// <summary>
-        /// Touches to profile time
+        /// Set the last configuration update time to <see cref="DateTime.Now"/>.
         /// </summary>
         public virtual void TouchProfileTime()
         {
@@ -96,7 +93,8 @@ namespace NetSparkleUpdater.Configurations
         }
 
         /// <summary>
-        /// Touches the check time to now, should be used after a check directly
+        /// Set the last time we checked for updates to <see cref="DateTime.Now"/>.
+        /// Should be used after an update check has been made.
         /// </summary>
         public virtual void TouchCheckTime()
         {
@@ -104,21 +102,24 @@ namespace NetSparkleUpdater.Configurations
         }
 
         /// <summary>
-        /// This method allows to skip a specific version
+        /// Set the given version as the version that should be skipped (ignored)
+        /// when looking at available updates
         /// </summary>
-        /// <param name="version">the version to skeip</param>
-        public virtual void SetVersionToSkip(String version)
+        /// <param name="version">the version to skip. e.g. "1.2.3"</param>
+        public virtual void SetVersionToSkip(string version)
         {
             LastVersionSkipped = version;
         }
 
         /// <summary>
-        /// Reloads the configuration object
+        /// Reloads the configuration object from disk/memory/etc.
         /// </summary>
         public abstract void Reload();
 
         /// <summary>
-        /// This method sets default values for the config
+        /// Set the configuration values to their default values (should check for update,
+        /// last check time was in the past, no version skipped, and have never run the
+        /// software).
         /// </summary>
         protected void InitWithDefaultValues()
         {

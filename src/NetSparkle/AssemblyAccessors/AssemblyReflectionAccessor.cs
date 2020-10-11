@@ -9,7 +9,8 @@ using NetSparkleUpdater.Interfaces;
 namespace NetSparkleUpdater.AssemblyAccessors
 {
     /// <summary>
-    /// Assembly reflection accessor
+    /// An assembly accessor that uses reflection to learn information
+    /// on an assembly with a given name.
     /// </summary>
     public class AssemblyReflectionAccessor : IAssemblyAccessor
     {
@@ -17,9 +18,14 @@ namespace NetSparkleUpdater.AssemblyAccessors
         private List<Attribute> _assemblyAttributes = new List<Attribute>();
 
         /// <summary>
-        /// Constructor
+        /// Create the assembly accessor with a given assembly name. All pertinent attributes
+        /// that are needed are read during object construction.
         /// </summary>
-        /// <param name="assemblyName">the assembly name</param>
+        /// <param name="assemblyName">the assembly name. 
+        /// If null is passed, <seealso cref="Assembly.GetEntryAssembly"/> is used to get info on the asembly.</param>
+        /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
+        /// <exception cref="ArgumentNullException">Thrown when the assembly can't be loaded</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
         public AssemblyReflectionAccessor(string assemblyName)
         {
             if (assemblyName == null)
@@ -112,9 +118,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
 
         #region Assembly Attribute Accessors
 
-        /// <summary>
-        /// Gets the assembly title
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyTitle
         {
             get
@@ -124,20 +128,16 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        /// <summary>
-        /// Gets the version
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyVersion
         {
             get
             {
                 return _assembly.GetName().Version.ToString();
             }
-        }        
+        }
 
-        /// <summary>
-        /// Gets the description
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyDescription
         {
             get
@@ -147,9 +147,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        /// <summary>
-        /// Gets the product
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyProduct
         {
             get
@@ -159,9 +157,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        /// <summary>
-        /// Gets the copyright
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyCopyright
         {
             get
@@ -171,9 +167,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        /// <summary>
-        /// Gets the company
-        /// </summary>
+        /// <inheritdoc/>
         public string AssemblyCompany
         {
             get
