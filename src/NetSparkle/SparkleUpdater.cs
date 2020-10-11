@@ -67,29 +67,29 @@ namespace NetSparkleUpdater
         #region Constructors
 
         /// <summary>
-        /// ctor which needs the appcast url
+        /// Constructor which requires the app cast url and the object that will verify app cast signatures
         /// </summary>
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
+        /// <param name="appcastUrl">the URL of the app cast file</param>
+        /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
             : this(appcastUrl, signatureVerifier, null)
         { }
 
         /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
-        /// </summary>        
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
+        /// ctor which needs the app cast url, an object to verify app cast signatures, and a reference assembly
+        /// </summary>
+        /// <param name="appcastUrl">the URL of the app cast file</param>
+        /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
             : this(appcastUrl, signatureVerifier, referenceAssembly, null)
         { }
 
         /// <summary>
-        /// ctor which needs the appcast url and a referenceassembly
-        /// </summary>        
-        /// <param name="appcastUrl">the URL of the appcast file</param>
-        /// <param name="signatureVerifier">the object that will verify your appcast signatures.</param>
+        /// Constructor that performs all necessary initialization for software update checking
+        /// </summary>
+        /// <param name="appcastUrl">the URL of the app cast file</param>
+        /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
         public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory)
@@ -111,7 +111,7 @@ namespace NetSparkleUpdater
             if (referenceAssembly != null)
             {
                 _appReferenceAssembly = referenceAssembly;
-                LogWriter.PrintMessage("Checking the following file: " + _appReferenceAssembly);
+                LogWriter.PrintMessage("Checking the following file for assembly information: " + _appReferenceAssembly);
             }
 
             // adjust the delegates
@@ -128,7 +128,7 @@ namespace NetSparkleUpdater
 
             // set the url
             AppCastUrl = appcastUrl;
-            LogWriter.PrintMessage("Using the following url: {0}", AppCastUrl);
+            LogWriter.PrintMessage("Using the following url for downloading the app cast: {0}", AppCastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
         }
@@ -207,25 +207,26 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// The user interface window that shows the release notes and
+        /// The user interface that shows the release notes and
         /// asks the user to skip, remind me later, or update
         /// </summary>
         private IUpdateAvailable UpdateAvailableWindow { get; set; }
 
         /// <summary>
-        /// The user interface window that shows a download progress bar,
+        /// The user interface that shows a download progress bar,
         /// and then asks to install and relaunch the application
         /// </summary>
         private IDownloadProgress ProgressWindow { get; set; }
 
         /// <summary>
-        /// The user interface window that shows the 'Checking for Updates...'
-        /// form.
+        /// The user interface that shows the 'Checking for Updates...'
+        /// UIrm.
         /// </summary>
         private ICheckingForUpdates CheckingForUpdatesWindow { get; set; }
 
         /// <summary>
-        /// The NetSparkle configuration object for the current assembly.
+        /// The configuration object for a given assembly that has information on when
+        /// updates were checked last, any updates that have been skipped, etc.
         /// </summary>
         public Configuration Configuration 
         { 
@@ -252,22 +253,22 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// The object that verifies signatures (DSA or otherwise) of downloaded items
+        /// The object that verifies signatures (DSA, Ed25519, or otherwise) of downloaded items
         /// </summary>
         public ISignatureVerifier SignatureVerifier { get; set; }
 
         /// <summary>
-        /// Gets or sets the appcast URL
+        /// Gets or sets the app cast URL
         /// </summary>
         public string AppCastUrl { get; set; }
 
         /// <summary>
-        /// Specifies if you want to use the notification toast
+        /// Specifies if you want to use the notification toast message (not implemented in all UIs).
         /// </summary>
         public bool UseNotificationToast { get; set; }
 
         /// <summary>
-        /// WinForms/WPF only. 
+        /// This setting is only valid on WinForms and WPF.
         /// If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
         /// Must be set to true if using NetSparkleUpdater from Avalonia.
         /// </summary>
@@ -355,8 +356,8 @@ namespace NetSparkleUpdater
         #endregion
 
         /// <summary>
-        /// Starts a NetSparkle background loop to check for updates every 24 hours.
-        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
+        /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
+        /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         public void StartLoop(bool doInitialCheck)
@@ -365,8 +366,8 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Starts a NetSparkle background loop to check for updates on a given interval.
-        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
+        /// Starts a SparkleUpdater background loop to check for updates on a given interval.
+        /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
@@ -376,8 +377,8 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Starts a NetSparkle background loop to check for updates every 24 hours.
-        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
+        /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
+        /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
@@ -388,10 +389,10 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Starts a NetSparkle background loop to check for updates on a given interval.
-        /// <para>You should only call this function when your app is initialized and shows its main window.</para>
+        /// Starts a SparkleUpdater background loop to check for updates on a given interval.
+        /// <para>You should only call this function when your app is initialized and shows its main UIw.</para>
         /// </summary>
-        /// <param name="doInitialCheck">whether the first check should happen before or after the first period</param>
+        /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
@@ -432,7 +433,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Stops the Sparkle background loop. Called automatically by <see cref="Dispose()"/>.
+        /// Stops the SparkleUpdater background loop. Called automatically by <see cref="Dispose()"/>.
         /// </summary>
         public void StopLoop()
         {
@@ -462,7 +463,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Dispose of managed and unmanaged resources
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">true if the object is currently being disposed; false otherwise</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -485,7 +486,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Unregisters events so that we don't have multiple items updating
+        /// Unregisters events so that we don't call events more often than we should
         /// </summary>
         private void UnregisterEvents()
         {
@@ -506,7 +507,7 @@ namespace NetSparkleUpdater
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
@@ -514,7 +515,7 @@ namespace NetSparkleUpdater
         /// the calling process has read access to the reference assembly.
         /// This method is also called from the background loops.
         /// </summary>
-        /// <param name="config">the NetSparkle configuration for the reference assembly</param>
+        /// <param name="config">the SparkleUpdater configuration for the reference assembly</param>
         /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
         protected async Task<UpdateInfo> GetUpdateStatus(Configuration config)
         {
@@ -939,8 +940,8 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Called when the installer is downloaded
         /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="e">used to determine if the download was successful.</param>
+        /// <param name="sender">the object that initiated this event call</param>
+        /// <param name="e">information on if the download was successful.</param>
         private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
         {
             bool shouldShowUIItems = !IsDownloadingSilently();
@@ -1351,9 +1352,10 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Quits the application (host application) 
+        /// Quits the application (host application) that is using/started SparkleUpdater
         /// </summary>
-        /// <returns>Runs asynchrously, so returns a Task</returns>
+        /// <returns>Asynchronous task that can be awaited to call code after the application 
+        /// is quit (which may or may not be worth it based on your program setup)</returns>
         public async Task QuitApplication()
         {
             // quit the app
@@ -1388,9 +1390,10 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Apps may need, for example, to let user save their work
+        /// Ask the application to close their current work items. 
+        /// Apps may need, for example, to let the user save their work
         /// </summary>
-        /// <returns>true if it's OK to run the installer</returns>
+        /// <returns>true if it's OK to run the installer and close the software; false otherwise</returns>
         private async Task<bool> AskApplicationToSafelyCloseUp()
         {
             try
@@ -1470,7 +1473,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Does a one-off check for updates
+        /// Perform a one-time check for updates
         /// </summary>
         private async Task<UpdateInfo> CheckForUpdates()
         {
@@ -1527,7 +1530,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Cancels an in-progress download and deletes the temporary file.
+        /// Cancels an in-progress download of an app cast file and deletes the temporary file.
         /// </summary>
         public void CancelFileDownload()
         {
@@ -1542,8 +1545,8 @@ namespace NetSparkleUpdater
         /// Events should always be fired on the thread that started the Sparkle object.
         /// Used for events that are fired after coming from an update available window
         /// or the download progress window.
-        /// Basically, if ShowsUIOnMainThread, just invokes the action. Otherwise,
-        /// uses the SynchronizationContext to call the action. Ensures that the action
+        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
+        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
         /// is always on the main thread.
         /// </summary>
         /// <param name="action"></param>
@@ -1563,8 +1566,8 @@ namespace NetSparkleUpdater
         /// Events should always be fired on the thread that started the Sparkle object.
         /// Used for events that are fired after coming from an update available window
         /// or the download progress window.
-        /// Basically, if ShowsUIOnMainThread, just invokes the action. Otherwise,
-        /// uses the SynchronizationContext to call the action. Ensures that the action
+        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
+        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
         /// is always on the main thread.
         /// </summary>
         /// <param name="action"></param>
@@ -1580,10 +1583,6 @@ namespace NetSparkleUpdater
             }
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="sender">not used.</param>
-        /// <param name="args">Info on the user response and what update item they responded to</param>
         private async void OnUserWindowUserResponded(object sender, UpdateResponseEventArgs args)
         {
             LogWriter.PrintMessage("Update window response: {0}", args.Result);
@@ -1629,7 +1628,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// This method will be executed as worker thread
+        /// Loop that occasionally checks for updates for the running application
         /// </summary>
         private async void OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
