@@ -10,7 +10,8 @@ using System.Text;
 namespace NetSparkleUpdater.Downloaders
 {
     /// <summary>
-    /// Class that takes care of downloading data for an app cast. Allows
+    /// Class that takes care of downloading data for an app cast, including the 
+    /// app cast itself as well as the app cast signature (if available). Allows
     /// you to send extra JSON with your request for the app cast information.
     /// </summary>
     public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
@@ -26,12 +27,12 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <summary>
-        /// If true, don't check the validity of SSL certificates
+        /// If true, don't check the validity of SSL certificates. Defaults to false.
         /// </summary>
         public bool TrustEverySSLConnection { get; set; } = false;
 
         /// <summary>
-        /// If not "", sends extra JSON via POST to server with the web request for update information and for the DSA signature.
+        /// If not "", sends extra JSON via POST to server with the web request for update information and for the app cast signature.
         /// </summary>
         public string ExtraJsonData { get; set; } = "";
 
@@ -68,7 +69,7 @@ namespace NetSparkleUpdater.Downloaders
 
         /// <summary>
         /// Download the app cast from the given URL.
-        /// Performs a GET request by default. If ExtraJsonData is set,
+        /// Performs a GET request by default. If <see cref="ExtraJsonData"/> is set,
         /// uses a POST request and sends the JSON data along with the
         /// request.
         /// </summary>
@@ -124,11 +125,11 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// Determine if the remote X509 certificate is valid
         /// </summary>
-        /// <param name="sender">the web request</param>
+        /// <param name="sender">the web request that is being made</param>
         /// <param name="certificate">the certificate</param>
         /// <param name="chain">the chain</param>
-        /// <param name="sslPolicyErrors">how to handle policy errors</param>
-        /// <returns><c>true</c> if the cert is valid</returns>
+        /// <param name="sslPolicyErrors">any SSL policy errors that have occurred</param>
+        /// <returns><c>true</c> if the cert is valid; false otherwise</returns>
         private bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (TrustEverySSLConnection)

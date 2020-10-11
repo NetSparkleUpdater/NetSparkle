@@ -114,7 +114,7 @@ _sparkle.PreparingToExit += ((x, cancellable) =>
 
 Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be executed/read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 
-The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use [AboutToExitForInstallerRun](#abouttoexitforinstallerrun)/[AboutToExitForInstallerRunAsync](#abouttoexitforinstallerrunasync).
+The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use `PreparingForExit` or `PreparingToExitAsync`.
 
 ## App Cast
 
@@ -277,7 +277,7 @@ This section is still WIP, but major changes include:
   * Sample app to demonstrate how to handle events yourself with your own UI
 * Many delegates, events, and functions have been renamed, removed, and/or tweaked for clarity and better use
   * `DownloadEvent` now has the `AppCastItem` that is being downloaded rather than being just the download path
-  * `AboutToExitForInstallerRun`/`AboutToExitForInstallerRunAsync` has been renamed to `PreparingToExit`/``PreparingToExitAsync`, respectively
+  * `AboutToExitForInstallerRun`/`AboutToExitForInstallerRunAsync` has been renamed to `PreparingToExit`/`PreparingToExitAsync`, respectively
   * The `UserSkippedVersion` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `RemindMeLaterSelected` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.

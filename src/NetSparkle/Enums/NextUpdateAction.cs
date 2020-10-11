@@ -1,7 +1,7 @@
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Everytime when NetSparkleUpdater detects an update, the
+    /// Every time when <see cref="SparkleUpdater"/> detects an update, the
     /// consumer can decide what should happen next with the help
     /// of the <see cref="UpdateDetected"/> event
     /// </summary>
@@ -16,7 +16,7 @@ namespace NetSparkleUpdater.Enums
         /// </summary>
         PerformUpdateUnattended = 2,
         /// <summary>
-        /// Prohibit the update
+        /// Prohibit (don't allow) the update
         /// </summary>
         ProhibitUpdate = 3
     }

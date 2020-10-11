@@ -10,7 +10,7 @@ namespace NetSparkleUpdater.Interfaces
     /// <summary>
     /// Interface for objects that can download (or otherwise obtain) update files
     /// for a given <see cref="AppCastItem"/>. These objects should send back
-    /// progress updates and handle other excepctions or other event changes as necessary.
+    /// progress updates and handle other exceptions or other event changes as necessary.
     /// </summary>
     public interface IUpdateDownloader
     {

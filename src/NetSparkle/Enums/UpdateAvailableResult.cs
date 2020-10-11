@@ -1,7 +1,9 @@
+using NetSparkleUpdater.Interfaces;
+
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Possible Result values for IUpdateAvailable implementation.
+    /// Possible result values for <see cref="IUpdateAvailable"/> implementation.
     /// </summary>
     public enum UpdateAvailableResult
     {
@@ -21,7 +23,8 @@ namespace NetSparkleUpdater.Enums
         SkipUpdate,
 
         /// <summary>
-        /// User chose to remind them later about this update.
+        /// User chose to remind them later about this update (e.g. close for now, but 
+        /// feel free to tell me about it next time that the software checks for updates).
         /// </summary>
         RemindMeLater
     }

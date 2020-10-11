@@ -8,6 +8,8 @@ namespace NetSparkleUpdater.Configurations
     /// Configuration data for this software and NetSparkle instance.
     /// Allows you to get information on the versions that the user
     /// skipped, when the last update was performed, etc.
+    /// Used by the <see cref="JSONConfiguration"/> class to save/load
+    /// data easily to/from disk.
     /// </summary>
     public class SavedConfigurationData
     {
@@ -16,7 +18,7 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public bool CheckForUpdate { get; set; }
         /// <summary>
-        /// The last DateTime that an update check was performed
+        /// The last <see cref="DateTime"/> that an update check was performed
         /// </summary>
         public DateTime LastCheckTime { get; set; }
         /// <summary>
@@ -34,7 +36,7 @@ namespace NetSparkleUpdater.Configurations
         /// </summary>
         public bool DidRunOnce { get; set; }
         /// <summary>
-        /// Last DateTime that the configuration data was updated.
+        /// Last <see cref="DateTime"/> that the configuration data was updated.
         /// </summary>
         public DateTime LastConfigUpdate { get; set; }
     }

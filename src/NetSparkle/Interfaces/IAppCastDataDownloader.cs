@@ -14,11 +14,12 @@ namespace NetSparkleUpdater.Interfaces
     {
         /// <summary>
         /// Used for both downloading app cast and the app cast's .dsa file.
-        /// Note that you must handle your own exceptions if they occur. Otherwise, SparkleUpdater
-        /// will act as though the appcast failed to download.
+        /// Note that you must handle your own exceptions if they occur. 
+        /// Otherwise, <see cref="SparkleUpdater"></see> will act as though the appcast 
+        /// failed to download.
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <param name="url">string URL for the place where the app cast can be downloaded</param>
+        /// <returns>The app cast data encoded as a string</returns>
         string DownloadAndGetAppCastData(string url);
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace NetSparkleUpdater.Interfaces
         /// app cast file so that it can be converted to bytes.
         /// (WebRequestAppCastDataDownloader defaults to UTF8.)
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The <seealso cref="Encoding"/> of the app cast</returns>
         Encoding GetAppCastEncoding();
     }
 }

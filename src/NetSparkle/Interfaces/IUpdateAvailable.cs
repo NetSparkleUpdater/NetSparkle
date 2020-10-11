@@ -16,7 +16,7 @@ namespace NetSparkleUpdater.Interfaces
         event UserRespondedToUpdate UserResponded;
 
         /// <summary>
-        /// Show the UI
+        /// Show the UI that displays release notes, etc.
         /// </summary>
         void Show(bool IsOnMainThread);
 
@@ -36,22 +36,23 @@ namespace NetSparkleUpdater.Interfaces
         void HideSkipButton();
 
         /// <summary>
-        /// Gets the result for skip, later, or install
+        /// Gets the user choice on how to handle this update (e.g. skip, remind me later)
         /// </summary>
         UpdateAvailableResult Result { get; }
 
         /// <summary>
-        /// Gets or sets the current item being installed
+        /// Gets or sets the current item being installed 
+        /// (the item that the user should update to)
         /// </summary>
         AppCastItem CurrentItem { get; }
 
         /// <summary>
-        /// Brings the form to the front of all windows
+        /// Brings the update info UI to the front of all windows
         /// </summary>
         void BringToFront();
 
         /// <summary>
-        /// Close the form
+        /// Close the UI that shows update information
         /// </summary>
         void Close();
     }

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
-    /// Interface for UIs that tell the user that NetSparkle is checking for updates
+    /// Interface for UIs that tell the user that <see cref="SparkleUpdater"/> 
+    /// is checking for updates
     /// </summary>
     public interface ICheckingForUpdates
     {
@@ -17,12 +18,12 @@ namespace NetSparkleUpdater.Interfaces
         event EventHandler UpdatesUIClosing;
 
         /// <summary>
-        /// Show the UI
+        /// Show the checking for updates UI
         /// </summary>
         void Show();
 
         /// <summary>
-        /// Close the form
+        /// Close the window/UI that shows the checking for updates UI
         /// </summary>
         void Close();
     }

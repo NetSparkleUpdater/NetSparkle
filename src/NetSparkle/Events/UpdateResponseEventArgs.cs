@@ -26,7 +26,7 @@ namespace NetSparkleUpdater.Events
         /// Constructor for UpdateResponseArgs that allows for easy setting
         /// of the result
         /// </summary>
-        /// <param name="result">User's response of type UpdateAvailableResult</param>
+        /// <param name="result">User's response of type <see cref="UpdateAvailableResult"/></param>
         /// <param name="item">Item that the user is responding to an update message for</param>
         public UpdateResponseEventArgs(UpdateAvailableResult result, AppCastItem item) : base()
         {

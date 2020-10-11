@@ -17,7 +17,7 @@ namespace NetSparkleUpdater.Interfaces
         IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
 
         /// <summary>
-        /// Create download progress window
+        /// Create the download progress window
         /// </summary>
         /// <param name="item">Appcast item to download</param>
         IDownloadProgress CreateProgressWindow(AppCastItem item);

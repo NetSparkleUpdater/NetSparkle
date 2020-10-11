@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.Downloaders
 {
     /// <summary>
     /// Class that downloads files from the internet and reports
-    /// progress on those files being downloaded. Uses a WebClient
+    /// progress on those files being downloaded. Uses a <seealso cref="WebClient"/>
     /// object as its main method for downloading.
     /// </summary>
     public class WebClientFileDownloader : IUpdateDownloader, IDisposable

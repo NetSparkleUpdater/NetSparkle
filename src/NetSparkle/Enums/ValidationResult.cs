@@ -1,23 +1,26 @@
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Return value of the DSA verification check functions.
+    /// Return value of the signature verification check functions.
     /// </summary>
     public enum ValidationResult
     {
         /// <summary>
-        /// The DSA public key and signature exists and they are valid.
+        /// The public key and signature both exist and they are valid (the update file
+        /// is safe to use).
         /// </summary>
         Valid = 1,
 
         /// <summary>
-        /// Depending on the SecurityMode at least one of DSA public key or the signature dosn't exist or
-        /// they exists but they are not valid. In this case the file will be rejected.
+        /// Depending on the <see cref="SecurityMode"/> used, either the public key or the 
+        /// signature doesn't exist -- or they exist but are not valid. 
+        /// In this case the update file will be rejected.
         /// </summary>
         Invalid = 2,
 
         /// <summary>
-        /// There wasn't any DSA public key or signature and SecurityMode said this is okay.
+        /// There wasn't any public key or signature available, and this is OK based on the 
+        /// <see cref="SecurityMode"/> used.
         /// </summary>
         Unchecked = 3,
     }

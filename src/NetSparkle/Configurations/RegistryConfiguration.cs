@@ -10,13 +10,8 @@ namespace NetSparkleUpdater.Configurations
     /// This class handles all registry values which are used from sparkle to handle 
     /// update intervalls. All values are stored in HKCU\Software\Vendor\AppName which 
     /// will be read ot from the assembly information. All values are of the REG_SZ 
-    /// type, no matter what their "logical" type is. The following options are
-    /// available:
-    /// 
-    /// CheckForUpdate  - Boolean    - Whether NetSparkle should check for updates
-    /// LastCheckTime   - time_t     - Time of last check
-    /// SkipThisVersion - String     - If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
-    /// DidRunOnce      - Boolean    - Check only one time when the app launched
+    /// type, no matter what their "logical" type is.
+    /// This should only be used on Windows!
     /// </summary>    
     public class RegistryConfiguration : Configuration
     {
@@ -61,9 +56,7 @@ namespace NetSparkleUpdater.Configurations
             }
         }
 
-        /// <summary>
-        /// Touches to profile time
-        /// </summary>
+        /// <inheritdoc/>
         public override void TouchProfileTime()
         {
             base.TouchProfileTime();
@@ -71,9 +64,7 @@ namespace NetSparkleUpdater.Configurations
             SaveValuesToPath(BuildRegistryPath());
         }
 
-        /// <summary>
-        /// Touches the check time to now, should be used after a check directly
-        /// </summary>
+        /// <inheritdoc/>
         public override void TouchCheckTime()
         {
             base.TouchCheckTime();
@@ -81,28 +72,24 @@ namespace NetSparkleUpdater.Configurations
             SaveValuesToPath(BuildRegistryPath());
         }
 
-        /// <summary>
-        /// This method allows to skip a specific version
-        /// </summary>
-        /// <param name="version">the version to skeip</param>
+        /// <inheritdoc/>
         public override void SetVersionToSkip(string version)
         {
             base.SetVersionToSkip(version);
             SaveValuesToPath(BuildRegistryPath());
         }
 
-        /// <summary>
-        /// Reloads the configuration object
-        /// </summary>
+        /// <inheritdoc/>
         public override void Reload()
         {
             LoadValuesFromPath(BuildRegistryPath());
         }
 
         /// <summary>
-        /// This function build a valid registry path in dependecy to the 
-        /// assembly information
+        /// Generate the path in the registry where data will be saved to/loaded from.
         /// </summary>
+        /// <exception cref="NetSparkleException">Thrown when the assembly accessor does not have the company or product name
+        /// information available</exception>
         public virtual string BuildRegistryPath()
         {
             if (!string.IsNullOrEmpty(_registryPath))
@@ -142,10 +129,10 @@ namespace NetSparkleUpdater.Configurations
         }
 
         /// <summary>
-        /// This method loads the values from registry
+        /// Load values from the provided registry path
         /// </summary>
         /// <param name="regPath">the registry path</param>
-        /// <returns><c>true</c> if the items were loaded</returns>
+        /// <returns><c>true</c> if the items were loaded successfully; false otherwise</returns>
         private bool LoadValuesFromPath(string regPath)
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
@@ -208,10 +195,10 @@ namespace NetSparkleUpdater.Configurations
         }
 
         /// <summary>
-        /// This method store the information into registry
+        /// Stores the configuration data into the registry at the given path
         /// </summary>
         /// <param name="regPath">the registry path</param>
-        /// <returns><c>true</c> if the values were saved to the registry</returns>
+        /// <returns><c>true</c> if the values were saved to the registry; false otherwise</returns>
         private bool SaveValuesToPath(string regPath)
         {
             RegistryKey key = Registry.CurrentUser.CreateSubKey(regPath);

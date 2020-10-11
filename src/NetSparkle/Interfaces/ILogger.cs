@@ -7,7 +7,7 @@ namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for objects that can handle log information output
-    /// (e.g. to a console or a file or something else)
+    /// (e.g. to a console or a file)
     /// </summary>
     public interface ILogger
     {
