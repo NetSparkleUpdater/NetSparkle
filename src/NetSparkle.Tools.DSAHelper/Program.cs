@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using NetSparkleUpdater.Enums;
@@ -20,6 +18,7 @@ namespace NetSparkleUpdater.DSAHelper
                 // check if we have some parameters
                 if (args.Count() < 1)
                 {
+                    Console.WriteLine("[ERROR] args.Count() < 1");
                     Usage();
                     return;
                 }
@@ -63,6 +62,8 @@ namespace NetSparkleUpdater.DSAHelper
                         {
                             if (args.Count() != 3)
                             {
+                                Console.WriteLine("[ERROR] args.Count() != 3");
+                                PrintArgs(args);
                                 Usage();
                                 Environment.ExitCode = -1;
                                 return;
@@ -93,6 +94,8 @@ namespace NetSparkleUpdater.DSAHelper
                         {
                             if (args.Count() != 4)
                             {
+                                Console.WriteLine("[ERROR] args.Count() != 4");
+                                PrintArgs(args);
                                 Usage();
                                 Environment.ExitCode = -1;
                                 return;
@@ -131,6 +134,15 @@ namespace NetSparkleUpdater.DSAHelper
             {
                 Console.WriteLine("Something went wrong :-(");
                 Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        static private void PrintArgs(string[] args)
+        {
+            var i = 0;
+            foreach (var arg in args)
+            {
+                Console.WriteLine("{0}: {1}", i++, arg);
             }
         }
 
