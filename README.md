@@ -257,6 +257,8 @@ This section is still WIP, but major changes include:
 * Minimum .NET requirement is now .NET Framework 4.5.2 instead of 4.5.1
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
+* The default NetSparkleUpdater/NetSparkle.New package **has no built-in UI**. Please use one of the NetSparkleUpdater packages with a UI if you want a built-in UI that is provided for you.
+  * Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be executed/read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 * XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
   * Enabled build time warnings for functions that need documentation that don't have it
 * `SparkleUpdater` constructors now require an `ISignatureVerifier` in order to "force" you to choose your signature verification method
