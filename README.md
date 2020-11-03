@@ -255,10 +255,10 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 This section is still WIP, but major changes include:
 
 * Minimum .NET requirement is now .NET Framework 4.5.2 instead of 4.5.1
-* XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
-  * Enabled build time warnings for functions that need documentation that don't have it
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
+* XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
+  * Enabled build time warnings for functions that need documentation that don't have it
 * `SparkleUpdater` constructors now require an `ISignatureVerifier` in order to "force" you to choose your signature verification method
 * `SecurityMode` is a new enum that defines which signatures are required and which signatures are not required
   * Added `SecurityMode.OnlyVerifySoftwareDownloads` if you want to verify only software download signatures and don't care about verifying your app cast or release notes
@@ -284,6 +284,13 @@ This section is still WIP, but major changes include:
   * The `UserSkippedVersion` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `RemindMeLaterSelected` event has been removed. Use `UserRespondedToUpdate` instead.
   * The `FinishedDownloading`/`DownloadedFileReady` events have been removed. Use `DownloadFinished` instead.
+  * The `StartedDownloading` event has been removed and replaced with `DownloadStarted`
+  * The `DownloadError` event has been removed and replaced with `DownloadHadError`
+  * `Sparkle.RunUpdate` no longer exists. Use `SparkleUpdater.InstallUpdate` instead.
+  * `Sparkle.DownloadPathForAppCastItem` -> `SparkleUpdater.GetDownloadPathForAppCastItem`
+  * `AppCastItem.DownloadDSASignature` -> `AppCastItem.DownloadSignature`
+  * `SilentModeTypes` enum renamed to `UserInteractionMode`
+  * `Sparkle.SilentMode` renamed to `Sparkle.UserInteractionMode`
 * By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
 * `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available). If `sparkle:dsaSignature` is not found, `sparkle:edSignature` will be used (if available). This is to give us as much compatibility with old versions of `NetSparkle` as well as the macOS `Sparkle` library.
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool. You can also store these signatures in a custom location with the `--key-path` flag.
@@ -291,6 +298,7 @@ This section is still WIP, but major changes include:
 * Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
 * **We now rely on Portable.BouncyCastle** for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!
+
 
 ## FAQ
 
