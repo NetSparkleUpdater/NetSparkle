@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("byt",["Property"],[["BytesReceived",,[["NetSparkleUpdater.Events.ItemDownloadProgressEventArgs",,,,0,"File:NetSparkle/Events/ItemDownloadProgressEventArgs.cs:NetSparkleUpdater.Events.ItemDownloadProgressEventArgs.BytesReceived","CSharpClass:NetSparkleUpdater.Events.ItemDownloadProgressEventArgs:BytesReceived"]]]]);

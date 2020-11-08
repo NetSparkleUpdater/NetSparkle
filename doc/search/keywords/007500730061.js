@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("usa",["Function"],[["Usage",,[["NetSparkleUpdater.DSAHelper.Program",,,,0,"File:NetSparkle.Tools.DSAHelper/Program.cs:NetSparkleUpdater.DSAHelper.Program.Usage","CSharpClass:NetSparkleUpdater.DSAHelper.Program:Usage"]]]]);

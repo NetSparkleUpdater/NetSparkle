@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("dat",["Constant"],[["DateTimeFormat",,[["NetSparkleUpdater.Configurations.RegistryConfiguration",,,,0,"File:NetSparkle/Configurations/RegistryConfiguration.cs:NetSparkleUpdater.Configurations.RegistryConfiguration.DateTimeFormat","CSharpClass:NetSparkleUpdater.Configurations.RegistryConfiguration:DateTimeFormat"]]]]);

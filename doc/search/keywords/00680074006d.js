@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("htm",["Function"],[["HtmlEvaluator",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown.HtmlEvaluator","CSharpClass:MarkdownSharp.Markdown:HtmlEvaluator"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("doe",["Function"],[["DoExtensionsMatch",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.DoExtensionsMatch","CSharpClass:NetSparkleUpdater.SparkleUpdater:DoExtensionsMatch"]]]]);

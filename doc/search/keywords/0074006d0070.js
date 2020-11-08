@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("tmp",["Property"],[["TmpDownloadFilePath",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.TmpDownloadFilePath","CSharpClass:NetSparkleUpdater.SparkleUpdater:TmpDownloadFilePath"]]]]);

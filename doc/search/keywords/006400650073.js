@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("des",["Property"],[["Description",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem.Description","CSharpClass:NetSparkleUpdater.AppCastItem:Description"]]]]);

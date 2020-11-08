@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_no",["Variable"],[["_notes",,[["NetSparkleUpdater.UI.WPF.UpdateAvailableWindow",,,,0,"File:NetSparkle.UI.WPF/UpdateAvailableWindow.xaml.cs:NetSparkleUpdater.UI.WPF.UpdateAvailableWindow._notes","CSharpClass:NetSparkleUpdater.UI.WPF.UpdateAvailableWindow:_notes"]]]]);

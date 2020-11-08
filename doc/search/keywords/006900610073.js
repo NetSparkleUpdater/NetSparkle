@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ias",["Interface"],[["IAssemblyAccessor",,[["NetSparkleUpdater.Interfaces",,,,0,"File:NetSparkle/Interfaces/IAssemblyAccessor.cs:NetSparkleUpdater.Interfaces.IAssemblyAccessor","CSharpClass:NetSparkleUpdater.Interfaces.IAssemblyAccessor"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_sy",["Variable"],[["_syncContext",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater._syncContext","CSharpClass:NetSparkleUpdater.SparkleUpdater:_syncContext"]]]]);

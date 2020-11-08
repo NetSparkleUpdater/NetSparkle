@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ty",["Constant"],[["_typeAttribute",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem._typeAttribute","CSharpClass:NetSparkleUpdater.AppCastItem:_typeAttribute"]]]]);

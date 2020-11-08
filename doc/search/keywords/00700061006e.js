@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("pan",["Variable"],[["panel1",,[["NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow",,,,0,"File:NetSparkle.UI.WinForms.NetCore/UpdateAvailableWindow.Designer.cs:NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow.panel1","CSharpClass:NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow:panel1"]]]]);

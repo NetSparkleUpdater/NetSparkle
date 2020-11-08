@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:NetSparkle/Enums/SecurityMode.cs","SecurityMode.cs");NDSummary.OnSummaryLoaded("File:NetSparkle/Enums/SecurityMode.cs",[["C#","CSharp"]],[["Enums","Enumeration"],["Groups","Group"]],[[130,0,1,"Types","NetSparkleUpdater.Enums.Types"],[131,0,0,"SecurityMode","NetSparkleUpdater.Enums.SecurityMode"]]);

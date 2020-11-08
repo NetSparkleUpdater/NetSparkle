@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isw",["Property"],[["IsWindowsUpdate",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem.IsWindowsUpdate","CSharpClass:NetSparkleUpdater.AppCastItem:IsWindowsUpdate"]]]]);

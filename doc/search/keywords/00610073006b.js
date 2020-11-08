@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ask",["Function"],[["AskApplicationToSafelyCloseUp",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.AskApplicationToSafelyCloseUp","CSharpClass:NetSparkleUpdater.SparkleUpdater:AskApplicationToSafelyCloseUp"]]]]);

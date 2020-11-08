@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("sto",["Function"],[["StopLoop",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.StopLoop","CSharpClass:NetSparkleUpdater.SparkleUpdater:StopLoop"]]]]);

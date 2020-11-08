@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("num",["Function"],[["NumBytesToUserReadableString",,[["NetSparkleUpdater.Utilities",,,,0,"File:NetSparkle.Shared/Utilities.cs:NetSparkleUpdater.Utilities.NumBytesToUserReadableString","CSharpClass:NetSparkleUpdater.Utilities:NumBytesToUserReadableString"]]]]);

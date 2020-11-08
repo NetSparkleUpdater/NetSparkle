@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_am",["Variable"],[["_amps",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown._amps","CSharpClass:MarkdownSharp.Markdown:_amps"]]]]);

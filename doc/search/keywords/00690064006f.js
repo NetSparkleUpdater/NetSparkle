@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ido",["Interface"],[["IDownloadProgress",,[["NetSparkleUpdater.Interfaces",,,,0,"File:NetSparkle/Interfaces/IDownloadProgress.cs:NetSparkleUpdater.Interfaces.IDownloadProgress","CSharpClass:NetSparkleUpdater.Interfaces.IDownloadProgress"]]]]);

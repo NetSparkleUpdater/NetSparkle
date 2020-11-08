@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("tag",["Variable"],[["tag",,[["NetSparkleUpdater.LogWriter",,,,0,"File:NetSparkle/LogWriter.cs:NetSparkleUpdater.LogWriter.tag","CSharpClass:NetSparkleUpdater.LogWriter:tag"]]]]);

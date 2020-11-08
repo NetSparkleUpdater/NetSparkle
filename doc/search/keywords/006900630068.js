@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ich",["Interface"],[["ICheckingForUpdates",,[["NetSparkleUpdater.Interfaces",,,,0,"File:NetSparkle/Interfaces/ICheckingForUpdates.cs:NetSparkleUpdater.Interfaces.ICheckingForUpdates","CSharpClass:NetSparkleUpdater.Interfaces.ICheckingForUpdates"]]]]);

@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:NetSparkle/Enums/UpdateAvailableResult.cs","UpdateAvailableResult.cs");NDSummary.OnSummaryLoaded("File:NetSparkle/Enums/UpdateAvailableResult.cs",[["C#","CSharp"]],[["Enums","Enumeration"],["Groups","Group"]],[[136,0,1,"Types","NetSparkleUpdater.Enums.Types"],[137,0,0,"UpdateAvailableResult","NetSparkleUpdater.Enums.UpdateAvailableResult"]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("unr",["Function"],[["UnregisterEvents",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.UnregisterEvents","CSharpClass:NetSparkleUpdater.SparkleUpdater:UnregisterEvents"]]]]);

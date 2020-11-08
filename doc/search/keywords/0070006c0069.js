@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("pli",["Class"],[["PListConfiguration",,[["NetSparkle.Xamarin",,,,0,"File:NetSparkle.Xamarin/PListConfiguration.cs:NetSparkle.Xamarin.PListConfiguration","CSharpClass:NetSparkle.Xamarin.PListConfiguration"]]]]);

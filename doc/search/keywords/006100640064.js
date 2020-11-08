@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("add",["Function"],[["AddEventHandler",,[["XamlGeneratedNamespace.GeneratedInternalTypeHelper",,,,0,"File:NetSparkle.UI.WPF/obj/Debug/net451/GeneratedInternalTypeHelper.g.i.cs:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler","CSharpClass:XamlGeneratedNamespace.GeneratedInternalTypeHelper:AddEventHandler"]]]]);

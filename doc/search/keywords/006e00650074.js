@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("net",["Class"],[["NetSparkleException",,[["NetSparkleUpdater",,,,0,"File:NetSparkle/NetSparkleException.cs:NetSparkleUpdater.NetSparkleException","CSharpClass:NetSparkleUpdater.NetSparkleException"]]]]);

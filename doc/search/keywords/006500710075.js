@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("equ",["Function"],[["Equals",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem.Equals","CSharpClass:NetSparkleUpdater.AppCastItem:Equals"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("atx",["Function"],[["AtxHeaderEvaluator",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown.AtxHeaderEvaluator","CSharpClass:MarkdownSharp.Markdown:AtxHeaderEvaluator"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isc",["Property"],[["IsCriticalUpdate",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem.IsCriticalUpdate","CSharpClass:NetSparkleUpdater.AppCastItem:IsCriticalUpdate"]]]]);

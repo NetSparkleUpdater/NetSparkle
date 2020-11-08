@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("uti",["Class"],[["Utilities",,[["NetSparkleUpdater",,,,0,"File:NetSparkle.Shared/Utilities.cs:NetSparkleUpdater.Utilities","CSharpClass:NetSparkleUpdater.Utilities"]]],["UtilitiesTests",,[["NetSparkleUnitTests",,,,0,"File:NetSparkle.Tests/UtilitiesTests.cs:NetSparkleUnitTests.UtilitiesTests","CSharpClass:NetSparkleUnitTests.UtilitiesTests"]]]]);

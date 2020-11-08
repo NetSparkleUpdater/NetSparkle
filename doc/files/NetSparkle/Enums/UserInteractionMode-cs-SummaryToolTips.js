@@ -1,0 +1,1 @@
+NDSummary.OnToolTipsLoaded("File:NetSparkle/Enums/UserInteractionMode.cs",{110:"<div class=\"NDToolTip TEnumeration LCSharp\"><div id=\"NDPrototype110\" class=\"NDPrototype NoParameterForm\"><span class=\"SHKeyword\">public enum</span> UserInteractionMode</div><div class=\"TTSummary\">Allows for updating the application with or without user interaction.</div></div>"});

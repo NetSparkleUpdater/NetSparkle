@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_sa",["Variable"],[["_savePath",,[["NetSparkleUpdater.Configurations.JSONConfiguration",,,,0,"File:NetSparkle/Configurations/JSONConfiguration.cs:NetSparkleUpdater.Configurations.JSONConfiguration._savePath","CSharpClass:NetSparkleUpdater.Configurations.JSONConfiguration:_savePath"]]]]);

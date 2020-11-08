@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_es",["Variable"],[["_escapeTable",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown._escapeTable","CSharpClass:MarkdownSharp.Markdown:_escapeTable"]]]]);

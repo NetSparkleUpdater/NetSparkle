@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ont",["Function"],[["OnToastClick",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.OnToastClick","CSharpClass:NetSparkleUpdater.SparkleUpdater:OnToastClick"]]]]);

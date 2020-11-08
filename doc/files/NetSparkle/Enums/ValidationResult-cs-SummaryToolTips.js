@@ -1,0 +1,1 @@
+NDSummary.OnToolTipsLoaded("File:NetSparkle/Enums/ValidationResult.cs",{108:"<div class=\"NDToolTip TEnumeration LCSharp\"><div id=\"NDPrototype108\" class=\"NDPrototype NoParameterForm\"><span class=\"SHKeyword\">public enum</span> ValidationResult</div><div class=\"TTSummary\">Return value of the signature verification check functions.</div></div>"});

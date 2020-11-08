@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_la",["Variable"],[["_latestDownloadedUpdateInfo",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater._latestDownloadedUpdateInfo","CSharpClass:NetSparkleUpdater.SparkleUpdater:_latestDownloadedUpdateInfo"]]]]);

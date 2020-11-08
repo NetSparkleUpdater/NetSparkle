@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("nor",["Function"],[["Normalize",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown.Normalize","CSharpClass:MarkdownSharp.Markdown:Normalize"]]]]);

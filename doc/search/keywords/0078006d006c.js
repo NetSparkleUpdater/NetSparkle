@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("xml",["Class"],[["XMLAppCast",,[["NetSparkleUpdater.AppCastHandlers",,,,0,"File:NetSparkle/AppCastHandlers/XMLAppCast.cs:NetSparkleUpdater.AppCastHandlers.XMLAppCast","CSharpClass:NetSparkleUpdater.AppCastHandlers.XMLAppCast"]]]]);

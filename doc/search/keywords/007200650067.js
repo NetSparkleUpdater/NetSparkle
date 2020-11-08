@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("reg",["Class"],[["RegistryConfiguration",,[["NetSparkleUpdater.Configurations",,,,0,"File:NetSparkle/Configurations/RegistryConfiguration.cs:NetSparkleUpdater.Configurations.RegistryConfiguration","CSharpClass:NetSparkleUpdater.Configurations.RegistryConfiguration"]]]]);

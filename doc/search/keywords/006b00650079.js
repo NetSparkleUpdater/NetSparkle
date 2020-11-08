@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("key",["Function"],[["KeysExist",,[["NetSparkleUpdater.AppCastGenerator.SignatureManager",,,,0,"File:NetSparkle.Tools.AppCastGenerator/SignatureManager.cs:NetSparkleUpdater.AppCastGenerator.SignatureManager.KeysExist","CSharpClass:NetSparkleUpdater.AppCastGenerator.SignatureManager:KeysExist"]]]]);

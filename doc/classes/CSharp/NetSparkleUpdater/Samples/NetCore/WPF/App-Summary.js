@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("CSharpClass:NetSparkleUpdater.Samples.NetCore.WPF.App","App");NDSummary.OnSummaryLoaded("CSharpClass:NetSparkleUpdater.Samples.NetCore.WPF.App",[["C#","CSharp"]],[["Classes","Class"]],[[954,0,0,"<span class=\"Qualifier\">NetSparkleUpdater.&#8203;Samples.&#8203;NetCore.&#8203;WPF.</span>&#8203;App"]]);

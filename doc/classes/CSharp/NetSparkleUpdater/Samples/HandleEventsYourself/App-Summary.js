@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("CSharpClass:NetSparkleUpdater.Samples.HandleEventsYourself.App","App");NDSummary.OnSummaryLoaded("CSharpClass:NetSparkleUpdater.Samples.HandleEventsYourself.App",[["C#","CSharp"]],[["Classes","Class"]],[[891,0,0,"<span class=\"Qualifier\">NetSparkleUpdater.&#8203;Samples.&#8203;HandleEventsYourself.</span>&#8203;App"]]);

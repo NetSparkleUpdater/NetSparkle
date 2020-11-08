@@ -1,0 +1,1 @@
+NDSummary.OnToolTipsLoaded("File:NetSparkle/Enums/UpdateAvailableResult.cs",{137:"<div class=\"NDToolTip TEnumeration LCSharp\"><div id=\"NDPrototype137\" class=\"NDPrototype NoParameterForm\"><span class=\"SHKeyword\">public enum</span> UpdateAvailableResult</div><div class=\"TTSummary\">Possible result values for IUpdateAvailable implementation.</div></div>"});

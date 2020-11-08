@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("sou",["Property"],[["SourceBinaryDirectory",,[["NetSparkleUpdater.Tools.AppCastGenerator.Program.Options",,,,0,"File:NetSparkle.Tools.AppCastGenerator/Program.cs:NetSparkleUpdater.Tools.AppCastGenerator.Program.Options.SourceBinaryDirectory","CSharpClass:NetSparkleUpdater.Tools.AppCastGenerator.Program.Options:SourceBinaryDirectory"]]]]);

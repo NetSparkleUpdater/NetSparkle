@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ons",["Function"],[["OnSkipButtonClick",,[["NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow",,,,0,"File:NetSparkle.UI.WinForms.NetCore/UpdateAvailableWindow.cs:NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow.OnSkipButtonClick","CSharpClass:NetSparkleUpdater.UI.WinForms.UpdateAvailableWindow:OnSkipButtonClick"]]]]);

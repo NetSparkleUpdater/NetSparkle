@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("pat",["Property"],[["PathToKeyFiles",,[["NetSparkleUpdater.Tools.AppCastGenerator.Program.Options",,,,0,"File:NetSparkle.Tools.AppCastGenerator/Program.cs:NetSparkleUpdater.Tools.AppCastGenerator.Program.Options.PathToKeyFiles","CSharpClass:NetSparkleUpdater.Tools.AppCastGenerator.Program.Options:PathToKeyFiles"]]]]);

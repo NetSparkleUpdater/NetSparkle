@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ok_",["Function"],[["OK_Click",,[["NetSparkleUpdater.UI.WinForms.MessageNotificationWindow",,,,0,"File:NetSparkle.UI.WinForms.NetCore/MessageNotificationWindow.cs:NetSparkleUpdater.UI.WinForms.MessageNotificationWindow.OK_Click","CSharpClass:NetSparkleUpdater.UI.WinForms.MessageNotificationWindow:OK_Click"]]]]);

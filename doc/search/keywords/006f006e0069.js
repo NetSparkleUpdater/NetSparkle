@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("oni",["Function"],[["OnInstallAndReLaunchClick",,[["NetSparkleUpdater.UI.WinForms.DownloadProgressWindow",,,,0,"File:NetSparkle.UI.WinForms.NetCore/DownloadProgressWindow.cs:NetSparkleUpdater.UI.WinForms.DownloadProgressWindow.OnInstallAndReLaunchClick","CSharpClass:NetSparkleUpdater.UI.WinForms.DownloadProgressWindow:OnInstallAndReLaunchClick"]]]]);

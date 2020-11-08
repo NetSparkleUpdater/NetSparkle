@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_un",["Variable"],[["_unescapes",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown._unescapes","CSharpClass:MarkdownSharp.Markdown:_unescapes"]]]]);

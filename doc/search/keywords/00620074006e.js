@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("btn",["Variable"],[["btnInstallAndReLaunch",,[["NetSparkleUpdater.UI.WinForms.DownloadProgressWindow",,,,0,"File:NetSparkle.UI.WinForms.NetCore/DownloadProgressWindow.Designer.cs:NetSparkleUpdater.UI.WinForms.DownloadProgressWindow.btnInstallAndReLaunch","CSharpClass:NetSparkleUpdater.UI.WinForms.DownloadProgressWindow:btnInstallAndReLaunch"]]]]);

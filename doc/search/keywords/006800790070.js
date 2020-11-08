@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("hyp",["Function"],[["HyperlinkEvaluator",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown.HyperlinkEvaluator","CSharpClass:MarkdownSharp.Markdown:HyperlinkEvaluator"]]]]);

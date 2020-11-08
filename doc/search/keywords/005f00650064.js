@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ed",["Constant"],[["_ed25519SignatureAttribute",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem._ed25519SignatureAttribute","CSharpClass:NetSparkleUpdater.AppCastItem:_ed25519SignatureAttribute"]]]]);

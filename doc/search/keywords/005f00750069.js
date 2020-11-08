@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ui",["Variable"],[["_uiFactory",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater._uiFactory","CSharpClass:NetSparkleUpdater.SparkleUpdater:_uiFactory"]]]]);

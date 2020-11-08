@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isl",["Property"],[["IsLinuxUpdate",,[["NetSparkleUpdater.AppCastItem",,,,0,"File:NetSparkle/AppCastItem.cs:NetSparkleUpdater.AppCastItem.IsLinuxUpdate","CSharpClass:NetSparkleUpdater.AppCastItem:IsLinuxUpdate"]]]]);

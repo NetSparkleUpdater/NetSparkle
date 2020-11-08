@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("was",["Property"],[["WasHandled",,[["NetSparkleUpdater.Events.DownloadInstallEventArgs",,,,0,"File:NetSparkle/Events/DownloadInstallEventArgs.cs:NetSparkleUpdater.Events.DownloadInstallEventArgs.WasHandled","CSharpClass:NetSparkleUpdater.Events.DownloadInstallEventArgs:WasHandled"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isz",["Function"],[["IsZipDownload",,[["NetSparkleUpdater.SparkleUpdater",,,,0,"File:NetSparkle/SparkleUpdater.cs:NetSparkleUpdater.SparkleUpdater.IsZipDownload","CSharpClass:NetSparkleUpdater.SparkleUpdater:IsZipDownload"]]]]);

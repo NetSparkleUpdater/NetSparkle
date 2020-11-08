@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:NetSparkle/Enums/UserInteractionMode.cs","UserInteractionMode.cs");NDSummary.OnSummaryLoaded("File:NetSparkle/Enums/UserInteractionMode.cs",[["C#","CSharp"]],[["Enums","Enumeration"],["Groups","Group"]],[[109,0,1,"Types","NetSparkleUpdater.Enums.Types"],[110,0,0,"UserInteractionMode","NetSparkleUpdater.Enums.UserInteractionMode"]]);

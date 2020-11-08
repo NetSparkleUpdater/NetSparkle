@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("jso",["Class"],[["JSONConfiguration",,[["NetSparkleUpdater.Configurations",,,,0,"File:NetSparkle/Configurations/JSONConfiguration.cs:NetSparkleUpdater.Configurations.JSONConfiguration","CSharpClass:NetSparkleUpdater.Configurations.JSONConfiguration"]]]]);

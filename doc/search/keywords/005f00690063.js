@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ic",["Variable"],[["_iconBitmap",,[["NetSparkleUpdater.UI.Avalonia.UIFactory",,,,0,"File:NetSparkle.UI.Avalonia/UIFactory.cs:NetSparkleUpdater.UI.Avalonia.UIFactory._iconBitmap","CSharpClass:NetSparkleUpdater.UI.Avalonia.UIFactory:_iconBitmap"]]]]);

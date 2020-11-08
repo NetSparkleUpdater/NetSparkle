@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("rep",["Function"],[["RepeatString",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown.RepeatString","CSharpClass:MarkdownSharp.Markdown:RepeatString"]]]]);

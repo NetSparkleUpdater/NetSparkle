@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isi",["Interface"],[["ISignatureVerifier",,[["NetSparkleUpdater.Interfaces",,,,0,"File:NetSparkle/Interfaces/ISignatureVerifier.cs:NetSparkleUpdater.Interfaces.ISignatureVerifier","CSharpClass:NetSparkleUpdater.Interfaces.ISignatureVerifier"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ho",["Variable"],[["_horizontalRules",,[["MarkdownSharp.Markdown",,,,0,"File:NetSparkle/Libraries/MarkdownSharp.cs:MarkdownSharp.Markdown._horizontalRules","CSharpClass:MarkdownSharp.Markdown:_horizontalRules"]]]]);

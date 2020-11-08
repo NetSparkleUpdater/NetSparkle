@@ -1,0 +1,1 @@
+NDSummary.OnToolTipsLoaded("File:NetSparkle/Enums/UpdateStatus.cs",{133:"<div class=\"NDToolTip TEnumeration LCSharp\"><div id=\"NDPrototype133\" class=\"NDPrototype NoParameterForm\"><span class=\"SHKeyword\">public enum</span> UpdateStatus</div><div class=\"TTSummary\">Possibilities for the status of an update request</div></div>"});

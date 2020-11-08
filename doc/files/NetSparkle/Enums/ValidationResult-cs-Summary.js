@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:NetSparkle/Enums/ValidationResult.cs","ValidationResult.cs");NDSummary.OnSummaryLoaded("File:NetSparkle/Enums/ValidationResult.cs",[["C#","CSharp"]],[["Enums","Enumeration"],["Groups","Group"]],[[107,0,1,"Types","NetSparkleUpdater.Enums.Types"],[108,0,0,"ValidationResult","NetSparkleUpdater.Enums.ValidationResult"]]);

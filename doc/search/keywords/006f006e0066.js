@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("onf",["Function"],[["OnFrameworkInitializationCompleted",,[["NetSparkleUpdater.Samples.Avalonia.App",,,,0,"File:NetSparkle.Samples.Avalonia/App.xaml.cs:NetSparkleUpdater.Samples.Avalonia.App.OnFrameworkInitializationCompleted","CSharpClass:NetSparkleUpdater.Samples.Avalonia.App:OnFrameworkInitializationCompleted"]]]]);

@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("File:NetSparkle/Enums/NextUpdateAction.cs","NextUpdateAction.cs");NDSummary.OnSummaryLoaded("File:NetSparkle/Enums/NextUpdateAction.cs",[["C#","CSharp"]],[["Enums","Enumeration"],["Groups","Group"]],[[134,0,1,"Types","NetSparkleUpdater.Enums.Types"],[135,0,0,"NextUpdateAction","NetSparkleUpdater.Enums.NextUpdateAction"]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isf",["Property"],[["IsFirstRun",,[["NetSparkleUpdater.Configurations.Configuration",,,,0,"File:NetSparkle/Configurations/Configuration.cs:NetSparkleUpdater.Configurations.Configuration.IsFirstRun","CSharpClass:NetSparkleUpdater.Configurations.Configuration:IsFirstRun"]]]]);
