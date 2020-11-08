@@ -96,6 +96,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
         static void Main(string[] args)
         {
+            // By default, if no args given, print help
+            if (args.Count() == 0)
+            {
+                args = new string[] { "--help" };
+            }
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(Run)
                 .WithNotParsed(HandleParseError);
@@ -191,9 +196,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             }
 
             Console.WriteLine("");
-            Console.WriteLine($"Operating System: {opts.OperatingSystem}", Color.Blue);
-            Console.WriteLine($"Searching: {opts.SourceBinaryDirectory}", Color.Blue);
-            Console.WriteLine($"Found {binaries.Count()} {opts.Extension} files(s)", Color.Blue);
+            Console.WriteLine($"Operating System: {opts.OperatingSystem}", Color.LightBlue);
+            Console.WriteLine($"Searching: {opts.SourceBinaryDirectory}", Color.LightBlue);
+            Console.WriteLine($"Found {binaries.Count()} {opts.Extension} files(s)", Color.LightBlue);
             Console.WriteLine("");
 
             try
