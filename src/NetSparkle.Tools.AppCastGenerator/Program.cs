@@ -35,7 +35,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('f', "file-extract-version", SetName = "local", Required = false, HelpText = "Determine the version from the file name", Default = false)]
             public bool FileExtractVersion { get; set; }
 
-            [Option('o', "os", Required = false, HelpText = "Operating System (windows,macos,linux)", Default = "windows")]
+            [Option('o', "os", Required = false, HelpText = "Operating System (windows, macos, linux)", Default = "windows")]
             public string OperatingSystem { get; set; }
 
             [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
@@ -228,7 +228,20 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     var productVersion = version;
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
-                    var remoteUpdateFile = $"{opts.BaseUrl}/{(opts.PrefixVersion ? $"{version}/" :"")}{HttpUtility.UrlEncode(fileInfo.Name)}";
+
+                    var urlEncodedFileName = HttpUtility.UrlEncode(fileInfo.Name);
+                    var urlToUse = opts.BaseUrl.ToString().EndsWith("/")
+                        ? opts.BaseUrl.ToString()
+                        : opts.BaseUrl + "/";
+                    if (opts.PrefixVersion)
+                    {
+                        urlToUse += $"{version}/";
+                    }
+                    if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
+                    {
+                        urlEncodedFileName = urlEncodedFileName.Substring(1);
+                    }
+                    var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
 
                     // changelog stuff
                     var changelogFileName = productVersion + ".md";
@@ -261,6 +274,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
                         {
                             item.ReleaseNotesSignature = changelogSignature;
+                            var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/") 
+                                ? opts.ChangeLogUrl
+                                : opts.ChangeLogUrl + "/";
                             item.ReleaseNotesLink = opts.ChangeLogUrl + changelogFileName;
                         }
                         else
