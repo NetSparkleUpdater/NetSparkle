@@ -13,6 +13,7 @@ using Console = Colorful.Console;
 using System.Drawing;
 using NetSparkleUpdater.AppCastGenerator;
 using System.Web;
+using System.ComponentModel;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
@@ -50,7 +51,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('n', "product-name", Required = false, HelpText = "Product Name", Default = "Application")]
             public string ProductName { get; set; }
 
-            [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url")]
+            [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
             public bool PrefixVersion { get; set; }
 
             [Option("key-path", SetName = "local", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
@@ -59,17 +60,16 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             #region Key Generation
 
-            [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys")]
+            [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys", Default = false)]
             public bool GenerateKeys { get; set; }
 
-            [Option("force", SetName = "keys", Required = false, HelpText = "Force regeneration of keys")]
+            [Option("force", SetName = "keys", Required = false, HelpText = "Force regeneration of keys", Default = false)]
             public bool ForceRegeneration { get; set; }
 
-            [Option("export", SetName = "keys", Required = false, HelpText = "Export keys")]
+            [Option("export", SetName = "keys", Required = false, HelpText = "Export keys", Default = false)]
             public bool Export { get; set; }
 
             #endregion
-
 
             #region Getting Signatures for Binaries
 
