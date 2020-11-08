@@ -26,3 +26,7 @@ src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj.u
 
 # OS generated files #
 .DS_Store*
+
+doc/generated/*
+doc/Working Data
+!git.folder
