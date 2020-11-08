@@ -88,6 +88,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             #endregion
 
+
+            [Option("show-examples", SetName = "local", Required = false, HelpText = "Show extended examples", Default = false)]
+            public bool ShowExtendedExamples { get; set; }
         }
 
 
@@ -113,6 +116,12 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 GenerateFromAtom(opts);
                 return;
             }*/
+
+            if (opts.ShowExtendedExamples)
+            {
+                PrintExtendedExamples();
+                return;
+            }
 
             if (!string.IsNullOrWhiteSpace(opts.PathToKeyFiles))
             {
@@ -368,6 +377,53 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             return FileVersionInfo.GetVersionInfo(fileInfo.FullName).ProductVersion;
         }
 
+        static void PrintExtendedExamples()
+        {
+            var examples = @"
+#### Key Generation
+# Generate Ed25519 keys for the first time
+generate_appcast.exe --generate-keys
+# Store keys in a custom location
+generate_appcast.exe --key-path path/to/store/keys
 
+# By default, your Ed25519 signatures are stored on disk in your local 
+# application data folder in a subdirectory called `netsparkle`. 
+# If you want to export your keys to the console, you can do:
+generate_appcast.exe --export
+
+#### Generate a signature for a binary without creating an app cast:
+generate_appcast.exe --generate-signature path/to/binary.exe
+
+#### Verifying Binaries
+generate_appcast.exe --verify path/to/binary.exe --signature base_64_signature
+
+#### Using a custom key location:
+# If your keys are sitting on disk somewhere
+# (`NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` -- both 
+# in base 64 and both on disk in the same folder!), you can pass in 
+# the path to these keys like this:
+generate_appcast.exe --key-path path/to/keys/
+
+#### Generating an app cast
+
+# Generate an app cast for Windows executables that are sitting in a 
+# specific directory
+generate_appcast.exe -a directory/for/appcast/output/ -e exe -b directory/with/binaries/ -o windows
+
+# Add change log info to your app cast
+generate_appcast.exe -b binary/folder -p change/log/folder
+
+# Customize download URL for binaries and change logs
+generate_appcast.exe -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
+
+# Set your application name for the app cast
+generate_appcast.exe -n ""My Awesome App"" -b binary/folder
+
+# Use file versions in file names, e.g. for apps like ""My App 1.2.1.dmg""
+generate_appcast.exe - n ""macOS version"" - o macos - f true - b binary / folder - e dmg
+
+";
+            Console.Write(examples);
+        }
     }
 }

@@ -209,8 +209,10 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 
 _Missing some option you'd like to see? File an issue on this repo or add it yourself and send us a pull request!_
 
-#### General Options When Generating App Cast
+* `--show-examples`: Print examples of usage to the console.
+* `--help`: Show all options and their descriptions.
 
+#### General Options When Generating App Cast
 * `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./Output`
 * `-e`/`--ext`: When looking for files to add to the app cast, use the given extension. Defaults to `exe`. Example use: `-e exe`
 * `-b`/`--binaries`: File path to directory that should be searched through when looking for files to add to the app cast. Defaults to `.`. Example use: `-b my/build/directory`
