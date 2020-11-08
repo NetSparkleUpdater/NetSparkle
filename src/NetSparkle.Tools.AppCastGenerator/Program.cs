@@ -91,8 +91,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
         }
 
 
-        private static string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
-        private static SignatureManager _signatureManager = new SignatureManager();
+        private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
+        private static readonly SignatureManager _signatureManager = new SignatureManager();
 
         static void Main(string[] args)
         {
@@ -181,7 +181,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             if (!_operatingSystems.Any(opts.OperatingSystem.Contains))
             {
                 Console.WriteLine($"Invalid operating system: {opts.OperatingSystem}", Color.Red);
-                Console.WriteLine($"Valid options are : windows, macos or linux");
+                Console.WriteLine($"Valid options are: {0}", string.Join(", ", _operatingSystems));
                 Environment.Exit(1);
             }
 
