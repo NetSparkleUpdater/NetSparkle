@@ -26,7 +26,7 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 
 | Package | Use Case | Release | Preview | Downloads |
 | ------- | -------- | ------- | ------- | --------- |
-| NetSparkle | Core package; No UI or 100% custom UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) |
+| NetSparkle | Core package; No built-in UI or 100% custom UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) |
 | WinForms UI (.NET Framework) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) |
 | WinForms UI (.NET Core) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) |
 | WPF UI (.NET Framework and Core) | NetSparkle with built-in WPF UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WPF.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) |
@@ -181,64 +181,19 @@ By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
 
 ### Ed25519 Signatures
 
-You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET Core 3.1 Desktop Runtime to be installed.** If you need to generate an Ed25519 keypair, use the tool like this:
-
-```bash
-generate_appcast.exe --generate-keys
-```
-
-Then you can use the tool like this:
-
-```bash
-generate_appcast.exe -a directory/for/appcast/ -e exe -b directory/with/binaries/ -o windows
-```
-
-You can use the `AppCastGenerator` tool to verify your binaries:
-
-```bash
-generate_appcast.exe --verify path/to/binary.exe --signature base_64_signature
-```
-
-If you want to make a signature for a binary, you can do so like this:
-
-```bash
-generate_appcast.exe --generate-signature path/to/binary.exe
-```
-
-By default, your Ed25519 signatures are stored on disk in your local application data folder in a subdirectory called `netsparkle`. If you want to export your keys, you can do:
-
-```bash
-generate_appcast.exe --export
-```
-
-Or you can store keys in a custom location:
-
-```bash
-generate_appcast.exe --key-path path/to/store/keys
-```
-
-If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
-
-If your keys are sitting on disk somewhere (`NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` -- both in base 64 and both on disk in the same folder!), you can pass in the path to these keys like this:
-
-```bash
-generate_appcast.exe --key-path path/to/keys/
-```
-
+You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET Core 3.1 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
 
 ### DSA Signatures
 
-DSA signatures are not recommended for 2.0. They are insecure!
+DSA signatures are not recommended for 2.0+. They are insecure!
 
-You can generate these signatures using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). If you need to generate a DSA public/private key, please use the same tool on Windows like this: 
+You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
 
 ```
 NetSparkle.DSAHelper.exe /genkey_pair
 ```
 
-This only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux.
-
-On any platform, you can use the DSAHelper to get a signature like this:
+You can use the DSAHelper to get a signature like this:
 
 ```
 NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
@@ -246,9 +201,102 @@ NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_Pri
 
 ### How can I make the app cast?
 
-* Use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file.
+* Use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file. Available options are described below.
 * Rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing).
 * Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (DSA) signature for the app cast file manually! :)
+
+### App Cast Generator Options
+
+_Missing some option you'd like to see? File an issue on this repo or add it yourself and send us a pull request!_
+
+#### General Options When Generating App Cast
+
+* `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./Output`
+* `-e`/`--ext`: When looking for files to add to the app cast, use the given extension. Defaults to `exe`. Example use: `-e exe`
+* `-b`/`--binaries`: File path to directory that should be searched through when looking for files to add to the app cast. Defaults to `.`. Example use: `-b my/build/directory`
+* `-f`/`--file-extract-version`: Whether or not to extract the version of the file from the file's name rather than the file itself. Defaults to false. Use when your files that will be downloaded by NetSparkleUpdater will have the version number in the file name, e.g. "My App 1.3.2.exe". Example use: `-f true`
+* `-o`/`--os`: Operating system that the app cast items belong to. Must be one of the following: `windows`, `mac`, `linux`. Defaults to `windows`. Example use: `-o linux`
+* `-u`/`--base-url`: Beginning portion of the URL to use for downloads. The file name that will be downloaded will be put after this portion of the URL. Example use: `-u https://myawesomecompany.com/downloads`
+* `-l`/`--change-log-url`: Beginning portion of the URL to use for your change log files. The change log file that will be downloaded will be put after this portion of the URL. If this option is not specified, then the change log data will be put into the app cast itself. Example use: `-l https://myawesomecompany.com/changes`
+* `-p`/`--change-log-path`: Path to the change log files for your software. These are expected to be in markdown format with an extension of `.md`. The file name of the change log files must contain the version of the software, e.g. `MyApp 1.3.2.md`. Example use: `-p path/to/change/logs`
+* `-n`/`--product-name`: Product name for your software. Used when setting the title for your app cast and its items. Defaults to `Application`. Example use: `-n "My Awesome App"`
+* `-x`/`--url-prefix-version`: Add the version number as a prefix to the file name for the download URL. Defaults to false. For example, if `--base-url` is `www.example.com/downloads`, your version is `1.4.2`, and your app name is `MyApp.exe`, your download URL will become `www.example.com/downloads/1.4.2/MyApp.exe`. Example use: `-x true`. 
+* `--key-path`: Path to `NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` files, which are your private and public Ed25519 keys for your software updates, respectively.  Example use: `--key-path my/path/to/keys`
+  * If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
+
+#### Options for Key Generation
+
+* `--generate-keys`: If set, will attempt to generate NEW Ed25519 keys for you. Can be used in conjunction with `--key-path`. Once keys are successfully (or unsuccessfully) generated, the program ends without generating an app cast. By default, existing keys are not overwritten. This option defaults to `false`.
+* `--force`: If set to `true`, will overwrite existing keys on disk. **WARNING: THIS COULD RESULT IN A LOSS OF YOUR PUBLIC AND PRIVATE KEYS. USE WITH CAUTION. DO NOT USE IF YOU DO NOT KNOW WHAT YOU ARE DOING! THIS WILL MAKE NO ATTEMPT TO BACK UP YOUR DATA.** This option defaults to `false`. Example use: `--generate-keys --force true`.
+* `--export`: Export keys as base 64 strings to the console. Defaults to `false`. Example use: `--export true`. Output format:
+```
+Private Key:
+2o34usledjfs0
+Public Key:
+sdljflase;ru2u3
+```
+
+#### Options for Generating Signatures Without App Cast
+
+* `--generate-signature`: Generate a signature for a file and output it to the console. Example use: `--generate-signature path/to/app/MyApp.exe`. Outputs in format: `Signature: seljr13412zpdfj`. 
+
+#### Options for Verifying Signatures
+
+Note that these options are only for verifying Ed25519 signatures. For DSA signatures, please use the `DSAHelper` tool. Both of the following options must be used together. You must have keys already generated in order to verify file signatures.
+
+* `--verify`: Path to the file that has a signature you want to verify.
+* `--signature`: Base 64 signature of the file.
+
+Example use: `--verify my/path/MyApp.exe --signature 123l4ijsdfzderu23`.
+
+This will return either `Signature valid` (signature is good!) or `Signature invalid` (signature does not match file).
+
+#### App Cast Generator Examples
+
+```bash
+
+#### Key Generation
+# Generate Ed25519 keys for the first time
+generate_appcast.exe --generate-keys
+# Store keys in a custom location
+generate_appcast.exe --key-path path/to/store/keys
+
+# By default, your Ed25519 signatures are stored on disk in your local 
+# application data folder in a subdirectory called `netsparkle`. 
+# If you want to export your keys to the console, you can do:
+generate_appcast.exe --export
+
+#### Generate a signature for a binary without creating an app cast:
+generate_appcast.exe --generate-signature path/to/binary.exe
+
+#### Verifying Binaries
+generate_appcast.exe --verify path/to/binary.exe --signature base_64_signature
+
+#### Using a custom key location:
+# If your keys are sitting on disk somewhere
+# (`NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` -- both 
+# in base 64 and both on disk in the same folder!), you can pass in 
+# the path to these keys like this:
+generate_appcast.exe --key-path path/to/keys/
+
+#### Generating an app cast
+
+# Generate an app cast for Windows executables that are sitting in a 
+# specific directory
+generate_appcast.exe -a directory/for/appcast/output/ -e exe -b directory/with/binaries/ -o windows
+
+# Add change log info to your app cast
+generate_appcast.exe -b binary/folder -p change/log/folder
+
+# Customize download URL for binaries and change logs
+generate_appcast.exe -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
+
+# Set your application name for the app cast
+generate_appcast.exe -n "My Awesome App" -b binary/folder
+
+# Use file versions in file names, e.g. for apps like "My App 1.2.1.dmg"
+generate_appcast.exe -n "macOS version" -o macos -f true -b binary/folder -e dmg
+```
 
 ## Updating from 0.X or 1.X
 
@@ -295,6 +343,7 @@ This section is still WIP, but major changes include:
   * `Sparkle.SilentMode` renamed to `Sparkle.UserInteractionMode`
 * By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
 * `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available). If `sparkle:dsaSignature` is not found, `sparkle:edSignature` will be used (if available). This is to give us as much compatibility with old versions of `NetSparkle` as well as the macOS `Sparkle` library.
+* An entirely new app cast generator tool is now available for use.
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool. You can also store these signatures in a custom location with the `--key-path` flag.
   * You can still use DSA signatures via the DSAHelper tool and the `DSAChecker` class. This is not recommended.
 * Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
@@ -353,7 +402,7 @@ The "Handle Events Yourself" sample will be very helpful to you: https://github.
 
 ### Does this work with Avalonia 0.10?
 
-Right now, the Avalonia UI is compatible with Avalonia 0.9. Please see #122 for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
+Right now, the Avalonia UI is compatible with Avalonia 0.9. Please see [#122](https://github.com/NetSparkleUpdater/NetSparkle/issues/122) for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
 
 ### Things aren't working. Help!
 
