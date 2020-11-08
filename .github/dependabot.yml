@@ -5,8 +5,42 @@
 
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/src" # Location of package manifests
+    directory: "/src/NetSparkle" # Location of package manifests
+    schedule:
+      interval: "daily"
+    assignees:
+      - "Deadpikle"
+    target-branch: "develop"
+    commit-message:
+      # Prefix all commit messages with "npm"
+      prefix: "[Dependabot]"
+    labels:
+      - "dependabot"
+      - "awaiting triage"
+    reviewers:
+      - "Deadpikle"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/NetSparkle.UI.Avalonia" # Location of package manifests
+    schedule:
+      interval: "daily"
+    assignees:
+      - "Deadpikle"
+    target-branch: "develop"
+    commit-message:
+      # Prefix all commit messages with "npm"
+      prefix: "[Dependabot]"
+    labels:
+      - "dependabot"
+      - "awaiting triage"
+    reviewers:
+      - "Deadpikle"
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/NetSparkle.Tools.AppCastGenerator" # Location of package manifests
     schedule:
       interval: "daily"
     assignees:
