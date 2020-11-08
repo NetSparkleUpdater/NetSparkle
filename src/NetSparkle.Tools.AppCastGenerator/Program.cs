@@ -73,17 +73,17 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             #region Getting Signatures for Binaries
 
-            [Option("generate-signature", SetName = "signing", Required = false, HelpText = "Generate signature from binary")]
+            [Option("generate-signature", SetName = "signing", Required = false, HelpText = "File path to binary to generate a signature for")]
             public string BinaryToSign { get; set; }
 
             #endregion
 
             #region Verifying Binary Signatures
 
-            [Option("verify", SetName = "verify", Required = false, HelpText = "Binary to verify")]
+            [Option("verify", SetName = "verify", Required = false, HelpText = "Path to file to verify")]
             public string BinaryToVerify { get; set; }
 
-            [Option("signature", SetName = "verify", Required = false, HelpText = "Signature")]
+            [Option("signature", SetName = "verify", Required = false, HelpText = "Signature of file to verify")]
             public string Signature { get; set; }
 
             #endregion
