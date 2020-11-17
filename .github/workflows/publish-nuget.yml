@@ -13,6 +13,10 @@ jobs:
         with:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
             nuget-version: '5.x'
+      
+      # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
+      - name: Setup Environment
+        run: echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.0
