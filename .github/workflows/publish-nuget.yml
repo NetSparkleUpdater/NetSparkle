@@ -19,6 +19,21 @@ jobs:
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.0
+      
+      - name: Setup dotnet 3.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.0'
+        
+      - name: Setup dotnet 3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+        
+      - name: Setup dotnet 5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
 
       # Required for a specific dotnet version that doesn't come with ubuntu-latest / windows-latest
       # Visit bit.ly/2synnZl to see the list of SDKs that are pre-installed with ubuntu-latest / windows-latest
