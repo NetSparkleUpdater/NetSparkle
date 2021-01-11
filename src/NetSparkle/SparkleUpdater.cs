@@ -61,6 +61,8 @@ namespace NetSparkleUpdater
         private IUIFactory _uiFactory;
         private bool _disposed;
         private Configuration _configuration;
+        private string _restartExecutableName;
+        private string _restartExecutablePath;
 
         #endregion
 
@@ -249,7 +251,46 @@ namespace NetSparkleUpdater
                 }
                 return _configuration;
             } 
-            set { _configuration = value; } 
+            set { _configuration = value; }
+        }
+
+        /// <summary>
+        /// Path to the working directory for the current application.
+        /// This is the directory that the current executable sits in --
+        /// e.g. C:/Users/...Foo/. It will be used when restarting the
+        /// application on Windows or will be used on macOS/Linux for
+        /// overwriting files on an update.
+        /// </summary>
+        public string RestartExecutablePath
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(_restartExecutablePath))
+                {
+                    return _restartExecutablePath;
+                }
+                return Utilities.GetFullBaseDirectory();
+            }
+        }
+
+        /// <summary>
+        /// Executable name to use when restarting the software.
+        /// This is the name that will be used/started when the update has been installed.
+        /// This defaults to <see cref="Environment.CommandLine"/>.
+        /// Used in conjunction with RestartExecutablePath to restart the application --
+        /// {RestartExecutablePath}/{RestartExecutableName} is what is called to restart the
+        /// app.
+        /// </summary>
+        public string RestartExecutableName
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(_restartExecutableName))
+                {
+                    return _restartExecutableName;
+                }
+                return Environment.CommandLine;
+            }
         }
 
         /// <summary>
@@ -1212,9 +1253,9 @@ namespace NetSparkleUpdater
         protected virtual async Task RunDownloadedInstaller(string downloadFilePath)
         {
             LogWriter.PrintMessage("Running downloaded installer");
-            // get the commandline 
-            string cmdLine = Environment.CommandLine;
-            string workingDir = Utilities.GetFullBaseDirectory();
+            // get the options for restarting the application
+            string executableName = RestartExecutableName;
+            string workingDir = RestartExecutablePath;
 
             // generate the batch file path
 #if NETFRAMEWORK
@@ -1259,7 +1300,7 @@ namespace NetSparkleUpdater
                     {
                         relaunchAfterUpdate = $@"
                         cd {workingDir}
-                        {cmdLine}";
+                        {executableName}";
                     }
 
                     string output = $@"
