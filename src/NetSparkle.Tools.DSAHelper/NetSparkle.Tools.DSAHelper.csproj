@@ -9,7 +9,7 @@
     <AssemblyTitle>NetSparkle</AssemblyTitle>
     <Product>NetSparkle</Product>
     <Description>NetSparkle is an auto update framework for .NET developers</Description>
-    <Copyright>Portions Copyright © Dirk Eisenberg 2010, Deadpikle 2020</Copyright>
+    <Copyright>Portions Copyright © Dirk Eisenberg 2010, Deadpikle 2020-2021</Copyright>
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <FileVersion>2.0.0</FileVersion>
     <OutputPath>..\..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
