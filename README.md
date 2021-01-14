@@ -356,6 +356,7 @@ This section is still WIP, but major changes include:
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool. You can also store these signatures in a custom location with the `--key-path` flag.
   * You can still use DSA signatures via the DSAHelper tool and the `DSAChecker` class. This is not recommended.
 * Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
+* The server file name for each app cast download is now checked before doing any downloads or showing available updates to the client. To disable this behavior and use the name in the app cast, set `SparkleUpdater.CheckServerFileName` to `false`.
 * **We now rely on Portable.BouncyCastle** (BouncyCastle.Crypto.dll) for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!
 
