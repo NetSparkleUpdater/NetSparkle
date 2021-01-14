@@ -271,6 +271,10 @@ namespace NetSparkleUpdater
                 }
                 return Utilities.GetFullBaseDirectory();
             }
+            set
+            {
+                _restartExecutablePath = value;
+            }
         }
 
         /// <summary>
@@ -290,6 +294,10 @@ namespace NetSparkleUpdater
                     return _restartExecutableName;
                 }
                 return Environment.CommandLine;
+            }
+            set
+            {
+                _restartExecutableName = value;
             }
         }
 
