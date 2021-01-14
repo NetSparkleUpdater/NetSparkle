@@ -1,21 +1,39 @@
-# NetSparkle
+<div align="center">
+  <img alt="NetSparkleUpdater logo" height="200" src="src/NetSparkle/ArtWork/software-update-available.png">
+  <h1>NetSparkleUpdater</h1>
+  <p>An easily customizable software update framework for C# .NET projects with built-in UIs for WinForms, WPF, and Avalonia</p>
+  <a href="https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge">
+    <img alt="Gitter" src="https://badges.gitter.im/Join%20Chat.svg">
+  </a>
+  <a href="https://github.com/NetSparkleUpdater/NetSparkle/issues">
+    <img alt="Gitter" src="https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square">
+  </a>
+</div>
 
- [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NetSparkleUpdater/NetSparkle?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge) [![Issues](https://img.shields.io/github/issues/NetSparkleUpdater/NetSparkle.svg?style=flat-square)](https://github.com/NetSparkleUpdater/NetSparkle/issues)
+# 
 
 NetSparkle is a software update framework for C# that is compatible with .NET Core 3+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), uses Ed25519 or other signatures, and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
-The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more! No more big changes to the API are planned (but we cannot guarantee it before 2.0 RC), but smaller API changes may occur if bugs are found between now and the official 2.0 release.
+The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more!
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
 * macOS -- .zip, .pkg, .dmg
 * Linux -- .tar.gz, .deb, .rpm
 
-_README and other documentation updates for version 2.0 are in progress. If you have specific questions or need help even after looking at the samples, please file an issue or message me on [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle). You should be able to implement your own handlers and/or UI for most operations, so things like a custom update process, downloading/parsing JSON rather than XML, downloading things from FTP, using your own file signature verification method, etc. are all now possible. Some extra features aren't built-in out of the box yet, such as JSON app cast feeds -- contributions are welcome and benefit the whole community!_
+## Getting Started
 
-## Contributing
-
-Contributions are ALWAYS welcome! If you see a new feature you'd like to add, please open an issue to talk about it first, then open a PR for that implementation. If there's a bug you find, please open a PR with the fix or file an issue! Thank you!! :) You can also join us in our [Gitter chat room](https://gitter.im/NetSparkleUpdater/NetSparkle)!
+- [Installing NetSparkle](#installing-netsparkle)
+- [How Updates Work](#how-updates-work)
+- [Basic Usage](#basic-usage)
+- [App Cast](#app-cast)
+- [Updating from 0.x or 1.x](#updating-from-0x-or-1x)
+- [FAQ](#faq)
+- [Requirements](#requirements)
+- [License](#license)
+- [Contributing](#contributing)
+- [Acknowledgements](#acknowledgements)
+- [Other Options](#other-options)
 
 ## Installing NetSparkle
 
@@ -35,17 +53,6 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
-- [How Updates Work](#how-updates-work)
-- [Basic Usage](#basic-usage)
-- [Appcast](#app-cast)
-- [Updating from 0.x or 1.x](#updating-from-0x-or-1x)
-- SparkleUpdater class
-    - [Public Methods](#public-methods)
-    - [Public Properties](#public-properties)
-    - [Public Events](#public-events)
-- [License](#license)
-- [Requirements](#requirements)
-- [Other Options](#other-options)
 
 ## How updates work
 
@@ -419,23 +426,36 @@ Here are some things you can do to figure out how to get your app running:
 
 Yes! Please help us make this library awesome!
 
+## Requirements
+
+- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5+
+
 ## License
 
 NetSparkle is available under the [MIT License](LICENSE).
 
-## Requirements
+## Contributing
 
-- .NET Framework 4.5.2+ OR .NET Core 3+
+Contributions are ALWAYS welcome! If you see a new feature you'd like to add, please open an issue to talk about it first, then open a PR for that implementation. If there's a bug you find, please open a PR with the fix or file an issue! Thank you!! :) You can also join us in our [Gitter chat room](https://gitter.im/NetSparkleUpdater/NetSparkle)!
+
+### Areas where we could use help/contributions
+
+* Unit tests for all parts of the project
+* Extensive testing on macOS/Linux
+* More built-in app cast parsers (e.g. natively support using/creating JSON feeds) -- possible via interfaces but not built-in yet
+* More options in the app cast generator
+* See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues) for more
 
 ## Acknowledgements
 
 * The original NetSparkle library, found at [dei79/netsparkle](https://github.com/dei79/netsparkle)
 * A function for finding the base directory was taken from MIT-licensed [WalletWasabi](https://github.com/zkSNACKs/WalletWasabi/)
 * MarkdownSharp is from [here](https://github.com/StackExchange/MarkdownSharp)
+* We got our starting README layout from [MahApps.Metro](https://github.com/MahApps/MahApps.Metro), an awesome UI framework for WPF 
 
 ## Other Options
 
-An incomplete list of other projects related to software updating:
+An incomplete list of other projects related to software updating that you might want to look at if NetSparkleUpdater doesn't work for you:
 
 - [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows)
 - [WinSparkle](https://github.com/vslavik/winsparkle)
