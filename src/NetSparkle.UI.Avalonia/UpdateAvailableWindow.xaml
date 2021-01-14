@@ -45,8 +45,9 @@
                 Margin="10,5,10,0" />-->
     <ScrollViewer
         Grid.Column="1"
-        Grid.Row="2">
-      <html:HtmlLabel Name="ChangeNotesHTMLLabel" />
+        Grid.Row="2"
+        HorizontalScrollBarVisibility="Visible">
+      <html:HtmlLabel Name="ChangeNotesHTMLLabel"/>
     </ScrollViewer>
     <Button Name="SkipButton"
             IsEnabled="{Binding IsSkipEnabled}"
