@@ -69,7 +69,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             var grid = this.FindControl<Grid>("MainGrid");
             _releaseNotesRow = grid.RowDefinitions[2];
             _htmlLabel = this.FindControl<HtmlLabel>("ChangeNotesHTMLLabel");
-            _htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true);
+            //_htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true); // throws on 0.10.0 for some reason?
         }
 
         UpdateAvailableResult IUpdateAvailable.Result => _dataContext?.UserResponse ?? UpdateAvailableResult.None;
