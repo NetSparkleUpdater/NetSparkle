@@ -565,8 +565,9 @@ namespace NetSparkleUpdater
         /// This method is also called from the background loops.
         /// </summary>
         /// <param name="config">the SparkleUpdater configuration for the reference assembly</param>
+        /// <param name="ignoreSkippedVersions">true to ignore skipped versions, false otherwise</param>
         /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
-        protected async Task<UpdateInfo> GetUpdateStatus(Configuration config)
+        protected async Task<UpdateInfo> GetUpdateStatus(Configuration config, bool ignoreSkippedVersions = false)
         {
             List<AppCastItem> updates = null;
             // report
@@ -614,13 +615,13 @@ namespace NetSparkleUpdater
             // check if the version will be the same then the installed version
             if (updates.Count == 0)
             {
-                LogWriter.PrintMessage("Installed version is valid, no update needed ({0})", config.InstalledVersion);
+                LogWriter.PrintMessage("Installed version is latest, no update needed ({0})", config.InstalledVersion);
                 return new UpdateInfo(UpdateStatus.UpdateNotAvailable, updates);
             }
             LogWriter.PrintMessage("Latest version on the server is {0}", updates[0].Version);
 
             // check if the available update has to be skipped
-            if (updates[0].Version.Equals(config.LastVersionSkipped))
+            if (!ignoreSkippedVersions && updates[0].Version.Equals(config.LastVersionSkipped))
             {
                 LogWriter.PrintMessage("Latest update has to be skipped (user decided to skip version {0})", config.LastVersionSkipped);
                 return new UpdateInfo(UpdateStatus.UserSkipped, updates);
@@ -1472,8 +1473,9 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Check for updates, using UI interaction appropriate for if the user initiated the update request
+        /// <param name="ignoreSkippedVersions">true to ignore skipped versions, false otherwise</param>
         /// </summary>
-        public async Task<UpdateInfo> CheckForUpdatesAtUserRequest()
+        public async Task<UpdateInfo> CheckForUpdatesAtUserRequest(bool ignoreSkippedVersions = false)
         {
             CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates();
             if (CheckingForUpdatesWindow != null)
@@ -1484,7 +1486,7 @@ namespace NetSparkleUpdater
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting, so we add an artificial delay
             await Task.Delay(250);
-            UpdateInfo updateData = await CheckForUpdates(true); // handles UpdateStatus.UpdateAvailable (in terms of UI)
+            UpdateInfo updateData = await CheckForUpdates(true, ignoreSkippedVersions); // handles UpdateStatus.UpdateAvailable (in terms of UI)
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1517,22 +1519,25 @@ namespace NetSparkleUpdater
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
         /// Basically, this checks for updates without showing a UI. NO UI WILL BE SHOWN. You must handle any showing
         /// of the UI yourself -- see the "HandleEventsYourself" sample!
+        /// <param name="ignoreSkippedVersions">true to ignore skipped versions, false otherwise</param>
         /// </summary>
-        public async Task<UpdateInfo> CheckForUpdatesQuietly()
+        public async Task<UpdateInfo> CheckForUpdatesQuietly(bool ignoreSkippedVersions = false)
         {
-            return await CheckForUpdates(false);
+            return await CheckForUpdates(false, ignoreSkippedVersions);
         }
 
         /// <summary>
         /// Perform a one-time check for updates
+        /// <param name="isUserManuallyCheckingForUpdates">true if user triggered the update check (so show UI), false otherwise (no UI)</param>
+        /// <param name="ignoreSkippedVersions">true to ignore skipped versions, false otherwise</param>
         /// </summary>
-        private async Task<UpdateInfo> CheckForUpdates(bool isUserManuallyCheckingForUpdates)
+        private async Task<UpdateInfo> CheckForUpdates(bool isUserManuallyCheckingForUpdates, bool ignoreSkippedVersions = false)
         {
             UpdateCheckStarted?.Invoke(this);
             Configuration config = Configuration;
 
             // check if update is required
-            _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
+            _latestDownloadedUpdateInfo = await GetUpdateStatus(config, ignoreSkippedVersions);
             List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
