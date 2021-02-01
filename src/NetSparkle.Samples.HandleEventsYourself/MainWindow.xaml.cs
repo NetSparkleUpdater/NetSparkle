@@ -57,7 +57,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             _updateInfo = await _sparkle.CheckForUpdatesQuietly();
             // use _sparkle.CheckForUpdatesQuietly() if you don't want the user to know you are checking for updates!
             // if you use CheckForUpdatesAtUserRequest() and are using a UI, then handling things yourself is rather silly
-            // as it will show a UI for things
+            // as it will show a UI for everything
             if (_updateInfo != null)
             {
                 switch (_updateInfo.Status)

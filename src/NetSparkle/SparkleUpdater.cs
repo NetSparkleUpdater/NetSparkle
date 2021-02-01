@@ -1481,8 +1481,10 @@ namespace NetSparkleUpdater
                 CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
                 CheckingForUpdatesWindow.Show();
             }
-
-            UpdateInfo updateData = await CheckForUpdates(); // handles UpdateStatus.UpdateAvailable (in terms of UI)
+            // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
+            // 'Checking for Updates...' window is very disorienting, so we add an artificial delay
+            await Task.Delay(250);
+            UpdateInfo updateData = await CheckForUpdates(true); // handles UpdateStatus.UpdateAvailable (in terms of UI)
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
@@ -1513,26 +1515,19 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Check for updates, using interaction appropriate for where the user doesn't know you're doing it, so be polite.
-        /// Basically, this checks for updates without showing a UI. However, if a UIFactory is set and an update
-        /// is found, an update UI will be shown!
+        /// Basically, this checks for updates without showing a UI. NO UI WILL BE SHOWN. You must handle any showing
+        /// of the UI yourself -- see the "HandleEventsYourself" sample!
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesQuietly()
         {
-            return await CheckForUpdates();
+            return await CheckForUpdates(false);
         }
 
         /// <summary>
         /// Perform a one-time check for updates
         /// </summary>
-        private async Task<UpdateInfo> CheckForUpdates()
+        private async Task<UpdateInfo> CheckForUpdates(bool isUserManuallyCheckingForUpdates)
         {
-            // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
-            // 'Checking for Updates...' window is very disorienting, so we add an artificial delay
-            bool isUserManuallyCheckingForUpdates = CheckingForUpdatesWindow != null;
-            if (isUserManuallyCheckingForUpdates)
-            {
-                await Task.Delay(250);
-            }
             UpdateCheckStarted?.Invoke(this);
             Configuration config = Configuration;
 
@@ -1541,7 +1536,7 @@ namespace NetSparkleUpdater
             List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
-                // show the update window
+                // there's an update available!
                 LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
@@ -1552,26 +1547,42 @@ namespace NetSparkleUpdater
                     AppCastItems = updates
                 };
 
-                // if the client wants to intercept, send an event
+                // UpdateDetected allows for catching and overriding the update handling,
+                // so if the user has implemented it, tell them there is an update and stop
+                // handling everything.
                 if (UpdateDetected != null)
                 {
-                    UpdateDetected(this, ev);
-                    // if the client wants the default UI then show them
+                    UpdateDetected(this, ev); // event's next action can change, here
                     switch (ev.NextAction)
                     {
+                        case NextUpdateAction.PerformUpdateUnattended:
+                            {
+                                LogWriter.PrintMessage("Unattended update desired from consumer");
+                                UserInteractionMode = UserInteractionMode.DownloadAndInstall;
+                                UpdatesHaveBeenDownloaded(updates);
+                                break;
+                            }
+                        case NextUpdateAction.ProhibitUpdate:
+                            {
+                                LogWriter.PrintMessage("Update prohibited from consumer");
+                                break;
+                            }
                         case NextUpdateAction.ShowStandardUserInterface:
-                            LogWriter.PrintMessage("Showing standard update UI");
-                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
-                            break;
+                            {
+                                LogWriter.PrintMessage("Showing standard update UI");
+                                // don't show UI if we are quietly checking for updates with no UI
+                                if (!isUserManuallyCheckingForUpdates) 
+                                {
+                                    UpdatesHaveBeenDownloaded(updates);
+                                }
+                                break;
+                            }
                     }
                 }
-                else
+                else if (isUserManuallyCheckingForUpdates)
                 {
-                    // otherwise just go forward with the UI notification
-                    if (isUserManuallyCheckingForUpdates && CheckingForUpdatesWindow != null)
-                    {
-                        ShowUpdateNeededUI(updates);
-                    }
+                    // user checked for updates, so show the UI
+                    ShowUpdateNeededUI(updates);
                 }
             }
             UpdateCheckFinished?.Invoke(this, _latestDownloadedUpdateInfo.Status);
@@ -1695,7 +1706,7 @@ namespace NetSparkleUpdater
                     break;
                 }
                 // set state
-                bool bUpdateRequired = false;
+                bool isUpdateAvailable = false;
 
                 // notify
                 LoopStarted?.Invoke(this);
@@ -1740,8 +1751,8 @@ namespace NetSparkleUpdater
                             {
                                 break;
                             }
-                            bUpdateRequired = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
-                            if (bUpdateRequired)
+                            isUpdateAvailable = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
+                            if (isUpdateAvailable)
                             {
                                 List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
                                 // show the update window
@@ -1756,6 +1767,10 @@ namespace NetSparkleUpdater
                                     AppCastItems = updates
                                 };
                                 UpdateDetected?.Invoke(this, ev);
+                                if (_cancelToken.IsCancellationRequested)
+                                {
+                                    break;
+                                }
 
                                 // check results
                                 switch (ev.NextAction)
@@ -1764,7 +1779,7 @@ namespace NetSparkleUpdater
                                         {
                                             LogWriter.PrintMessage("Unattended update desired from consumer");
                                             UserInteractionMode = UserInteractionMode.DownloadAndInstall;
-                                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                            UpdatesHaveBeenDownloaded(updates);
                                             break;
                                         }
                                     case NextUpdateAction.ProhibitUpdate:
@@ -1775,7 +1790,7 @@ namespace NetSparkleUpdater
                                     default:
                                         {
                                             LogWriter.PrintMessage("Preparing to show standard update UI");
-                                            OnWorkerProgressChanged(_taskWorker, new ProgressChangedEventArgs(1, updates));
+                                            UpdatesHaveBeenDownloaded(updates);
                                             break;
                                         }
                                 }
@@ -1803,7 +1818,7 @@ namespace NetSparkleUpdater
                 isInitialCheck = false;
 
                 // notify
-                LoopFinished?.Invoke(this, bUpdateRequired);
+                LoopFinished?.Invoke(this, isUpdateAvailable);
 
                 // report wait statement
                 LogWriter.PrintMessage("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
@@ -1878,9 +1893,11 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Updates from appcast have been downloaded from the server
+        /// Updates from appcast have been downloaded from the server.
+        /// If the user is downloading silently, the download will begin.
+        /// If the user is not downloading silently, the update UI will be shown.
         /// </summary>
-        /// <param name="updates">updates to be installed</param>
+        /// <param name="updates">updates to be installed. If null, nothing will happen.</param>
         private async void UpdatesHaveBeenDownloaded(List<AppCastItem> updates)
         {
             if (updates != null)

@@ -101,7 +101,7 @@ On the first Application.Idle event, your App Cast XML file will be downloaded, 
 If you want to check for an update in the background without the user seeing anything, use
 
 ```csharp
-_sparkle.CheckForUpdatesQuietly();
+var updateInfo = _sparkle.CheckForUpdatesQuietly();
 ```
 
 If you want to have a menu item for the user to check for updates so the user can see the UI while NetSparkle looks for updates, use
@@ -362,6 +362,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
   * `Ed25519Checker` is the class responsible for handling Ed25519 signatures. `DSAChecker` sticks around for verifying DSA signatures if they're still used.
 * Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
 * The server file name for each app cast download is now checked before doing any downloads or showing available updates to the client. To disable this behavior and use the name in the app cast, set `SparkleUpdater.CheckServerFileName` to `false`.
+* **Breaking change**: `CheckForUpdatesQuietly` now shows no UI ever. It could show a UI before, which didn't make a lot of sense based on the function name. Make sure that if you use this function that you handle showing a UI yourself if necessary. (See the HandleEventsYourself sample if you want help.) You can always trigger the built-in `SparkleUpdater` by calling `_sparkle.ShowUpdateNeededUI(updateInfo.Updates)`. 
 * **We now rely on Portable.BouncyCastle** (BouncyCastle.Crypto.dll) for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!
 
@@ -407,7 +408,7 @@ The answer is both yes and no. No, because that is not the default behavior. Yes
 Here's a summary of what you can do:
 
 1. Setup your `SparkleUpdater` object
-2. Call `_updateInfo = await _sparkle.CheckForUpdatesQuietly();` (no UI) or `_sparkle.CheckForUpdatesAtUserRequest()` (shows UI). I would recommend checking quietly because the UI method will always show the latest version. You can always show your own UI.
+2. Call `_updateInfo = await _sparkle.CheckForUpdatesQuietly();` (no UI shown) or `_sparkle.CheckForUpdatesAtUserRequest()` (shows UI). I would recommend checking quietly because the UI method will always show the latest version. You can always show your own UI.
 3. Look in `_updateInfo.Updates` for the available versions in your app cast. You can compare it with your currently installed version to see which ones are new and which ones are old.
 4. Call `await _sparkle.InitAndBeginDownload(update);` with the update you want to download. The download path is provided in the `DownloadFinished` event.
 5. When it's done downloading, call `_sparkle.InstallUpdate(update, _downloadPath);`
