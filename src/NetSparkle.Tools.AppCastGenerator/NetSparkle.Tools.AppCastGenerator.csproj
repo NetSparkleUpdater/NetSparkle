@@ -26,6 +26,9 @@
     <Description>Commandline tool 'generate_appcast.exe' to scan a directory for .exe files and generate appcast.xml</Description>
     <Copyright>Copyright © ndreisg 2019, Deadpikle 2020-2021</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>appcast</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
     <PostBuildEvent />
     <PostBuildEvent />
     <PostBuildEvent />
