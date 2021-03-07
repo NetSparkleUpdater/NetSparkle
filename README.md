@@ -49,7 +49,9 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 | WinForms UI (.NET Core) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) |
 | WPF UI (.NET Framework and Core) | NetSparkle with built-in WPF UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WPF.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) |
 | [Avalonia](https://github.com/AvaloniaUI/Avalonia) UI | NetSparkle with built-in Avalonia UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.Avalonia/) |
-| Command Line Tools | DSA helper; AppCast generator (incl. Ed25519 helpers) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) |
+| App Cast Generator Tool | `netsparkle-generate-appcast` CLI tool (incl. Ed25519 helpers) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) |
+| DSA Helper Tool | DSA signature CLI tool | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) |
+Command Line Tools [DEPRECATED] | DSA helper; AppCast generator (incl. Ed25519 helpers) [DEPRECATED] | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) |
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
@@ -186,6 +188,11 @@ By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
 1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
 2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA) signature for that file at http://example.com/awesome-software.xml.signature. 
 
+#### Installing the App Cast command-line tool
+
+1. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+2. The tool is now available on your command line as the `netsparkle-generate-appcast` command
+
 ### Ed25519 Signatures
 
 You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 5 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
@@ -206,11 +213,16 @@ You can use the DSAHelper to get a signature like this:
 NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
 ```
 
+#### Installing the DSA Helper command-line tool
+
+1. `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`
+2. The tool is now available on your command line as the `netsparkle-dsa` command
+
 ### How can I make the app cast?
 
-* Use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file. Available options are described below.
+* Use the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)) to easily create your app cast file. Available options are described below. You can install it on your CLI via `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`.
 * Rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing).
-* Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (DSA) signature for the app cast file manually! :)
+* Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (Ed25519/DSA) signature for the app cast file manually! :)
 
 ### App Cast Generator Options
 
