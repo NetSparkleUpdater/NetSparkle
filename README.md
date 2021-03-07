@@ -223,7 +223,7 @@ _Missing some option you'd like to see? File an issue on this repo or add it you
 * `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./Output`
 * `-e`/`--ext`: When looking for files to add to the app cast, use the given extension. Defaults to `exe`. Example use: `-e exe`
 * `-b`/`--binaries`: File path to directory that should be searched through when looking for files to add to the app cast. Defaults to `.`. Example use: `-b my/build/directory`
-* `-r`/`--search-binary-subdirectories`: True to search the binary directory recursively for binaries; false to only search the top directory. Defaults to `false`. Example use: `-r true`.
+* `-r`/`--search-binary-subdirectories`: True to search the binary directory recursively for binaries; false to only search the top directory. Defaults to `false`. Example use: `-r`.
 * `-f`/`--file-extract-version`: Whether or not to extract the version of the file from the file's name rather than the file itself. Defaults to false. Use when your files that will be downloaded by NetSparkleUpdater will have the version number in the file name, e.g. "My App 1.3.2.exe". Example use: `-f true`
 * `-o`/`--os`: Operating system that the app cast items belong to. Must be one of the following: `windows`, `mac`, `linux`. Defaults to `windows`. Example use: `-o linux`
 * `-u`/`--base-url`: Beginning portion of the URL to use for downloads. The file name that will be downloaded will be put after this portion of the URL. Example use: `-u https://myawesomecompany.com/downloads`
