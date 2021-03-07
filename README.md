@@ -364,6 +364,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
   * `AppCastItem.DownloadDSASignature` -> `AppCastItem.DownloadSignature`
   * `SilentModeTypes` enum renamed to `UserInteractionMode`
   * `Sparkle.SilentMode` renamed to `Sparkle.UserInteractionMode`
+  * `UseSyncronizedForms` renamed to `ShowsUIOnMainThread`
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
   * Sample app to demonstrate how to handle events yourself with your own, custom UI
