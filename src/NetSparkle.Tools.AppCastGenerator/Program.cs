@@ -30,6 +30,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('b', "binaries", SetName = "local", Required = false, HelpText = "Directory containing binaries.", Default = ".")]
             public string SourceBinaryDirectory { get; set; }
 
+            [Option('r', "search-binary-subdirectories", SetName = "local", Required = false, HelpText = "Search subdirectories of --binaries for binaries", Default = false)]
+            public bool SearchBinarySubDirectories { get; set; }
+
             //[Option('g', "github-atom-feed", SetName = "github", Required = false, HelpText = "Generate from Github release atom feed (signatures not supported yet)")]
             //public string GithubAtomFeed { get; set; }
 
@@ -184,7 +187,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 opts.SourceBinaryDirectory = Environment.CurrentDirectory;
             }
 
-            var binaries = Directory.GetFiles(opts.SourceBinaryDirectory, search);
+            var binaries = Directory.GetFiles(opts.SourceBinaryDirectory, search, 
+                opts.SearchBinarySubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             if (binaries.Length == 0)
             {
