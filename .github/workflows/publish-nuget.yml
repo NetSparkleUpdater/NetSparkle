@@ -41,19 +41,19 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Build NetSparkle in Release
-        run: dotnet build src/NetSparkle/NetSparkle.csproj --configuration Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
       
       - name: Build NetSparkle.UI.WinForms.NetCore in Release
-        run: dotnet build src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
       
       - name: Build NetSparkle.UI.WPF in Release
-        run: dotnet build src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
 
       - name: Build NetSparkle.Tools.AppCastGenerator in Release
-        run: dotnet build src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj --configuration Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj --configuration Release
 
       - name: Build NetSparkle.Tools.DSAHelper in Release
-        run: dotnet build src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
         
   publish_core:
     needs: build
@@ -63,7 +63,7 @@ jobs:
       - name: Publish Netsparkle.New on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle/NetSparkle.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
@@ -80,7 +80,7 @@ jobs:
       - name: Publish NetSparkleUpdater.UI.WPF on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
@@ -97,7 +97,7 @@ jobs:
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
@@ -114,7 +114,7 @@ jobs:
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
@@ -124,21 +124,21 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
-          del nuget\winformsnetframework\lib\net452\NetSparkle.dll
-          del nuget\winformsnetframework\lib\net452\NetSparkle.pdb
-          copy LICENSE.md nuget\winformsnetframework\LICENSE.md
-          copy src\NetSparkle\ArtWork\software-update-available.png nuget\winformsnetframework\software-update-available.png
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.dll
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.pdb
+          copy ${{ github.workspace }}/LICENSE.md ${{ github.workspace }}/nuget\winformsnetframework\LICENSE.md
+          copy ${{ github.workspace }}/src\NetSparkle\ArtWork\software-update-available.png ${{ github.workspace }}/nuget\winformsnetframework\software-update-available.png
           
       - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
         run: |
-          cd nuget/winformsnetframework
+          cd ${{ github.workspace }}/nuget/winformsnetframework
           nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
-          cd ../../
+          cd ${{ github.workspace }}
 
   publish_tools:
     needs: build
@@ -148,7 +148,7 @@ jobs:
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
@@ -160,7 +160,7 @@ jobs:
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
-          PROJECT_FILE_PATH: src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
