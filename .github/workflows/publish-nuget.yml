@@ -53,7 +53,7 @@ jobs:
         
       # Publish
       - name: Publish Netsparkle.New on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -64,7 +64,7 @@ jobs:
           PACKAGE_NAME: NetSparkle.New
         
       - name: Publish NetSparkleUpdater.UI.WPF on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -75,7 +75,7 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
         
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -86,7 +86,7 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
         
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -114,7 +114,7 @@ jobs:
           cd ../../
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -125,7 +125,7 @@ jobs:
           PACKAGE_NAME: NetSparkle.Tools.DSAHelper
 
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
-        uses: rohith/publish-nuget@v2.1.2
+        uses: rohith/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
