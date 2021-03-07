@@ -113,31 +113,6 @@ jobs:
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
           cd ../../
 
-      - name: Build NetSparkleUpdater.Tools for all operating systems
-        run: |
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/windows/ -r win-x86
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/windows/ -r win-x86
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/macOS/ -r osx-x64
-          dotnet publish src/NetSparkle.Tools.AppCastGenerator --configuration Release -o nuget/tools/tools/linux/ -r linux-x64
-          dotnet publish src/NetSparkle.Tools.DSAHelper --configuration Release -o nuget/tools/tools/linux/ -r linux-x64
-
-      - name: Copy extra output to NetSparkleUpdater.Tools output
-        run: |
-          mkdir nuget\tools\lib
-          mkdir nuget\tools\content
-          mkdir nuget\tools\content\Extras
-          xcopy /s /q /y Extras\* nuget\tools\content\Extras\
-          copy LICENSE.md nuget\tools\LICENSE.md
-          copy src\NetSparkle\ArtWork\software-update-available.png nuget\tools\software-update-available.png
-
-      - name: Publish NetSparkleUpdater.Tools (all tools in 1 package)
-        run: |
-          cd nuget/tools
-          nuget pack NetSparkleUpdater.Tools.nuspec
-          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
-          cd ../../
-
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: rohith/publish-nuget@v2.1.2
         with:
