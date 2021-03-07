@@ -130,9 +130,20 @@ jobs:
           copy LICENSE.md nuget\tools\LICENSE.md
           copy src\NetSparkle\ArtWork\software-update-available.png nuget\tools\software-update-available.png
 
-      - name: Publish NetSparkleUpdater.Tools
+      - name: Publish NetSparkleUpdater.Tools (all tools in 1 package)
         run: |
           cd nuget/tools
           nuget pack NetSparkleUpdater.Tools.nuspec
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols
           cd ../../
+
+      - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
+        uses: rohith/publish-nuget@v2.1.2
+        with:
+          PROJECT_FILE_PATH: src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkle.Tools.AppCastGenerator
