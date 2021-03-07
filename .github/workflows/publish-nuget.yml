@@ -120,12 +120,12 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net451
+        run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
-          del nuget\winformsnetframework\lib\net451\NetSparkle.dll
-          del nuget\winformsnetframework\lib\net451\NetSparkle.pdb
+          del nuget\winformsnetframework\lib\net452\NetSparkle.dll
+          del nuget\winformsnetframework\lib\net452\NetSparkle.pdb
           copy LICENSE.md nuget\winformsnetframework\LICENSE.md
           copy src\NetSparkle\ArtWork\software-update-available.png nuget\winformsnetframework\software-update-available.png
           
