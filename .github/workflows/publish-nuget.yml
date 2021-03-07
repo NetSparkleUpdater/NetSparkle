@@ -8,8 +8,9 @@ jobs:
     name: List on NuGet
     runs-on: windows-latest
     # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    #env:
+    #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    # microsoft/setup-msbuild@v1.0.2 fixes that deprecation issue.
     steps:
       - uses: actions/checkout@v2
       - uses: nuget/setup-nuget@v1
@@ -18,7 +19,7 @@ jobs:
             nuget-version: '5.x'
 
       - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.0
+        uses: microsoft/setup-msbuild@v1.0.2
       
       - name: Setup dotnet 3.0
         uses: actions/setup-dotnet@v1
