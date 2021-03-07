@@ -3,7 +3,7 @@
     <ProjectGuid>{19F0D329-2127-4788-8AFA-DDEDA4B70F88}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
-    <AssemblyName>generate_appcast</AssemblyName>
+    <AssemblyName>NetSparkleUpdater.Tools.AppCastGenerator</AssemblyName>
     <TargetFramework>net5</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -23,7 +23,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <AssemblyTitle>NetSparkleUpdaterAppCastGenerator</AssemblyTitle>
     <Product>NetSparkleUpdater.Tools.AppCastGenerator</Product>
-    <Description>Command line tool 'generate_appcast' to scan a directory for update files and generate appcast.xml. Use in conjunction with the NetSparkleUpdater library</Description>
+    <Description>Command line tool 'netsparkle-generate-appcast' to scan a directory for update files and generate appcast.xml. Can also be used to generate ed25519 keys/etc. for that app cast. Use in conjunction with the NetSparkleUpdater library.</Description>
     <Copyright>Copyright © ndreisg 2019, Deadpikle 2020-2021</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PackAsTool>true</PackAsTool>

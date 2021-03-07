@@ -4,15 +4,29 @@
     <ProjectGuid>{B4D6FCB0-1217-4AFA-A2A5-4BA5482876C0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
-    <AssemblyName>NetSparkle.DSAHelper</AssemblyName>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>NetSparkleUpdater.Tools.DSAHelper</AssemblyName>
+    <TargetFramework>net5</TargetFramework>
     <AssemblyTitle>NetSparkle</AssemblyTitle>
-    <Product>NetSparkle</Product>
-    <Description>NetSparkle is an auto update framework for .NET developers</Description>
-    <Copyright>Portions Copyright © Dirk Eisenberg 2010, Deadpikle 2020-2021</Copyright>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
+    <Product>NetSparkleUpdater.Tools.DSAHelper</Product>
+    <Description>Command line tool 'netsparkle-dsa' to generate and use DSA signatures. WARNING: DSA signatures are insecure. If possible, please use NetSparkleUpdater.Tools.AppCastGenerator instead to use ed25519 signatures. Use in conjunction with the NetSparkleUpdater library.</Description>
+    <Copyright>Copyright © Dirk Eisenberg 2010, Deadpikle 2020-2021</Copyright>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <OutputPath>..\..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.0</Version>
+    <Authors>Deadpikle</Authors>
+    <Company>Deadpikle</Company>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>netsparkle-dsa</ToolCommandName>
+    <PackageLicenseFile>README.md</PackageLicenseFile>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast, dsa</PackageTags>
+    <PackageReleaseNotes>2.0.0: See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -36,5 +50,15 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
