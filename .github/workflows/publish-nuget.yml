@@ -35,12 +35,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
-  build:
-    needs: setup
-    name: Build packages
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
+          
       - name: Build NetSparkle in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
       
@@ -56,12 +51,6 @@ jobs:
       - name: Build NetSparkle.Tools.DSAHelper in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
         
-  publish_core:
-    needs: build
-    name: Publish core NetSparkleUpdater package
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
       - name: Publish Netsparkle.New on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -74,12 +63,6 @@ jobs:
           PACKAGE_NAME: NetSparkle.New
           INCLUDE_SYMBOLS: true
 
-  publish_wpf:
-    needs: build
-    name: Publish WPF package
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.UI.WPF on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -92,12 +75,6 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
           INCLUDE_SYMBOLS: true
 
-  publish_avalonia:
-    needs: build
-    name: Publish Avalonia package
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -109,13 +86,7 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
           INCLUDE_SYMBOLS: true
-        
-  publish_forms:
-    needs: build
-    name: Publish WinForms packages
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
+
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -144,13 +115,7 @@ jobs:
           nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
           cd ${{ github.workspace }}
-
-  publish_tools:
-    needs: build
-    name: Publish tools (app cast generator, dsa helper) packages
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
+          
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
