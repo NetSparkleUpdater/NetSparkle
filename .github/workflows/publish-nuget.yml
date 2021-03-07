@@ -61,7 +61,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Publish Netsparkle.New on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -70,6 +70,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkle.New
+          INCLUDE_SYMBOLS: true
 
   publish_wpf:
     needs: build
@@ -77,7 +78,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Publish NetSparkleUpdater.UI.WPF on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -86,6 +87,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
+          INCLUDE_SYMBOLS: true
 
   publish_avalonia:
     needs: build
@@ -93,7 +95,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -102,6 +104,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
+          INCLUDE_SYMBOLS: true
         
   publish_forms:
     needs: build
@@ -109,7 +112,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -118,6 +121,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
+          INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
         run: msbuild src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452
@@ -142,7 +146,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -151,9 +155,10 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkle.Tools.DSAHelper
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
-        uses: rohith/publish-nuget@v2.1.2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -162,3 +167,4 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkle.Tools.AppCastGenerator
+          INCLUDE_SYMBOLS: true
