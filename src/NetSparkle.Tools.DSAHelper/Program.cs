@@ -150,21 +150,21 @@ namespace NetSparkleUpdater.DSAHelper
         {
             ShowHeadLine();
 
-            Console.WriteLine("NetSparkle.DSAHelper.exe /genkey_pair");
+            Console.WriteLine("netsparkle-dsa /genkey_pair");
             Console.WriteLine("");
             Console.WriteLine("Generates a public and a private DSA key pair which is stored in the current");
             Console.WriteLine("working directory. The private is stored in the file NetSparkle_DSA.priv");
             Console.WriteLine("The public key will be stored in a file named NetSparkle_DSA.pub. Add the");
             Console.WriteLine("public key file as resource to your application.");
             Console.WriteLine("");
-            Console.WriteLine("NetSparkle.DSAHelper.exe /sign_update {YourPackage.msi} {NetSparkle_DSA.priv}");
+            Console.WriteLine("netsparkle-dsa /sign_update {YourPackage.msi} {NetSparkle_DSA.priv}");
             Console.WriteLine("");
             Console.WriteLine("Allows to sign an existing update package unattended. YourPackage.msi has to be");
             Console.WriteLine("a valid path to the package binary as self (mostly Windows Installer packages).");
             Console.WriteLine("The NetSparkle_DSA.priv has to be a path to the generated DAS private key,");
             Console.WriteLine("which has to be used for signing.");
             Console.WriteLine("");
-            Console.WriteLine("NetSparkle.DSAHelper.exe /verify_update {YourPackage.msi} {NetSparkle_DSA.pub} \"{Base64SignatureString}\"");
+            Console.WriteLine("netsparkle-dsa /verify_update {YourPackage.msi} {NetSparkle_DSA.pub} \"{Base64SignatureString}\"");
             Console.WriteLine("");
             
         }
@@ -172,7 +172,10 @@ namespace NetSparkleUpdater.DSAHelper
         private static void ShowHeadLine()
         {
             Console.WriteLine("NetSparkle DSA Helper");
-            Console.WriteLine("(c) 2011 Dirk Eisenberg under the terms of MIT license");
+            Console.WriteLine("(c) 2011 Dirk Eisenberg, 2020-20201 Deadpikle under the terms of MIT license");
+            Console.WriteLine("[NOTE] DSA signatures are considered insecure. Please consider using the");
+            Console.WriteLine("[NOTE] NetSparkleUpdater.Tools.AppCastGenerator package instead to make use of");
+            Console.WriteLine("[NOTE] ed25519 signatures instead. Thanks!");
             Console.WriteLine("");
         }
     }
