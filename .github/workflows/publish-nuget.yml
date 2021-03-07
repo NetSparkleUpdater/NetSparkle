@@ -40,6 +40,7 @@ jobs:
     name: Build packages
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Build NetSparkle in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
       
@@ -60,6 +61,7 @@ jobs:
     name: Publish core NetSparkleUpdater package
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Publish Netsparkle.New on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -77,6 +79,7 @@ jobs:
     name: Publish WPF package
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.UI.WPF on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -94,6 +97,7 @@ jobs:
     name: Publish Avalonia package
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -111,6 +115,7 @@ jobs:
     name: Publish WinForms packages
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
@@ -145,6 +150,7 @@ jobs:
     name: Publish tools (app cast generator, dsa helper) packages
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
