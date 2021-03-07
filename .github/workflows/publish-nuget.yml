@@ -5,7 +5,7 @@ on:
       - develop # Your default release branch
 jobs:
   setup:
-    name: Setup everything for publishing to NuGet
+    name: Build and publish all packages to NuGet
     runs-on: windows-latest
     # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
     #env:
@@ -115,7 +115,7 @@ jobs:
           nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed
           nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
           cd ${{ github.workspace }}
-          
+
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: brandedoutcast/publish-nuget@v2.5.5
         with:
