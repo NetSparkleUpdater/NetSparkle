@@ -28,7 +28,6 @@
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.NetFramework.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <DocumentationFile>..\bin\Release\NetSparkle.UI.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">

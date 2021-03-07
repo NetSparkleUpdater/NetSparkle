@@ -28,7 +28,6 @@
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <DocumentationFile>..\bin\Release\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>

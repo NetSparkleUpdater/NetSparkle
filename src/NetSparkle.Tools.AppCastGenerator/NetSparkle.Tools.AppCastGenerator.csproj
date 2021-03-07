@@ -35,7 +35,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile></DocumentationFile>
-    <DebugType>pdbonly</DebugType>
     <OutputPath></OutputPath>
     <OutputPath></OutputPath>
     <NoWarn>1701;1702</NoWarn>
