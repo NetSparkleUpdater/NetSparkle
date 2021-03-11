@@ -55,14 +55,13 @@ Command Line Tools [DEPRECATED] | DSA helper; AppCast generator (incl. Ed25519 h
 
 All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
 
-
 ## How updates work
 
 A typical software update path for a stereotypical piece of software might look like this:
 
 1. Compile application so it can be run on other computers (e.g. `dotnet publish`)
 2. Programmer puts app in some sort of installer/zip/etc. for distribution (e.g. InnoSetup for Windows)
-3. Programmer creates app cast file (see the [appcast](#appcast) section of this document for more info on how to create this)
+3. Programmer creates app cast file (see the [app cast](#app-cast) section of this document for more info on how to create this)
 4. Programmer uploads files for distribution (installer, app cast file, appcast-file.signature file) to their download site.
 5. Client opens app and is automatically notified of an available update (or the software otherwise detects there is an update)
 6. Client chooses to update (or update is downloaded if the software downloads it automatically)
@@ -79,7 +78,7 @@ Right now, NetSparkleUpdater **does not** help you with 1., 2., or 4. "Why not?"
   * Linux: Use [dotnet-packaging](https://github.com/qmfrederik/dotnet-packaging/) to create an rpm, deb, or tar.gz file for your users.
 * 4. We don't know where your files will live on the internet, so you need to be responsible for uploading these files and putting them online somewhere.
 
-To create your app cast file, see the [appcast](#appcast) section of this document.
+To create your app cast file, see the [app cast](#app-cast) section of this document.
 
 We are open to contributions that might make the overall install/update process easier for the user. Please file an issue first with your idea before starting work so we can talk about it.
 
@@ -125,11 +124,24 @@ Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplicat
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use `PreparingForExit` or `PreparingToExitAsync`.
 
-## App Cast
+## Appcast
+
+The appcast is just an XML file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
+
+We strongly recommend that you make use of the [netsparkle-generate-appcast](#install-appcast-generator-tool) tool to (re)create the file because it correctly takes care of all signing requirements for you.
+
+### Install AppCast Generator Tool
+
+1. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+2. The tool is now available on your command line as the `netsparkle-generate-appcast` command
+
+#### Sparkle Compatibility 
 
 NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
 
-_Note: if your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 2.0.0-20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519._
+#### DAS vs Ed25519 Signatures
+
+If your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 2.0.0-20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519.
 
 Here is a sample app cast:
 
@@ -157,6 +169,8 @@ Here is a sample app cast:
     </channel>
 </rss>
 ```
+
+### App Cast Items
 
 NetSparkle reads the `<item>` tags to determine whether updates are available.
 
@@ -188,10 +202,7 @@ By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
 1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
 2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA) signature for that file at http://example.com/awesome-software.xml.signature. 
 
-#### Installing the App Cast command-line tool
-
-1. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
-2. The tool is now available on your command line as the `netsparkle-generate-appcast` command
+_Note:_ the app cast generator tool creates both of these signatures for you when it recreates the appcast.xml file.
 
 ### Ed25519 Signatures
 
@@ -386,6 +397,16 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 ### Am I required to use a UI with NetSparkleUpdater?
 
 Nope. You can just reference the core library and handle everything yourself, including any custom UI. Check out the code samples for an example of doing that!
+
+### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
+
+NetSparkle.Updater is the right package.  You might also find one called NetSparkle.New which is deprecated.
+
+### Must I put all my release versions into a single appcast file?
+
+No.  If your app is just using NetSparkle to work out if there is a later release - and you are not using the appcast as a way to refer to historical versions of your app in any was - then you don't need to add all the released versions into the appcast file.  
+
+Having just the latest version of your software in the appcast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the appcast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
 
 ### How can I use NetSparkleUpdater with [AppCenter](https://appcenter.ms/)?
 
