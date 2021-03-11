@@ -33,6 +33,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('r', "search-binary-subdirectories", SetName = "local", Required = false, HelpText = "Search subdirectories of --binaries for binaries", Default = false)]
             public bool SearchBinarySubDirectories { get; set; }
 
+            [Option('s', "single-binary", SetName = "local", Required = false, HelpText = "Recalculate the signature of a single binary and insert this into the appcast.xml file specified by --appcast-output-directory, if specified only this binary is considered.  This option never removes items from the appcast, it will only insert or update.", Default = false)]
+            public bool SingleBinaryIntoAppcast { get; set; }
+
             //[Option('g', "github-atom-feed", SetName = "github", Required = false, HelpText = "Generate from Github release atom feed (signatures not supported yet)")]
             //public string GithubAtomFeed { get; set; }
 
@@ -170,7 +173,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (result)
                 {
                     Console.WriteLine($"Signature valid", Color.Green);
-                } 
+                }
                 else
                 {
                     Console.WriteLine($"Signature invalid", Color.Red);
@@ -187,7 +190,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 opts.SourceBinaryDirectory = Environment.CurrentDirectory;
             }
 
-            var binaries = Directory.GetFiles(opts.SourceBinaryDirectory, search, 
+            var binaries = Directory.GetFiles(opts.SourceBinaryDirectory, search,
                 opts.SearchBinarySubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             if (binaries.Length == 0)
@@ -292,7 +295,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
                         {
                             item.ReleaseNotesSignature = changelogSignature;
-                            var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/") 
+                            var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/")
                                 ? opts.ChangeLogUrl
                                 : opts.ChangeLogUrl + "/";
                             item.ReleaseNotesLink = opts.ChangeLogUrl + changelogFileName;
@@ -306,12 +309,20 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     items.Add(item);
                 }
 
-                var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
-
                 var appcastFileName = Path.Combine(opts.OutputDirectory, "appcast.xml");
+                XDocument appcastXmlDocument = null;
+
+                if (opts.SingleBinaryIntoAppcast)
+                {
+                    appcastXmlDocument = XMLAppCast.ReadFromFile(appcastFileName);
+                }
+                else
+                {
+                    appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
+                }
+
 
                 var dirName = Path.GetDirectoryName(appcastFileName);
-
                 if (!Directory.Exists(dirName))
                 {
                     Console.WriteLine("Creating {0}", dirName);
@@ -335,7 +346,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     if (result)
                     {
-                        
+
                         File.WriteAllText(signatureFile, signature);
                         Console.WriteLine($"Wrote {signatureFile}", Color.Green);
                     }
@@ -344,7 +355,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                         Console.WriteLine($"Failed to verify {signatureFile}", Color.Red);
                     }
 
-                } 
+                }
                 else
                 {
                     Console.WriteLine("Skipped generating signature.  Generate keys with --generate-keys", Color.Red);
