@@ -32,6 +32,7 @@ namespace NetSparkleUpdater.UI.WPF
         private UpdateAvailableWindowViewModel _dataContext;
         private bool _hasFinishedNavigatingToAboutBlank = false;
         private string _notes = "";
+        private bool _wasResponseSent = false;
 
         /// <summary>
         /// Initialize the available update window with no initial date context
@@ -57,6 +58,14 @@ namespace NetSparkleUpdater.UI.WPF
             _dataContext.ReleaseNotesUpdater = this;
             _dataContext.UserRespondedHandler = this;
             ReleaseNotesBrowser.Navigated += ReleaseNotesBrowser_Navigated;
+            Closing += UpdateAvailableWindow_Closing;
+        }
+
+        private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            UserRespondedToUpdateCheck(UpdateAvailableResult.None); // just in case response not sent
+            ReleaseNotesBrowser.Navigated -= ReleaseNotesBrowser_Navigated;
+            Closing -= UpdateAvailableWindow_Closing;
         }
 
         UpdateAvailableResult IUpdateAvailable.Result => _dataContext?.UserResponse ?? UpdateAvailableResult.None;
@@ -84,7 +93,9 @@ namespace NetSparkleUpdater.UI.WPF
 
         void IUpdateAvailable.Close()
         {
+            UserRespondedToUpdateCheck(UpdateAvailableResult.None);
             ReleaseNotesBrowser.Navigated -= ReleaseNotesBrowser_Navigated;
+            Closing -= UpdateAvailableWindow_Closing;
             CloseWindow();
         }
 
@@ -124,7 +135,11 @@ namespace NetSparkleUpdater.UI.WPF
         /// <param name="response">How the user responded to the update (e.g. install the update, remind me later)</param>
         public void UserRespondedToUpdateCheck(UpdateAvailableResult response)
         {
-            UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
+            if (!_wasResponseSent)
+            {
+                _wasResponseSent = true;
+                UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
+            }
         }
 
         /// <summary>
