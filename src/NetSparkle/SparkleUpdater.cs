@@ -697,8 +697,6 @@ namespace NetSparkleUpdater
 
                         if (UpdateAvailableWindow != null)
                         {
-
-                            // clear if already set.
                             UpdateAvailableWindow.UserResponded += OnUserWindowUserResponded;
                             UpdateAvailableWindow.Show(ShowsUIOnMainThread);
                         }
@@ -1682,7 +1680,7 @@ namespace NetSparkleUpdater
                     }
                 });
             }
-            else if (result == UpdateAvailableResult.RemindMeLater && currentItem != null)
+            else
             {
                 CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
             }

@@ -88,7 +88,8 @@ namespace NetSparkleUpdater
     /// </summary>
     /// <param name="sender">The object that initiated the event</param>
     /// <param name="e">An UpdateResponse object that contains the information on how the user
-    /// responded to the available update (e.g. skip, remind me later).</param>
+    /// responded to the available update (e.g. skip, remind me later). Be warned that 
+    /// <see cref="UpdateResponseEventArgs.UpdateItem"/> might be null.</param>
     public delegate void UserRespondedToUpdate(object sender, UpdateResponseEventArgs e);
 
     /// <summary>
