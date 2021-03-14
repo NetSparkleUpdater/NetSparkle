@@ -60,7 +60,7 @@ namespace NetSparkleUpdater
             }
             else
             {
-                Debug.WriteLine(tag + " " + message, arguments);
+                Trace.WriteLine(string.Format(tag + " " + message, arguments));
             }
         }
     }
