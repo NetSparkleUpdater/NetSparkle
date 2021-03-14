@@ -98,6 +98,9 @@
     <EmbeddedResource Include="DownloadProgressWindow.it.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DownloadProgressWindow.JA.resx">
+      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DownloadProgressWindow.lt.resx">
       <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -138,6 +141,9 @@
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateAvailableWindow.it.resx">
+      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateAvailableWindow.JA.resx">
       <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateAvailableWindow.lt.resx">
