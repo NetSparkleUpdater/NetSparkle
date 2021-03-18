@@ -1311,6 +1311,7 @@ namespace NetSparkleUpdater
                     }
 
                     string output = $@"
+                        chcp 65001 > nul
                         set /A counter=0                       
                         setlocal ENABLEDELAYEDEXPANSION
                         :loop
