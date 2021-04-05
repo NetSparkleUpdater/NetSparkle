@@ -25,6 +25,8 @@ namespace NetSparkleUpdater.UI.WPF
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            ReleaseNotesHTMLTemplate = "";
+            AdditionalReleaseNotesHeaderHTML = "";
         }
 
         /// <summary>
@@ -32,13 +34,10 @@ namespace NetSparkleUpdater.UI.WPF
         /// application icon to show in all update windows
         /// </summary>
         /// <param name="applicationIcon">the <see cref="ImageSource"/> to show in all windows</param>
-        public UIFactory(ImageSource applicationIcon)
+        public UIFactory(ImageSource applicationIcon) : this()
         {
             _applicationIcon = applicationIcon;
             _applicationIcon?.Freeze();
-            HideReleaseNotes = false;
-            HideRemindMeLaterButton = false;
-            HideSkipButton = false;
         }
 
         /// <inheritdoc/>
@@ -49,6 +48,12 @@ namespace NetSparkleUpdater.UI.WPF
 
         /// <inheritdoc/>
         public bool HideRemindMeLaterButton { get; set; }
+
+        /// <inheritdoc/>
+        public string ReleaseNotesHTMLTemplate { get; set; }
+
+        /// <inheritdoc/>
+        public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
@@ -70,7 +75,7 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 (window as IUpdateAvailable).HideRemindMeLaterButton();
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded);
+            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML);
             return window;
         }
 

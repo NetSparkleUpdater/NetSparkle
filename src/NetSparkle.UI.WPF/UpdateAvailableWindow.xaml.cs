@@ -27,7 +27,7 @@ namespace NetSparkleUpdater.UI.WPF
     /// 
     /// Window that shows the list of available updates to the user
     /// </summary>
-    public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesUpdater, IUserRespondedToUpdateCheck
+    public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
     {
         private UpdateAvailableWindowViewModel _dataContext;
         private bool _hasFinishedNavigatingToAboutBlank = false;
@@ -55,7 +55,7 @@ namespace NetSparkleUpdater.UI.WPF
         {
             InitializeComponent();
             DataContext = _dataContext = viewModel;
-            _dataContext.ReleaseNotesUpdater = this;
+            _dataContext.ReleaseNotesDisplayer = this;
             _dataContext.UserRespondedHandler = this;
             ReleaseNotesBrowser.Navigated += ReleaseNotesBrowser_Navigated;
             Closing += UpdateAvailableWindow_Closing;

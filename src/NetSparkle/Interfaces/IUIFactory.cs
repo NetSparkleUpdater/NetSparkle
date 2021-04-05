@@ -95,5 +95,30 @@ namespace NetSparkleUpdater.Interfaces
         /// Hides the remind me later button when an update is found.
         /// </summary>
         bool HideRemindMeLaterButton { get; set; }
+
+        /// <summary>
+        /// The HTML template to use for each changelog, version, etc. for every app cast
+        /// item update. If you set this to "" or null, the default ReleaseNotesGrabber will use
+        /// the default template.
+        /// To work properly, you MUST have 3 placeholders in the template ({0}, {1}, {2}, {3}), 
+        /// as this will be used in a string.Format() call.
+        /// The only exception to this would be if you implement your own <see cref="ReleaseNotesGrabber"/>
+        /// subclass that overrides 
+        /// <see cref="ReleaseNotesGrabber.DownloadAllReleaseNotes(List{AppCastItem}, AppCastItem, System.Threading.CancellationToken)"/>.
+        /// <para/>
+        /// {0} = app cast item version;
+        /// {1} = app cast publication date;
+        /// {2} = the actual release notes;
+        /// {3} = the background color for the release notes header.
+        /// </summary>
+        string ReleaseNotesHTMLTemplate { get; set; }
+
+        /// <summary>
+        /// Any additional header information to stick in the HTML head element
+        /// that will show up in the release notes (e.g. styles, etc.).
+        /// Must be HTML formatted to work properly.
+        /// Can be null or "".
+        /// </summary>
+        string AdditionalReleaseNotesHeaderHTML { get; set; }
     }
 }

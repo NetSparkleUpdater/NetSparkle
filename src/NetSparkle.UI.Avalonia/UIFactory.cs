@@ -18,8 +18,6 @@ namespace NetSparkleUpdater.UI.Avalonia
     public class UIFactory : IUIFactory
     {
         private WindowIcon _applicationIcon = null;
-        private string _releaseNotesSeparatorTemplate;
-        private string _releaseNotesHeadAddition;
 
         private Bitmap _iconBitmap;
 
@@ -32,7 +30,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         }
 
         /// <inheritdoc/>
-        public UIFactory(WindowIcon applicationIcon, string releaseNotesSeparatorTemplate = "", string releaseNotesHeadAddition = "")
+        public UIFactory(WindowIcon applicationIcon, string releaseNotesSeparatorTemplate = "", string releaseNotesHeadAddition = "") : this()
         {
             _applicationIcon = applicationIcon;
             if (applicationIcon != null)
@@ -44,11 +42,8 @@ namespace NetSparkleUpdater.UI.Avalonia
                     _iconBitmap = new Bitmap(stream);
                 }
             }
-            _releaseNotesSeparatorTemplate = releaseNotesSeparatorTemplate;
-            _releaseNotesHeadAddition = releaseNotesHeadAddition;
-            HideReleaseNotes = false;
-            HideRemindMeLaterButton = false;
-            HideSkipButton = false;
+            ReleaseNotesHTMLTemplate = releaseNotesSeparatorTemplate;
+            AdditionalReleaseNotesHeaderHTML = releaseNotesHeadAddition;
         }
 
         /// <inheritdoc/>
@@ -59,6 +54,12 @@ namespace NetSparkleUpdater.UI.Avalonia
 
         /// <inheritdoc/>
         public bool HideRemindMeLaterButton { get; set; }
+
+        /// <inheritdoc/>
+        public string ReleaseNotesHTMLTemplate { get; set; }
+
+        /// <inheritdoc/>
+        public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
@@ -80,7 +81,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 (window as IUpdateAvailable).HideRemindMeLaterButton();
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, _releaseNotesSeparatorTemplate, _releaseNotesHeadAddition);
+            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML);
             return window;
         }
 

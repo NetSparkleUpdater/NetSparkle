@@ -31,9 +31,13 @@ namespace NetSparkleUpdater.UI.WinForms
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
 
-        private ReleaseNotesGrabber _releaseNotesGrabber;
-
         private bool _didSendResponse = false;
+
+
+        /// <summary>
+        /// Object responsible for downloading and formatting markdown release notes for display in HTML
+        /// </summary>
+        public ReleaseNotesGrabber ReleaseNotesGrabber { get; set; }
 
         /// <summary>
         /// Form constructor for showing release notes.
@@ -42,14 +46,14 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="items">List of updates to show. Should contain at least one item.</param>
         /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        /// <param name="separatorTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
-        /// <param name="headAddition">Additional text they will inserted into HTML Head. For Stylesheets.</param>
+        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show for the release notes</param>
+        /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
         public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
-            string separatorTemplate = "", string headAddition = "")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "")
         {
             _sparkle = sparkle;
             _updates = items;
-            _releaseNotesGrabber = new ReleaseNotesGrabber(separatorTemplate, headAddition, sparkle);
+            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);
 
             InitializeComponent();
 
@@ -110,7 +114,7 @@ namespace NetSparkleUpdater.UI.WinForms
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
 
-            ReleaseNotesBrowser.DocumentText = _releaseNotesGrabber.GetLoadingText();
+            ReleaseNotesBrowser.DocumentText = ReleaseNotesGrabber.GetLoadingText();
             EnsureDialogShown();
             LoadReleaseNotes(items);
             FormClosing += UpdateAvailableWindow_FormClosing;
@@ -119,7 +123,7 @@ namespace NetSparkleUpdater.UI.WinForms
         private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
-            string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
+            string releaseNotes = await ReleaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
             ReleaseNotesBrowser.Invoke((MethodInvoker)delegate
             {
                 // see https://stackoverflow.com/a/15209861/3938401
@@ -150,7 +154,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public AppCastItem CurrentItem
         {
-            get { return _updates.Count() > 0 ? _updates[0] : null; }
+            get { return _updates.Count > 0 ? _updates[0] : null; }
         }
 
         /// <summary>

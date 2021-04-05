@@ -13,22 +13,10 @@ namespace NetSparkleUpdater
 {
     /// <summary>
     /// Grabs release notes formatted as Markdown (https://en.wikipedia.org/wiki/Markdown)
-    /// from the server and allows you to view them as HTML
+    /// from the server and allows you to view them as HTML.
     /// </summary>
     public class ReleaseNotesGrabber
     {
-        /// <summary>
-        /// The HTML template to use between each changelog for every update between the
-        /// most current update and the one that the user is going to install
-        /// </summary>
-        protected string _separatorTemplate;
-
-        /// <summary>
-        /// The initial HTML to use for the changelog. This is everything before the 
-        /// body tag and includes the html and head elements/tags.
-        /// </summary>
-        protected string _initialHTML;
-
         /// <summary>
         /// The <see cref="SparkleUpdater"/> for this ReleaseNotesGrabber. Mostly
         /// used for logging via <see cref="LogWriter"/>, but also can be used
@@ -48,31 +36,64 @@ namespace NetSparkleUpdater
         public bool ChecksReleaseNotesSignature { get; set; }
 
         /// <summary>
-        /// Base constructor for ReleaseNotesGrabber
+        /// HTML to show while release notes are loading. Does NOT include
+        /// ending body and html tags.
         /// </summary>
-        /// <param name="separatorTemplate">Template to use for separating each item in the HTML</param>
-        /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
-        /// <param name="sparkle">Sparkle updater being used</param>
-        public ReleaseNotesGrabber(string separatorTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
+        public string LoadingHTML { get; set; }
+
+        /// <summary>
+        /// The HTML template to use for each changelog, version, etc. for every app cast
+        /// item update
+        /// </summary>
+        public string ReleaseNotesTemplate { get; set; }
+
+        /// <summary>
+        /// The HTML template to use for each changelog, version, etc. for every app cast
+        /// item update
+        /// </summary>
+        public string AdditionalHeaderHTML { get; set; }
+
+        /// <summary>
+        /// The initial HTML to use for the changelog. This is everything before the 
+        /// body tag and includes the html and head elements/tags. This ends with an
+        /// open body tag.
+        /// </summary>
+        public string InitialHTML
         {
-            _separatorTemplate =
-                !string.IsNullOrEmpty(separatorTemplate) ?
-                    separatorTemplate :
-                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right;\">" +
-                    "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
-            _initialHTML = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/><title>Sparkle</title>" + 
-                htmlHeadAddition + "</head><body>";
-            _sparkle = sparkle;
-            ChecksReleaseNotesSignature = false;
+            get
+            {
+                return string.Format("<!DOCTYPE html><html><head><meta http-equiv='Content-Type' " +
+                    "content='text/html;charset=UTF-8'/>{0}</head><body>", AdditionalHeaderHTML ?? "");
+            }
         }
 
         /// <summary>
-        /// Generates the text to display while release notes are loading
+        /// Base constructor for ReleaseNotesGrabber
+        /// </summary>
+        /// <param name="releaseNotesTemplate">Template to use for separating each item in the HTML</param>
+        /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
+        /// <param name="sparkle">Sparkle updater being used</param>
+        public ReleaseNotesGrabber(string releaseNotesTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
+        {
+            ReleaseNotesTemplate =
+                !string.IsNullOrEmpty(releaseNotesTemplate) ?
+                    releaseNotesTemplate :
+                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right;\">" +
+                    "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
+            AdditionalHeaderHTML = htmlHeadAddition;
+            _sparkle = sparkle;
+            ChecksReleaseNotesSignature = false;
+            LoadingHTML = "<p><em>Loading release notes...</em></p>";
+        }
+
+        /// <summary>
+        /// Generates the text to display while release notes are loading.
+        /// By default, this is InitialHTML + LoadingHTML + the ending body and html tags.
         /// </summary>
         /// <returns>HTML to show to the user while release notes are loading</returns>
         public virtual string GetLoadingText()
         {
-            return _initialHTML + "<p><em>Loading release notes...</em></p></body></html>"; ;
+            return InitialHTML + LoadingHTML + "</body></html>";
         }
 
         /// <summary>
@@ -85,13 +106,13 @@ namespace NetSparkleUpdater
         public virtual async Task<string> DownloadAllReleaseNotes(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
-            StringBuilder sb = new StringBuilder(_initialHTML);
+            StringBuilder sb = new StringBuilder(InitialHTML);
             foreach (AppCastItem castItem in items)
             {
                 _sparkle.LogWriter.PrintMessage("Initializing release notes for {0}", castItem.Version);
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
-                sb.Append(string.Format(_separatorTemplate,
+                sb.Append(string.Format(ReleaseNotesTemplate,
                                         castItem.Version,
                                         castItem.PublicationDate.ToString("D"), // was dd MMM yyyy
                                         releaseNotes,

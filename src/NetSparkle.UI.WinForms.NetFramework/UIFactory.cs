@@ -25,12 +25,9 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public UIFactory(Icon applicationIcon)
+        public UIFactory(Icon applicationIcon) : this()
         {
             _applicationIcon = applicationIcon;
-            HideReleaseNotes = false;
-            HideRemindMeLaterButton = false;
-            HideSkipButton = false;
         }
 
         /// <inheritdoc/>
@@ -43,9 +40,16 @@ namespace NetSparkleUpdater.UI.WinForms
         public bool HideRemindMeLaterButton { get; set; }
 
         /// <inheritdoc/>
+        public string ReleaseNotesHTMLTemplate { get; set; }
+
+        /// <inheritdoc/>
+        public string AdditionalReleaseNotesHeaderHTML { get; set; }
+
+        /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded);
+            var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded,
+                ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML);
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();

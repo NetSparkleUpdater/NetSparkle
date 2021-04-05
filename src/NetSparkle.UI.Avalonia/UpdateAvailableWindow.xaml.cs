@@ -19,7 +19,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// 
     /// Window that shows the list of available updates to the user
     /// </summary>
-    public class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesUpdater, IUserRespondedToUpdateCheck
+    public class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
     {
         private UpdateAvailableWindowViewModel _dataContext;
         private RowDefinition _releaseNotesRow;
@@ -60,7 +60,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             this.AttachDevTools();
 #endif
             DataContext = _dataContext = viewModel;
-            _dataContext.ReleaseNotesUpdater = this;
+            _dataContext.ReleaseNotesDisplayer = this;
             _dataContext.UserRespondedHandler = this;
             Closing += UpdateAvailableWindow_Closing;
         }

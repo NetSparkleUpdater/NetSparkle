@@ -17,7 +17,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
     {
         private SparkleUpdater _sparkle;
         private List<AppCastItem> _updates;
-        private ReleaseNotesGrabber _releaseNotesGrabber;
 
         private CancellationToken _cancellationToken;
         private CancellationTokenSource _cancellationTokenSource;
@@ -50,13 +49,18 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <summary>
         /// Interface object for the object that will be displaying the release notes
         /// </summary>
-        public IReleaseNotesUpdater ReleaseNotesUpdater { get; set; }
+        public IReleaseNotesDisplayer ReleaseNotesDisplayer { get; set; }
 
         /// <summary>
         /// Interface object for the object that can handle user responses to the update that
         /// is being shown to the user
         /// </summary>
         public IUserRespondedToUpdateCheck UserRespondedHandler { get; set; }
+
+        /// <summary>
+        /// Object responsible for downloading and formatting markdown release notes for display in HTML
+        /// </summary>
+        public ReleaseNotesGrabber ReleaseNotesGrabber { get; set; }
 
         /// <summary>
         /// Header text to show to the user. Usually something along the lines of
@@ -190,15 +194,15 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <param name="sparkle">The <seealso cref="SparkleUpdater"/> item that is currently checking for updates</param>
         /// <param name="items">The list of <seealso cref="AppCastItem"/> updates that are available for the user</param>
         /// <param name="isUpdateAlreadyDownloaded">Whether or not the update is already downloaded ot the user's computer</param>
-        /// <param name="separatorTemplate">The HTML string template to show in the release notes</param>
-        /// <param name="headAddition">The HTML string to add into the head element of the HTML for the release notes</param>
+        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show in the release notes</param>
+        /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
         public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
-            string separatorTemplate = "", string headAddition = "")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "")
         {
             _sparkle = sparkle;
             _updates = items;
 
-            _releaseNotesGrabber = new ReleaseNotesGrabber(separatorTemplate, headAddition, sparkle);
+            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);
 
             AppCastItem item = items.FirstOrDefault();
 
@@ -234,15 +238,15 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
 
-            ReleaseNotesUpdater?.ShowReleaseNotes(_releaseNotesGrabber.GetLoadingText());
+            ReleaseNotesDisplayer?.ShowReleaseNotes(ReleaseNotesGrabber.GetLoadingText());
             LoadReleaseNotes(items);
         }
 
         private async void LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
-            string releaseNotes = await _releaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
-            ReleaseNotesUpdater?.ShowReleaseNotes(releaseNotes);
+            string releaseNotes = await ReleaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
+            ReleaseNotesDisplayer?.ShowReleaseNotes(releaseNotes);
         }
 
         /// <summary>
