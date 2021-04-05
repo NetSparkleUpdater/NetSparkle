@@ -347,6 +347,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
   * `IAppCastHandler` to implement your own app cast parsing
   * `ISignatureVerifier` to implement your own download/app cast signature checking. NetSparkleUpdater has built-in DSA and Ed25519 signature verifiers.
   * `IUIFactory` to implement your own UI
+    * `IUIFactory` implementors must now have `ReleaseNotesHTMLTemplate` and `AdditionalReleaseNotesHeaderHTML` -- it's ok if these are `string.Empty`/`""`/`null`.
   * `ILogger` to implement your own logger class (rather than being forced to subclass `LogWriter` like in previous versions)
   * `Configuration` subclasses now take an `IAssemblyAccessor` in their constructor(s) in order to define where assembly information is loaded from
   * Many `SparkleUpdater` functions are now virtual and thus more easily overridden for your specific use case
