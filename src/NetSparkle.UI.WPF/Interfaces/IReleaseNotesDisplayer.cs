@@ -14,7 +14,7 @@ namespace NetSparkleUpdater.UI.WPF.Interfaces
         /// <summary>
         /// Show the given release notes to the user
         /// </summary>
-        /// <param name="notes">string of HTML release notes to show to the end-user</param>
-        void ShowReleaseNotes(string notes);
+        /// <param name="htmlNotes">string of HTML release notes to show to the end-user</param>
+        void ShowReleaseNotes(string htmlNotes);
     }
 }

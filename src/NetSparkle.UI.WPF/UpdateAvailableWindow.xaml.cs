@@ -148,10 +148,10 @@ namespace NetSparkleUpdater.UI.WPF
         /// There is some bizarre thing where the WPF browser doesn't navigate to the release notes unless you successfully navigate to
         /// about:blank first. I don't know why. I feel like this is a Terrible Bad Fix, but...it works for now...
         /// </summary>
-        /// <param name="notes">The HTML notes to show to the end user</param>
-        public void ShowReleaseNotes(string notes)
+        /// <param name="htmlNotes">The HTML notes to show to the end user</param>
+        public void ShowReleaseNotes(string htmlNotes)
         {
-            _notes = notes;
+            _notes = htmlNotes;
             ReleaseNotesBrowser.Dispatcher.Invoke(() =>
             {
 

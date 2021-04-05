@@ -156,12 +156,12 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <summary>
         /// Show the HTML release notes to the user via the UI dispatcher
         /// </summary>
-        /// <param name="notes">The HTML notes to show to the end user</param>
-        public void ShowReleaseNotes(string notes)
+        /// <param name="htmlNotes">The HTML notes to show to the end user</param>
+        public void ShowReleaseNotes(string htmlNotes)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                _htmlLabel.Text = notes;
+                _htmlLabel.Text = htmlNotes;
             });
         }
     }
