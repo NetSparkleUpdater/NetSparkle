@@ -1319,7 +1319,7 @@ namespace NetSparkleUpdater
                     if (RelaunchAfterUpdate)
                     {
                         relaunchAfterUpdate = $@"
-                        cd {workingDir}
+                        cd ""{workingDir}""
                         {executableName}";
                     }
 
