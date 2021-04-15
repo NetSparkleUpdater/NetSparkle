@@ -432,9 +432,9 @@ Here's a summary of what you can do:
 
 The "Handle Events Yourself" sample will be very helpful to you: https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself
 
-### Does this work with Avalonia 0.10?
+### Does this work with Avalonia version XYZ?
 
-Right now, the Avalonia UI is compatible with Avalonia 0.10. Please see [#122](https://github.com/NetSparkleUpdater/NetSparkle/issues/122) for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
+Right now, we are compatible with 0.10. If you need to make changes, you can use your own `IUIFactory` implementation to fix any issues that come up.
 
 ### Things aren't working. Help!
 
