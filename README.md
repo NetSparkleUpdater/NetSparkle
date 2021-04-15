@@ -340,7 +340,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
   * `NetSparkleUpdater` offers basic, built-in UIs for WinForms, WPF, and Avalonia. Copy & paste these files to your project and modify them to make them work better in your project!
   * `SparkleUpdater` no longer holds its own `Icon`. This is now handled by the `UIFactory` object.
   * `HideReleaseNotes`, `HideRemindMeLaterButton`, and `HideSkipButton` are all handled by the `UIFactory` objects
-* Added built-in UIs for WPF and [Avalonia](https://github.com/AvaloniaUI/Avalonia) 0.9.X.
+* Added built-in UIs for WPF and [Avalonia](https://github.com/AvaloniaUI/Avalonia) 0.10.X.
 * Localization capabilities are now non-functional and are expected to come back in a later version. See [this issue](https://github.com/NetSparkleUpdater/NetSparkle/issues/92). (Contributions are welcome!)
 * Most `SparkleUpdater` elements are now configurable. For example, you can implement `IAppCastHandler` to implement your own app cast parsing and checking.
   * `IAppCastDataDownloader` to implement downloading of your app cast file
@@ -434,7 +434,7 @@ The "Handle Events Yourself" sample will be very helpful to you: https://github.
 
 ### Does this work with Avalonia 0.10?
 
-Right now, the Avalonia UI is compatible with Avalonia 0.9. Please see [#122](https://github.com/NetSparkleUpdater/NetSparkle/issues/122) for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
+Right now, the Avalonia UI is compatible with Avalonia 0.10. Please see [#122](https://github.com/NetSparkleUpdater/NetSparkle/issues/122) for details on this issue -- basically, when 0.10 is officially released, we'll update the Avalonia build. For now, you can use your own `IUIFactory` implementation to fix any issues that come up.
 
 ### Things aren't working. Help!
 
