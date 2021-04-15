@@ -1330,7 +1330,7 @@ namespace NetSparkleUpdater
                         :loop
                         set /A counter=!counter!+1
                         if !counter! == 90 (
-                            goto :afterinstall
+                            exit /b 1
                         )
                         tasklist | findstr ""\<{processID}\>"" > nul
                         if not errorlevel 1 (
@@ -1339,8 +1339,8 @@ namespace NetSparkleUpdater
                         )
                         :install
                         {installerCmd}
-                        {relaunchAfterUpdate}
                         :afterinstall
+                        {relaunchAfterUpdate}
                         endlocal";
                     await write.WriteAsync(output);
                     write.Close();
