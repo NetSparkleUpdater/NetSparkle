@@ -60,6 +60,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option("key-path", SetName = "local", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
             public string PathToKeyFiles { get; set; }
 
+            [Option("signature-file-extension", SetName = "local", Required = false,
+                HelpText = "Suffix (without '.') to append to appcast.xml for signature file",
+                Default = "signature")]
+            public string SignatureFileExtension { get; set; }
+
 
             #region Key Generation
 
@@ -328,7 +333,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (_signatureManager.KeysExist())
                 {
                     var appcastFile = new FileInfo(appcastFileName);
-                    var signatureFile = appcastFileName + ".signature";
+                    var extension = opts.SignatureFileExtension?.TrimStart('.') ?? "signature";
+                    var signatureFile = appcastFileName + "." + extension;
                     var signature = _signatureManager.GetSignatureForFile(appcastFile);
 
                     var result = _signatureManager.VerifySignature(appcastFile, signature);

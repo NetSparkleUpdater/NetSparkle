@@ -29,7 +29,8 @@ namespace NetSparkleUpdater.Samples.NetFramework.WPF
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
-                ShowsUIOnMainThread = false
+                ShowsUIOnMainThread = false,
+                AppCastHandler = new AppCastHandlers.XMLAppCast() { SignatureFileExtension = "txt"}
                 //UseNotificationToast = true
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)

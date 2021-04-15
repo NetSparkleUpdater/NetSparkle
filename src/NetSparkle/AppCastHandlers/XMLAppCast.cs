@@ -38,6 +38,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         public string Language { get; set; }
 
         /// <summary>
+        /// Extension (WITHOUT the "." at the start) for the signature
+        /// file. Defaults to "signature".
+        /// </summary>
+        public string SignatureFileExtension { get; set; }
+
+        /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
@@ -48,6 +54,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public XMLAppCast()
         {
             Items = new List<AppCastItem>();
+            SignatureFileExtension = "signature";
         }
 
         /// <summary>
@@ -86,13 +93,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     _logWriter.PrintMessage("Downloading app cast signature data...");
                     var signature = "";
+                    var extension = SignatureFileExtension?.TrimStart('.') ?? "signature";
                     try
                     {
-                        signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".signature");
+                        signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + "." + extension);
                     }
                     catch (Exception e)
                     {
-                        _logWriter.PrintMessage("Error reading app cast {0}.signature: {1} ", _castUrl, e.Message);
+                        _logWriter.PrintMessage("Error reading app cast {0}.{2}: {1} ", _castUrl, e.Message, extension);
                     }
                     if (string.IsNullOrWhiteSpace(signature))
                     {

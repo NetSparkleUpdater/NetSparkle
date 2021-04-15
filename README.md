@@ -245,6 +245,7 @@ _Missing some option you'd like to see? File an issue on this repo or add it you
 * `-x`/`--url-prefix-version`: Add the version number as a prefix to the file name for the download URL. Defaults to false. For example, if `--base-url` is `www.example.com/downloads`, your version is `1.4.2`, and your app name is `MyApp.exe`, your download URL will become `www.example.com/downloads/1.4.2/MyApp.exe`. Example use: `-x true`. 
 * `--key-path`: Path to `NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` files, which are your private and public Ed25519 keys for your software updates, respectively.  Example use: `--key-path my/path/to/keys`
   * If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
+* `--signature-file-extension`: Extension (WITHOUT the `.`) to use for the appcast xml signature file. Defaults to `signature`. Example use: `--signature-file-extension txt`.
 
 #### Options for Key Generation
 
@@ -369,7 +370,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 * Samples have been updated and improved
   * Sample apps for [Avalonia](https://github.com/AvaloniaUI/Avalonia), WinForms, and WPF UIs
   * Sample app to demonstrate how to handle events yourself with your own, custom UI
-* By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server.
+* By default, the app cast signature file now has a `.signature` extension. The app cast downloader will look for a file with the old `.dsa` signature if data is not available or found in a `appcast.xml.signature` on your server. You can change the extension using the `signature-file-extension` option in the app cast generator and via the `XMLAppCast.SignatureFileExtension` property.
 * `sparkle:dsaSignature` is now `sparkle:signature` instead. If no `sparkle:signature` is found, `sparkle:dsaSignature` will be used (if available). If `sparkle:dsaSignature` is not found, `sparkle:edSignature` will be used (if available). This is to give us as much compatibility with old versions of `NetSparkle` as well as the macOS `Sparkle` library.
 * An entirely new app cast generator tool is now available for use.
 * By default, the app cast generator tool now uses Ed25519 signatures. If you don't want to use files on disk to store your keys, set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running the app cast generator tool. You can also store these signatures in a custom location with the `--key-path` flag.

@@ -64,6 +64,8 @@ namespace NetSparkleUpdater
         private string _restartExecutableName;
         private string _restartExecutablePath;
 
+        private IAppCastHandler _appCastHandler;
+
         #endregion
 
         #region Constructors
@@ -400,7 +402,18 @@ namespace NetSparkleUpdater
         /// The object responsible for parsing app cast information and checking to
         /// see if any updates are available in a given app cast
         /// </summary>
-        public IAppCastHandler AppCastHandler { get; set; }
+        public IAppCastHandler AppCastHandler
+        {
+            get
+            {
+                if (_appCastHandler == null)
+                {
+                    _appCastHandler = new XMLAppCast();
+                }
+                return _appCastHandler;
+            }
+            set => _appCastHandler = value;
+        }
 
         #endregion
 
