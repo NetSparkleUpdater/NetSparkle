@@ -1311,7 +1311,7 @@ namespace NetSparkleUpdater
             {
                 if (isWindows)
                 {
-                    write.WriteLine("@echo off");
+                    await write.WriteLineAsync("@echo off");
                     // We should wait until the host process has died before starting the installer.
                     // This way, any DLLs or other items can be replaced properly.
                     // Code from: http://stackoverflow.com/a/22559462/3938401
@@ -1342,7 +1342,7 @@ namespace NetSparkleUpdater
                         {relaunchAfterUpdate}
                         :afterinstall
                         endlocal";
-                    write.Write(output);
+                    await write.WriteAsync(output);
                     write.Close();
                 }
                 else
@@ -1374,7 +1374,7 @@ namespace NetSparkleUpdater
                             {waitForFinish}
                             {tarCommand}
                             {relaunchAfterUpdate}";
-                        write.Write(output);
+                        await write.WriteAsync(output);
                     }
                     else
                     {
@@ -1388,7 +1388,7 @@ namespace NetSparkleUpdater
                             {waitForFinish}
                             {installerCmd}
                             {relaunchAfterUpdate}";
-                        write.Write(output);
+                        await write.WriteAsync(output);
                     }
                     write.Close();
                 }
