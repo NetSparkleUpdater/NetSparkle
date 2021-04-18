@@ -280,15 +280,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     //
                     var item = new AppCastItem()
                     {
-                        Title = itemTitle,
-                        DownloadLink = remoteUpdateFile,
-                        Version = productVersion,
-                        ShortVersion = productVersion.Substring(0, productVersion.LastIndexOf('.')),
+                        Title = itemTitle?.Trim(),
+                        DownloadLink = remoteUpdateFile?.Trim(),
+                        Version = productVersion?.Trim(),
+                        ShortVersion = productVersion?.Substring(0, productVersion.LastIndexOf('.'))?.Trim(),
                         PublicationDate = fileInfo.CreationTime,
                         UpdateSize = fileInfo.Length,
                         Description = "",
                         DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(fileInfo) : null,
-                        OperatingSystemString = opts.OperatingSystem,
+                        OperatingSystemString = opts.OperatingSystem?.Trim(),
                         MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
                     };
 
@@ -300,11 +300,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                             var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/") 
                                 ? opts.ChangeLogUrl
                                 : opts.ChangeLogUrl + "/";
-                            item.ReleaseNotesLink = opts.ChangeLogUrl + changelogFileName;
+                            item.ReleaseNotesLink = (opts.ChangeLogUrl + changelogFileName).Trim();
                         }
                         else
                         {
-                            item.Description = File.ReadAllText(changelogPath);
+                            item.Description = File.ReadAllText(changelogPath).Trim();
                         }
                     }
 
