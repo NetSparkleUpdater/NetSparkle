@@ -1362,7 +1362,7 @@ namespace NetSparkleUpdater
                     string relaunchAfterUpdate = "";
                     if (RelaunchAfterUpdate)
                     {
-                        relaunchAfterUpdate = $@"{workingDir}/{executableName}";
+                        relaunchAfterUpdate = Path.Combine(workingDir, executableName);
                     }
                     if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
                     {
