@@ -11,7 +11,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Create sparkle form implementation. This is the form that tells the user that an update is available, shows changelogs if necessary, etc.
         /// </summary>
-        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="updates">Sorted array of updates from latest to previous</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
         IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false);
@@ -19,58 +19,70 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Create the download progress window
         /// </summary>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="item">Appcast item to download</param>
-        IDownloadProgress CreateProgressWindow(AppCastItem item);
+        IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item);
 
         /// <summary>
         /// Inform user in some way that NetSparkle is checking for updates
         /// </summary>
-        ICheckingForUpdates ShowCheckingForUpdates();
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle);
 
         /// <summary>
         /// Initialize UI. Called when Sparkle is constructed and/or when the UIFactory is set.
         /// </summary>
-        void Init();
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        void Init(SparkleUpdater sparkle);
 
         /// <summary>
         /// Show user a message saying downloaded update format is unknown
         /// </summary>
-        void ShowUnknownInstallerFormatMessage(string downloadFileName);
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        /// <param name="downloadFileName">file name for the download</param>
+        void ShowUnknownInstallerFormatMessage(SparkleUpdater sparkle, string downloadFileName);
 
         /// <summary>
         /// Show user that current installed version is up-to-date
         /// </summary>
-        void ShowVersionIsUpToDate();
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        void ShowVersionIsUpToDate(SparkleUpdater sparkle);
 
         /// <summary>
         /// Show message that latest update was skipped by user
         /// </summary>
-        void ShowVersionIsSkippedByUserRequest();
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        void ShowVersionIsSkippedByUserRequest(SparkleUpdater sparkle);
 
         /// <summary>
         /// Show message that appcast is not available
         /// </summary>
-        void ShowCannotDownloadAppcast(string appcastUrl);
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        /// <param name="appcastUrl">The URL to the app cast file</param>
+        void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string appcastUrl);
 
         /// <summary>
         /// See if this UIFactory can show toast messages
         /// </summary>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <returns>true if the UIFactory can show for toast messages; false otherwise</returns>
-        bool CanShowToastMessages();
+        bool CanShowToastMessages(SparkleUpdater sparkle);
 
         /// <summary>
         /// Show 'toast' window to notify new version is available
         /// </summary>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="updates">Appcast updates</param>
         /// <param name="clickHandler">handler for click</param>
-        void ShowToast(List<AppCastItem> updates,  Action<List<AppCastItem>> clickHandler);
+        void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates,  Action<List<AppCastItem>> clickHandler);
 
         /// <summary>
         /// Show message on download error
         /// </summary>
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="message">Error message from exception</param>
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        void ShowDownloadErrorMessage(string message, string appcastUrl);
+        void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string appcastUrl);
 
         /// <summary>
         /// Shut down the UI so we can run an update.
@@ -79,7 +91,8 @@ namespace NetSparkleUpdater.Interfaces
         /// If in Avalonia, shuts down the current application lifetime if it
         /// implements IClassicDesktopStyleApplicationLifetime.
         /// </summary>
-        void Shutdown();
+        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
+        void Shutdown(SparkleUpdater sparkle);
 
         /// <summary>
         /// Hides the release notes view when an update is found.

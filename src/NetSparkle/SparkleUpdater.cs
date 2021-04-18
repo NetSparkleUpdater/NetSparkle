@@ -109,7 +109,7 @@ namespace NetSparkleUpdater
                 _syncContext = new SynchronizationContext();
             }
             // init UI
-            UIFactory?.Init();
+            UIFactory?.Init(this);
             _appReferenceAssembly = null;
             // set the reference assembly
             if (referenceAssembly != null)
@@ -207,7 +207,7 @@ namespace NetSparkleUpdater
         public IUIFactory UIFactory
         { 
             get { return _uiFactory; } 
-            set { _uiFactory = value; _uiFactory?.Init(); }
+            set { _uiFactory = value; _uiFactory?.Init(this); }
         }
 
         /// <summary>
@@ -653,9 +653,9 @@ namespace NetSparkleUpdater
         {
             if (updates != null)
             {
-                if (UseNotificationToast && (bool)UIFactory?.CanShowToastMessages())
+                if (UseNotificationToast && (bool)UIFactory?.CanShowToastMessages(this))
                 {
-                    UIFactory?.ShowToast(updates, OnToastClick);
+                    UIFactory?.ShowToast(this, updates, OnToastClick);
                 }
                 else
                 {
@@ -934,7 +934,7 @@ namespace NetSparkleUpdater
                     // create the form
                     Action<object> showSparkleDownloadUI = (state) =>
                     {
-                        ProgressWindow = UIFactory?.CreateProgressWindow(castItem);
+                        ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
                         if (ProgressWindow != null)
                         {
                             ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
@@ -1019,7 +1019,7 @@ namespace NetSparkleUpdater
                 string errorMessage = "Download canceled";
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
                 }
                 DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 return;
@@ -1035,7 +1035,7 @@ namespace NetSparkleUpdater
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    UIFactory?.ShowDownloadErrorMessage(e.Error.Message, AppCastUrl);
+                    UIFactory?.ShowDownloadErrorMessage(this, e.Error.Message, AppCastUrl);
                 }
                 DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
                 return;
@@ -1089,7 +1089,7 @@ namespace NetSparkleUpdater
                 {
                     if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                     {
-                        UIFactory?.ShowDownloadErrorMessage(errorMessage, AppCastUrl);
+                        UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
                     }
                     DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(errorMessage));
                 });
@@ -1298,7 +1298,7 @@ namespace NetSparkleUpdater
             }
             catch (InvalidDataException)
             {
-                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath);
+                UIFactory?.ShowUnknownInstallerFormatMessage(this, downloadFilePath);
                 return;
             }
 
@@ -1441,7 +1441,7 @@ namespace NetSparkleUpdater
                         // Because the download/install window is usually on a separate thread,
                         // send dual shutdown messages via both the sync context (kills "main" app)
                         // and the current thread (kills current thread)
-                        UIFactory?.Shutdown();
+                        UIFactory?.Shutdown(this);
                     }
                 }));
             }
@@ -1489,7 +1489,7 @@ namespace NetSparkleUpdater
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest(bool ignoreSkippedVersions = false)
         {
-            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates();
+            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(this);
             if (CheckingForUpdatesWindow != null)
             {
                 CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
@@ -1507,13 +1507,13 @@ namespace NetSparkleUpdater
                     switch (updateData.Status)
                     {
                         case UpdateStatus.UpdateNotAvailable:
-                            UIFactory?.ShowVersionIsUpToDate();
+                            UIFactory?.ShowVersionIsUpToDate(this);
                             break;
                         case UpdateStatus.UserSkipped:
-                            UIFactory?.ShowVersionIsSkippedByUserRequest(); // they can get skipped version from Configuration
+                            UIFactory?.ShowVersionIsSkippedByUserRequest(this); // they can get skipped version from Configuration
                             break;
                         case UpdateStatus.CouldNotDetermine:
-                            UIFactory?.ShowCannotDownloadAppcast(AppCastUrl);
+                            UIFactory?.ShowCannotDownloadAppcast(this, AppCastUrl);
                             break;
                     }
                 });

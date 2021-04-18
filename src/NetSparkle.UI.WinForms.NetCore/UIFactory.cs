@@ -66,19 +66,19 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual IDownloadProgress CreateProgressWindow(AppCastItem item)
+        public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
         {
             return new DownloadProgressWindow(item, _applicationIcon);
         }
 
         /// <inheritdoc/>
-        public virtual ICheckingForUpdates ShowCheckingForUpdates()
+        public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
         {
             return new CheckingForUpdatesWindow(_applicationIcon);
         }
 
         /// <inheritdoc/>
-        public virtual void Init()
+        public virtual void Init(SparkleUpdater sparkle)
         {
             // enable visual style to ensure that we have XP style or higher
             // also in WPF applications
@@ -86,38 +86,38 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(SparkleUpdater sparkle, string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, 
                 string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsUpToDate()
+        public virtual void ShowVersionIsUpToDate(SparkleUpdater sparkle)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsSkippedByUserRequest()
+        public virtual void ShowVersionIsSkippedByUserRequest(SparkleUpdater sparkle)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(string appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
         /// <inheritdoc/>
-        public virtual bool CanShowToastMessages()
+        public virtual bool CanShowToastMessages(SparkleUpdater sparkle)
         {
             return true;
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
+        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
         {
             Thread thread = new Thread(() =>
             {
@@ -134,7 +134,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(string message, string appcastUrl)
+        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }
@@ -147,7 +147,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public void Shutdown()
+        public void Shutdown(SparkleUpdater sparkle)
         {
             Application.Exit();
         }
