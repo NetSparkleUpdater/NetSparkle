@@ -406,13 +406,13 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
-NetSparkleUpdater.NetSparkle is the right package (once 2.0 is released).  You might also find one called NetSparkle.New (which will be deprecated upon release of 2.0).
+`NetSparkleUpdater.NetSparkle` is the right package (once 2.0 is released) if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library.  You might also find the core library called `NetSparkle.New` (which will be deprecated upon release of 2.0). Previous to 2.0, the UI libraries reference `NetSparkle.New`.
 
-### Must I put all my release versions into a single appcast file?
+### Must I put all my release versions into a single app cast file?
 
-No.  If your app is just using NetSparkle to work out if there is a later release - and you are not using the appcast as a way to refer to historical versions of your app in any was - then you don't need to add all the released versions into the appcast file.  
+No. If your app is just using NetSparkle to work out if there is a later release - and you are not using the app cast as a way to refer to historical versions of your app in any was - then you don't need to add all the released versions into the app cast file.  
 
-Having just the latest version of your software in the appcast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the appcast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
+Having just the latest version of your software in the app cast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the appcast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
 
 ### How can I use NetSparkleUpdater with [AppCenter](https://appcenter.ms/)?
 
