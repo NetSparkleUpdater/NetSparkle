@@ -406,7 +406,7 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
-NetSparkle.Updater is the right package.  You might also find one called NetSparkle.New which is deprecated.
+NetSparkleUpdater.NetSparkle is the right package (once 2.0 is released).  You might also find one called NetSparkle.New (which will be deprecated upon release of 2.0).
 
 ### Must I put all my release versions into a single appcast file?
 
