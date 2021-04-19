@@ -130,6 +130,11 @@ namespace NetSparkleUpdater
             return fullBaseDirectory;
 #else
             // https://stackoverflow.com/a/837501/3938401
+            try
+            {
+                return Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            } 
+            catch {}
             return System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
 #endif
         }

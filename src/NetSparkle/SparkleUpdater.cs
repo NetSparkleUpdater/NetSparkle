@@ -284,8 +284,8 @@ namespace NetSparkleUpdater
         /// This is the name that will be used/started when the update has been installed.
         /// This defaults to <see cref="Environment.CommandLine"/>.
         /// Used in conjunction with RestartExecutablePath to restart the application --
-        /// {RestartExecutablePath}/{RestartExecutableName} is what is called to restart the
-        /// app.
+        /// cd "{RestartExecutablePath}"
+        /// "{RestartExecutableName}" is what is called to restart the app.
         /// </summary>
         public string RestartExecutableName
         {
@@ -295,7 +295,20 @@ namespace NetSparkleUpdater
                 {
                     return _restartExecutableName;
                 }
-                return Environment.CommandLine;
+#if NETCORE
+                try
+                {
+                    return Path.GetFileName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                } 
+                catch (Exception e)
+                {
+                    LogWriter?.PrintMessage("Unable to get executable name: " + e.Message);
+                }
+#endif
+                // we cannot just use Path.GetFileName because on .NET Framework it can fail with
+                // invalid chars in the path, so we do some crazy things to get the file name anotehr way
+                var cmdLine = Environment.CommandLine.Trim().TrimStart('"').TrimEnd('"');
+                return cmdLine.Substring(cmdLine.LastIndexOf(Path.DirectorySeparatorChar) + 1).Trim();
             }
             set
             {
@@ -415,7 +428,7 @@ namespace NetSparkleUpdater
             set => _appCastHandler = value;
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
@@ -569,7 +582,7 @@ namespace NetSparkleUpdater
             }
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
@@ -1306,6 +1319,13 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
             string processID = Process.GetCurrentProcess().Id.ToString();
+            string relaunchAfterUpdate = "";
+            if (RelaunchAfterUpdate)
+            {
+                relaunchAfterUpdate = $@"
+                    cd ""{workingDir}""
+                    ""{executableName}""";
+            }
 
             using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
             using (StreamWriter write = new StreamWriter(stream, new UTF8Encoding(false))/*new StreamWriter(batchFilePath, false, new UTF8Encoding(false))*/)
@@ -1315,13 +1335,6 @@ namespace NetSparkleUpdater
                     // We should wait until the host process has died before starting the installer.
                     // This way, any DLLs or other items can be replaced properly.
                     // Code from: http://stackoverflow.com/a/22559462/3938401
-                    string relaunchAfterUpdate = "";
-                    if (RelaunchAfterUpdate)
-                    {
-                        relaunchAfterUpdate = $@"
-                        cd ""{workingDir}""
-                        ""{executableName}""";
-                    }
 
                     string output = $@"
                         @echo off
@@ -1360,11 +1373,6 @@ namespace NetSparkleUpdater
                             fi;
                         done;
                     ";
-                    string relaunchAfterUpdate = "";
-                    if (RelaunchAfterUpdate)
-                    {
-                        relaunchAfterUpdate = Path.Combine(workingDir, executableName);
-                    }
                     if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
                     {
                         // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
