@@ -93,7 +93,9 @@ _sparkle = new SparkleUpdater(
     new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
                        "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools AppCastGenerator on any OS
 ) {
-    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon) // or null or choose some other UI factory or build your own!
+    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null or choose some other UI factory or build your own!
+    RelaunchAfterUpdate = false, // default is false; set to true if you want your app to restart after updating (keep as false if your installer will start your app for you)
+    CustomInstallerArguments = "", // set if you want your installer to get some command-line args
 };
 _sparkle.StartLoop(true); // `true` to run an initial check online -- only call StartLoop once for a given SparkleUpdater instance!
 ```
@@ -380,6 +382,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 * Removed `AssemblyAccessor` class in lieu of `IAssemblyAccessor` implementors
 * The server file name for each app cast download is now checked before doing any downloads or showing available updates to the client. To disable this behavior and use the name in the app cast, set `SparkleUpdater.CheckServerFileName` to `false`.
 * `bool ignoreSkippedVersions = false` has been added to `CheckForUpdatesAtUserRequest`, `CheckForUpdatesQuietly`, and `GetUpdateStatus` to make ignoring skipped versions easier.
+* The file name/path used by `RelaunchAfterUpdate` are controlled by `RestartExecutableName` and `RestartExecutablePath`, respectively. `SparkleUpdater` makes a best effort to figure these out for you; however, you can override them if you need to. NOTE: The way these parameters are fetched has CHANGED in recent previews (as of 2021-04-18) -- YOU HAVE BEEN WARNED!!
 * **Breaking change**: `CheckForUpdatesQuietly` now shows no UI ever. It could show a UI before, which didn't make a lot of sense based on the function name. Make sure that if you use this function that you handle showing a UI yourself if necessary. (See the HandleEventsYourself sample if you want help.) You can always trigger the built-in `SparkleUpdater` by calling `_sparkle.ShowUpdateNeededUI(updateInfo.Updates)`. 
 * **We now rely on Portable.BouncyCastle** (BouncyCastle.Crypto.dll) for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!

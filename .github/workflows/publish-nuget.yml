@@ -61,7 +61,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkle.New
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WPF on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -73,7 +73,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -85,7 +85,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -97,7 +97,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
         run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
@@ -126,7 +126,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.DSAHelper
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
         uses: brandedoutcast/publish-nuget@v2.5.5
@@ -138,4 +138,4 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.AppCastGenerator
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
