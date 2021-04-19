@@ -48,10 +48,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
-    <AssemblyVersion>2.0.4.0</AssemblyVersion>
-    <FileVersion>2.0.4.0</FileVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <FileVersion>2.0.5.0</FileVersion>
     <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
-    <Version>2.0.4</Version>
+    <Version>2.0.5</Version>
     <Authors>Deadpikle</Authors>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
@@ -59,7 +59,7 @@
     <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast</PackageTags>
-    <PackageReleaseNotes>2.0.4: See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+    <PackageReleaseNotes>2.0.5: See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
