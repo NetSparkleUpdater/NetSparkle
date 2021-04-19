@@ -1307,11 +1307,11 @@ namespace NetSparkleUpdater
 
             string processID = Process.GetCurrentProcess().Id.ToString();
 
-            using (StreamWriter write = new StreamWriter(batchFilePath, false, new UTF8Encoding(false)))
+            using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
+            using (StreamWriter write = new StreamWriter(stream, new UTF8Encoding(false))/*new StreamWriter(batchFilePath, false, new UTF8Encoding(false))*/)
             {
                 if (isWindows)
                 {
-                    await write.WriteLineAsync("@echo off");
                     // We should wait until the host process has died before starting the installer.
                     // This way, any DLLs or other items can be replaced properly.
                     // Code from: http://stackoverflow.com/a/22559462/3938401
@@ -1320,10 +1320,11 @@ namespace NetSparkleUpdater
                     {
                         relaunchAfterUpdate = $@"
                         cd ""{workingDir}""
-                        {executableName}";
+                        ""{executableName}""";
                     }
 
                     string output = $@"
+                        @echo off
                         chcp 65001 > nul
                         set /A counter=0                       
                         setlocal ENABLEDELAYEDEXPANSION
@@ -1340,7 +1341,7 @@ namespace NetSparkleUpdater
                         :install
                         {installerCmd}
                         :afterinstall
-                        {relaunchAfterUpdate}
+                        {relaunchAfterUpdate.Trim()}
                         endlocal";
                     await write.WriteAsync(output);
                     write.Close();

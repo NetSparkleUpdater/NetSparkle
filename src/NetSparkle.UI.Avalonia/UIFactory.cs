@@ -90,7 +90,8 @@ namespace NetSparkleUpdater.UI.Avalonia
         {
             var viewModel = new DownloadProgressWindowViewModel()
             {
-                ItemToDownload = item
+                ItemToDownload = item,
+                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
             return new DownloadProgressWindow(viewModel, _iconBitmap)
             {

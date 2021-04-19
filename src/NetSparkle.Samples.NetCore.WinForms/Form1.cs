@@ -24,6 +24,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
             _sparkleUpdateDetector = new SparkleUpdater(appcastUrl, new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WinForms.UIFactory(icon),
+                //RelaunchAfterUpdate = true,
                 //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true
             };

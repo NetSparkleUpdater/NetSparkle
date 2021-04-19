@@ -84,7 +84,8 @@ namespace NetSparkleUpdater.UI.WPF
         {
             var viewModel = new DownloadProgressWindowViewModel()
             {
-                ItemToDownload = item
+                ItemToDownload = item,
+                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
             return new DownloadProgressWindow(viewModel)
             {

@@ -68,7 +68,10 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <inheritdoc/>
         public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
         {
-            return new DownloadProgressWindow(item, _applicationIcon);
+            return new DownloadProgressWindow(item, _applicationIcon)
+            {
+                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
+            };
         }
 
         /// <inheritdoc/>

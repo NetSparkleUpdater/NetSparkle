@@ -158,6 +158,11 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         }
 
         /// <summary>
+        /// Whether or not the software will relaunch after the update has been installed
+        /// </summary>
+        public bool SoftwareWillRelaunchAfterUpdateInstalled { get; set; } = false;
+
+        /// <summary>
         /// Change whether or not the <see cref="AppCastItem"/> download file has finished downloading
         /// </summary>
         /// <param name="isInstallFileValid">true if the download file has finished downloading;
@@ -174,7 +179,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             if (isInstallFileValid)
             {
                 IsActionButtonVisible = true;
-                ActionButtonTitle = "Install and Relaunch";
+                ActionButtonTitle = SoftwareWillRelaunchAfterUpdateInstalled ? "Install and Relaunch" : "Install";
             }
             else
             {
