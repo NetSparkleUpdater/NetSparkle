@@ -14,7 +14,7 @@
 
 NetSparkle is a software update framework for C# that is compatible with .NET Core 3+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), uses Ed25519 or other signatures, and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
-The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON appcasts), and more!
+The `develop` branch has changed significantly from `master` and represents a major 2.0 version update. NetSparkle 2.0, currently in beta, brings the ability to customize most of NetSparkle -- custom UIs are easy, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts), and more!
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
@@ -62,7 +62,7 @@ A typical software update path for a stereotypical piece of software might look 
 1. Compile application so it can be run on other computers (e.g. `dotnet publish`)
 2. Programmer puts app in some sort of installer/zip/etc. for distribution (e.g. InnoSetup for Windows)
 3. Programmer creates app cast file (see the [app cast](#app-cast) section of this document for more info on how to create this)
-4. Programmer uploads files for distribution (installer, app cast file, appcast-file.signature file) to their download site.
+4. Programmer uploads files for distribution (installer, app cast file, appCast-file.signature file) to their download site.
 5. Client opens app and is automatically notified of an available update (or the software otherwise detects there is an update)
 6. Client chooses to update (or update is downloaded if the software downloads it automatically)
 7. Update is downloaded and sitting on the user's disk
@@ -126,9 +126,9 @@ Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplicat
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use `PreparingForExit` or `PreparingToExitAsync`.
 
-## Appcast
+## App cast
 
-The appcast is just an XML file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
+The app cast is just an XML file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
 
 We strongly recommend that you make use of the [netsparkle-generate-appcast](#install-appcast-generator-tool) tool to (re)create the file because it correctly takes care of all signing requirements for you.
 
@@ -412,7 +412,7 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 No. If your app is just using NetSparkle to work out if there is a later release - and you are not using the app cast as a way to refer to historical versions of your app in any was - then you don't need to add all the released versions into the app cast file.  
 
-Having just the latest version of your software in the app cast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the appcast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
+Having just the latest version of your software in the app cast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the app cast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
 
 ### How can I use NetSparkleUpdater with [AppCenter](https://appcenter.ms/)?
 
@@ -427,10 +427,10 @@ public bool DownloadAndParse()
     {
         _logWriter.PrintMessage("Downloading app cast data...");
 
-        var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-        if (!string.IsNullOrEmpty(appcast))
+        var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
+        if (!string.IsNullOrEmpty(appCast))
         {
-            ParseAppCast(appcast);
+            ParseAppCast(appCast);
             return true;
         }
     }
