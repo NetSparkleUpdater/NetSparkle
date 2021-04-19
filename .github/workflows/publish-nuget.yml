@@ -100,7 +100,7 @@ jobs:
           INCLUDE_SYMBOLS: false
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
@@ -112,8 +112,8 @@ jobs:
       - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
         run: |
           cd ${{ github.workspace }}/nuget/winformsnetframework
-          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed
-          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -NoSymbols -verbosity detailed
+          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed -Symbols -SymbolPackageFormat snupkg
+          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -verbosity detailed
           cd ${{ github.workspace }}
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper

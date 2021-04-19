@@ -18,6 +18,10 @@
     <PackageReleaseNotes>2.0 Beta: See https://github.com/NetSparkleUpdater/NetSparkle for all beta information and to file issues/pull requests for and ask questions about this project.</PackageReleaseNotes>
     <RootNamespace>NetSparkleUpdater.UI.Avalonia</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.xml</DocumentationFile>

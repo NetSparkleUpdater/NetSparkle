@@ -23,6 +23,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>NetSparkleUpdater.UI.WPF</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.NetFramework.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
