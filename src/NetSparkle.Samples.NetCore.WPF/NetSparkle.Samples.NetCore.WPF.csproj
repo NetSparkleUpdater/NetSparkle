@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>net5-windows;netcoreapp3.1</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
   </PropertyGroup>

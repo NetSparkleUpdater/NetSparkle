@@ -342,7 +342,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
 * More logs are now written via `LogWriter` to help you debug and figure out any issues that are going on
-* The default `NetSparkleUpdater` package (`NetSparkle.New`/`NetSparkleUpdater.NetSparkle`) **has no built-in UI**. Please use one of the NetSparkleUpdater packages with a UI if you want a built-in UI that is provided for you.
+* The default `NetSparkleUpdater` package (`NetSparkle.New`/`NetSparkleUpdater.SparkleUpdater`) **has no built-in UI**. Please use one of the NetSparkleUpdater packages with a UI if you want a built-in UI that is provided for you.
   * Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be executed/read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 * XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
   * Enabled build time warnings for functions that need documentation that don't have it
@@ -395,6 +395,8 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 * `bool ignoreSkippedVersions = false` has been added to `CheckForUpdatesAtUserRequest`, `CheckForUpdatesQuietly`, and `GetUpdateStatus` to make ignoring skipped versions easier.
 * The file name/path used by `RelaunchAfterUpdate` are controlled by `RestartExecutableName` and `RestartExecutablePath`, respectively. `SparkleUpdater` makes a best effort to figure these out for you; however, you can override them if you need to. NOTE: The way these parameters are fetched has CHANGED in recent previews (as of 2021-04-18) -- YOU HAVE BEEN WARNED!!
 * **Breaking change**: `CheckForUpdatesQuietly` now shows no UI ever. It could show a UI before, which didn't make a lot of sense based on the function name. Make sure that if you use this function that you handle showing a UI yourself if necessary. (See the HandleEventsYourself sample if you want help.) You can always trigger the built-in `SparkleUpdater` by calling `_sparkle.ShowUpdateNeededUI(updateInfo.Updates)`. 
+* **Breaking change**: DLL assembly names for .NET Framework WinForms UI dlls changed from `NetSparkle.UI.WinForms` to `NetSparkleUpdater.UI.WinForms`.
+* **Breaking change**: DLL assembly names for Avalonia UI dlls changed from `NetSparkle.UI.Avalonia` to `NetSparkleUpdater.UI.Avalonia`.
 * **We now rely on Portable.BouncyCastle** (BouncyCastle.Crypto.dll) for the ed25519 implementation. This means there is another DLL to reference when you use NetSparkle!
 * **We now rely on System.Text.Json (netstandard2.0) OR Newtonsoft.Json (.NET Framework 4.5.2)** for the JSON items. This means there is another DLL to reference when you use NetSparkle, and it will change depending on if the `System.Text.Json` or `Newtonsoft.Json` item is used!
 
@@ -406,7 +408,7 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
-`NetSparkleUpdater.NetSparkle` is the right package (once 2.0 is released) if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library.  You might also find the core library called `NetSparkle.New` (which will be deprecated upon release of 2.0). Previous to 2.0, the UI libraries reference `NetSparkle.New`.
+`NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library.  You might also find the core library called `NetSparkle.New` (which will be deprecated upon release of 2.0). Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
 
 ### Must I put all my release versions into a single app cast file?
 

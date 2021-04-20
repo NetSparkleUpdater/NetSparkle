@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
-    <AssemblyName>NetSparkle.UI.WinForms</AssemblyName>
+    <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\bin\Debug\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Debug\NetSparkle.UI.WinForms\NetSparkleUpdater.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\bin\Release\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Release\NetSparkle.UI.WinForms\NetSparkleUpdater.UI.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
