@@ -39,12 +39,12 @@ Built-in supported update download types:
 
 NetSparkle is available via NuGet. To choose a NuGet package to use:
 
-* Reference the core NetSparkle build if you don't care about having a built-in UI and can manage things yourself
+* Reference the core NetSparkleUpdater.SparkleUpdater package if you don't care about having a built-in UI and can manage things yourself
 * Choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
 
 | Package | Use Case | Release | Preview | Downloads |
 | ------- | -------- | ------- | ------- | --------- |
-| NetSparkle | Core package; No built-in UI or 100% custom UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkle.New.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkle.New/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkle.New.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkle.New/) |
+| NetSparkleUpdater.SparkleUpdater | Core package; Use a 100% custom UI (nothing built-in) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.SparkleUpdater.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.SparkleUpdater/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.SparkleUpdater.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.SparkleUpdater/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.SparkleUpdater.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.SparkleUpdater/) |
 | WinForms UI (.NET Framework) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetFramework.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetFramework/) |
 | WinForms UI (.NET Core) | NetSparkle with built-in WinForms UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WinForms.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WinForms.NetCore/) |
 | WPF UI (.NET Framework and Core) | NetSparkle with built-in WPF UI | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.UI.WPF.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.UI.WPF.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.UI.WPF/) |
@@ -90,7 +90,7 @@ We are open to contributions that might make the overall install/update process 
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
     new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
-                       "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools AppCastGenerator on any OS
+                       "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools.AppCastGenerator .NET CLI tool on any OS
 ) {
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null or choose some other UI factory or build your own!
     RelaunchAfterUpdate = false, // default is false; set to true if you want your app to restart after updating (keep as false if your installer will start your app for you)
@@ -208,13 +208,13 @@ _Note:_ the app cast generator tool creates both of these signatures for you whe
 
 ### Ed25519 Signatures
 
-You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 5 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
+You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 5 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
 
 ### DSA Signatures
 
 DSA signatures are not recommended for 2.0+. They are insecure!
 
-You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
+You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
 
 ```
 NetSparkle.DSAHelper.exe /genkey_pair
@@ -342,7 +342,7 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 * Change of base namespace from `NetSparkle` to `NetSparkleUpdater`
 * `Sparkle` renamed to `SparkleUpdater` for clarity
 * More logs are now written via `LogWriter` to help you debug and figure out any issues that are going on
-* The default `NetSparkleUpdater` package (`NetSparkle.New`/`NetSparkleUpdater.SparkleUpdater`) **has no built-in UI**. Please use one of the NetSparkleUpdater packages with a UI if you want a built-in UI that is provided for you.
+* The default `NetSparkleUpdater` package (`NetSparkleUpdater.SparkleUpdater`) **has no built-in UI**. Please use one of the NetSparkleUpdater packages with a UI if you want a built-in UI that is provided for you.
   * Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplication` or `CloseApplicationAsync` events to close your application; otherwise, your downloaded update file will never be executed/read! The only exception to this is if you want to handle all aspects of installing the update package yourself.
 * XML docs are now properly shipped with the code for all public and protected methods rather than being here in this README file
   * Enabled build time warnings for functions that need documentation that don't have it
@@ -408,7 +408,7 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
-`NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library.  You might also find the core library called `NetSparkle.New` (which will be deprecated upon release of 2.0). Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
+`NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library. Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
 
 ### Must I put all my release versions into a single app cast file?
 
