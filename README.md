@@ -56,11 +56,11 @@ All notable changes to this project will be documented in the [changelog](CHANGE
 
 DEPRECATED:
 
-* `[com.pikleproductions.netsparkle](https://www.nuget.org/packages/com.pikleproductions.netsparkle/)` -- replaced by `NetSparkleUpdater.SparkleUpdater`
-* `[com.pikleproductions.netsparkle.tools](https://www.nuget.org/packages/com.pikleproductions.netsparkle.tools/)` -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
-* `[NetSparkle.New](https://www.nuget.org/packages/NetSparkle.New/)` -- replaced by `NetSparkleUpdater.SparkleUpdater`
-* `[NetSparkle.New.Tools](https://www.nuget.org/packages/NetSparkle.New.Tools/)` -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
-* `[NetSparkleUpdater.Tools](https://www.nuget.org/packages/NetSparkleUpdater.Tools/)` -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+* [`com.pikleproductions.netsparkle`](https://www.nuget.org/packages/com.pikleproductions.netsparkle/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
+* [`com.pikleproductions.netsparkle.tools`](https://www.nuget.org/packages/com.pikleproductions.netsparkle.tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+* [`NetSparkle.New`](https://www.nuget.org/packages/NetSparkle.New/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
+* [`NetSparkle.New.Tools`](https://www.nuget.org/packages/NetSparkle.New.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+* [`NetSparkleUpdater.Tools`](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
 ## How updates work
 
 A typical software update path for a stereotypical piece of software might look like this:
