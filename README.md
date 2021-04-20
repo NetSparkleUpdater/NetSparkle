@@ -39,7 +39,7 @@ Built-in supported update download types:
 
 NetSparkle is available via NuGet. To choose a NuGet package to use:
 
-* Reference the core NetSparkleUpdater.SparkleUpdater package if you don't care about having a built-in UI and can manage things yourself
+* Reference the core NetSparkleUpdater.SparkleUpdater package (old package had 28,949 downloads! Thank you!) if you don't care about having a built-in UI and can manage things yourself
 * Choose one of the other packages if you want a built-in UI or want to create your UI based on one of the other UIs
 
 | Package | Use Case | Release | Preview | Downloads |
