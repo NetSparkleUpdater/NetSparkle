@@ -60,7 +60,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0">
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0">
     </PackageReference>
     <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
   </ItemGroup>
@@ -83,7 +83,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="4.7.2">
+    <PackageReference Include="System.Text.Json" Version="5.0.2">
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
