@@ -8,7 +8,8 @@
         Width="400"
         Icon="avares://NetSparkleUpdater.Samples.Avalonia/Assets/software-update-available.png"
         Height="200">
-  <StackPanel Spacing="4">
+  <StackPanel Spacing="4"
+              Margin="4">
     <TextBlock Text="Welcome to NetSparkle Avalonia!"/>
     <Button Content="Manual Update Check"
             Click="ManualUpdateCheck_Click"
