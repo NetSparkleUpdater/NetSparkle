@@ -1,0 +1,141 @@
+name: Publish to NuGet
+on:
+  push:
+    branches:
+      - develop # Your default release branch
+jobs:
+  setup:
+    name: Build and publish all packages to NuGet
+    runs-on: windows-latest
+    # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
+    #env:
+    #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    # microsoft/setup-msbuild@v1.0.2 fixes that deprecation issue.
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nuget/setup-nuget@v1
+        with:
+            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-version: '5.x'
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Setup dotnet 3.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.0'
+        
+      - name: Setup dotnet 3.1
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+        
+      - name: Setup dotnet 5.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+          
+      - name: Build NetSparkle in Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
+      
+      - name: Build NetSparkle.UI.WinForms.NetCore in Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
+      
+      - name: Build NetSparkle.UI.WPF in Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
+
+      - name: Build NetSparkle.Tools.AppCastGenerator in Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj --configuration Release
+
+      - name: Build NetSparkle.Tools.DSAHelper in Release
+        run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
+        
+      - name: Publish Netsparkle.New on version change
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkle.New
+          INCLUDE_SYMBOLS: false
+
+      - name: Publish NetSparkleUpdater.UI.WPF on version change
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.UI.WPF
+          INCLUDE_SYMBOLS: false
+
+      - name: Publish NetSparkleUpdater.UI.Avalonia on version change
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
+          INCLUDE_SYMBOLS: false
+
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
+          INCLUDE_SYMBOLS: false
+
+      - name: Build NetSparkle.UI.WinForms.NetFramework in Release
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+
+      - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
+        run: |
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.dll
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.pdb
+          copy ${{ github.workspace }}/LICENSE.md ${{ github.workspace }}/nuget\winformsnetframework\LICENSE.md
+          copy ${{ github.workspace }}/src\NetSparkle\ArtWork\software-update-available.png ${{ github.workspace }}/nuget\winformsnetframework\software-update-available.png
+          
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
+        run: |
+          cd ${{ github.workspace }}/nuget/winformsnetframework
+          nuget pack NetSparkleUpdater.UI.WinForms.NetFramework.nuspec -verbosity detailed -Symbols -SymbolPackageFormat snupkg
+          nuget push *.nupkg -Source https://www.nuget.org/api/v2/package -SkipDuplicate -verbosity detailed
+          cd ${{ github.workspace }}
+
+      - name: Publish NetSparkleUpdater.Tools.DSAHelper
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.Tools.DSAHelper
+          INCLUDE_SYMBOLS: false
+
+      - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
+          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
+          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
+          TAG_COMMIT: false # Flag to enable / disalge git tagging
+          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          PACKAGE_NAME: NetSparkleUpdater.Tools.AppCastGenerator
+          INCLUDE_SYMBOLS: false

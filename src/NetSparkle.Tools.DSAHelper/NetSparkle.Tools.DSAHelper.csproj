@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <ProjectGuid>{B4D6FCB0-1217-4AFA-A2A5-4BA5482876C0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
+    <AssemblyName>NetSparkleUpdater.Tools.DSAHelper</AssemblyName>
+    <TargetFramework>net5</TargetFramework>
+    <AssemblyTitle>NetSparkle</AssemblyTitle>
+    <Product>NetSparkleUpdater.Tools.DSAHelper</Product>
+    <Description>Command line tool 'netsparkle-dsa' to generate and use DSA signatures. WARNING: DSA signatures are insecure. If possible, please use NetSparkleUpdater.Tools.AppCastGenerator instead to use ed25519 signatures. Use in conjunction with the NetSparkleUpdater library.</Description>
+    <Copyright>Copyright © Dirk Eisenberg 2010, Deadpikle 2020-2021</Copyright>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <FileVersion>2.0.5.0</FileVersion>
+    <OutputPath>..\..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.5</Version>
+    <Authors>Deadpikle</Authors>
+    <Company>Deadpikle</Company>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>netsparkle-dsa</ToolCommandName>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast, dsa</PackageTags>
+    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="obj\x86\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Remove="obj\x86\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Remove="obj\x86\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Remove="obj\x86\Release\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Remove="obj\x86\Release\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Remove="obj\x86\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+</Project>

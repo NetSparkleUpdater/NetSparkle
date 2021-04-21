@@ -1,9 +1,0 @@
-<Window x:Class="NetSparkle.TestAppWPF.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" Icon="software-update-available.ico">
-    <Grid>
-        <Button Content="Manual Update Check" 
-                Height="23" HorizontalAlignment="Center" Margin="0" Name="button1" VerticalAlignment="Center" Width="146" Click="button1_Click" />
-    </Grid>
-</Window>

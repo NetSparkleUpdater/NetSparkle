@@ -1,0 +1,65 @@
+﻿<Window x:Class="NetSparkleUpdater.Samples.HandleEventsYourself.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NetSparkleUpdater.Samples.HandleEventsYourself"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="450"
+        Width="600">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Column="0">
+            <StackPanel Orientation="Vertical"
+                        Width="Auto"
+                        HorizontalAlignment="Left">
+                <TextBlock Text="Look at the code behind to see how each step works!"
+                           TextWrapping="Wrap"
+                           FontWeight="Bold" />
+                <Label Content="Step 0: Initialize Sparkle" />
+                <Label Content="Step 1: Check for updates" />
+                <Button Content="Click me to check for updates"
+                        Click="CheckUpdates_Click"
+                        Width="200"
+                        Margin="50,0,0,0"
+                        HorizontalAlignment="Left" />
+                <Label Name="UpdateInfo"
+                       FontStyle="Italic" />
+                <Label Content="Step 2: Download the update" />
+                <Button Content="Click me to download the update"
+                        Name="DownloadUpdateButton"
+                        Click="DownloadUpdate_Click"
+                        Width="200"
+                        Margin="50,0,0,0"
+                        HorizontalAlignment="Left" />
+                <TextBlock Name="DownloadInfo"
+                           FontStyle="Italic"
+                           TextWrapping="Wrap" />
+                <Label Content="Step 3: Install the update" />
+                <Button Content="Click me to install the update"
+                        Name="InstallUpdateButton"
+                        Click="InstallUpdateButton_Click"
+                        Width="200"
+                        Margin="50,0,0,0"
+                        HorizontalAlignment="Left" />
+            </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer Grid.Column="1">
+            <StackPanel Orientation="Vertical"
+                        Margin="4">
+                <TextBlock Text="Click below if all steps of the download should be done automatically and the app restarted ASAP"
+                           TextWrapping="Wrap" />
+                <Button Content="Click to start the update process" 
+                        Name="UpdateAutomaticallyButton"
+                        Click="UpdateAutomaticallyButton_Click" />
+                <TextBlock Text=""
+                           Name="RunFullUpdateUpdateStatusLabel"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

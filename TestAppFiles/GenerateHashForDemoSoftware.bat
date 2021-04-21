@@ -1,3 +1,4 @@
+echo This file needs its paths fixed. TODO:
 @echo off
 if exist "../bin/Release/DSAHelper/NetSparkle.DSAHelper.exe" (
 	if exist "../bin/Release/DSAHelper/SampleDownloadedExecutable/NetSparkleUpdate.exe" (

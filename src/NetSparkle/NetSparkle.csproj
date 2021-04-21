@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Deadpikle, Dirk Eisenberg</Authors>
+    <Description>NetSparkleUpdater/NetSparkle is a C# .NET software update framework that allows you to easily download installer files and update your C# .NET Framework or .NET Core software. Built-in UIs are available for WinForms, WPF, and Avalonia; if you want a built-in UI, please reference a NetSparkleUpdater.UI package. You provide, somewhere on the internet, an XML appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle framework then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The framework can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</Description>
+    <Copyright>Copyright 2010 - 2021</Copyright>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
+    <PackageTags>sparkle, netsparkle, update, software, updater</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <Product>NetSparkleUpdater.SparkleUpdater</Product>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <PackageIconUrl />
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <RootNamespace>NetSparkleUpdater</RootNamespace>
+    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+    <DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+    <DefineConstants>TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+    <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+    <DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+    <DefineConstants>TRACE;NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+    <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE;NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+  <!-- .NET 4.5 references, compilation flags and build options -->
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0">
+    </PackageReference>
+    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="nuget\**" />
+    <EmbeddedResource Remove="nuget\**" />
+    <None Remove="nuget\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" Version="5.0.2">
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
+  </ItemGroup>
+</Project>

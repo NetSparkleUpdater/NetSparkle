@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{19F0D329-2127-4788-8AFA-DDEDA4B70F88}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
+    <AssemblyName>NetSparkleUpdater.Tools.AppCastGenerator</AssemblyName>
+    <TargetFramework>net5</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AssemblyTitle>NetSparkleUpdaterAppCastGenerator</AssemblyTitle>
+    <Product>NetSparkleUpdater.Tools.AppCastGenerator</Product>
+    <Description>Command line tool 'netsparkle-generate-appcast' to scan a directory for update files and generate appcast.xml. Can also be used to generate ed25519 keys/etc. for that app cast. Use in conjunction with the NetSparkleUpdater library.</Description>
+    <Copyright>Copyright © ndreisg 2019, Deadpikle 2020-2021</Copyright>
+    <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <LangVersion>default</LangVersion>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DocumentationFile></DocumentationFile>
+    <OutputPath></OutputPath>
+    <OutputPath></OutputPath>
+    <NoWarn>1701;1702</NoWarn>
+    <NoWarn>1701;1702</NoWarn>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent />
+    <AssemblyVersion>2.0.6.0</AssemblyVersion>
+    <FileVersion>2.0.6.0</FileVersion>
+    <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
+    <Version>2.0.6</Version>
+    <Authors>Deadpikle</Authors>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
+    <PackageIcon>software-update-available.png</PackageIcon>
+    <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast</PackageTags>
+    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="Colorful.Console" Version="1.2.15" />
+    <PackageReference Include="MimeTypes" Version="2.2.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\NetSparkle\ArtWork\software-update-available.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,91 @@
+﻿<controls:BaseWindow x:Class="NetSparkleUpdater.UI.WPF.DownloadProgressWindow"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:local="clr-namespace:NetSparkleUpdater.UI.WPF"
+                     xmlns:controls="clr-namespace:NetSparkleUpdater.UI.WPF.Controls"
+                     mc:Ignorable="d"
+                     Width="600"
+                     MaxWidth="600"
+                     Title="Software Update"
+                     ResizeMode="NoResize"
+                     SizeToContent="Height"
+                     x:Name="DownloadProgressWindowControl"
+                     d:DesignHeight="250"
+                     d:DesignWidth="800" 
+                     WindowStartupLocation="CenterScreen">
+    <controls:BaseWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </controls:BaseWindow.Resources>
+    <Grid Margin="5"
+          x:Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0"
+               Grid.RowSpan="2"
+               Grid.Column="0"
+               Source="{Binding ElementName=DownloadProgressWindowControl, Path=Icon}"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Width="48"
+               Height="48"
+               Margin="10,10,5,0" />
+        <TextBlock Name="DownloadingTitle"
+                   TextWrapping="Wrap"
+                   Grid.Row="0"
+                   Grid.Column="1"
+                   Text="{Binding DownloadingTitle}"
+                   HorizontalAlignment="Left"
+                   FontWeight="Bold"
+                   FontSize="24" />
+        <Label Name="DownloadProgress"
+               Grid.Row="1"
+               Grid.Column="1"
+               Content="{Binding UserReadableDownloadProgress}"
+               HorizontalAlignment="Left"
+               FontWeight="Bold"
+               FontSize="20" />
+        <ProgressBar Name="ProgressBar"
+                     Grid.Row="2"
+                     Grid.Column="0"
+                     Grid.ColumnSpan="2"
+                     Minimum="0"
+                     Maximum="100"
+                     IsIndeterminate="False"
+                     Height="20"
+                     Value="{Binding DownloadProgress}"
+                     Margin="5,0,5,0" />
+        <TextBlock TextWrapping="Wrap"
+                   Name="ErrorMessage"
+                   Grid.Row="3"
+                   Grid.Column="0"
+                   Margin="5,5,0,5"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding ErrorMessageText}"
+                   Visibility="{Binding IsErrorMessageVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalAlignment="Left"
+                   FontWeight="Regular"
+                   FontSize="16" />
+        <Button Name="ActionButton"
+                Visibility="{Binding IsActionButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Grid.Row="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Content="{Binding ActionButtonTitle}"
+                FontSize="16"
+                HorizontalAlignment="Center"
+                Padding="10,5,10,5"
+                Margin="0,10,0,10"
+                Click="ActionButton_Click" />
+    </Grid>
+</controls:BaseWindow>
