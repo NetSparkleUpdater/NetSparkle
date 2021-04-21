@@ -191,7 +191,7 @@ The important tags in each `<item>` are:
     - The URL to an HTML or Markdown document describing the update.
     - If the `<description>` tag is present, it will be used instead.
     - **Attributes**:
-        - `sparkle:signature`, optional: the DSA signature of the document; NetSparkle does not check this DSA signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog DSA signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
+        - `sparkle:signature`, optional: the DSA/Ed25519 signature of the document; NetSparkle does not check this signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
 - `<pubDate>`
     - The date this update was published
 - `<enclosure>`
@@ -201,14 +201,14 @@ The important tags in each `<item>` are:
         - `sparkle:version`: machine-readable version number of this update
         - `length`, optional: (not validated) size of the update file in bytes
         - `type`: ignored
-        - `sparkle:signature`: DSA signature of the update file
+        - `sparkle:signature`: DSA/Ed25519 signature of the update file
         - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
         - `sparkle:os`: Operating system for the app cast item. Defaults to Windows if not supplied. For Windows, use "win" or "windows"; for macOS, use "macos" or "osx"; for Linux, use "linux".
 
-By default, you need 2 (DSA) signatures (`SecurityMode.Strict`):
+By default, you need 2 (DSA/Ed25519) signatures (`SecurityMode.Strict`):
 
 1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
-2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA) signature for that file at http://example.com/awesome-software.xml.signature. 
+2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA/Ed25519) signature for that file at http://example.com/awesome-software.xml.signature. 
 
 _Note:_ the app cast generator tool creates both of these signatures for you when it recreates the appcast.xml file.
 
