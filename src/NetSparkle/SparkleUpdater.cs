@@ -1400,6 +1400,8 @@ namespace NetSparkleUpdater
                         await write.WriteAsync(output);
                     }
                     write.Close();
+                    // if we're on unix, we need to make the script executable!
+                    Exec($"chmod +x {batchFilePath}"); // this could probably be made async at some point
                 }
             }
 
@@ -1407,19 +1409,54 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Going to execute script at path: {0}", batchFilePath);
 
             // init the installer helper
-            _installerProcess = new Process
+            if (isWindows)
             {
-                StartInfo =
+                _installerProcess = new Process
                 {
-                    FileName = batchFilePath,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            // start the installer process. the batch file will wait for the host app to close before starting.
-            _installerProcess.Start();
+                    StartInfo =
+                    {
+                        FileName = batchFilePath,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
+                // start the installer process. the batch file will wait for the host app to close before starting.
+                _installerProcess.Start();
+            }
+            else
+            {
+                // on macOS need to use bash to execute the shell script
+                Exec(batchFilePath, false);
+            }
             await QuitApplication();
+        }
+
+        // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
+        // for easy /bin/bash commands
+        private static void Exec(string cmd, bool waitForExit = true)
+        {
+            var escapedArgs = cmd.Replace("\"", "\\\"");
+                
+            using (var process = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "/bin/bash",
+                        Arguments = $"-c \"{escapedArgs}\""
+                    }
+                })
+            {
+                process.Start();
+                if (waitForExit)
+                {
+                    process.WaitForExit();
+                }
+            }
         }
 
         /// <summary>
