@@ -51,5 +51,13 @@ namespace NetSparkleUpdater.UI.Avalonia
         {
             AvaloniaXamlLoader.Load(this);
         }
+
+        /// <summary>
+        /// Close the message window
+        /// </summary>
+        public void CloseMessage()
+        {
+            Close();
+        }
     }
 }
