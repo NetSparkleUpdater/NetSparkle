@@ -930,6 +930,10 @@ namespace NetSparkleUpdater
             {
                 UpdateDownloader = new WebClientFileDownloader();
             }
+            else if (UpdateDownloader is WebClientFileDownloader webClientFileDownloader)
+            {
+                webClientFileDownloader.PrepareToDownloadFile(); // refresh download operations
+            }
         }
 
         private void CreateAndShowProgressWindow(AppCastItem castItem, bool shouldShowAsDownloadedAlready)

@@ -25,6 +25,27 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public WebClientFileDownloader()
         {
+            PrepareToDownloadFile();
+        }
+
+        /// <summary>
+        /// Do preparation work necessary to download a file,
+        /// aka set up the WebClient for use.
+        /// </summary>
+        public void PrepareToDownloadFile()
+        {
+            if (_webClient != null)
+            {
+                // can't re-use WebClient, so cancel old requests
+                // and start a new request as needed
+                if (_webClient.IsBusy)
+                {
+                    try 
+                    {
+                        _webClient.CancelAsync();
+                    } catch {}
+                }
+            }
             _webClient = new WebClient
             {
                 UseDefaultCredentials = true,
@@ -71,7 +92,10 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void CancelDownload()
         {
-            _webClient.CancelAsync();
+            try 
+            {
+                _webClient.CancelAsync();
+            } catch {}
         }
 
         /// <inheritdoc/>
