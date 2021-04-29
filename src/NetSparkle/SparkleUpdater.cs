@@ -928,7 +928,10 @@ namespace NetSparkleUpdater
         {
             if (UpdateDownloader == null)
             {
-                UpdateDownloader = new WebClientFileDownloader();
+                UpdateDownloader = new WebClientFileDownloader()
+                {
+                    Logger = LogWriter
+                };
             }
             else if (UpdateDownloader is WebClientFileDownloader webClientFileDownloader)
             {
