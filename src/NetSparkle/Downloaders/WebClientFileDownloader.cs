@@ -29,13 +29,24 @@ namespace NetSparkleUpdater.Downloaders
             PrepareToDownloadFile();
         }
 
+        /// <summary>
+        /// Default constructor for the web client file downloader.
+        /// Uses default credentials and default proxy.
+        /// </summary>
+        /// <param name="logger">ILogger to write logs to</param>
+        public WebClientFileDownloader(ILogger logger)
+        {
+            _logger = logger;
+            PrepareToDownloadFile();
+        }
 
         /// <summary>
         /// ILogger to log data from WebClientFileDownloader
         /// </summary>
-        public ILogger Logger
+        public ILogger LogWriter
         {
             set { _logger = value; }
+            get { return _logger; }
         }
 
         /// <summary>

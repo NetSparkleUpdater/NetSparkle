@@ -826,7 +826,7 @@ namespace NetSparkleUpdater
             CreateUpdateDownloaderIfNeeded();
             _downloadTempFileName = await GetDownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
-            // DSA signature checks out, don't redownload the file!
+            // signature checks out, don't redownload the file!
             bool needsToDownload = true;
             if (File.Exists(_downloadTempFileName))
             {
@@ -857,10 +857,10 @@ namespace NetSparkleUpdater
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
-                    // The file exists but it either has a bad DSA signature or SecurityMode is set to Unsafe.
+                    // The file exists but it either has a bad signature or SecurityMode is set to Unsafe.
                     // Redownload it!
                     _hasAttemptedFileRedownload = true;
-                    LogWriter.PrintMessage("File is corrupt or DSA signature is Unchecked; deleting file and redownloading...");
+                    LogWriter.PrintMessage("File is corrupt or signature is Unchecked; deleting file and redownloading...");
                     try
                     {
                         File.Delete(_downloadTempFileName);
@@ -928,10 +928,7 @@ namespace NetSparkleUpdater
         {
             if (UpdateDownloader == null)
             {
-                UpdateDownloader = new WebClientFileDownloader()
-                {
-                    Logger = LogWriter
-                };
+                UpdateDownloader = new WebClientFileDownloader(LogWriter);
             }
             else if (UpdateDownloader is WebClientFileDownloader webClientFileDownloader)
             {
@@ -1116,7 +1113,7 @@ namespace NetSparkleUpdater
             }
             else
             {
-                LogWriter.PrintMessage("DSA Signature is valid. File successfully downloaded!");
+                LogWriter.PrintMessage("Signature is valid. File successfully downloaded!");
                 DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                 if (shouldInstallAndRelaunch)
@@ -1133,7 +1130,7 @@ namespace NetSparkleUpdater
         /// want to run a potentially out-of-date installer, don't use this. This should
         /// only be used if your user wants to update before another update has been
         /// installed AND the file is already downloaded.
-        /// This function will verify that the file exists and that the DSA 
+        /// This function will verify that the file exists and that the 
         /// signature is valid before running. It will also utilize the
         /// PreparingToExit event to ensure that the application can close.
         /// </summary>
