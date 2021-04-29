@@ -59,6 +59,7 @@ namespace NetSparkleUpdater.Downloaders
             if (_webClient != null)
             {
                 _logger?.PrintMessage("IUpdateDownloader: WebClient existed already. Canceling...");
+                UnsubscribeFromEvents();
                 // can't re-use WebClient, so cancel old requests
                 // and start a new request as needed
                 if (_webClient.IsBusy)
@@ -77,6 +78,15 @@ namespace NetSparkleUpdater.Downloaders
             };
             _webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
             _webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            if (_webClient != null)
+            {
+                _webClient.DownloadProgressChanged -= WebClient_DownloadProgressChanged;
+                _webClient.DownloadFileCompleted -= WebClient_DownloadFileCompleted;
+            }
         }
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -105,7 +115,8 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void Dispose()
         {
-            _webClient.Dispose();
+            UnsubscribeFromEvents()
+            _webClient?.Dispose();
         }
 
         /// <inheritdoc/>
