@@ -300,7 +300,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                             var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/") 
                                 ? opts.ChangeLogUrl
                                 : opts.ChangeLogUrl + "/";
-                            item.ReleaseNotesLink = (opts.ChangeLogUrl + changelogFileName).Trim();
+                            item.ReleaseNotesLink = (Path.Combine(opts.ChangeLogUrl, changelogFileName)).Trim();
                         }
                         else
                         {
