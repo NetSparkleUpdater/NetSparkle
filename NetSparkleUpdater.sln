@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Xamarin", "src\N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Tests.AppCastGenerator", "src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj", "{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79C02DF2-6AE7-42AB-8274-56C87A280408}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.Avalonia.MacOS", "src\NetSparkle.Samples.Avalonia.MacOS\NetSparkle.Samples.Avalonia.MacOS.csproj", "{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -386,11 +390,34 @@ Global
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Release|x64.Build.0 = Release|Any CPU
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Release|x86.ActiveCfg = Release|Any CPU
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Release|x86.Build.0 = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|ARM.Build.0 = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|x64.Build.0 = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3A84A257-B554-4263-8E94-0D8097282331}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7} = {79C02DF2-6AE7-42AB-8274-56C87A280408}
 	EndGlobalSection
 EndGlobal
