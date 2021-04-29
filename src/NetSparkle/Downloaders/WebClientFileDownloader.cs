@@ -18,6 +18,7 @@ namespace NetSparkleUpdater.Downloaders
     public class WebClientFileDownloader : IUpdateDownloader, IDisposable
     {
         private WebClient _webClient;
+        private ILogger _logger;
 
         /// <summary>
         /// Default constructor for the web client file downloader.
@@ -28,14 +29,25 @@ namespace NetSparkleUpdater.Downloaders
             PrepareToDownloadFile();
         }
 
+
+        /// <summary>
+        /// ILogger to log data from WebClientFileDownloader
+        /// </summary>
+        public ILogger Logger
+        {
+            set { _logger = value; }
+        }
+
         /// <summary>
         /// Do preparation work necessary to download a file,
         /// aka set up the WebClient for use.
         /// </summary>
         public void PrepareToDownloadFile()
         {
+            _logger?.PrintMessage("IUpdateDownloader: Preparing to download file...");
             if (_webClient != null)
             {
+                _logger?.PrintMessage("IUpdateDownloader: WebClient existed already. Canceling...");
                 // can't re-use WebClient, so cancel old requests
                 // and start a new request as needed
                 if (_webClient.IsBusy)
@@ -46,6 +58,7 @@ namespace NetSparkleUpdater.Downloaders
                     } catch {}
                 }
             }
+            _logger?.PrintMessage("IUpdateDownloader: Creating new WebClient...");
             _webClient = new WebClient
             {
                 UseDefaultCredentials = true,
@@ -63,6 +76,7 @@ namespace NetSparkleUpdater.Downloaders
 
         private void WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            _logger?.PrintMessage("IUpdateDownloader: Download file is complete!");
             DownloadFileCompleted?.Invoke(sender, e);
         }
 
@@ -86,12 +100,14 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void StartFileDownload(Uri uri, string downloadFilePath)
         {
+            _logger?.PrintMessage("IUpdateDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
             _webClient.DownloadFileAsync(uri, downloadFilePath);
         }
 
         /// <inheritdoc/>
         public void CancelDownload()
         {
+            _logger?.PrintMessage("IUpdateDownloader: Canceling download");
             try 
             {
                 _webClient.CancelAsync();

@@ -1426,11 +1426,13 @@ namespace NetSparkleUpdater
                     }
                 };
                 // start the installer process. the batch file will wait for the host app to close before starting.
+                LogWriter.PrintMessage("Starting the installer process at {0}", batchFilePath);
                 _installerProcess.Start();
             }
             else
             {
                 // on macOS need to use bash to execute the shell script
+                LogWriter.PrintMessage("Starting the installer script process at {0} via /bin/bash", batchFilePath);
                 Exec(batchFilePath, false);
             }
             await QuitApplication();
@@ -1438,28 +1440,28 @@ namespace NetSparkleUpdater
 
         // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
         // for easy /bin/bash commands
-        private static void Exec(string cmd, bool waitForExit = true)
+        private void Exec(string cmd, bool waitForExit = true)
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
                 
-            using (var process = new Process()
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "/bin/bash",
-                        Arguments = $"-c \"{escapedArgs}\""
-                    }
-                })
+            _installerProcess = new Process()
             {
-                process.Start();
-                if (waitForExit)
+                StartInfo = new ProcessStartInfo
                 {
-                    process.WaitForExit();
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"{escapedArgs}\""
                 }
+            };
+            LogWriter.PrintMessage("Starting the process via /bin/bash -c \"{0}\"", escapedArgs);
+            _installerProcess.Start();
+            if (waitForExit)
+            {
+                LogWriter.PrintMessage("Waiting for exit...");
+                _installerProcess.WaitForExit();
             }
         }
 
@@ -1480,10 +1482,12 @@ namespace NetSparkleUpdater
                 {
                     if (CloseApplicationAsync != null)
                     {
+                        LogWriter.PrintMessage("Shutting down application via CloseApplicationAsync...");
                         await CloseApplicationAsync.Invoke();
                     }
                     else if (CloseApplication != null)
                     {
+                        LogWriter.PrintMessage("Shutting down application via CloseApplication...");
                         CloseApplication.Invoke();
                     }
                     else
@@ -1491,6 +1495,7 @@ namespace NetSparkleUpdater
                         // Because the download/install window is usually on a separate thread,
                         // send dual shutdown messages via both the sync context (kills "main" app)
                         // and the current thread (kills current thread)
+                        LogWriter.PrintMessage("Shutting down application via UIFactory...");
                         UIFactory?.Shutdown(this);
                     }
                 }));
