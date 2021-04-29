@@ -115,7 +115,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void Dispose()
         {
-            UnsubscribeFromEvents()
+            UnsubscribeFromEvents();
             _webClient?.Dispose();
         }
 
