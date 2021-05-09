@@ -24,8 +24,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('a', "appcast-output-directory", Required = false, HelpText = "Directory to write appcast.xml")]
             public string OutputDirectory { get; set; }
 
-            [Option('e', "ext", SetName = "local", Required = false, HelpText = "Search for file extensions.", Default = "exe", Separator = ',')]
-            public IEnumerable<string> Extensions { get; set; }
+            [Option('e', "ext", SetName = "local", Required = false, HelpText = "Search for file extensions.", Default = "exe")]
+            public string Extensions { get; set; }
 
             [Option('b', "binaries", SetName = "local", Required = false, HelpText = "Directory containing binaries.", Default = ".")]
             public string SourceBinaryDirectory { get; set; }
@@ -189,11 +189,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             {
                 opts.SourceBinaryDirectory = Environment.CurrentDirectory;
             }
-
-            var searches = opts.Extensions.Select(extension => $"*.{extension}");
-            var binaries = searches.SelectMany(search => Directory.GetFiles(opts.SourceBinaryDirectory, search,
-                    opts.SearchBinarySubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
-
+            var searches = opts.Extensions.Split(",").ToList()
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .Select(extension => $"*.{extension.Trim()}");
+            var binaries = searches
+                .SelectMany(search => Directory.GetFiles(opts.SourceBinaryDirectory, search,
+                            opts.SearchBinarySubDirectories 
+                            ? SearchOption.AllDirectories 
+                            : SearchOption.TopDirectoryOnly));
             if (!binaries.Any())
             {
                 Console.WriteLine($"No files founds matching {string.Join(",", searches)} in {opts.SourceBinaryDirectory}", Color.Yellow);
