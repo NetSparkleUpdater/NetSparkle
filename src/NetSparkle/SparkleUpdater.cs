@@ -1432,17 +1432,27 @@ namespace NetSparkleUpdater
             else
             {
                 // on macOS need to use bash to execute the shell script
-                LogWriter.PrintMessage("Starting the installer script process at {0} via /bin/bash", batchFilePath);
+                LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
                 Exec(batchFilePath, false);
             }
             await QuitApplication();
         }
 
         // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
-        // for easy /bin/bash commands
+        // for easy shell commands
         private void Exec(string cmd, bool waitForExit = true)
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
+            var shell = "";
+            try {
+                // leave nothing up to chance :)
+                shell = System.Environment.GetEnvironmentVariable("SHELL");
+            } catch { }
+            if (string.IsNullOrWhiteSpace(shell))
+            {
+                shell = "/bin/sh";
+            }
+            LogWriter.PrintMessage("Shell is {0}", shell);
                 
             _installerProcess = new Process()
             {
@@ -1452,11 +1462,11 @@ namespace NetSparkleUpdater
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "/bin/bash",
+                    FileName = shell,
                     Arguments = $"-c \"{escapedArgs}\""
                 }
             };
-            LogWriter.PrintMessage("Starting the process via /bin/bash -c \"{0}\"", escapedArgs);
+            LogWriter.PrintMessage("Starting the process via {1} -c \"{0}\"", escapedArgs, shell);
             _installerProcess.Start();
             if (waitForExit)
             {
