@@ -117,9 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblHeader.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lblHeader.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
+  <data name="lblHeader.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing">
@@ -129,15 +133,14 @@
     <value>NoControl</value>
   </data>
   <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>84, 23</value>
+    <value>64, 6</value>
   </data>
   <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 0, 6, 0</value>
+    <value>6, 6, 6, 0</value>
   </data>
   <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>616, 46</value>
+    <value>666, 54</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
@@ -151,79 +154,25 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblHeader.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;lblHeader.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>2</value>
   </data>
-  <data name="progressDownload.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="imgAppIcon.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
-  </data>
-  <data name="progressDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>24, 123</value>
-  </data>
-  <data name="progressDownload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
-  </data>
-  <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>688, 44</value>
-  </data>
-  <data name="progressDownload.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;progressDownload.Name" xml:space="preserve">
-    <value>progressDownload</value>
-  </data>
-  <data name="&gt;&gt;progressDownload.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;progressDownload.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;progressDownload.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>196, 123</value>
-  </data>
-  <data name="btnInstallAndReLaunch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
-  </data>
-  <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>346, 44</value>
-  </data>
-  <data name="btnInstallAndReLaunch.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="btnInstallAndReLaunch.Text" xml:space="preserve">
-    <value>Install and Relaunch</value>
-  </data>
-  <data name="&gt;&gt;btnInstallAndReLaunch.Name" xml:space="preserve">
-    <value>btnInstallAndReLaunch</value>
-  </data>
-  <data name="&gt;&gt;btnInstallAndReLaunch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnInstallAndReLaunch.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;btnInstallAndReLaunch.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>24, 23</value>
+    <value>5, 6</value>
   </data>
   <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+    <value>5, 6, 5, 6</value>
   </data>
   <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 48</value>
@@ -241,64 +190,25 @@
     <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>0</value>
   </data>
-  <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10.125pt, style=Bold</value>
-  </data>
-  <data name="downloadProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>84, 75</value>
-  </data>
-  <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 0, 6, 0</value>
-  </data>
-  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>700, 200</value>
-  </data>
-  <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>211, 37</value>
-  </data>
-  <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
-  <data name="downloadProgressLbl.Text" xml:space="preserve">
-    <value>(0 MB / 10 MB)</value>
-  </data>
-  <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
-    <value>downloadProgressLbl</value>
-  </data>
-  <data name="&gt;&gt;downloadProgressLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;downloadProgressLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;downloadProgressLbl.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="buttonCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top</value>
   </data>
   <data name="buttonCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>258, 187</value>
+    <value>245, 232</value>
   </data>
   <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 44</value>
+    <value>245, 60</value>
   </data>
   <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -313,10 +223,142 @@
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>217, 159</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 61</value>
+  </data>
+  <data name="btnInstallAndReLaunch.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Text" xml:space="preserve">
+    <value>Install and Relaunch</value>
+  </data>
+  <data name="&gt;&gt;btnInstallAndReLaunch.Name" xml:space="preserve">
+    <value>btnInstallAndReLaunch</value>
+  </data>
+  <data name="&gt;&gt;btnInstallAndReLaunch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnInstallAndReLaunch.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;btnInstallAndReLaunch.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10.125pt, style=Bold</value>
+  </data>
+  <data name="downloadProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 60</value>
+  </data>
+  <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
+  </data>
+  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>700, 200</value>
+  </data>
+  <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>700, 37</value>
+  </data>
+  <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="downloadProgressLbl.Text" xml:space="preserve">
+    <value>(0 MB / 10 MB)</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Name" xml:space="preserve">
+    <value>downloadProgressLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;downloadProgressLbl.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="tableLayoutPanel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>736, 279</value>
+  </data>
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;tableLayoutPanel1.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="imgAppIcon" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonCancel" Row="4" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="lblHeader" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="btnInstallAndReLaunch" Row="3" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="downloadProgressLbl" Row="1" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;Control Name="progressDownload" Row="2" RowSpan="1" Column="0" ColumnSpan="2" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,58,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="progressDownload.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 103</value>
+  </data>
+  <data name="progressDownload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
+  <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
+    <value>724, 44</value>
+  </data>
+  <data name="progressDownload.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;progressDownload.Name" xml:space="preserve">
+    <value>progressDownload</value>
+  </data>
+  <data name="&gt;&gt;progressDownload.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;progressDownload.Parent" xml:space="preserve">
+    <value>tableLayoutPanel1</value>
+  </data>
+  <data name="&gt;&gt;progressDownload.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -328,7 +370,7 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>736, 254</value>
+    <value>736, 279</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -517,6 +559,9 @@
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>6, 6, 6, 6</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>200, 250</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
