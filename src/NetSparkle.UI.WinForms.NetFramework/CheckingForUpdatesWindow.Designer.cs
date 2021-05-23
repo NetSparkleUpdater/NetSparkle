@@ -74,7 +74,7 @@ namespace NetSparkleUpdater.UI.WinForms
             this.iconImage.Margin = new System.Windows.Forms.Padding(6);
             this.iconImage.Name = "iconImage";
             this.iconImage.Size = new System.Drawing.Size(48, 48);
-            this.iconImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.iconImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.iconImage.TabIndex = 7;
             this.iconImage.TabStop = false;
             // 

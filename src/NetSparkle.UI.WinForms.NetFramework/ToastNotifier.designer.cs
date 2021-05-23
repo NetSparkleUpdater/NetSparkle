@@ -53,10 +53,10 @@ namespace NetSparkleUpdater
             // 
             this.Image.Dock = System.Windows.Forms.DockStyle.Left;
             this.Image.Location = new System.Drawing.Point(0, 0);
-            this.Image.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Image.Margin = new System.Windows.Forms.Padding(6);
             this.Image.Name = "Image";
-            this.Image.Size = new System.Drawing.Size(128, 115);
-            this.Image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.Image.Size = new System.Drawing.Size(128, 111);
+            this.Image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Image.TabIndex = 3;
             this.Image.TabStop = false;
             this.Image.Click += new System.EventHandler(this.ToastNotifier_Click);
@@ -85,13 +85,13 @@ namespace NetSparkleUpdater
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(480, 115);
+            this.ClientSize = new System.Drawing.Size(476, 111);
             this.ControlBox = false;
             this.Controls.Add(this._callToAction);
             this.Controls.Add(this.Image);
             this.Controls.Add(this._message);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ToastNotifier";
