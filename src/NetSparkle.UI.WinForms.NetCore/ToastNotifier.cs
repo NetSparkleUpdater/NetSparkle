@@ -42,7 +42,7 @@ namespace NetSparkleUpdater.UI.WinForms
             if (applicationIcon != null)
             {
                 Icon = applicationIcon;
-                this.Image.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
+                this.Image.Image = Icon.ToBitmap();// new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
             }
         }
 
