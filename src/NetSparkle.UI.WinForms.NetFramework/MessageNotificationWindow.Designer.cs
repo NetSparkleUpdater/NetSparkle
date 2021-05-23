@@ -101,7 +101,6 @@ namespace NetSparkleUpdater.UI.WinForms
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "MessageNotificationWindow";
             this.Text = "Message";
             ((System.ComponentModel.ISupportInitialize)(this.iconImage)).EndInit();
