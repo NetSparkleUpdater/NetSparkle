@@ -129,10 +129,13 @@
     <value>NoControl</value>
   </data>
   <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 12</value>
+    <value>84, 23</value>
+  </data>
+  <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
   </data>
   <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>308, 24</value>
+    <value>616, 46</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
@@ -160,10 +163,13 @@
     <value>NoControl</value>
   </data>
   <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 64</value>
+    <value>24, 123</value>
+  </data>
+  <data name="progressDownload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 23</value>
+    <value>688, 44</value>
   </data>
   <data name="progressDownload.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -184,10 +190,13 @@
     <value>NoControl</value>
   </data>
   <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 64</value>
+    <value>196, 123</value>
+  </data>
+  <data name="btnInstallAndReLaunch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 23</value>
+    <value>346, 44</value>
   </data>
   <data name="btnInstallAndReLaunch.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -211,7 +220,10 @@
     <value>NoControl</value>
   </data>
   <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 12</value>
+    <value>24, 23</value>
+  </data>
+  <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing">
     <value>48, 48</value>
@@ -247,13 +259,16 @@
     <value>NoControl</value>
   </data>
   <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 39</value>
+    <value>84, 75</value>
+  </data>
+  <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 0, 6, 0</value>
   </data>
   <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>350, 104</value>
+    <value>700, 200</value>
   </data>
   <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 19</value>
+    <value>211, 37</value>
   </data>
   <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -277,10 +292,13 @@
     <value>NoControl</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>129, 97</value>
+    <value>258, 187</value>
+  </data>
+  <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+    <value>220, 44</value>
   </data>
   <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -304,13 +322,13 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>12, 25</value>
   </data>
   <data name="$this.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>368, 132</value>
+    <value>736, 254</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -497,8 +515,8 @@
         /////wAA
 </value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
