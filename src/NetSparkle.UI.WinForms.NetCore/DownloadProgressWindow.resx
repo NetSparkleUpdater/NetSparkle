@@ -1,64 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -117,25 +57,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblHeader.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing">
+  <assembly alias="System.Drawing.Common" name="System.Drawing.Common, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+  <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing.Common">
     <value>Segoe UI, 9.75pt, style=Bold</value>
   </data>
   <data name="lblHeader.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 12</value>
+  <assembly alias="System.Drawing.Primitives" name="System.Drawing.Primitives, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>91, 30</value>
   </data>
-  <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>308, 24</value>
+  <assembly alias="System.Windows.Forms.Primitives" name="System.Windows.Forms.Primitives, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 0, 6, 0</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>667, 59</value>
+  </data>
+  <assembly alias="System.Private.CoreLib" name="System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" />
+  <data name="lblHeader.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>8</value>
   </data>
   <data name="lblHeader.Text" xml:space="preserve">
@@ -145,7 +90,7 @@
     <value>lblHeader</value>
   </data>
   <data name="&gt;&gt;lblHeader.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblHeader.Parent" xml:space="preserve">
     <value>$this</value>
@@ -159,20 +104,23 @@
   <data name="progressDownload.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 64</value>
+  <data name="progressDownload.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>26, 158</value>
   </data>
-  <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing">
-    <value>344, 23</value>
+  <data name="progressDownload.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 7, 6, 7</value>
   </data>
-  <data name="progressDownload.TabIndex" type="System.Int32, mscorlib">
+  <data name="progressDownload.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>745, 57</value>
+  </data>
+  <data name="progressDownload.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>9</value>
   </data>
   <data name="&gt;&gt;progressDownload.Name" xml:space="preserve">
     <value>progressDownload</value>
   </data>
   <data name="&gt;&gt;progressDownload.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;progressDownload.Parent" xml:space="preserve">
     <value>$this</value>
@@ -183,13 +131,16 @@
   <data name="btnInstallAndReLaunch.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 64</value>
+  <data name="btnInstallAndReLaunch.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>212, 158</value>
   </data>
-  <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 23</value>
+  <data name="btnInstallAndReLaunch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 7, 6, 7</value>
   </data>
-  <data name="btnInstallAndReLaunch.TabIndex" type="System.Int32, mscorlib">
+  <data name="btnInstallAndReLaunch.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>375, 57</value>
+  </data>
+  <data name="btnInstallAndReLaunch.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>10</value>
   </data>
   <data name="btnInstallAndReLaunch.Text" xml:space="preserve">
@@ -199,7 +150,7 @@
     <value>btnInstallAndReLaunch</value>
   </data>
   <data name="&gt;&gt;btnInstallAndReLaunch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnInstallAndReLaunch.Parent" xml:space="preserve">
     <value>$this</value>
@@ -210,23 +161,26 @@
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 12</value>
+  <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>26, 30</value>
   </data>
-  <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 7, 6, 7</value>
+  </data>
+  <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>48, 48</value>
   </data>
   <data name="imgAppIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>AutoSize</value>
+    <value>Zoom</value>
   </data>
-  <data name="imgAppIcon.TabIndex" type="System.Int32, mscorlib">
+  <data name="imgAppIcon.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>6</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Name" xml:space="preserve">
     <value>imgAppIcon</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Parent" xml:space="preserve">
     <value>$this</value>
@@ -237,25 +191,28 @@
   <data name="downloadProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, mscorlib">
+  <data name="downloadProgressLbl.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
-  <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="downloadProgressLbl.Font" type="System.Drawing.Font, System.Drawing.Common">
     <value>Segoe UI, 10.125pt, style=Bold</value>
   </data>
   <data name="downloadProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 39</value>
+  <data name="downloadProgressLbl.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>91, 96</value>
   </data>
-  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>350, 104</value>
+  <data name="downloadProgressLbl.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 0, 6, 0</value>
   </data>
-  <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 19</value>
+  <data name="downloadProgressLbl.MaximumSize" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>758, 256</value>
   </data>
-  <data name="downloadProgressLbl.TabIndex" type="System.Int32, mscorlib">
+  <data name="downloadProgressLbl.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>211, 37</value>
+  </data>
+  <data name="downloadProgressLbl.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>12</value>
   </data>
   <data name="downloadProgressLbl.Text" xml:space="preserve">
@@ -265,7 +222,7 @@
     <value>downloadProgressLbl</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;downloadProgressLbl.Parent" xml:space="preserve">
     <value>$this</value>
@@ -276,13 +233,16 @@
   <data name="buttonCancel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>129, 97</value>
+  <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>280, 239</value>
   </data>
-  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+  <data name="buttonCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 7, 6, 7</value>
   </data>
-  <data name="buttonCancel.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>238, 57</value>
+  </data>
+  <data name="buttonCancel.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>13</value>
   </data>
   <data name="buttonCancel.Text" xml:space="preserve">
@@ -292,7 +252,7 @@
     <value>buttonCancel</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
     <value>$this</value>
@@ -300,19 +260,19 @@
   <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e">
     <value>True</value>
   </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing.Primitives">
+    <value>13, 32</value>
   </data>
   <data name="$this.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>368, 132</value>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>797, 325</value>
   </data>
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAIAEBAAAAEAIABoBAAAJgAAADAwAAABACAAqCUAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAE
         AADXDQAA1w0AAAAAAAAAAAAA////AP///wD///8A////AP///wD///8A////AABczlIAXM5i////AP//
@@ -497,8 +457,8 @@
         /////wAA
 </value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 7, 6, 7</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
@@ -510,6 +470,6 @@
     <value>DownloadProgressWindow</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

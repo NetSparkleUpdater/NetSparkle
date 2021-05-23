@@ -39,10 +39,10 @@ namespace NetSparkleUpdater.UI.WinForms
             // _message
             // 
             this._message.AutoSize = true;
-            this._message.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this._message.Location = new System.Drawing.Point(142, 17);
+            this._message.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this._message.Location = new System.Drawing.Point(154, 22);
             this._message.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this._message.MaximumSize = new System.Drawing.Size(380, 0);
+            this._message.MaximumSize = new System.Drawing.Size(412, 0);
             this._message.Name = "_message";
             this._message.Size = new System.Drawing.Size(247, 37);
             this._message.TabIndex = 2;
@@ -53,10 +53,10 @@ namespace NetSparkleUpdater.UI.WinForms
             // 
             this.Image.Dock = System.Windows.Forms.DockStyle.Left;
             this.Image.Location = new System.Drawing.Point(0, 0);
-            this.Image.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Image.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.Image.Name = "Image";
-            this.Image.Size = new System.Drawing.Size(128, 115);
-            this.Image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.Image.Size = new System.Drawing.Size(139, 142);
+            this.Image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.Image.TabIndex = 3;
             this.Image.TabStop = false;
             this.Image.Click += new System.EventHandler(this.ToastNotifier_Click);
@@ -70,10 +70,10 @@ namespace NetSparkleUpdater.UI.WinForms
             // _callToAction
             // 
             this._callToAction.AutoSize = true;
-            this._callToAction.Location = new System.Drawing.Point(144, 75);
+            this._callToAction.Location = new System.Drawing.Point(156, 96);
             this._callToAction.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this._callToAction.Name = "_callToAction";
-            this._callToAction.Size = new System.Drawing.Size(116, 25);
+            this._callToAction.Size = new System.Drawing.Size(128, 32);
             this._callToAction.TabIndex = 4;
             this._callToAction.TabStop = true;
             this._callToAction.Text = "link Label1";
@@ -82,16 +82,16 @@ namespace NetSparkleUpdater.UI.WinForms
             // 
             // ToastNotifier
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(480, 115);
+            this.ClientSize = new System.Drawing.Size(516, 142);
             this.ControlBox = false;
             this.Controls.Add(this._callToAction);
             this.Controls.Add(this.Image);
             this.Controls.Add(this._message);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ToastNotifier";

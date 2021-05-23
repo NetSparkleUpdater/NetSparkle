@@ -1,64 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -117,31 +57,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblHeader.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="lblHeader.AutoSize" type="System.Boolean, mscorlib">
+  <assembly alias="System.Private.CoreLib" name="System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e" />
+  <data name="lblHeader.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing">
+  <assembly alias="System.Drawing.Common" name="System.Drawing.Common, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+  <data name="lblHeader.Font" type="System.Drawing.Font, System.Drawing.Common">
     <value>Segoe UI, 9.75pt, style=Bold</value>
   </data>
   <data name="lblHeader.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing">
-    <value>70, 18</value>
+  <assembly alias="System.Drawing.Primitives" name="System.Drawing.Primitives, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblHeader.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>71, 23</value>
   </data>
-  <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 18, 6, 0</value>
+  <assembly alias="System.Windows.Forms.Primitives" name="System.Windows.Forms.Primitives, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblHeader.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 23, 6, 0</value>
   </data>
-  <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>911, 36</value>
+  <data name="lblHeader.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>992, 36</value>
   </data>
-  <data name="lblHeader.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblHeader.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>5</value>
   </data>
   <data name="lblHeader.Text" xml:space="preserve">
@@ -151,7 +93,7 @@
     <value>lblHeader</value>
   </data>
   <data name="&gt;&gt;lblHeader.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblHeader.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -159,25 +101,25 @@
   <data name="&gt;&gt;lblHeader.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="lblInfoText.AutoSize" type="System.Boolean, mscorlib">
+  <data name="lblInfoText.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
-  <data name="lblInfoText.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="lblInfoText.Font" type="System.Drawing.Font, System.Drawing.Common">
     <value>Segoe UI, 8.25pt</value>
   </data>
   <data name="lblInfoText.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="lblInfoText.Location" type="System.Drawing.Point, System.Drawing">
-    <value>70, 70</value>
+  <data name="lblInfoText.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>71, 77</value>
   </data>
-  <data name="lblInfoText.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="lblInfoText.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="lblInfoText.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lblInfoText.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>850, 30</value>
   </data>
-  <data name="lblInfoText.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblInfoText.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>4</value>
   </data>
   <data name="lblInfoText.Text" xml:space="preserve">
@@ -187,7 +129,7 @@
     <value>lblInfoText</value>
   </data>
   <data name="&gt;&gt;lblInfoText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lblInfoText.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -195,25 +137,25 @@
   <data name="&gt;&gt;lblInfoText.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+  <data name="label3.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
-  <data name="label3.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="label3.Font" type="System.Drawing.Font, System.Drawing.Common">
     <value>Segoe UI, 9.75pt, style=Bold</value>
   </data>
   <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>70, 112</value>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>71, 123</value>
   </data>
-  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>186, 36</value>
   </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+  <data name="label3.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>3</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
@@ -223,7 +165,7 @@
     <value>label3</value>
   </data>
   <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label3.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -231,7 +173,7 @@
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="skipButton.AutoSize" type="System.Boolean, mscorlib">
+  <data name="skipButton.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
   <data name="skipButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -240,16 +182,16 @@
   <data name="skipButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="skipButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 6</value>
+  <data name="skipButton.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>6, 8</value>
   </data>
-  <data name="skipButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="skipButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="skipButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 47</value>
+  <data name="skipButton.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>215, 60</value>
   </data>
-  <data name="skipButton.TabIndex" type="System.Int32, mscorlib">
+  <data name="skipButton.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>2</value>
   </data>
   <data name="skipButton.Text" xml:space="preserve">
@@ -259,7 +201,7 @@
     <value>skipButton</value>
   </data>
   <data name="&gt;&gt;skipButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;skipButton.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -267,7 +209,7 @@
   <data name="&gt;&gt;skipButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="buttonRemind.AutoSize" type="System.Boolean, mscorlib">
+  <data name="buttonRemind.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
   <data name="buttonRemind.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -276,16 +218,16 @@
   <data name="buttonRemind.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="buttonRemind.Location" type="System.Drawing.Point, System.Drawing">
-    <value>450, 6</value>
+  <data name="buttonRemind.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>494, 8</value>
   </data>
-  <data name="buttonRemind.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 15, 6</value>
+  <data name="buttonRemind.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 16, 8</value>
   </data>
-  <data name="buttonRemind.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 47</value>
+  <data name="buttonRemind.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>238, 60</value>
   </data>
-  <data name="buttonRemind.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonRemind.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>1</value>
   </data>
   <data name="buttonRemind.Text" xml:space="preserve">
@@ -295,7 +237,7 @@
     <value>buttonRemind</value>
   </data>
   <data name="&gt;&gt;buttonRemind.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonRemind.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -303,7 +245,7 @@
   <data name="&gt;&gt;buttonRemind.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="updateButton.AutoSize" type="System.Boolean, mscorlib">
+  <data name="updateButton.AutoSize" type="System.Boolean, System.Private.CoreLib">
     <value>True</value>
   </data>
   <data name="updateButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -312,16 +254,16 @@
   <data name="updateButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="updateButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>691, 6</value>
+  <data name="updateButton.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>754, 8</value>
   </data>
-  <data name="updateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="updateButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="updateButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 47</value>
+  <data name="updateButton.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>238, 60</value>
   </data>
-  <data name="updateButton.TabIndex" type="System.Int32, mscorlib">
+  <data name="updateButton.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>0</value>
   </data>
   <data name="updateButton.Text" xml:space="preserve">
@@ -331,7 +273,7 @@
     <value>updateButton</value>
   </data>
   <data name="&gt;&gt;updateButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;updateButton.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
@@ -342,26 +284,26 @@
   <data name="ReleaseNotesBrowser.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="ReleaseNotesBrowser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>70, 160</value>
+  <data name="ReleaseNotesBrowser.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>71, 175</value>
   </data>
-  <data name="ReleaseNotesBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="ReleaseNotesBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="ReleaseNotesBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>40, 54</value>
+  <data name="ReleaseNotesBrowser.MinimumSize" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>43, 69</value>
   </data>
-  <data name="ReleaseNotesBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>911, 571</value>
+  <data name="ReleaseNotesBrowser.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>992, 760</value>
   </data>
-  <data name="ReleaseNotesBrowser.TabIndex" type="System.Int32, mscorlib">
+  <data name="ReleaseNotesBrowser.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>0</value>
   </data>
   <data name="&gt;&gt;ReleaseNotesBrowser.Name" xml:space="preserve">
     <value>ReleaseNotesBrowser</value>
   </data>
   <data name="&gt;&gt;ReleaseNotesBrowser.Type" xml:space="preserve">
-    <value>System.Windows.Forms.WebBrowser, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.WebBrowser, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;ReleaseNotesBrowser.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -375,26 +317,26 @@
   <data name="imgAppIcon.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 10</value>
+  <data name="imgAppIcon.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>11, 13</value>
   </data>
-  <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 6, 6</value>
+  <data name="imgAppIcon.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>11, 13, 6, 8</value>
   </data>
-  <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="imgAppIcon.Size" type="System.Drawing.Size, System.Drawing.Primitives">
     <value>48, 48</value>
   </data>
   <data name="imgAppIcon.SizeMode" type="System.Windows.Forms.PictureBoxSizeMode, System.Windows.Forms">
-    <value>AutoSize</value>
+    <value>Zoom</value>
   </data>
-  <data name="imgAppIcon.TabIndex" type="System.Int32, mscorlib">
+  <data name="imgAppIcon.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>0</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Name" xml:space="preserve">
     <value>imgAppIcon</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;imgAppIcon.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -405,35 +347,38 @@
   <data name="tableLayoutPanel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel1.ColumnCount" type="System.Int32, System.Private.CoreLib">
     <value>2</value>
   </data>
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel2.ColumnCount" type="System.Int32, System.Private.CoreLib">
     <value>3</value>
   </data>
   <data name="tableLayoutPanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="tableLayoutPanel2.Location" type="System.Drawing.Point, System.Drawing.Primitives">
     <value>0, 0</value>
   </data>
-  <data name="tableLayoutPanel2.RowCount" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>3, 4, 3, 4</value>
+  </data>
+  <data name="tableLayoutPanel2.RowCount" type="System.Int32, System.Private.CoreLib">
     <value>1</value>
   </data>
-  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>917, 59</value>
+  <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>998, 76</value>
   </data>
-  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel2.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>3</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel2.Name" xml:space="preserve">
     <value>tableLayoutPanel2</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel2.Parent" xml:space="preserve">
     <value>panel1</value>
@@ -444,20 +389,23 @@
   <data name="tableLayoutPanel2.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="skipButton" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="updateButton" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="buttonRemind" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,28.29705,Percent,71.70294,AutoSize,73" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
-  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>67, 740</value>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>68, 947</value>
   </data>
-  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>917, 59</value>
+  <data name="panel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>3, 4, 3, 4</value>
   </data>
-  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>998, 76</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>6</value>
   </data>
   <data name="&gt;&gt;panel1.Name" xml:space="preserve">
     <value>panel1</value>
   </data>
   <data name="&gt;&gt;panel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
     <value>tableLayoutPanel1</value>
@@ -465,23 +413,26 @@
   <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, -3</value>
+  <data name="tableLayoutPanel1.Location" type="System.Drawing.Point, System.Drawing.Primitives">
+    <value>1, -4</value>
   </data>
-  <data name="tableLayoutPanel1.RowCount" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>3, 4, 3, 4</value>
+  </data>
+  <data name="tableLayoutPanel1.RowCount" type="System.Int32, System.Private.CoreLib">
     <value>5</value>
   </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>987, 802</value>
+  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>1069, 1027</value>
   </data>
-  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
+  <data name="tableLayoutPanel1.TabIndex" type="System.Int32, System.Private.CoreLib">
     <value>10</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.Name" xml:space="preserve">
     <value>tableLayoutPanel1</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;tableLayoutPanel1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -492,16 +443,16 @@
   <data name="tableLayoutPanel1.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="ReleaseNotesBrowser" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="imgAppIcon" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblHeader" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="lblInfoText" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="label3" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="panel1" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,69,Percent,100" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, System.Private.CoreLib, Version=5.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e">
     <value>True</value>
   </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>12, 25</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing.Primitives">
+    <value>13, 32</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>990, 798</value>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>1072, 1021</value>
   </data>
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAIAEBAAAAEAIABoBAAAJgAAADAwAAABACAAqCUAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAE
         AADXDQAA1w0AAAAAAAAAAAAA////AP///wD///8A////AP///wD///8A////AABczlIAXM5i////AP//
@@ -686,11 +637,11 @@
         /////wAA
 </value>
   </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms.Primitives">
+    <value>6, 8, 6, 8</value>
   </data>
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>864, 450</value>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing.Primitives">
+    <value>934, 556</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
@@ -702,6 +653,6 @@
     <value>UpdateAvailableWindow</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=5.0.6.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
