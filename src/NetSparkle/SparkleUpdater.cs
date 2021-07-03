@@ -185,6 +185,15 @@ namespace NetSparkleUpdater
         public string CustomInstallerArguments { get; set; }
 
         /// <summary>
+        /// Use this command template to run the installer (unzipping, for example)
+        /// {0} is downloadFilePath
+        /// {1} is workingDir (with no trailing backslash)
+        /// Example for unzipping Windows 10:
+        ///     "tar -x -f {0} -C \"{1}\""
+        /// </summary>
+        public string CustomUnzipCommandTemplate { get; set; }
+
+        /// <summary>
         /// Function that is called asynchronously to clean up old installers that have been
         /// downloaded with SilentModeTypes.DownloadNoInstall or SilentModeTypes.DownloadAndInstall.
         /// </summary>
@@ -1307,7 +1316,15 @@ namespace NetSparkleUpdater
             string installerCmd;
             try
             {
-                installerCmd = GetInstallerCommand(downloadFilePath);
+                if (".zip".Equals(Path.GetExtension(downloadFilePath), StringComparison.CurrentCultureIgnoreCase) && !string.IsNullOrEmpty(CustomUnzipCommandTemplate))
+                {
+                    installerCmd = string.Format(CustomUnzipCommandTemplate, downloadFilePath, workingDir.TrimEnd('\\'));
+                    LogWriter.PrintMessage("Using custom unzip command: {0}", installerCmd);
+                }
+                else
+                {
+                    installerCmd = GetInstallerCommand(downloadFilePath);
+                }
                 if (!string.IsNullOrEmpty(CustomInstallerArguments))
                 {
                     installerCmd += " " + CustomInstallerArguments;
