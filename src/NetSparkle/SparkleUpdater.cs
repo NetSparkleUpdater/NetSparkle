@@ -1554,7 +1554,10 @@ namespace NetSparkleUpdater
         /// </summary>
         public async Task<UpdateInfo> CheckForUpdatesAtUserRequest(bool ignoreSkippedVersions = false)
         {
-            CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(this);
+            if (CheckingForUpdatesWindow == null)
+            {
+                CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(this);
+            }
             if (CheckingForUpdatesWindow != null)
             {
                 CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
