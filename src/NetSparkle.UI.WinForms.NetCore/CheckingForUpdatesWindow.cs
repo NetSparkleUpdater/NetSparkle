@@ -54,7 +54,7 @@ namespace NetSparkleUpdater.UI.WinForms
 
         void ICheckingForUpdates.Close()
         {
-            Close();
+            CloseForm();
         }
         void ICheckingForUpdates.Show()
         {
