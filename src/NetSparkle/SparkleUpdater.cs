@@ -571,7 +571,7 @@ namespace NetSparkleUpdater
 
             if (UpdateAvailableWindow != null)
             {
-                UpdateAvailableWindow.UserResponded -= OnUserWindowUserResponded;
+                UpdateAvailableWindow.UserResponded -= OnUpdateWindowUserResponded;
                 UpdateAvailableWindow = null;
             }
 
@@ -723,7 +723,7 @@ namespace NetSparkleUpdater
 
                         if (UpdateAvailableWindow != null)
                         {
-                            UpdateAvailableWindow.UserResponded += OnUserWindowUserResponded;
+                            UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
                             UpdateAvailableWindow.Show(ShowsUIOnMainThread);
                         }
                     };
@@ -1725,7 +1725,7 @@ namespace NetSparkleUpdater
             }
         }
 
-        private async void OnUserWindowUserResponded(object sender, UpdateResponseEventArgs args)
+        private async void OnUpdateWindowUserResponded(object sender, UpdateResponseEventArgs args)
         {
             LogWriter.PrintMessage("Update window response: {0}", args.Result);
             var currentItem = args.UpdateItem;
@@ -1763,10 +1763,19 @@ namespace NetSparkleUpdater
             {
                 CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
             }
-            UpdateAvailableWindow?.Close();
-            UpdateAvailableWindow = null; // done using the window so don't hold onto reference
-            CheckingForUpdatesWindow?.Close();
-            CheckingForUpdatesWindow = null;
+
+            CallFuncConsideringUIThreads(() =>
+            {
+                if (result != UpdateAvailableResult.None)
+                {
+                    // if result is None, then user closed the window some other way to ignore things so we don't need
+                    // to close it
+                    UpdateAvailableWindow?.Close();
+                    UpdateAvailableWindow = null; // done using the window so don't hold onto reference
+                }
+                CheckingForUpdatesWindow?.Close();
+                CheckingForUpdatesWindow = null;
+            });
         }
 
         /// <summary>
