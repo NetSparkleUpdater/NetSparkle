@@ -138,10 +138,12 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             if (!_didSendResponse)
             {
+                // user closed form in some other way other than standard buttons
                 DialogResult = DialogResult.None;
                 _didSendResponse = true;
                 UserResponded?.Invoke(this, new UpdateResponseEventArgs(UpdateAvailableResult.None, CurrentItem));
             }
+            FormClosing -= UpdateAvailableWindow_FormClosing;
         }
 
         /// <summary>
@@ -195,11 +197,17 @@ namespace NetSparkleUpdater.UI.WinForms
 
         private void CloseForm()
         {
-            if (InvokeRequired)
+            if (InvokeRequired && !IsDisposed && !Disposing)
             {
-                this.Invoke((MethodInvoker)delegate () { Close(); });
+                this.Invoke((MethodInvoker)delegate () 
+                { 
+                    if (!IsDisposed && !Disposing) 
+                    { 
+                        Close(); 
+                    } 
+                });
             }
-            else
+            else if (!IsDisposed && !Disposing)
             {
                 Close();
             }
