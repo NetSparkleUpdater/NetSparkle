@@ -1557,12 +1557,12 @@ namespace NetSparkleUpdater
             if (CheckingForUpdatesWindow == null)
             {
                 CheckingForUpdatesWindow = UIFactory?.ShowCheckingForUpdates(this);
+                if (CheckingForUpdatesWindow != null)
+                {
+                    CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
+                }
             }
-            if (CheckingForUpdatesWindow != null)
-            {
-                CheckingForUpdatesWindow.UpdatesUIClosing += CheckingForUpdatesWindow_Closing; // to detect canceling
-                CheckingForUpdatesWindow.Show();
-            }
+            CheckingForUpdatesWindow?.Show();
             // artificial delay -- if internet is super fast and the update check is super fast, the flash (fast show/hide) of the
             // 'Checking for Updates...' window is very disorienting, so we add an artificial delay
             await Task.Delay(250);
