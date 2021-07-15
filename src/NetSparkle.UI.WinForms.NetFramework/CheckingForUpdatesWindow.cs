@@ -54,7 +54,7 @@ namespace NetSparkleUpdater.UI.WinForms
 
         void ICheckingForUpdates.Close()
         {
-            Close();
+            CloseForm();
         }
         void ICheckingForUpdates.Show()
         {
@@ -68,11 +68,17 @@ namespace NetSparkleUpdater.UI.WinForms
 
         private void CloseForm()
         {
-            if (InvokeRequired)
+            if (InvokeRequired && !IsDisposed && !Disposing)
             {
-                this.Invoke((MethodInvoker)delegate () { Close(); });
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    if (!IsDisposed && !Disposing)
+                    {
+                        Close();
+                    }
+                });
             }
-            else
+            else if (!IsDisposed && !Disposing)
             {
                 Close();
             }
