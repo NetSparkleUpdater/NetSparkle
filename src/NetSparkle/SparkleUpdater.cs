@@ -1387,7 +1387,7 @@ namespace NetSparkleUpdater
                             {waitForFinish}
                             {tarCommand}
                             {relaunchAfterUpdate}";
-                        await write.WriteAsync(output);
+                        await write.WriteAsync(output.Replace("\r\n", "\n"));
                     }
                     else
                     {
@@ -1401,7 +1401,7 @@ namespace NetSparkleUpdater
                             {waitForFinish}
                             {installerCmd}
                             {relaunchAfterUpdate}";
-                        await write.WriteAsync(output);
+                        await write.WriteAsync(output.Replace("\r\n", "\n"));
                     }
                     write.Close();
                     // if we're on unix, we need to make the script executable!
