@@ -38,11 +38,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.HandleEv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Xamarin", "src\NetSparkle.Xamarin\NetSparkle.Xamarin.csproj", "{0E23D858-2A2D-4D60-AC01-B420D079D9C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Tests.AppCastGenerator", "src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj", "{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tests.AppCastGenerator", "src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj", "{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79C02DF2-6AE7-42AB-8274-56C87A280408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.Avalonia.MacOS", "src\NetSparkle.Samples.Avalonia.MacOS\NetSparkle.Samples.Avalonia.MacOS.csproj", "{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia.MacOS", "src\NetSparkle.Samples.Avalonia.MacOS\NetSparkle.Samples.Avalonia.MacOS.csproj", "{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EF1CB9-F6D1-4D71-87C2-F2E80DD53968}"
+	ProjectSection(SolutionItems) = preProject
+		nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec = nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -414,10 +419,10 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {3A84A257-B554-4263-8E94-0D8097282331}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7} = {79C02DF2-6AE7-42AB-8274-56C87A280408}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A84A257-B554-4263-8E94-0D8097282331}
 	EndGlobalSection
 EndGlobal
