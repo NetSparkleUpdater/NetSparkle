@@ -72,7 +72,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.6" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.6" />
