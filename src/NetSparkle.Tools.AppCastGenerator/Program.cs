@@ -255,7 +255,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     var productVersion = version;
                     var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
-                    var urlEncodedFileName = HttpUtility.UrlEncode(fileInfo.Name);
+                    var urlEncodedFileName = Uri.EscapeDataString(fileInfo.Name);
                     var urlToUse = !string.IsNullOrWhiteSpace(opts.BaseUrl?.ToString()) 
                         ? (opts.BaseUrl.ToString().EndsWith("/") ? opts.BaseUrl.ToString() : opts.BaseUrl + "/") 
                         : "";
