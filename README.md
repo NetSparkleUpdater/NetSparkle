@@ -418,7 +418,7 @@ Nope. You can just reference the core library and handle everything yourself, in
 
 ### Must I put all my release versions into a single app cast file?
 
-No. If your app is just using NetSparkle to work out if there is a later release - and you are not using the app cast as a way to refer to historical versions of your app in any was - then you don't need to add all the released versions into the app cast file.  
+No. If your app is just using NetSparkle to work out if there is a later release - and you are not using the app cast as a way to refer to historical versions of your app in any way - then you don't need to add all the released versions into the app cast file.  
 
 Having just the latest version of your software in the app cast has the added side effect that you won't need all the binaries & changelogs of all the versions to be available to the app cast generator tool.  For example, this might make an automated release build easier via GitHub Actions - because the only data required is the generated .exe and changelogs from your git repository.
 
