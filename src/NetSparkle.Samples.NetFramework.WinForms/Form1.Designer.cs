@@ -50,6 +50,8 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
             // 
             // AppBackgroundCheckButton
             // 
+            this.AppBackgroundCheckButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AppBackgroundCheckButton.Location = new System.Drawing.Point(12, 37);
             this.AppBackgroundCheckButton.Name = "AppBackgroundCheckButton";
             this.AppBackgroundCheckButton.Size = new System.Drawing.Size(212, 23);
@@ -60,6 +62,8 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
             // 
             // ExplicitUserRequestCheckButton
             // 
+            this.ExplicitUserRequestCheckButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ExplicitUserRequestCheckButton.Location = new System.Drawing.Point(12, 80);
             this.ExplicitUserRequestCheckButton.Name = "ExplicitUserRequestCheckButton";
             this.ExplicitUserRequestCheckButton.Size = new System.Drawing.Size(212, 23);
@@ -70,8 +74,8 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(248, 154);
             this.Controls.Add(this.ExplicitUserRequestCheckButton);
             this.Controls.Add(this.AppBackgroundCheckButton);

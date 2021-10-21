@@ -55,6 +55,9 @@
   <PropertyGroup>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -91,6 +94,7 @@
     </Compile>
     <None Include="app.config" />
     <EmbeddedResource Include="NetSparkle_DSA.pub" />
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
