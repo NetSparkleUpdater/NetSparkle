@@ -52,7 +52,7 @@ jobs:
         run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
         
       - name: Publish Netsparkle.New on version change
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -61,10 +61,10 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkle.New
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WPF on version change
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -73,10 +73,10 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -85,10 +85,10 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -97,7 +97,7 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
         run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
@@ -117,7 +117,7 @@ jobs:
           cd ${{ github.workspace }}
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -126,10 +126,10 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.DSAHelper
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
-        uses: brandedoutcast/publish-nuget@v2.5.5
+        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -138,4 +138,4 @@ jobs:
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
           NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.AppCastGenerator
-          INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
