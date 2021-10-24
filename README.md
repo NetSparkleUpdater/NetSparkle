@@ -412,6 +412,10 @@ This section holds info on major changes when moving from versions 0.X or 1.Y. I
 
 Nope. You can just reference the core library and handle everything yourself, including any custom UI. Check out the code samples for an example of doing that!
 
+### How do I make my .NET Framework WinForms app high DPI aware?
+
+See #238 [and this documentation](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/high-dpi-support-in-windows-forms?view=netframeworkdesktop-4.8#configuring-your-windows-forms-app-for-high-dpi-support) for the fix for making this work on the sample application. Basically, you need to use an app config file and manifest file to let Windows know that your application is DPI-aware. If that doesn't work for you, try some of the tips at [this SO post](https://stackoverflow.com/questions/4075802/creating-a-dpi-aware-application).
+
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
 `NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library. Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
