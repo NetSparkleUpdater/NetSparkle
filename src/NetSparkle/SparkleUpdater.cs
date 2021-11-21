@@ -1265,7 +1265,18 @@ namespace NetSparkleUpdater
 #endif
         }
 
-        private bool IsZipDownload(string downloadFilePath)
+
+
+        /// <summary>
+        /// Checks to see if the file at the path is a zip download.
+        /// If user is on macOS and extension is a .zip, returns true.
+        /// If user is on Linux and extension is a .tar.gz, returns true.
+        /// Otherwise returns false. Always returns false on .NET Framework.
+        /// </summary>
+        /// <param name="downloadFilePath">Path to the downloaded update file</param>
+        /// <returns>True if on macOS and path is a .zip, true of on Linux and path is a 
+        /// .tar.gz. False otherwise.</returns>
+        protected bool IsZipDownload(string downloadFilePath)
         {
 #if NETCORE
             string installerExt = Path.GetExtension(downloadFilePath);
@@ -1440,7 +1451,14 @@ namespace NetSparkleUpdater
 
         // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
         // for easy shell commands
-        private void Exec(string cmd, bool waitForExit = true)
+
+        /// <summary>
+        /// Execute a shell script.
+        /// <para>https://stackoverflow.com/a/47918132/3938401</para>
+        /// </summary>
+        /// <param name="cmd">Path to script to run via a shell</param>
+        /// <param name="waitForExit">True for the calling process to wait for the command to finish before exiting; false otherwise</param>
+        protected void Exec(string cmd, bool waitForExit = true)
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
             var shell = "";
