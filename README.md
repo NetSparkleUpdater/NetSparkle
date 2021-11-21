@@ -61,6 +61,11 @@ DEPRECATED:
 * [`NetSparkle.New`](https://www.nuget.org/packages/NetSparkle.New/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
 * [`NetSparkle.New.Tools`](https://www.nuget.org/packages/NetSparkle.New.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
 * [`NetSparkleUpdater.Tools`](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+
+Quick info for tool installations:
+* App cast generator -- `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`; available as `netsparkle-generate-appcast` on your command line after installation
+* DSA Helper -- `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`; available as `netsparkle-dsa` on your command line after installation
+
 ## How updates work
 
 A typical software update path for a stereotypical piece of software might look like this:
@@ -223,13 +228,13 @@ DSA signatures are not recommended for 2.0+. They are insecure!
 You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
 
 ```
-NetSparkle.DSAHelper.exe /genkey_pair
+netsparkle-dsa /genkey_pair
 ```
 
 You can use the DSAHelper to get a signature like this:
 
 ```
-NetSparkle.DSAHelper.exe /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
+netsparkle-dsa /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
 ```
 
 #### Installing the DSA Helper command-line tool
@@ -299,45 +304,45 @@ This will return either `Signature valid` (signature is good!) or `Signature inv
 
 #### Key Generation
 # Generate Ed25519 keys for the first time
-generate_appcast.exe --generate-keys
+netsparkle-generate-appcast --generate-keys
 # Store keys in a custom location
-generate_appcast.exe --key-path path/to/store/keys
+netsparkle-generate-appcast --key-path path/to/store/keys
 
 # By default, your Ed25519 signatures are stored on disk in your local 
 # application data folder in a subdirectory called `netsparkle`. 
 # If you want to export your keys to the console, you can do:
-generate_appcast.exe --export
+netsparkle-generate-appcast --export
 
 #### Generate a signature for a binary without creating an app cast:
-generate_appcast.exe --generate-signature path/to/binary.exe
+netsparkle-generate-appcast --generate-signature path/to/binary.exe
 
 #### Verifying Binaries
-generate_appcast.exe --verify path/to/binary.exe --signature base_64_signature
+netsparkle-generate-appcast --verify path/to/binary.exe --signature base_64_signature
 
 #### Using a custom key location:
 # If your keys are sitting on disk somewhere
 # (`NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` -- both 
 # in base 64 and both on disk in the same folder!), you can pass in 
 # the path to these keys like this:
-generate_appcast.exe --key-path path/to/keys/
+netsparkle-generate-appcast --key-path path/to/keys/
 
 #### Generating an app cast
 
 # Generate an app cast for Windows executables that are sitting in a 
 # specific directory
-generate_appcast.exe -a directory/for/appcast/output/ -e exe -b directory/with/binaries/ -o windows
+netsparkle-generate-appcast -a directory/for/appcast/output/ -e exe -b directory/with/binaries/ -o windows
 
 # Add change log info to your app cast
-generate_appcast.exe -b binary/folder -p change/log/folder
+netsparkle-generate-appcast -b binary/folder -p change/log/folder
 
 # Customize download URL for binaries and change logs
-generate_appcast.exe -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
+netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
 
 # Set your application name for the app cast
-generate_appcast.exe -n "My Awesome App" -b binary/folder
+netsparkle-generate-appcast -n "My Awesome App" -b binary/folder
 
 # Use file versions in file names, e.g. for apps like "My App 1.2.1.dmg"
-generate_appcast.exe -n "macOS version" -o macos -f true -b binary/folder -e dmg
+netsparkle-generate-appcast -n "macOS version" -o macos -f true -b binary/folder -e dmg
 ```
 
 ## Updating from 0.X or 1.X
