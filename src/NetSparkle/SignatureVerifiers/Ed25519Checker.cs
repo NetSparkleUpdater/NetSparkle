@@ -35,9 +35,14 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// an app cast and its items.</param>
         /// <param name="publicKey">the base 64 public key as a string</param>
         /// <param name="publicKeyFile">the public key file</param>
-        public Ed25519Checker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_Ed25519.pub")
+        /// <param name="readFileBeingVerifiedInChunks">if true, reads the file this checker is verifying in chunks rather than all at once</param>
+        /// <param name="chunkSize">if reading the file in chunks, size of chunks to read with. Defaults to 25 MB.</param>
+        public Ed25519Checker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_Ed25519.pub", 
+            bool readFileBeingVerifiedInChunks = false, int chunkSize = (1024*1024*25))
         {
             SecurityMode = mode;
+            ReadFileBeingVerifiedInChunks = readFileBeingVerifiedInChunks;
+            ChunkSize = chunkSize > 0 ? chunkSize : 1024 * 1024 * 25;
 
             if (string.IsNullOrEmpty(publicKey))
             {
@@ -76,6 +81,21 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <inheritdoc/>
         /// </summary>
         public SecurityMode SecurityMode { get; set; }
+
+        /// <summary>
+        /// When verifying files, whether to read the file in by chunks.
+        /// This will save RAM when verifying files because
+        /// it saves the file from being in both a byte[] and in the signature
+        /// verifier internal byte storage.
+        /// </summary>
+        public bool ReadFileBeingVerifiedInChunks { get; set; }
+
+        
+        /// <summary>
+        /// If reading file being verified in chunks, the size of the chunk.
+        /// Defaults to 25 MB.
+        /// </summary>
+        public int ChunkSize { get; set; }
 
         private bool CheckSecurityMode(string signature, ref ValidationResult result)
         {
@@ -148,9 +168,36 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <inheritdoc/>
         public ValidationResult VerifySignatureOfFile(string signature, string binaryPath)
         {
-            using (Stream inputStream = File.OpenRead(binaryPath))
+            if (ReadFileBeingVerifiedInChunks)
             {
-                return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
+                ValidationResult res = ValidationResult.Invalid;
+                if (!CheckSecurityMode(signature, ref res))
+                {
+                    return res;
+                }
+
+                // convert signature
+                // code for reading stream in chunks modified from https://stackoverflow.com/a/7542077/3938401
+                byte[] bHash = Convert.FromBase64String(signature);
+                var chunkSize = ChunkSize > 0 ? ChunkSize : 1024 * 1024 * 25;
+                using (Stream inputStream = File.OpenRead(binaryPath))
+                {
+                    // read file in chunks
+                    byte[] buffer = new byte[chunkSize]; // read in chunks of ChunkSize
+                    int bytesRead;
+                    while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        _signer.BlockUpdate(buffer, 0, bytesRead);
+                    }
+                    return _signer.VerifySignature(bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
+                }
+            }
+            else
+            {
+                using (Stream inputStream = File.OpenRead(binaryPath))
+                {
+                    return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
+                }
             }
         }
 
