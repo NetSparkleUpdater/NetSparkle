@@ -14,6 +14,7 @@ using System.Drawing;
 using NetSparkleUpdater.AppCastGenerator;
 using System.Web;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
@@ -77,6 +78,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 "If not set, uses --key-path (if set) or the default SignatureManager location. Not used in --generate-keys or --export.", Default = "")]
             public string PrivateKeyOverride { get; set; }
 
+            [Option("re-parse-existing", SetName = "local", Required = false, HelpText = "Re-parse an existing app cast rather than overriding it and creating it anew. " +
+                "Skips versions already in the app cast, so if you deploy a new binary with the same version, you will need to manually " +
+                "edit your app cast to remove the old listing" +
+                "for the version you are re-deploying.", Default = false)]
+            public bool ReparseExistingAppCast { get; set; }
 
             #region Key Generation
 
@@ -250,6 +256,32 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                 var items = new List<AppCastItem>();
 
+                var appcastFileName = Path.Combine(opts.OutputDirectory, "appcast.xml");
+
+                var dirName = Path.GetDirectoryName(appcastFileName);
+
+                if (!Directory.Exists(dirName))
+                {
+                    Console.WriteLine("Creating {0}", dirName);
+                    Directory.CreateDirectory(dirName);
+                }
+
+                if (opts.ReparseExistingAppCast && File.Exists(appcastFileName))
+                {
+                    Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
+                    XDocument doc = XDocument.Parse(appcastFileName);
+
+                    var docDescendants = doc.Descendants("item");
+                    var logWriter = new LogWriter(true);
+                    foreach (var item in docDescendants)
+                    {
+                        var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
+                        Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
+                            currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
+                        items.Add(currentItem);
+                    }
+                }
+
                 var usesChangelogs = !string.IsNullOrWhiteSpace(opts.ChangeLogPath) && Directory.Exists(opts.ChangeLogPath);
 
                 foreach (var binary in binaries)
@@ -274,78 +306,74 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     }
 
                     var productVersion = version;
-                    var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
-
-                    var urlEncodedFileName = Uri.EscapeDataString(fileInfo.Name);
-                    var urlToUse = !string.IsNullOrWhiteSpace(opts.BaseUrl?.ToString()) 
-                        ? (opts.BaseUrl.ToString().EndsWith("/") ? opts.BaseUrl.ToString() : opts.BaseUrl + "/") 
-                        : "";
-                    if (opts.PrefixVersion)
+                    if (items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault() == null)
                     {
-                        urlToUse += $"{version}/";
-                    }
-                    if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
-                    {
-                        urlEncodedFileName = urlEncodedFileName.Substring(1);
-                    }
-                    var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
+                        var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
-                    // changelog stuff
-                    var changelogFileName = productVersion + ".md";
-                    var changelogPath = Path.Combine(opts.ChangeLogPath, changelogFileName);
-                    var hasChangelogForFile = usesChangelogs && File.Exists(changelogPath);
-                    var changelogSignature = "";
-
-                    if (hasChangelogForFile)
-                    {
-                        changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
-                    }
-
-                    //
-                    var item = new AppCastItem()
-                    {
-                        Title = itemTitle?.Trim(),
-                        DownloadLink = remoteUpdateFile?.Trim(),
-                        Version = productVersion?.Trim(),
-                        ShortVersion = productVersion?.Substring(0, productVersion.LastIndexOf('.'))?.Trim(),
-                        PublicationDate = fileInfo.CreationTime,
-                        UpdateSize = fileInfo.Length,
-                        Description = "",
-                        DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(fileInfo) : null,
-                        OperatingSystemString = opts.OperatingSystem?.Trim(),
-                        MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
-                    };
-
-                    if (hasChangelogForFile)
-                    {
-                        if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
+                        var urlEncodedFileName = Uri.EscapeDataString(fileInfo.Name);
+                        var urlToUse = !string.IsNullOrWhiteSpace(opts.BaseUrl?.ToString())
+                            ? (opts.BaseUrl.ToString().EndsWith("/") ? opts.BaseUrl.ToString() : opts.BaseUrl + "/")
+                            : "";
+                        if (opts.PrefixVersion)
                         {
-                            item.ReleaseNotesSignature = changelogSignature;
-                            var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/") 
-                                ? opts.ChangeLogUrl
-                                : opts.ChangeLogUrl + "/";
-                            item.ReleaseNotesLink = (Path.Combine(opts.ChangeLogUrl, changelogFileName)).Trim();
+                            urlToUse += $"{version}/";
                         }
-                        else
+                        if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
                         {
-                            item.Description = File.ReadAllText(changelogPath).Trim();
+                            urlEncodedFileName = urlEncodedFileName.Substring(1);
                         }
-                    }
+                        var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
 
-                    items.Add(item);
+                        // changelog stuff
+                        var changelogFileName = productVersion + ".md";
+                        var changelogPath = Path.Combine(opts.ChangeLogPath, changelogFileName);
+                        var hasChangelogForFile = usesChangelogs && File.Exists(changelogPath);
+                        var changelogSignature = "";
+
+                        if (hasChangelogForFile)
+                        {
+                            changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
+                        }
+
+                        //
+                        var item = new AppCastItem()
+                        {
+                            Title = itemTitle?.Trim(),
+                            DownloadLink = remoteUpdateFile?.Trim(),
+                            Version = productVersion?.Trim(),
+                            ShortVersion = productVersion?.Substring(0, productVersion.LastIndexOf('.'))?.Trim(),
+                            PublicationDate = fileInfo.CreationTime,
+                            UpdateSize = fileInfo.Length,
+                            Description = "",
+                            DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(fileInfo) : null,
+                            OperatingSystemString = opts.OperatingSystem?.Trim(),
+                            MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
+                        };
+
+                        if (hasChangelogForFile)
+                        {
+                            if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
+                            {
+                                item.ReleaseNotesSignature = changelogSignature;
+                                var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/")
+                                    ? opts.ChangeLogUrl
+                                    : opts.ChangeLogUrl + "/";
+                                item.ReleaseNotesLink = (Path.Combine(opts.ChangeLogUrl, changelogFileName)).Trim();
+                            }
+                            else
+                            {
+                                item.Description = File.ReadAllText(changelogPath).Trim();
+                            }
+                        }
+                        items.Add(item);
+                    }
+                    else
+                    {
+                        Console.WriteLine("An app cast item with version {0} is already in the file, not adding it again...");
+                    }
                 }
 
                 var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
-
-                var appcastFileName = Path.Combine(opts.OutputDirectory, "appcast.xml");
-
-                var dirName = Path.GetDirectoryName(appcastFileName);
-
-                if (!Directory.Exists(dirName))
-                {
-                    Console.WriteLine("Creating {0}", dirName);
-                    Directory.CreateDirectory(dirName);
-                }
 
                 Console.WriteLine("Writing appcast to {0}", appcastFileName);
 
