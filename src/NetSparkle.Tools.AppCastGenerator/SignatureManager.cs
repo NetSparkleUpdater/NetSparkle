@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -14,6 +15,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         private string _storagePath;
         private string _privateKeyFilePath;
         private string _publicKeyFilePath;
+        private string _privateKeyOverride;
+        private string _publicKeyOverride;
 
         public const string PrivateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
         public const string PublicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
@@ -21,6 +24,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         public SignatureManager()
         {
             SetStorageDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle"));
+            _privateKeyOverride = "";
+            _publicKeyOverride = "";
         }
 
         public void SetStorageDirectory(string path)
@@ -34,6 +39,16 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             _privateKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.priv");
             _publicKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.pub");
+        }
+
+        public void SetPublicKeyOverride(string overridePubKey)
+        {
+            _publicKeyOverride = overridePubKey;
+        }
+
+        public void SetPrivateKeyOverride(string overridePrivKey)
+        {
+            _privateKeyOverride = overridePrivKey;
         }
 
         public bool KeysExist()
@@ -138,11 +153,19 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public byte[] GetPrivateKey()
         {
+            if (!string.IsNullOrWhiteSpace(_privateKeyOverride))
+            {
+                return Convert.FromBase64String(_privateKeyOverride);
+            }
             return ResolveKeyLocation(PrivateKeyEnvironmentVariable, _privateKeyFilePath);
         }
 
         public byte[] GetPublicKey()
         {
+            if (!string.IsNullOrWhiteSpace(_publicKeyOverride))
+            {
+                return Convert.FromBase64String(_publicKeyOverride);
+            }
             return ResolveKeyLocation(PublicKeyEnvironmentVariable, _publicKeyFilePath);
         }
 

@@ -45,10 +45,12 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
             public Uri BaseUrl { get; set; }
 
-            [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "Base URL to the location for your changelog files on some server for downloading", Default = "")]
+            [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "Base URL to the location for your changelog files on " +
+                "some server for downloading", Default = "")]
             public string ChangeLogUrl { get; set; }
 
-            [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
+            [Option('p', "change-log-path", SetName = "local", Required = false, HelpText = "File path to Markdown changelog files (expected extension: .md; " +
+                "version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
             public string ChangeLogPath { get; set; }
 
             [Option('n', "product-name", Required = false, HelpText = "Product Name", Default = "Application")]
@@ -64,6 +66,16 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 HelpText = "Suffix (without '.') to append to appcast.xml for signature file",
                 Default = "signature")]
             public string SignatureFileExtension { get; set; }
+
+            [Option("public-key-override", SetName = "local", Required = false, HelpText = "Public key override (ignores whatever is in the public key file) for signing binaries. This" +
+                " overrides ALL other public keys set when verifying binaries, INCLUDING public key set via environment variables! " +
+                "If not set, uses --key-path (if set) or the default SignatureManager location. Not used in --generate-keys or --export.", Default = "")]
+            public string PublicKeyOverride { get; set; }
+
+            [Option("private-key-override", SetName = "local", Required = false, HelpText = "Private key override (ignores whatever is in the private key file) for signing binaries. This" +
+                " overrides ALL other private keys set when signing binaries, INCLUDING private key set via environment variables! " +
+                "If not set, uses --key-path (if set) or the default SignatureManager location. Not used in --generate-keys or --export.", Default = "")]
+            public string PrivateKeyOverride { get; set; }
 
 
             #region Key Generation
@@ -157,6 +169,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Console.WriteLine("Keys failed to generate", Color.Red);
                 }
                 return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(opts.PublicKeyOverride))
+            {
+                _signatureManager.SetPublicKeyOverride(opts.PublicKeyOverride);
+            }
+            if (!string.IsNullOrWhiteSpace(opts.PrivateKeyOverride))
+            {
+                _signatureManager.SetPrivateKeyOverride(opts.PrivateKeyOverride);
             }
 
             if (opts.BinaryToSign != null)
@@ -398,11 +419,19 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 netsparkle-generate-appcast --generate-keys
 # Store keys in a custom location
 netsparkle-generate-appcast --key-path path/to/store/keys
+# Pass in public key via command line
+netsparkle-generate-appcast --public-key-override [YourPublicKeyHere]
+# Pass in private key via command line
+netsparkle-generate-appcast --private-key-override [YourPrivateKeyHere]
 
 # By default, your Ed25519 signatures are stored on disk in your local 
 # application data folder in a subdirectory called `netsparkle`. 
 # If you want to export your keys to the console, you can do:
 netsparkle-generate-appcast --export
+
+# You can also store your keys in the following environment variables:
+# set public key: SPARKLE_PUBLIC_KEY
+# set private key: SPARKLE_PRIVATE_KEY
 
 #### Generate a signature for a binary without creating an app cast:
 netsparkle-generate-appcast --generate-signature path/to/binary.exe

@@ -6,6 +6,7 @@ using Org.BouncyCastle.Security;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
@@ -65,6 +66,34 @@ namespace NetSparkle.Tests.AppCastGenerator
             manager.Generate(true);
             var signature = manager.GetSignatureForFile(path);
             // verify signature
+            Assert.True(manager.VerifySignature(path, signature));
+            // get rid of temp file
+            File.Delete(path);
+        }
+
+        [Fact]
+        public void CanGetAndVerifySignatureWithOverride()
+        {
+            // create tmp file 
+            var tempData = RandomString(1024);
+            var path = Path.GetTempFileName();
+            File.WriteAllText(path, tempData);
+            Assert.True(File.Exists(path));
+            Assert.Equal(tempData, File.ReadAllText(path));
+            // get signature of file
+            var manager = GetSignatureManager();
+            manager.Generate(true);
+            var signature = manager.GetSignatureForFile(path);
+            var realPublicKey = manager.GetPublicKey();
+            var realPrivateKey = manager.GetPrivateKey();
+            // intentionally mess up keys
+            manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests-wrong"));
+            manager.Generate(true);
+            // verify signature does not work
+            Assert.False(manager.VerifySignature(path, signature));
+            // override and verify that it does work
+            manager.SetPublicKeyOverride(Convert.ToBase64String(realPublicKey));
+            manager.SetPrivateKeyOverride(Convert.ToBase64String(realPrivateKey));
             Assert.True(manager.VerifySignature(path, signature));
             // get rid of temp file
             File.Delete(path);

@@ -307,11 +307,19 @@ This will return either `Signature valid` (signature is good!) or `Signature inv
 netsparkle-generate-appcast --generate-keys
 # Store keys in a custom location
 netsparkle-generate-appcast --key-path path/to/store/keys
+# Pass in public key via command line
+netsparkle-generate-appcast --public-key-override [YourPublicKeyHere]
+# Pass in private key via command line
+netsparkle-generate-appcast --private-key-override [YourPrivateKeyHere]
 
 # By default, your Ed25519 signatures are stored on disk in your local 
 # application data folder in a subdirectory called `netsparkle`. 
 # If you want to export your keys to the console, you can do:
 netsparkle-generate-appcast --export
+
+# You can also store your keys in the following environment variables:
+# set public key: SPARKLE_PUBLIC_KEY
+# set private key: SPARKLE_PRIVATE_KEY
 
 #### Generate a signature for a binary without creating an app cast:
 netsparkle-generate-appcast --generate-signature path/to/binary.exe
