@@ -269,7 +269,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (opts.ReparseExistingAppCast && File.Exists(appcastFileName))
                 {
                     Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
-                    XDocument doc = XDocument.Parse(appcastFileName);
+                    XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
 
                     var docDescendants = doc.Descendants("item");
                     var logWriter = new LogWriter(true);
