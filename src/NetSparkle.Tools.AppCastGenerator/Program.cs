@@ -55,7 +55,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public string ChangeLogPath { get; set; }
 
             [Option('n', "product-name", Required = false, HelpText = "Product name. This will be used in the app cast <title>. " +
-                "If you use --re-parse-existing, then this field will be ignored and the existing product name will be used.", Default = "Application")]
+                "If you use --reparse-existing, then this field will be ignored and the existing product name will be used.", Default = "Application")]
             public string ProductName { get; set; }
 
             [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
@@ -79,7 +79,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 "If not set, uses --key-path (if set) or the default SignatureManager location. Not used in --generate-keys or --export.", Default = "")]
             public string PrivateKeyOverride { get; set; }
 
-            [Option("re-parse-existing", SetName = "local", Required = false, HelpText = "Re-parse an existing app cast rather than overriding it and creating it anew. " +
+            [Option("reparse-existing", SetName = "local", Required = false, HelpText = "Re-parse an existing app cast rather than overriding it and creating it anew. " +
                 "Skips versions already in the app cast, so if you deploy a new binary with the same version, you will need to manually " +
                 "edit your app cast to remove the old listing" +
                 "for the version you are re-deploying.", Default = false)]
