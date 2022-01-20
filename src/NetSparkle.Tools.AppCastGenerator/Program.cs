@@ -271,6 +271,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
                     XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
 
+                    // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
+                    List<XElement> allTitles = doc.Root.Element("channel").Elements("title").ToList();
+                    if (allTitles.Count == 1)
+                        productName = allTitles[0].Value;
+
                     var docDescendants = doc.Descendants("item");
                     var logWriter = new LogWriter(true);
                     foreach (var item in docDescendants)
