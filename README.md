@@ -350,7 +350,13 @@ netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://exa
 netsparkle-generate-appcast -n "My Awesome App" -b binary/folder
 
 # Use file versions in file names, e.g. for apps like "My App 1.2.1.dmg"
-netsparkle-generate-appcast -n "macOS version" -o macos -f true -b binary/folder -e dmg
+netsparkle-generate-appcast -n "macOS version" -o macos -f true -b binary_folder -e dmg
+
+# Don't overwrite the entire app cast file
+netsparkle-generate-appcast --reparse-existing
+
+# Don't overwrite the entire app cast file, but do overwrite items that are still on disk
+netsparkle-generate-appcast --reparse-existing --reparse-overwrite-old-items
 ```
 
 ## Updating from 0.X or 1.X
