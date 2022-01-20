@@ -54,7 +54,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 "version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
             public string ChangeLogPath { get; set; }
 
-            [Option('n', "product-name", Required = false, HelpText = "Product Name", Default = "Application")]
+            [Option('n', "product-name", Required = false, HelpText = "Product name. This will be used in the app cast <title>. " +
+                "If you use --re-parse-existing, then this field will be ignored and the existing product name will be used.", Default = "Application")]
             public string ProductName { get; set; }
 
             [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
@@ -266,15 +267,22 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Directory.CreateDirectory(dirName);
                 }
 
-                if (opts.ReparseExistingAppCast && File.Exists(appcastFileName))
+                if (opts.ReparseExistingAppCast)
                 {
                     Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
+                    if (!File.Exists(appcastFileName))
+                    {
+                        Console.WriteLine("Error: App cast does not exist at {0}", appcastFileName);
+                        Environment.Exit(1);
+                    }
                     XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
 
                     // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                    List<XElement> allTitles = doc.Root.Element("channel").Elements("title").ToList();
+                    List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
                     if (allTitles.Count == 1)
+                    {
                         productName = allTitles[0].Value;
+                    }
 
                     var docDescendants = doc.Descendants("item");
                     var logWriter = new LogWriter(true);
