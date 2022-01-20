@@ -85,6 +85,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 "for the version you are re-deploying.", Default = false)]
             public bool ReparseExistingAppCast { get; set; }
 
+            [Option("reparse-overwrite-old-items", SetName = "local", Required = false, HelpText = 
+                "If both --reparse-existing and --reparse-overwrite-old are used, this option will cause old app cast " +
+                "items to be rewritten in the app cast if the binaries are found on disk. In other words, if 1.0.1 is in the app cast, " +
+                "and 1.0.1 is found on disk, then the 1.0.1 item will not be skipped and will be created in the app cast anew and the old app " +
+                "cast item will be thrown out. Note that this means that if you have multiple 1.0.1 versions on disk, the last one found " +
+                "will be the one in your app cast! Basically, the rule here is: always use things that are found, but keep old things in " +
+                "the app cast that weren't found.", Default = false)]
+            public bool OverwriteOldItemsInAppcastOnReparse { get; set; }
+
             #region Key Generation
 
             [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys", Default = false)]
@@ -319,7 +328,13 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     }
 
                     var productVersion = version;
-                    if (items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault() == null)
+                    var itemFoundInAppcast = items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault();
+                    if (itemFoundInAppcast != null && opts.ReparseExistingAppCast && opts.OverwriteOldItemsInAppcastOnReparse)
+                    {
+                        items.Remove(itemFoundInAppcast); // remove old item.
+                        itemFoundInAppcast = null;
+                    }
+                    if (itemFoundInAppcast == null)
                     {
                         var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
