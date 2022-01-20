@@ -85,14 +85,14 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 "for the version you are re-deploying.", Default = false)]
             public bool ReparseExistingAppCast { get; set; }
 
-            [Option("reparse-overwrite-old-items", SetName = "local", Required = false, HelpText = 
-                "If both --reparse-existing and --reparse-overwrite-old are used, this option will cause old app cast " +
-                "items to be rewritten in the app cast if the binaries are found on disk. In other words, if 1.0.1 is in the app cast, " +
-                "and 1.0.1 is found on disk, then the 1.0.1 item will not be skipped and will be created in the app cast anew and the old app " +
-                "cast item will be thrown out. Note that this means that if you have multiple 1.0.1 versions on disk, the last one found " +
-                "will be the one in your app cast! Basically, the rule here is: always use things that are found, but keep old things in " +
-                "the app cast that weren't found.", Default = false)]
-            public bool OverwriteOldItemsInAppcastOnReparse { get; set; }
+            [Option("overwrite-old-items", SetName = "local", Required = false, HelpText = 
+                "If--overwrite-old-items is used, this option will cause app cast " +
+                "items to be rewritten in the app cast if the a binary on disk with the same version number is found. " +
+                "In other words, if 1.0.1 is in the app cast already (either from reparsing or from another binary), " +
+                "and another 1.0.1 is found on disk, then the 1.0.1 data in the app cast will be rewritten based on the binary found. " +
+                "Note that this means that if you have multiple 1.0.1 versions on disk (which you shouldn't do...), the last one found " +
+                "will be the one in your app cast!", Default = false)]
+            public bool OverwriteOldItemsInAppcast { get; set; }
 
             #region Key Generation
 
@@ -281,7 +281,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
                     if (!File.Exists(appcastFileName))
                     {
-                        Console.WriteLine("Error: App cast does not exist at {0}", appcastFileName);
+                        Console.WriteLine("Error: App cast does not exist at {0}", appcastFileName, Color.Red);
                         Environment.Exit(1);
                     }
                     XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
@@ -323,14 +323,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                     if (version == null)
                     {
-                        Console.WriteLine($"Unable to determine version of binary {fileInfo.Name}, try -f parameter");
+                        Console.WriteLine($"Unable to determine version of binary {fileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
                         Environment.Exit(1);
                     }
 
                     var productVersion = version;
                     var itemFoundInAppcast = items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault();
-                    if (itemFoundInAppcast != null && opts.ReparseExistingAppCast && opts.OverwriteOldItemsInAppcastOnReparse)
+                    if (itemFoundInAppcast != null && opts.OverwriteOldItemsInAppcast)
                     {
+                        Console.WriteLine("Removing existing app cast item with version {0} so we can add the version on disk to the app cast...", productVersion);
                         items.Remove(itemFoundInAppcast); // remove old item.
                         itemFoundInAppcast = null;
                     }
@@ -397,9 +398,12 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     }
                     else
                     {
-                        Console.WriteLine("An app cast item with version {0} is already in the file, not adding it again...");
+                        Console.WriteLine("An app cast item with version {0} is already in the file, not adding it again...", productVersion);
                     }
                 }
+
+                // order the list by version -- helpful when reparsing app cast to make sure things stay in order
+                items.Sort((a, b) => a.Version.CompareTo(b.Version));
 
                 var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
 
@@ -443,8 +447,6 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 Console.WriteLine();
                 Environment.Exit(1);
             }
-
-
         }
 
         static void HandleParseError(IEnumerable<Error> errs)
@@ -524,7 +526,7 @@ netsparkle-generate-appcast -n ""macOS version"" -o macos -f true -b binary_fold
 netsparkle-generate-appcast --reparse-existing
 
 # Don't overwrite the entire app cast file, but do overwrite items that are still on disk
-netsparkle-generate-appcast --reparse-existing --reparse-overwrite-old-items
+netsparkle-generate-appcast --reparse-existing --overwrite-old-items
 
 ";
             Console.Write(examples);
