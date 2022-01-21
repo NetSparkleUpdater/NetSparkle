@@ -21,7 +21,6 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
     internal class Program
     {
         private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
-        private static readonly SignatureManager _signatureManager = new SignatureManager();
 
         static void Main(string[] args)
         {
@@ -43,23 +42,25 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 return;
             }
 
+            var signatureManager = new SignatureManager();
+
             if (!string.IsNullOrWhiteSpace(opts.PathToKeyFiles))
             {
-                _signatureManager.SetStorageDirectory(opts.PathToKeyFiles);
+                signatureManager.SetStorageDirectory(opts.PathToKeyFiles);
             }
 
             if (opts.Export)
             {
                 Console.WriteLine("Private Key:");
-                Console.WriteLine(Convert.ToBase64String(_signatureManager.GetPrivateKey()));
+                Console.WriteLine(Convert.ToBase64String(signatureManager.GetPrivateKey()));
                 Console.WriteLine("Public Key:");
-                Console.WriteLine(Convert.ToBase64String(_signatureManager.GetPublicKey()));
+                Console.WriteLine(Convert.ToBase64String(signatureManager.GetPublicKey()));
                 return;
             }
 
             if (opts.GenerateKeys)
             {
-                var didSucceed = _signatureManager.Generate(opts.ForceRegeneration);
+                var didSucceed = signatureManager.Generate(opts.ForceRegeneration);
                 if (didSucceed)
                 {
                     Console.WriteLine("Keys successfully generated", Color.Green);
@@ -73,16 +74,16 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (!string.IsNullOrWhiteSpace(opts.PublicKeyOverride))
             {
-                _signatureManager.SetPublicKeyOverride(opts.PublicKeyOverride);
+                signatureManager.SetPublicKeyOverride(opts.PublicKeyOverride);
             }
             if (!string.IsNullOrWhiteSpace(opts.PrivateKeyOverride))
             {
-                _signatureManager.SetPrivateKeyOverride(opts.PrivateKeyOverride);
+                signatureManager.SetPrivateKeyOverride(opts.PrivateKeyOverride);
             }
 
             if (opts.BinaryToSign != null)
             {
-                var signature = _signatureManager.GetSignatureForFile(new FileInfo(opts.BinaryToSign));
+                var signature = signatureManager.GetSignatureForFile(new FileInfo(opts.BinaryToSign));
 
                 Console.WriteLine($"Signature: {signature}", Color.Green);
 
@@ -91,7 +92,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.BinaryToVerify != null)
             {
-                var result = _signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature);
+                var result = signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature);
 
                 if (result)
                 {
@@ -105,255 +106,13 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 return;
             }
 
-
-            if (opts.SourceBinaryDirectory == ".")
-            {
-                opts.SourceBinaryDirectory = Environment.CurrentDirectory;
-            }
-            var searches = opts.Extensions.Split(",").ToList()
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .Select(extension => $"*.{extension.Trim()}");
-            var binaries = searches
-                .SelectMany(search => Directory.GetFiles(opts.SourceBinaryDirectory, search,
-                            opts.SearchBinarySubDirectories 
-                            ? SearchOption.AllDirectories 
-                            : SearchOption.TopDirectoryOnly));
-            if (!binaries.Any())
-            {
-                Console.WriteLine($"No files founds matching {string.Join(",", searches)} in {opts.SourceBinaryDirectory}", Color.Yellow);
-                Environment.Exit(1);
-            }
-
-            if (!_operatingSystems.Any(opts.OperatingSystem.Contains))
-            {
-                Console.WriteLine($"Invalid operating system: {opts.OperatingSystem}", Color.Red);
-                Console.WriteLine($"Valid options are: {0}", string.Join(", ", _operatingSystems));
-                Environment.Exit(1);
-            }
-
-            if (string.IsNullOrEmpty(opts.OutputDirectory))
-            {
-                opts.OutputDirectory = opts.SourceBinaryDirectory;
-            }
-
-            Console.WriteLine("");
-            Console.WriteLine($"Operating System: {opts.OperatingSystem}", Color.LightBlue);
-            Console.WriteLine($"Searching: {opts.SourceBinaryDirectory}", Color.LightBlue);
-            Console.WriteLine($"Found {binaries.Count()} {string.Join(",", searches)} files(s)", Color.LightBlue);
-            Console.WriteLine("");
-
-            try
-            {
-
-                var productName = opts.ProductName;
-
-                var items = new List<AppCastItem>();
-
-                var appcastFileName = Path.Combine(opts.OutputDirectory, "appcast.xml");
-
-                var dirName = Path.GetDirectoryName(appcastFileName);
-
-                if (!Directory.Exists(dirName))
-                {
-                    Console.WriteLine("Creating {0}", dirName);
-                    Directory.CreateDirectory(dirName);
-                }
-
-                if (opts.ReparseExistingAppCast)
-                {
-                    Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
-                    if (!File.Exists(appcastFileName))
-                    {
-                        Console.WriteLine("App cast does not exist at {0}, so creating it anew...", appcastFileName, Color.Red);
-                    }
-                    else
-                    {
-                        XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
-
-                        // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                        List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                        if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
-                        {
-                            productName = allTitles[0].Value;
-                            Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
-                        }
-
-                        var docDescendants = doc.Descendants("item");
-                        var logWriter = new LogWriter(true);
-                        foreach (var item in docDescendants)
-                        {
-                            var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
-                            Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                                currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
-                            items.Add(currentItem);
-                        }
-                    }
-                }
-
-                var usesChangelogs = !string.IsNullOrWhiteSpace(opts.ChangeLogPath) && Directory.Exists(opts.ChangeLogPath);
-
-                foreach (var binary in binaries)
-                {
-                    string version = null;
-                    var fileInfo = new FileInfo(binary);
-
-                    if (opts.FileExtractVersion)
-                    {
-                        version = GetVersionFromName(fileInfo);
-                    }
-                    else
-                    {
-                        version = GetVersionFromAssembly(fileInfo);
-
-                    }
-
-                    if (version == null)
-                    {
-                        Console.WriteLine($"Unable to determine version of binary {fileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
-                        Environment.Exit(1);
-                    }
-
-                    var productVersion = version;
-                    var itemFoundInAppcast = items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault();
-                    if (itemFoundInAppcast != null && opts.OverwriteOldItemsInAppcast)
-                    {
-                        Console.WriteLine("Removing existing app cast item with version {0} so we can add the version on disk to the app cast...", productVersion);
-                        items.Remove(itemFoundInAppcast); // remove old item.
-                        itemFoundInAppcast = null;
-                    }
-                    if (itemFoundInAppcast == null)
-                    {
-                        var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
-
-                        var urlEncodedFileName = Uri.EscapeDataString(fileInfo.Name);
-                        var urlToUse = !string.IsNullOrWhiteSpace(opts.BaseUrl?.ToString())
-                            ? (opts.BaseUrl.ToString().EndsWith("/") ? opts.BaseUrl.ToString() : opts.BaseUrl + "/")
-                            : "";
-                        if (opts.PrefixVersion)
-                        {
-                            urlToUse += $"{version}/";
-                        }
-                        if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
-                        {
-                            urlEncodedFileName = urlEncodedFileName.Substring(1);
-                        }
-                        var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
-
-                        // changelog stuff
-                        var changelogFileName = productVersion + ".md";
-                        var changelogPath = Path.Combine(opts.ChangeLogPath, changelogFileName);
-                        var hasChangelogForFile = usesChangelogs && File.Exists(changelogPath);
-                        var changelogSignature = "";
-
-                        if (hasChangelogForFile)
-                        {
-                            changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
-                        }
-
-                        //
-                        var item = new AppCastItem()
-                        {
-                            Title = itemTitle?.Trim(),
-                            DownloadLink = remoteUpdateFile?.Trim(),
-                            Version = productVersion?.Trim(),
-                            ShortVersion = productVersion?.Substring(0, productVersion.LastIndexOf('.'))?.Trim(),
-                            PublicationDate = fileInfo.CreationTime,
-                            UpdateSize = fileInfo.Length,
-                            Description = "",
-                            DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(fileInfo) : null,
-                            OperatingSystemString = opts.OperatingSystem?.Trim(),
-                            MIMEType = MimeTypes.GetMimeType(fileInfo.Name)
-                        };
-
-                        if (hasChangelogForFile)
-                        {
-                            if (!string.IsNullOrWhiteSpace(opts.ChangeLogUrl))
-                            {
-                                item.ReleaseNotesSignature = changelogSignature;
-                                var changeLogUrlBase = opts.ChangeLogUrl.EndsWith("/") || changelogFileName.StartsWith("/")
-                                    ? opts.ChangeLogUrl
-                                    : opts.ChangeLogUrl + "/";
-                                item.ReleaseNotesLink = (Path.Combine(opts.ChangeLogUrl, changelogFileName)).Trim();
-                            }
-                            else
-                            {
-                                item.Description = File.ReadAllText(changelogPath).Trim();
-                            }
-                        }
-                        items.Add(item);
-                    }
-                    else
-                    {
-                        Console.WriteLine("An app cast item with version {0} is already in the file, not adding it again...", productVersion);
-                    }
-                }
-
-                // order the list by version -- helpful when reparsing app cast to make sure things stay in order
-                items.Sort((a, b) => a.Version.CompareTo(b.Version));
-
-                var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, productName);
-
-                Console.WriteLine("Writing appcast to {0}", appcastFileName);
-
-                using (var w = XmlWriter.Create(appcastFileName, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
-                {
-                    appcastXmlDocument.Save(w);
-                }
-
-                if (_signatureManager.KeysExist())
-                {
-                    var appcastFile = new FileInfo(appcastFileName);
-                    var extension = opts.SignatureFileExtension?.TrimStart('.') ?? "signature";
-                    var signatureFile = appcastFileName + "." + extension;
-                    var signature = _signatureManager.GetSignatureForFile(appcastFile);
-
-                    var result = _signatureManager.VerifySignature(appcastFile, signature);
-
-                    if (result)
-                    {
-                        
-                        File.WriteAllText(signatureFile, signature);
-                        Console.WriteLine($"Wrote {signatureFile}", Color.Green);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to verify {signatureFile}", Color.Red);
-                    }
-
-                } 
-                else
-                {
-                    Console.WriteLine("Skipped generating signature.  Generate keys with --generate-keys", Color.Red);
-                    Environment.Exit(1);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine();
-                Environment.Exit(1);
-            }
+            var generator = new AppCastMaker(signatureManager, opts);
+            generator.Run();
         }
 
         static void HandleParseError(IEnumerable<Error> errs)
         {
             errs.Output();
-        }
-
-        static string GetVersionFromName(FileInfo fileInfo)
-        {
-            var regexPattern = @"\d+(\.\d+)+";
-            var regex = new Regex(regexPattern);
-
-            var match = regex.Match(fileInfo.FullName);
-
-            return match.Captures[match.Captures.Count - 1].Value; // get the numbers at the end of the string incase the app is something like 1.0application1.0.0.dmg
-        }
-
-        static string GetVersionFromAssembly(FileInfo fileInfo)
-        {
-            return FileVersionInfo.GetVersionInfo(fileInfo.FullName).ProductVersion;
         }
 
         static void PrintExtendedExamples()
