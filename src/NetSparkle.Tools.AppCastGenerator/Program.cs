@@ -55,7 +55,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             public string ChangeLogPath { get; set; }
 
             [Option('n', "product-name", Required = false, HelpText = "Product name. This will be used in the app cast <title>. " +
-                "If you use --reparse-existing, then this field will be ignored and the existing product name will be used.", Default = "Application")]
+                "If you use --reparse-existing, then this field will be ignored and the existing product name will be used (if available).", Default = "Application")]
             public string ProductName { get; set; }
 
             [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
@@ -289,9 +289,10 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
                         // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
                         List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                        if (allTitles.Count == 1)
+                        if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
                         {
                             productName = allTitles[0].Value;
+                            Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
                         }
 
                         var docDescendants = doc.Descendants("item");
