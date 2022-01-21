@@ -1,16 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-
-### Added
-
-### Changed
-
-- [Breaking Change] Split UI to separate DLLs. The core NetSparkle DLL no longer requires a `UI`.
-- Updated SampleApplication to more easily see new usage of NetSparkle
-
-### Removed
+NOTICE: Please view GitHub releases for new release information post-0.19.0. Thanks!
 
 ## [0.19.0]
 
