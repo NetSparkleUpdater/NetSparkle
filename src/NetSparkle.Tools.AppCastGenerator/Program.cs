@@ -281,26 +281,28 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Console.WriteLine("Parsing existing app cast at {0}...", appcastFileName);
                     if (!File.Exists(appcastFileName))
                     {
-                        Console.WriteLine("Error: App cast does not exist at {0}", appcastFileName, Color.Red);
-                        Environment.Exit(1);
+                        Console.WriteLine("App cast does not exist at {0}, so creating it anew...", appcastFileName, Color.Red);
                     }
-                    XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
-
-                    // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                    List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                    if (allTitles.Count == 1)
+                    else
                     {
-                        productName = allTitles[0].Value;
-                    }
+                        XDocument doc = XDocument.Parse(File.ReadAllText(appcastFileName));
 
-                    var docDescendants = doc.Descendants("item");
-                    var logWriter = new LogWriter(true);
-                    foreach (var item in docDescendants)
-                    {
-                        var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
-                        Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                            currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
-                        items.Add(currentItem);
+                        // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
+                        List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
+                        if (allTitles.Count == 1)
+                        {
+                            productName = allTitles[0].Value;
+                        }
+
+                        var docDescendants = doc.Descendants("item");
+                        var logWriter = new LogWriter(true);
+                        foreach (var item in docDescendants)
+                        {
+                            var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
+                            Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
+                                currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
+                            items.Add(currentItem);
+                        }
                     }
                 }
 
