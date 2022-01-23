@@ -48,19 +48,19 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// does not contain a product name)</returns>
         public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName);
 
-        public static string GetVersionFromName(FileInfo fileInfo)
+        public static string GetVersionFromName(string fullFileNameWithPath)
         {
             var regexPattern = @"\d+(\.\d+)+";
             var regex = new Regex(regexPattern);
 
-            var match = regex.Match(fileInfo.FullName);
+            var match = regex.Match(fullFileNameWithPath);
 
             return match.Captures[match.Captures.Count - 1].Value; // get the numbers at the end of the string incase the app is something like 1.0application1.0.0.dmg
         }
 
-        public static string GetVersionFromAssembly(FileInfo fileInfo)
+        public static string GetVersionFromAssembly(string fullFileNameWithPath)
         {
-            return FileVersionInfo.GetVersionInfo(fileInfo.FullName).ProductVersion;
+            return FileVersionInfo.GetVersionInfo(fullFileNameWithPath).ProductVersion;
         }
 
         public IEnumerable<string> GetSearchExtensionsFromString(string extensions)
@@ -83,7 +83,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion)
         {
-            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo) : GetVersionFromAssembly(binaryFileInfo);
+            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName) : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
                 Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
@@ -216,6 +216,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
                     if (productVersion == null)
                     {
+                        Console.WriteLine($"Skipping {binary} because it has no product version...");
                         continue;
                     }
 
