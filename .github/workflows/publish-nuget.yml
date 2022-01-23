@@ -1,12 +1,42 @@
 name: Publish to NuGet
-on:
-  push:
-    branches:
-      - develop # Your default release branch
+on: push
+# to update branch that publish happens on, edit the if: statement for the publish job
 jobs:
-  setup:
+  test:
+    name: Unit testing
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: nuget/setup-nuget@v1
+        with:
+            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-version: '5.x'
+
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Setup .NET 3.0, 3.1, 5.0
+        uses: actions/setup-dotnet@v1.9.0
+        with:
+          dotnet-version: |
+            3.0
+            3.1.x
+            5.0.x
+
+      - name: Run NetSparkle.Tests
+        run: dotnet test src\NetSparkle.Tests\NetSparkle.Tests.csproj
+
+      - name: Run NetSparkle.Tests.AppCastGenerator
+        run: dotnet test src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj
+
+  publish:
     name: Build and publish all packages to NuGet
     runs-on: windows-latest
+    needs: test
+    if: github.ref == 'refs/heads/develop'
     # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
     #env:
     #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
