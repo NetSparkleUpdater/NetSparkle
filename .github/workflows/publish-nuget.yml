@@ -8,7 +8,6 @@ jobs:
     strategy:
         matrix:
             os: [windows-latest, macos-latest, ubuntu-latest]
-            dotnet-version: ['3.0', '3.1.x', '5.0.x']
     steps:
       - uses: actions/checkout@v2.4.0
       - uses: nuget/setup-nuget@v1
@@ -19,19 +18,16 @@ jobs:
       # - name: Add MSBuild to PATH
       #   uses: microsoft/setup-msbuild@v1.0.2
       
-      - name: Setup .NET 3.0, 3.1, 5.0
+      - name: Setup .NET 5.0 for tests
         uses: actions/setup-dotnet@v1.9.0
         with:
-          dotnet-version: |
-            3.0
-            3.1.x
-            5.0.x
+          dotnet-version: '5.0.x'
 
       - name: Run NetSparkle.Tests
-        run: dotnet test -f ${{ matrix.dotnet-version }} ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+        run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
       - name: Run NetSparkle.Tests.AppCastGenerator
-        run: dotnet test -f ${{ matrix.dotnet-version }} ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
+        run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
   publish:
     name: Build and publish all packages to NuGet
