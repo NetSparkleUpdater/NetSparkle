@@ -12,7 +12,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('a', "appcast-output-directory", Required = false, HelpText = "Directory to write appcast.xml")]
         public string OutputDirectory { get; set; }
 
-        [Option('e', "ext", SetName = "local", Required = false, HelpText = "Search for file extensions.", Default = "exe")]
+        [Option('e', "ext", SetName = "local", Required = false, HelpText = "Search for file extensions. Can be something like " +
+            "\"exe\" or include multiple extensions with something like \"exe,msi\" (the extensions list is comma-separated)", Default = "exe")]
         public string Extensions { get; set; }
 
         [Option('b', "binaries", SetName = "local", Required = false, HelpText = "Directory containing binaries.", Default = ".")]
