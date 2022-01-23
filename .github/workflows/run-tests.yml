@@ -15,8 +15,8 @@ jobs:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
             nuget-version: '5.x'
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1.0.2
       
       - name: Setup .NET 3.0, 3.1, 5.0
         uses: actions/setup-dotnet@v1.9.0
