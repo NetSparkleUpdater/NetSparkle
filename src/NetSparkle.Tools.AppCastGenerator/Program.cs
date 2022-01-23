@@ -20,8 +20,6 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
     internal class Program
     {
-        private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
-
         static void Main(string[] args)
         {
             // By default, if no args given, print help
@@ -49,7 +47,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 signatureManager.SetStorageDirectory(opts.PathToKeyFiles);
             }
 
-            if (opts.Export)
+            if (opts.ExportKeys)
             {
                 Console.WriteLine("Private Key:");
                 Console.WriteLine(Convert.ToBase64String(signatureManager.GetPrivateKey()));
@@ -106,8 +104,21 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 return;
             }
 
+            // actually create the app cast
             var generator = new AppCastMaker(signatureManager, opts);
-            generator.Run();
+            var appCastFileName = generator.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+            var dirName = Path.GetDirectoryName(appCastFileName);
+            if (!Directory.Exists(dirName))
+            {
+                Console.WriteLine("Creating {0}", dirName);
+                Directory.CreateDirectory(dirName);
+            }
+            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
+            if (items != null)
+            {
+                generator.SerializeItemsToFile(items, productName, appCastFileName);
+                generator.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
+            }
         }
 
         static void HandleParseError(IEnumerable<Error> errs)

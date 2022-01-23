@@ -87,7 +87,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         public bool ForceRegeneration { get; set; }
 
         [Option("export", SetName = "keys", Required = false, HelpText = "Export keys", Default = false)]
-        public bool Export { get; set; }
+        public bool ExportKeys { get; set; }
 
         #endregion
 
