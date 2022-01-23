@@ -27,10 +27,10 @@ jobs:
             5.0.x
 
       - name: Run NetSparkle.Tests
-        run: dotnet test src\NetSparkle.Tests\NetSparkle.Tests.csproj
+        run: dotnet test ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
       - name: Run NetSparkle.Tests.AppCastGenerator
-        run: dotnet test src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj
+        run: dotnet test ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
   publish:
     name: Build and publish all packages to NuGet
