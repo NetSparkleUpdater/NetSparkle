@@ -1,21 +1,16 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
 
 using Console = Colorful.Console;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
-    public class AppCastMaker
+    public abstract class AppCastMaker
     {
         private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
         
@@ -27,6 +22,31 @@ namespace NetSparkleUpdater.AppCastGenerator
             _opts = options;
             _signatureManager = signatureManager;
         }
+
+        // to create your own app cast maker, you need to override the following three functions
+
+        /// <summary>
+        /// Get the file extension (without any "." preceding the extension) for the app cast file.
+        /// e.g., "xml"
+        /// </summary>
+        /// <returns>Extension for the app cast file</returns>
+        public abstract string GetAppCastExtension();
+        /// <summary>
+        /// Serialize a list of AppCastItem items to a file at the given path with the given title.
+        /// Overwrites any file at the given path. Does not verify that the given directory structure
+        /// for the output file exists.
+        /// </summary>
+        /// <param name="items">List of AppCastItem items to write</param>
+        /// <param name="applicationTitle">Title of application (or app cast)</param>
+        /// <param name="path">Output file path/name</param>
+        public abstract void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path);
+        /// <summary>
+        /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
+        /// </summary>
+        /// <param name="appCastFileName">File name/path for app cast file to read</param>
+        /// <returns>Tuple of items and the product name (product name can be null if file does not exist or file 
+        /// does not contain a product name)</returns>
+        public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName);
 
         public static string GetVersionFromName(FileInfo fileInfo)
         {
@@ -59,39 +79,6 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
             var searchOption = searchSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
             return extensionsStringForSearch.SelectMany(search => Directory.GetFiles(binaryDirectory, search, searchOption));
-        }
-
-        public (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName)
-        {
-            Console.WriteLine("Parsing existing app cast at {0}...", appCastFileName);
-            var items = new List<AppCastItem>();
-            string productName = null;
-            if (!File.Exists(appCastFileName))
-            {
-                Console.WriteLine("App cast does not exist at {0}, so creating it anew...", appCastFileName, Color.Red);
-            }
-            else
-            {
-                XDocument doc = XDocument.Parse(File.ReadAllText(appCastFileName));
-                // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
-                {
-                    productName = allTitles[0].Value;
-                    Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
-                }
-
-                var docDescendants = doc.Descendants("item");
-                var logWriter = new LogWriter(true);
-                foreach (var item in docDescendants)
-                {
-                    var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
-                    Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                        currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
-                    items.Add(currentItem);
-                }
-            }
-            return (items, productName);
         }
 
         public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion)
@@ -170,13 +157,13 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <param name="desiredOutputDirectory"></param>
         /// <param name="sourceBinaryDirectory"></param>
         /// <returns></returns>
-        public virtual string GetPathToAppCastOutput(string desiredOutputDirectory, string sourceBinaryDirectory)
+        public string GetPathToAppCastOutput(string desiredOutputDirectory, string sourceBinaryDirectory)
         {
             if (string.IsNullOrWhiteSpace(desiredOutputDirectory))
             {
                 desiredOutputDirectory = sourceBinaryDirectory;
             }
-            return Path.Combine(desiredOutputDirectory, "appcast.xml");
+            return Path.Combine(desiredOutputDirectory, "appcast." + GetAppCastExtension());
         }
 
         /// <summary>
@@ -235,7 +222,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     var itemFoundInAppcast = items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault();
                     if (itemFoundInAppcast != null && _opts.OverwriteOldItemsInAppcast)
                     {
-                        Console.WriteLine("Removing existing app cast item with version {0} so we can add the version on disk to the app cast...", productVersion);
+                        Console.WriteLine($"Removing existing app cast item with version {productVersion} so we can add the version on disk to the app cast...");
                         items.Remove(itemFoundInAppcast); // remove old item.
                         itemFoundInAppcast = null;
                     }
@@ -249,7 +236,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     else
                     {
-                        Console.WriteLine("An app cast item with version {0} is already in the file, not adding it again...", productVersion);
+                        Console.WriteLine($"An app cast item with version {productVersion} is already in the file, not adding it again...");
                     }
                 }
 
@@ -264,18 +251,6 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Console.WriteLine();
             }
             return (null, null);
-        }
-
-        // marked virtual so that in theory all you would have to do to create a JSON representation
-        // of your app cast would be to overwrite this function and GetPathToAppCastOutput
-        public virtual void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
-        {
-            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle);
-            Console.WriteLine("Writing app cast to {0}", path);
-            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
-            {
-                appcastXmlDocument.Save(xmlWriter);
-            }
         }
 
         /// <summary>

@@ -105,13 +105,13 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             }
 
             // actually create the app cast
-            var generator = new AppCastMaker(signatureManager, opts);
+            var generator = new XMLAppCastMaker(signatureManager, opts);
             var appCastFileName = generator.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
-            var dirName = Path.GetDirectoryName(appCastFileName);
-            if (!Directory.Exists(dirName))
+            var outputDirName = Path.GetDirectoryName(appCastFileName);
+            if (!Directory.Exists(outputDirName))
             {
-                Console.WriteLine("Creating {0}", dirName);
-                Directory.CreateDirectory(dirName);
+                Console.WriteLine("Creating {0}", outputDirName);
+                Directory.CreateDirectory(outputDirName);
             }
             var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
             if (items != null)
