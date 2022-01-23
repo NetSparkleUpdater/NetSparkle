@@ -1,0 +1,33 @@
+name: Run unit tests on all core operating systems
+on: push
+jobs:
+  tests:
+    name: Unit testing
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+        matrix:
+            os: [windows-latest, macos-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: nuget/setup-nuget@v1
+        with:
+            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-version: '5.x'
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Setup .NET 3.0, 3.1, 5.0
+        uses: actions/setup-dotnet@v1.9.0
+        with:
+          dotnet-version: |
+            3.0
+            3.1.x
+            5.0.x
+
+      - name: Run NetSparkle.Tests
+        run: dotnet test src\NetSparkle.Tests\NetSparkle.Tests.csproj
+
+      - name: Run NetSparkle.Tests.AppCastGenerator
+        run: dotnet test src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj
