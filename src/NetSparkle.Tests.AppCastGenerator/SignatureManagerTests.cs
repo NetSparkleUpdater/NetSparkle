@@ -18,6 +18,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             var manager = new SignatureManager();
             // make sure we don't overwrite user's NetSparkle keys!!
             manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests"));
+            manager.Generate(true);
             return manager;
         }
 
@@ -25,7 +26,6 @@ namespace NetSparkle.Tests.AppCastGenerator
         public void TestKeysExist()
         {
             var manager = GetSignatureManager();
-            manager.Generate(true);
             Assert.True(manager.KeysExist());
         }
 
@@ -33,7 +33,6 @@ namespace NetSparkle.Tests.AppCastGenerator
         public void CanGenerateKeys()
         {
             var manager = GetSignatureManager();
-            manager.Generate(true);
 
             var publicKey = manager.GetPublicKey();
             Assert.NotNull(publicKey);
@@ -63,7 +62,6 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
             var manager = GetSignatureManager();
-            manager.Generate(true);
             var signature = manager.GetSignatureForFile(path);
             // verify signature
             Assert.True(manager.VerifySignature(path, signature));
@@ -82,7 +80,6 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
             var manager = GetSignatureManager();
-            manager.Generate(true);
             var signature = manager.GetSignatureForFile(path);
             var realPublicKey = manager.GetPublicKey();
             var realPrivateKey = manager.GetPrivateKey();
@@ -133,6 +130,9 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(manager.VerifySignature(path, signature));
             // get rid of temp file
             File.Delete(path);
+            // cleanup environment keys
+            Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, null);
+            Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, null);
         }
     }
 }

@@ -18,10 +18,11 @@ namespace NetSparkle.Tests.AppCastGenerator
             var manager = new SignatureManager();
             // make sure we don't overwrite user's NetSparkle keys!!
             manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests"));
+            manager.Generate(true);
             return manager;
         }
 
-        private string GetCleanTempDir()
+        private string GetCleanTempDir(string extra = "")
         {
             var tempPath = Path.GetTempPath();
             var tempDir = Path.Combine(tempPath, "netsparkle-unit-tests-13927");
@@ -313,7 +314,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(fileSizeBytes, items[0].UpdateSize);
             Console.WriteLine(items[0].DownloadSignature);
             Console.WriteLine(signatureManager.GetSignatureForFile(dummyFilePath));
-            Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
+            Assert.True(signatureManager.VerifySignature(dummyFilePath, items[0].DownloadSignature));
             Assert.True(signatureManager.VerifySignature(
                 appCastFileName,
                 File.ReadAllText(appCastFileName + "." + (opts.SignatureFileExtension ?? "signature"))));
