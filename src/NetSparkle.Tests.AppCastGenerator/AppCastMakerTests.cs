@@ -22,7 +22,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             fixture = f;
         }
 
-        private string GetCleanTempDir(string extra = "")
+        private string GetCleanTempDir()
         {
             var tempPath = Path.GetTempPath();
             var tempDir = Path.Combine(tempPath, "netsparkle-unit-tests-13927");
