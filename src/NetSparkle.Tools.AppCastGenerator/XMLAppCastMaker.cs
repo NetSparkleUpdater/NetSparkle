@@ -19,44 +19,71 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
         }
 
+        /// <inheritdoc/>
         public override string GetAppCastExtension()
         {
             return "xml";
         }
 
-        public override (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName)
+        /// <inheritdoc/>
+        public override (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast)
         {
             Console.WriteLine("Parsing existing app cast at {0}...", appCastFileName);
             var items = new List<AppCastItem>();
             string productName = null;
-            if (!File.Exists(appCastFileName))
+            try
             {
-                Console.WriteLine("App cast does not exist at {0}, so creating it anew...", appCastFileName, Color.Red);
-            }
-            else
-            {
-                XDocument doc = XDocument.Parse(File.ReadAllText(appCastFileName));
-                // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
+                if (!File.Exists(appCastFileName))
                 {
-                    productName = allTitles[0].Value;
-                    Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
+                    Console.WriteLine("App cast does not exist at {0}, so creating it anew...", appCastFileName, Color.Red);
                 }
+                else
+                {
+                    XDocument doc = XDocument.Parse(File.ReadAllText(appCastFileName));
+                    // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
+                    List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
+                    if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
+                    {
+                        productName = allTitles[0].Value;
+                        Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
+                    }
 
-                var docDescendants = doc.Descendants("item");
-                var logWriter = new LogWriter(true);
-                foreach (var item in docDescendants)
-                {
-                    var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
-                    Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                        currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
-                    items.Add(currentItem);
+                    var docDescendants = doc.Descendants("item");
+                    var logWriter = new LogWriter(true);
+                    foreach (var item in docDescendants)
+                    {
+                        var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
+                        Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
+                            currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
+                        var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
+                        if (itemFound == null)
+                        {
+                            items.Add(currentItem);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Duplicate item with version {currentItem.Version} found in app cast. This is likely an invalid state" +
+                                $" and you should fix your app cast so that it does not have duplicate items.", Color.Yellow);
+                            if (overwriteOldItemsInAppcast)
+                            {
+                                items.Remove(itemFound); // remove old item.
+                                items.Add(currentItem);
+                                Console.WriteLine("Overwriting old item with newly found one...", Color.Yellow);
+                            }
+                        }
+                    }
                 }
+            } 
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error reading previous app cast: {e.Message}. Not using it for any items...", Color.Red);
+                return (new List<AppCastItem>(), null);
             }
+            items.Sort((a, b) => b.Version.CompareTo(a.Version));
             return (items, productName);
         }
 
+        /// <inheritdoc/>
         public override void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
         {
             var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle);

@@ -42,11 +42,15 @@ namespace NetSparkleUpdater.AppCastGenerator
         public abstract void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path);
         /// <summary>
         /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
+        /// Should not return duplicate versions.
+        /// The items list should always be non-null and sorted by AppCastItem.Version descending.
         /// </summary>
         /// <param name="appCastFileName">File name/path for app cast file to read</param>
+        /// <param name="overwriteOldItemsInAppcast">If true and an item is loaded with a version that has already been found,
+        /// overwrite the already found item with the newly found one</param>
         /// <returns>Tuple of items and the product name (product name can be null if file does not exist or file 
         /// does not contain a product name)</returns>
-        public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName);
+        public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
 
         public static string GetVersionFromName(string fullFileNameWithPath)
         {
@@ -200,7 +204,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 var productName = _opts.ProductName;
                 if (useExistingAppCastItems)
                 {
-                    var (existingItems, existingProductName) = GetItemsAndProductNameFromExistingAppCast(outputAppCastFileName);
+                    var (existingItems, existingProductName) = GetItemsAndProductNameFromExistingAppCast(outputAppCastFileName, _opts.OverwriteOldItemsInAppcast);
                     items.AddRange(existingItems);
                     if (!string.IsNullOrWhiteSpace(existingProductName))
                     {
@@ -241,8 +245,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                 }
 
-                // order the list by version -- helpful when reparsing app cast to make sure things stay in order
-                items.Sort((a, b) => a.Version.CompareTo(b.Version));
+                // order the list by version descending -- helpful when reparsing app cast to make sure things stay in order
+                items.Sort((a, b) => b.Version.CompareTo(a.Version));
                 return (items, productName);
             }
             catch (Exception e)
