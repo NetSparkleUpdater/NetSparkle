@@ -143,6 +143,11 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             var data = File.ReadAllBytes(file.FullName);
 
+            return GetSignatureForData(data);
+        }
+
+        public string GetSignatureForData(byte[] data)
+        { 
             var signer = new Ed25519Signer();
 
             signer.Init(true, new Ed25519PrivateKeyParameters(GetPrivateKey(), 0));
