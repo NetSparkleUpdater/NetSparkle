@@ -296,6 +296,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 BaseUrl = new Uri("https://example.com/downloads")
             };
             var signatureManager = GetSignatureManager();
+            Assert.True(signatureManager.KeysExist());
             var maker = new XMLAppCastMaker(signatureManager, opts);
             var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
             var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);

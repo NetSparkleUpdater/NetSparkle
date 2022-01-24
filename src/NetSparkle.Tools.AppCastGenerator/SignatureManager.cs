@@ -136,7 +136,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             if (!file.Exists)
             {
-                Console.Error.WriteLine("Target binary " + file.FullName + " does not exists");
+                Console.Error.WriteLine("Target binary " + file.FullName + " does not exist");
                 return null;
             }
 
