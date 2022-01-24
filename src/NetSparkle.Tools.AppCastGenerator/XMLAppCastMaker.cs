@@ -13,7 +13,7 @@ using Console = Colorful.Console;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
-    class XMLAppCastMaker : AppCastMaker
+    public class XMLAppCastMaker : AppCastMaker
     {
         public XMLAppCastMaker(SignatureManager signatureManager, Options options) : base(signatureManager, options)
         {

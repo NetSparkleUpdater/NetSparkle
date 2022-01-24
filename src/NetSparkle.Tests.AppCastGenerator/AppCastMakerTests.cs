@@ -34,5 +34,22 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("1.0bar7.8foo 1.2.4.8"));
             Assert.Equal("2.0", AppCastMaker.GetVersionFromName("1.0bar7.8foo6.3 2.0"));
         }
+
+        [Fact]
+        public void CanGetSearchExtensions()
+        {
+            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            var extensions = maker.GetSearchExtensionsFromString("");
+            Assert.Empty(extensions);
+            extensions = maker.GetSearchExtensionsFromString("exe");
+            Assert.Contains("*.exe", extensions);
+            extensions = maker.GetSearchExtensionsFromString("exe,msi");
+            Assert.Contains("*.exe", extensions);
+            Assert.Contains("*.msi", extensions);
+            extensions = maker.GetSearchExtensionsFromString("exe,msi");
+            Assert.Contains("*.exe", extensions);
+            Assert.Contains("*.msi", extensions);
+            Assert.Equal(2, extensions.Count());
+        }
     }
 }
