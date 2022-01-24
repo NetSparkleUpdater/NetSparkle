@@ -259,7 +259,8 @@ namespace NetSparkleUpdater
                 //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
                 // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
                 //      e.g. "Sat, 26 Oct 2019 22:05:11"
-                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", "ddd, dd MMM yyyy HH:mm:ss" };
+                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", 
+                    "ddd, dd MMM yyyy HH:mm:ss", "ddd, dd MMM yyyy HH:mm:ss K" };
                 string dt = pubDateElement.Value.Trim();
                 if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                 {
