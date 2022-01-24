@@ -97,5 +97,161 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Contains(Path.Combine(tempSubDir, "there-are-four-lights.txt"), binaryPaths);
             Assert.Contains(Path.Combine(tempSubDir, "please-understand.bat"), binaryPaths);
         }
+
+        [Fact]
+        public void XMLAppCastHasProperExtension()
+        {
+            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            Assert.Equal("xml", maker.GetAppCastExtension());
+        }
+
+        [Fact]
+        public void CanGetItemsAndProductNameFromExistingAppCast()
+        {
+            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            // create fake app cast file
+            var appCastData = @"";
+            var fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            var (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Empty(items);
+            Assert.Null(productName);
+            // now create something with some actual data!
+            appCastData = @"
+<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0""
+                       sparkle:os=""windows""
+                       length=""12288""
+                       type=""application/octet-stream""
+                       sparkle:signature=""foo"" />
+        </item>
+        <item>
+            <title>Version 1.3</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe""
+                       sparkle:version=""1.3""
+                       sparkle:os=""linux""
+                       length=""11555""
+                       type=""application/octet-stream""
+                       sparkle:signature=""bar"" />
+        </item>
+    </channel>
+</rss>
+".Trim();
+            fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Equal("NetSparkle Test App", productName);
+            Assert.Equal(2, items.Count);
+            Assert.Equal("Version 2.0", items[0].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md", items[0].ReleaseNotesLink);
+            Assert.Equal(28, items[0].PublicationDate.Day);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe", items[0].DownloadLink);
+            Assert.Equal("windows", items[0].OperatingSystemString);
+            Assert.Equal("2.0", items[0].Version);
+            Assert.Equal(12288, items[0].UpdateSize);
+            Assert.Equal("foo", items[0].DownloadSignature);
+
+            Assert.Equal("Version 1.3", items[1].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md", items[1].ReleaseNotesLink);
+            Assert.Equal(27, items[1].PublicationDate.Day);
+            Assert.Equal(30, items[1].PublicationDate.Minute);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe", items[1].DownloadLink);
+            Assert.Equal("linux", items[1].OperatingSystemString);
+            Assert.Equal("1.3", items[1].Version);
+            Assert.Equal(11555, items[1].UpdateSize);
+            Assert.Equal("bar", items[1].DownloadSignature);
+
+            // test duplicate items
+            appCastData = @"
+<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0""
+                       sparkle:os=""windows""
+                       length=""12288""
+                       type=""application/octet-stream""
+                       sparkle:signature=""foo"" />
+        </item>
+        <item>
+            <title>Version 1.3</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe""
+                       sparkle:version=""1.3""
+                       sparkle:os=""linux""
+                       length=""11555""
+                       type=""application/octet-stream""
+                       sparkle:signature=""bar"" />
+        </item>
+        <item>
+            <title>Version 1.3 - The Real Deal</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-real-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 27 Oct 2016 12:44:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe""
+                       sparkle:version=""1.3""
+                       sparkle:os=""macOS""
+                       length=""22222""
+                       type=""application/octet-stream""
+                       sparkle:signature=""moo"" />
+        </item>
+    </channel>
+</rss>
+".Trim();
+            fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, true);
+            Assert.Equal("NetSparkle Test App", productName);
+            Assert.Equal(2, items.Count);
+            Assert.Equal("Version 2.0", items[0].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md", items[0].ReleaseNotesLink);
+            Assert.Equal(28, items[0].PublicationDate.Day);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe", items[0].DownloadLink);
+            Assert.Equal("windows", items[0].OperatingSystemString);
+            Assert.Equal("2.0", items[0].Version);
+            Assert.Equal(12288, items[0].UpdateSize);
+            Assert.Equal("foo", items[0].DownloadSignature);
+
+            Assert.Equal("Version 1.3 - The Real Deal", items[1].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-real-release-notes.md", items[1].ReleaseNotesLink);
+            Assert.Equal(27, items[1].PublicationDate.Day);
+            Assert.Equal(44, items[1].PublicationDate.Minute);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe", items[1].DownloadLink);
+            Assert.Equal("macOS", items[1].OperatingSystemString);
+            Assert.Equal("1.3", items[1].Version);
+            Assert.Equal(22222, items[1].UpdateSize);
+            Assert.Equal("moo", items[1].DownloadSignature);
+        }
     }
 }
