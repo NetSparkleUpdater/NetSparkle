@@ -310,6 +310,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(items[0].DownloadSignature.Length > 0);
             Assert.True(items[0].IsWindowsUpdate);
             Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+            Console.WriteLine(items[0].DownloadSignature);
+            Console.WriteLine(signatureManager.GetSignatureForFile(dummyFilePath));
             Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
             Assert.True(signatureManager.VerifySignature(
                 appCastFileName,
