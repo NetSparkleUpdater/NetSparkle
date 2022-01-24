@@ -266,6 +266,14 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("moo", items[1].DownloadSignature);
         }
 
+        // https://stackoverflow.com/a/1344242/3938401
+        private static string RandomString(int length)
+        {
+            Random random = new SecureRandom();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
 
         [Fact]
         public void CanCreateSimpleAppCast()
@@ -273,8 +281,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             // setup test dir
             var tempDir = GetCleanTempDir();
             // create dummy files
-            File.WriteAllText(Path.Combine(tempDir, "hello 1.0.txt"), string.Empty);
-
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
             var opts = new Options()
             {
                 FileExtractVersion = true,
@@ -282,17 +292,28 @@ namespace NetSparkle.Tests.AppCastGenerator
                 SourceBinaryDirectory = tempDir,
                 Extensions = "txt",
                 OutputDirectory = tempDir,
-                OperatingSystem = "windows"
+                OperatingSystem = "windows",
+                BaseUrl = new Uri("https://example.com/downloads")
             };
-            var maker = new XMLAppCastMaker(GetSignatureManager(), opts);
+            var signatureManager = GetSignatureManager();
+            var maker = new XMLAppCastMaker(signatureManager, opts);
             var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
             var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
             if (items != null)
             {
                 maker.SerializeItemsToFile(items, productName, appCastFileName);
-                maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
+                maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
             }
             Assert.Single(items);
+            Assert.Equal("1.0", items[0].Version);
+            Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
+            Assert.True(items[0].DownloadSignature.Length > 0);
+            Assert.True(items[0].IsWindowsUpdate);
+            Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+            Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
+            Assert.True(signatureManager.VerifySignature(
+                appCastFileName,
+                File.ReadAllText(appCastFileName + "." + (opts.SignatureFileExtension ?? "signature"))));
         }
     }
 }

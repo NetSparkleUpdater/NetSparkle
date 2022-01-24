@@ -158,7 +158,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             // changelog stuff
             var changelogFileName = productVersion + ".md";
-            var changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
+            var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
             var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
             var changelogSignature = "";
 
