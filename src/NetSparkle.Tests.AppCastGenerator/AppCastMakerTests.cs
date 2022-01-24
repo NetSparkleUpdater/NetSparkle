@@ -314,6 +314,15 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(signatureManager.VerifySignature(
                 appCastFileName,
                 File.ReadAllText(appCastFileName + "." + (opts.SignatureFileExtension ?? "signature"))));
+            // read back and make sure things are the same
+            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(appCastFileName, true);
+            Assert.Single(items);
+            Assert.Equal("1.0", items[0].Version);
+            Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
+            Assert.True(items[0].DownloadSignature.Length > 0);
+            Assert.True(items[0].IsWindowsUpdate);
+            Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+            Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
         }
     }
 }
