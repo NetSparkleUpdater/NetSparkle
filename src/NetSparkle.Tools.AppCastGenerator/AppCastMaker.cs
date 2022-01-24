@@ -50,12 +50,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public static string GetVersionFromName(string fullFileNameWithPath)
         {
-            var regexPattern = @"\d+(\.\d+)+";
+            // get the numbers at the end of the string in case the app is something like 1.0application1.0.0.dmg
+            var regexPattern = @"\d+(\.\d+)+$";
             var regex = new Regex(regexPattern);
 
             var match = regex.Match(fullFileNameWithPath);
-
-            return match.Captures[match.Captures.Count - 1].Value; // get the numbers at the end of the string incase the app is something like 1.0application1.0.0.dmg
+            return match.Captures.Count > 0 ? match.Captures[match.Captures.Count - 1].Value : null;
         }
 
         public static string GetVersionFromAssembly(string fullFileNameWithPath)
