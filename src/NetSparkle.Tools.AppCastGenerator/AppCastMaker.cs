@@ -55,11 +55,54 @@ namespace NetSparkleUpdater.AppCastGenerator
         public static string GetVersionFromName(string fullFileNameWithPath)
         {
             // get the numbers at the end of the string in case the app is something like 1.0application1.0.0.dmg
-            var regexPattern = @"\d+(\.\d+)+$";
-            var regex = new Regex(regexPattern);
+            // this solution is a mix of https://stackoverflow.com/a/22704755/3938401
+            // and https://stackoverflow.com/a/31926058/3938401
+            // basically, we pull out the last numbers out of the name that are separated by '.'
+            if (fullFileNameWithPath.EndsWith("."))
+            {
+                // don't allow raw files that end in '.'
+                return null;
+            }
+            var split = fullFileNameWithPath.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-            var match = regex.Match(fullFileNameWithPath);
-            return match.Captures.Count > 0 ? match.Captures[match.Captures.Count - 1].Value : null;
+            var temp = 0;
+            var nums = new List<int>();
+
+            for (int i = split.Length - 1; i >= 0; i--)
+            {
+                var splitItem = split[i];
+                if (int.TryParse(splitItem, out temp))
+                {
+                    nums.Add(temp);
+                }
+                else
+                {
+                    var regexPattern = @"\d+$";
+                    var regex = new Regex(regexPattern);
+                    var match = regex.Match(splitItem);
+                    if (match.Success)
+                    {
+                        nums.Add(int.Parse(match.Captures[^1].Value));
+                        break;
+                    }
+                    else if (i != split.Length - 1)
+                    {
+                        // only break if we haven't tried at least 1 item more than the last item
+                        // (allows for skipping extension)
+                        break;
+                    }
+                }
+                if (nums.Count >= 4)
+                {
+                    break; // Major.Minor.Revision.Patch is all we allow
+                }
+            }
+            if (nums.Count > 0)
+            {
+                nums.Reverse();
+                return string.Join('.', nums);
+            }
+            return null;
         }
 
         public static string GetVersionFromAssembly(string fullFileNameWithPath)

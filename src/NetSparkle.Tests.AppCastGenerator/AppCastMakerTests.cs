@@ -21,11 +21,28 @@ namespace NetSparkle.Tests.AppCastGenerator
             return manager;
         }
 
+        private string GetCleanTempDir()
+        {
+            var tempPath = Path.GetTempPath();
+            var tempDir = Path.Combine(tempPath, "netsparkle-unit-tests-13927");
+            // remove any files set up in previous tests
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, true);
+            }
+            Directory.CreateDirectory(tempDir);
+            return tempDir;
+        }
+
         [Fact]
         public void CanGetVersionFromName()
         {
             Assert.Null(AppCastMaker.GetVersionFromName("foo"));
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
+            Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
+            Assert.Equal("0", AppCastMaker.GetVersionFromName("hello 1 .0.txt"));
+            Assert.Equal("2.3", AppCastMaker.GetVersionFromName("hello a2.3.txt"));
+            Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("foo1.0"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo0.1"));
             Assert.Equal("0.0.3.1", AppCastMaker.GetVersionFromName("foo0.0.3.1"));
@@ -33,6 +50,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("foo1.2.4.8"));
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("1.0bar7.8foo 1.2.4.8"));
             Assert.Equal("2.0", AppCastMaker.GetVersionFromName("1.0bar7.8foo6.3 2.0"));
+
+            Assert.Equal("3.2.1.0", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.1.0.zip"));
         }
 
         [Fact]
@@ -56,14 +75,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         public void CanFindBinaries()
         {
             // setup test dir
-            var tempPath = Path.GetTempPath();
-            var tempDir = Path.Combine(tempPath, "netsparkle-unit-tests-13927");
-            // remove any files set up in previous tests
-            if (Directory.Exists(tempDir))
-            {
-                Directory.Delete(tempDir, true);
-            }
-            Directory.CreateDirectory(tempDir);
+            var tempDir = GetCleanTempDir();
             // create dummy files
             File.WriteAllText(Path.Combine(tempDir, "hello.txt"), string.Empty);
             File.WriteAllText(Path.Combine(tempDir, "goodbye.txt"), string.Empty);
@@ -252,6 +264,35 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.3", items[1].Version);
             Assert.Equal(22222, items[1].UpdateSize);
             Assert.Equal("moo", items[1].DownloadSignature);
+        }
+
+
+        [Fact]
+        public void CanCreateSimpleAppCast()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            File.WriteAllText(Path.Combine(tempDir, "hello 1.0.txt"), string.Empty);
+
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows"
+            };
+            var maker = new XMLAppCastMaker(GetSignatureManager(), opts);
+            var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+            var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
+            if (items != null)
+            {
+                maker.SerializeItemsToFile(items, productName, appCastFileName);
+                maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
+            }
+            Assert.Single(items);
         }
     }
 }
