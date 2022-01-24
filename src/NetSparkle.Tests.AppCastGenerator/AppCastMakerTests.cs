@@ -7,18 +7,19 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
-    public class AppCastMakerTests
+    [Collection("Signature manager")]
+    public class AppCastMakerTests 
     {
-        private SignatureManager GetSignatureManager()
+        SignatureManagerFixture fixture;
+
+        public AppCastMakerTests(SignatureManagerFixture f)
         {
-            var manager = new SignatureManager();
-            // make sure we don't overwrite user's NetSparkle keys!!
-            manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests"));
-            return manager;
+            fixture = f;
         }
 
         private string GetCleanTempDir()
@@ -57,7 +58,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Fact]
         public void CanGetSearchExtensions()
         {
-            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
             var extensions = maker.GetSearchExtensionsFromString("");
             Assert.Empty(extensions);
             extensions = maker.GetSearchExtensionsFromString("exe");
@@ -85,7 +86,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             File.WriteAllText(Path.Combine(tempSubDir, "good-day-sir.txt"), string.Empty);
             File.WriteAllText(Path.Combine(tempSubDir, "there-are-four-lights.txt"), string.Empty);
             File.WriteAllText(Path.Combine(tempSubDir, "please-understand.bat"), string.Empty);
-            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
             var binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("exe"), searchSubdirectories: false);
             Assert.Empty(binaryPaths);
 
@@ -113,14 +114,14 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Fact]
         public void XMLAppCastHasProperExtension()
         {
-            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
             Assert.Equal("xml", maker.GetAppCastExtension());
         }
 
         [Fact]
         public void CanGetItemsAndProductNameFromExistingAppCast()
         {
-            var maker = new XMLAppCastMaker(GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
             // create fake app cast file
             var appCastData = @"";
             var fakeAppCastFilePath = Path.GetTempFileName();
@@ -280,11 +281,13 @@ namespace NetSparkle.Tests.AppCastGenerator
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
+
             // create dummy files
             var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
             const int fileSizeBytes = 57;
             var tempData = RandomString(fileSizeBytes);
             File.WriteAllText(dummyFilePath, tempData);
+
             var opts = new Options()
             {
                 FileExtractVersion = true,
@@ -295,8 +298,10 @@ namespace NetSparkle.Tests.AppCastGenerator
                 OperatingSystem = "windows",
                 BaseUrl = new Uri("https://example.com/downloads")
             };
-            var signatureManager = GetSignatureManager();
+
+            var signatureManager = fixture.GetSignatureManager();
             Assert.True(signatureManager.KeysExist());
+
             var maker = new XMLAppCastMaker(signatureManager, opts);
             var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
             var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
@@ -305,13 +310,24 @@ namespace NetSparkle.Tests.AppCastGenerator
                 maker.SerializeItemsToFile(items, productName, appCastFileName);
                 maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
             }
+
             Assert.Single(items);
             Assert.Equal("1.0", items[0].Version);
             Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
             Assert.True(items[0].DownloadSignature.Length > 0);
             Assert.True(items[0].IsWindowsUpdate);
             Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+
+            // reading from the file, and using the data directly - SHOULD result in the same signature.
+            var sigFromFile = signatureManager.GetSignatureForFile(dummyFilePath);
+            var sigFromBinaryData = signatureManager.GetSignatureForData(File.ReadAllBytes(dummyFilePath));
+            Assert.Equal(sigFromFile, sigFromBinaryData);
+
+            // the sig embedded into the item should also be the same
+            Assert.Equal(items[0].DownloadSignature, sigFromFile);
+
             Console.WriteLine(items[0].DownloadSignature);
+
             Console.WriteLine(signatureManager.GetSignatureForFile(dummyFilePath));
             Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
             Assert.True(signatureManager.VerifySignature(

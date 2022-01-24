@@ -11,29 +11,27 @@ using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
+    [Collection("Signature manager")]
     public class SignatureManagerTests
     {
-        private SignatureManager GetSignatureManager()
+        private SignatureManagerFixture fixture;
+
+        public SignatureManagerTests(SignatureManagerFixture f)
         {
-            var manager = new SignatureManager();
-            // make sure we don't overwrite user's NetSparkle keys!!
-            manager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), "netsparkle-tests"));
-            return manager;
+            fixture = f;
         }
 
         [Fact]
         public void TestKeysExist()
         {
-            var manager = GetSignatureManager();
-            manager.Generate(true);
+            var manager = fixture.GetSignatureManager();
             Assert.True(manager.KeysExist());
         }
 
         [Fact]
         public void CanGenerateKeys()
         {
-            var manager = GetSignatureManager();
-            manager.Generate(true);
+            var manager = fixture.GetSignatureManager();
 
             var publicKey = manager.GetPublicKey();
             Assert.NotNull(publicKey);
@@ -62,8 +60,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(File.Exists(path));
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
-            var manager = GetSignatureManager();
-            manager.Generate(true);
+            var manager = fixture.GetSignatureManager();
             var signature = manager.GetSignatureForFile(path);
             // verify signature
             Assert.True(manager.VerifySignature(path, signature));
@@ -81,8 +78,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(File.Exists(path));
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
-            var manager = GetSignatureManager();
-            manager.Generate(true);
+            var manager = fixture.GetSignatureManager();
             var signature = manager.GetSignatureForFile(path);
             var realPublicKey = manager.GetPublicKey();
             var realPrivateKey = manager.GetPrivateKey();
@@ -122,7 +118,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             var privKeyBase64 = Convert.ToBase64String(privateKey.GetEncoded());
             var pubKeyBase64 = Convert.ToBase64String(publicKey.GetEncoded());
 
-            var manager = GetSignatureManager();
+            var manager = fixture.GetSignatureManager();
             Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, privKeyBase64);
             Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, pubKeyBase64);
 
