@@ -1,6 +1,6 @@
 ## History
 
-**This is an old file. For an up-to-date changelog, see [CHANGELOG.md](CHANGELOG.md).**
+**This is an old file. For an up-to-date changelog, see [CHANGELOG.md](CHANGELOG.md) and GitHub releases.**
 
 June 2016 Steffen Xonna: Forked the library to raise the security and change some handling for an better usability for the user.  
 
