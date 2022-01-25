@@ -30,3 +30,4 @@ src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj.u
 doc/generated/*
 doc/Working Data
 !git.folder
+UpgradeLog.htm
