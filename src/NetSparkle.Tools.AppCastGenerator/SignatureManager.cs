@@ -23,9 +23,14 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public SignatureManager()
         {
-            SetStorageDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle"));
+            SetStorageDirectory(GetDefaultStorageDirectory());
             _privateKeyOverride = "";
             _publicKeyOverride = "";
+        }
+
+        public static string GetDefaultStorageDirectory()
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
         }
 
         public void SetStorageDirectory(string path)
@@ -39,6 +44,11 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             _privateKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.priv");
             _publicKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.pub");
+        }
+
+        public string GetStorageDirectory()
+        {
+            return _storagePath;
         }
 
         public void SetPublicKeyOverride(string overridePubKey)
@@ -189,6 +199,22 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
 
             return Convert.FromBase64String(File.ReadAllText(fileLocation));
+        }
+
+        /// <summary>
+        /// Deletes existing keys off disk. You shouldn't call this if they aren't backed up.
+        /// Useful for cleaning up unit tests.
+        /// </summary>
+        public void DeleteKeys()
+        {
+            if (File.Exists(_publicKeyFilePath))
+            {
+                File.Delete(_publicKeyFilePath);
+            }
+            if (File.Exists(_privateKeyFilePath))
+            {
+                File.Delete(_privateKeyFilePath);
+            }
         }
     }
 }

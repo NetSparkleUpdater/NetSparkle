@@ -1,33 +1,53 @@
 ﻿using NetSparkleUpdater.AppCastGenerator;
+using System;
 using System.IO;
 using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
-    public class SignatureManagerFixture
+    public class SignatureManagerFixture : IDisposable
     {
-        private SignatureManager manager;
+        public const string CollectionName = "signature-manager";
+
+        private SignatureManager _manager;
 
         public SignatureManagerFixture()
         {
-            manager = NewSignatureManager("netsparkle-tests");
+            _manager = CreateSignatureManager("netsparkle-tests");
         }
 
-        public SignatureManager NewSignatureManager(string temp_directory_name)
+        public SignatureManager CreateSignatureManager(string temp_directory_name)
         {
-            var newManager = new SignatureManager();
-            newManager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), temp_directory_name));
-            newManager.Generate(true);
-            return newManager;
+            var signatureManager = new SignatureManager();
+            signatureManager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), temp_directory_name));
+            signatureManager.Generate(true);
+            return signatureManager;
         }
 
         public SignatureManager GetSignatureManager()
         {
-            return manager;
+            return _manager;
+        }
+
+        public void CleanupSignatureManager(SignatureManager manager)
+        {
+            var storageDir = manager.GetStorageDirectory();
+            // the testing storage dir should never equal the default one,
+            // but because I am paranoid, we will do the check. We never want
+            // to erase someone's keys!
+            if (Directory.Exists(storageDir) && storageDir != SignatureManager.GetDefaultStorageDirectory())
+            {
+                Directory.Delete(storageDir, true);
+            }
+        }
+
+        public void Dispose()
+        {
+            CleanupSignatureManager(_manager);
         }
     }
 
-    [CollectionDefinition("Signature manager")]
+    [CollectionDefinition(SignatureManagerFixture.CollectionName)]
     public class SignatureManagerCollection : ICollectionFixture<SignatureManagerFixture>
     {
 

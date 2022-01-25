@@ -11,27 +11,27 @@ using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
-    [Collection("Signature manager")]
+    [Collection(SignatureManagerFixture.CollectionName)]
     public class SignatureManagerTests
     {
-        private SignatureManagerFixture fixture;
+        private SignatureManagerFixture _fixture;
 
-        public SignatureManagerTests(SignatureManagerFixture f)
+        public SignatureManagerTests(SignatureManagerFixture fixture)
         {
-            fixture = f;
+            _fixture = fixture;
         }
 
         [Fact]
         public void TestKeysExist()
         {
-            var manager = fixture.GetSignatureManager();
+            var manager = _fixture.GetSignatureManager();
             Assert.True(manager.KeysExist());
         }
 
         [Fact]
         public void CanGenerateKeys()
         {
-            var manager = fixture.GetSignatureManager();
+            var manager = _fixture.GetSignatureManager();
 
             var publicKey = manager.GetPublicKey();
             Assert.NotNull(publicKey);
@@ -60,7 +60,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(File.Exists(path));
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
-            var manager = fixture.GetSignatureManager();
+            var manager = _fixture.GetSignatureManager();
             var signature = manager.GetSignatureForFile(path);
             // verify signature
             Assert.True(manager.VerifySignature(path, signature));
@@ -78,20 +78,28 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.True(File.Exists(path));
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
-            var manager = fixture.GetSignatureManager();
+            var manager = _fixture.GetSignatureManager();
             var signature = manager.GetSignatureForFile(path);
             var realPublicKey = manager.GetPublicKey();
             var realPrivateKey = manager.GetPrivateKey();
             // intentionally mess up keys - by regenerating them in a new directory, we use a separate manager for this to preserve the keys
-            SignatureManager newManager = fixture.NewSignatureManager("netsparkle-tests-wrong");
-            // verify signature does not work
-            Assert.False(newManager.VerifySignature(path, signature));
-            // override and verify that it does work
-            newManager.SetPublicKeyOverride(Convert.ToBase64String(realPublicKey));
-            newManager.SetPrivateKeyOverride(Convert.ToBase64String(realPrivateKey));
-            Assert.True(newManager.VerifySignature(path, signature));
-            // get rid of temp file
-            File.Delete(path);
+            SignatureManager newManager = _fixture.CreateSignatureManager("netsparkle-tests-wrong");
+            try
+            {
+                // verify signature does not work
+                Assert.False(newManager.VerifySignature(path, signature));
+                // override and verify that it does work
+                newManager.SetPublicKeyOverride(Convert.ToBase64String(realPublicKey));
+                newManager.SetPrivateKeyOverride(Convert.ToBase64String(realPrivateKey));
+                Assert.True(newManager.VerifySignature(path, signature));
+            }
+            finally
+            {
+                // clean up created signature manager even if test fails
+                // get rid of temp file
+                File.Delete(path);
+                _fixture.CleanupSignatureManager(newManager);
+            }
         }
 
         [Fact]
@@ -117,22 +125,25 @@ namespace NetSparkle.Tests.AppCastGenerator
             var privKeyBase64 = Convert.ToBase64String(privateKey.GetEncoded());
             var pubKeyBase64 = Convert.ToBase64String(publicKey.GetEncoded());
 
-            var manager = fixture.GetSignatureManager();
-            Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, privKeyBase64);
-            Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, pubKeyBase64);
-
-            // get signature of file
-            var signature = manager.GetSignatureForFile(path);
-            manager.Generate(true); // force regeneration of keys to "prove" that we are using environment 
-
-            // verify signature
-            Assert.True(manager.VerifySignature(path, signature));
-            // get rid of temp file
-            File.Delete(path);
-
-            // cleanup environment keys
-            Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, null);
-            Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, null);
+            var manager = _fixture.GetSignatureManager();
+            try
+            {
+                Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, privKeyBase64);
+                Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, pubKeyBase64);
+                // get signature of file
+                var signature = manager.GetSignatureForFile(path);
+                manager.Generate(true); // force regeneration of keys to "prove" that we are using environment 
+                // verify signature
+                Assert.True(manager.VerifySignature(path, signature));
+            }
+            finally
+            {
+                // get rid of temp file
+                File.Delete(path);
+                // ensure environment is cleaned up, even if test fails
+                Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, null);
+                Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, null);
+            }
         }
     }
 }

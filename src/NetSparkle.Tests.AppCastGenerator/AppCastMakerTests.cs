@@ -12,14 +12,14 @@ using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
-    [Collection("Signature manager")]
+    [Collection(SignatureManagerFixture.CollectionName)]
     public class AppCastMakerTests 
     {
-        SignatureManagerFixture fixture;
+        SignatureManagerFixture _fixture;
 
-        public AppCastMakerTests(SignatureManagerFixture f)
+        public AppCastMakerTests(SignatureManagerFixture fixture)
         {
-            fixture = f;
+            _fixture = fixture;
         }
 
         private string GetCleanTempDir()
@@ -35,9 +35,18 @@ namespace NetSparkle.Tests.AppCastGenerator
             return tempDir;
         }
 
+        private void CleanUpDir(string dirPath)
+        {
+            if (Directory.Exists(dirPath))
+            {
+                Directory.Delete(dirPath, true);
+            }
+        }
+
         [Fact]
         public void CanGetVersionFromName()
         {
+            // Version should always be pulled from the right-most version in the app name
             Assert.Null(AppCastMaker.GetVersionFromName("foo"));
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
@@ -51,14 +60,14 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("foo1.2.4.8"));
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("1.0bar7.8foo 1.2.4.8"));
             Assert.Equal("2.0", AppCastMaker.GetVersionFromName("1.0bar7.8foo6.3 2.0"));
-
+            // test that it limits version to 4 digits
             Assert.Equal("3.2.1.0", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.1.0.zip"));
         }
 
         [Fact]
         public void CanGetSearchExtensions()
         {
-            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
             var extensions = maker.GetSearchExtensionsFromString("");
             Assert.Empty(extensions);
             extensions = maker.GetSearchExtensionsFromString("exe");
@@ -86,42 +95,51 @@ namespace NetSparkle.Tests.AppCastGenerator
             File.WriteAllText(Path.Combine(tempSubDir, "good-day-sir.txt"), string.Empty);
             File.WriteAllText(Path.Combine(tempSubDir, "there-are-four-lights.txt"), string.Empty);
             File.WriteAllText(Path.Combine(tempSubDir, "please-understand.bat"), string.Empty);
-            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
             var binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("exe"), searchSubdirectories: false);
-            Assert.Empty(binaryPaths);
 
-            binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt"), searchSubdirectories: false);
-            Assert.Equal(2, binaryPaths.Count());
-            Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
+            try
+            {
+                Assert.Empty(binaryPaths);
 
-            binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt,bat"), searchSubdirectories: false);
-            Assert.Equal(3, binaryPaths.Count());
-            Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempDir, "batch.bat"), binaryPaths);
+                binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt"), searchSubdirectories: false);
+                Assert.Equal(2, binaryPaths.Count());
+                Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
 
-            binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt,bat"), searchSubdirectories: true);
-            Assert.Equal(6, binaryPaths.Count());
-            Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempDir, "batch.bat"), binaryPaths);
-            Assert.Contains(Path.Combine(tempSubDir, "good-day-sir.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempSubDir, "there-are-four-lights.txt"), binaryPaths);
-            Assert.Contains(Path.Combine(tempSubDir, "please-understand.bat"), binaryPaths);
+                binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt,bat"), searchSubdirectories: false);
+                Assert.Equal(3, binaryPaths.Count());
+                Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempDir, "batch.bat"), binaryPaths);
+
+                binaryPaths = maker.FindBinaries(tempDir, maker.GetSearchExtensionsFromString("txt,bat"), searchSubdirectories: true);
+                Assert.Equal(6, binaryPaths.Count());
+                Assert.Contains(Path.Combine(tempDir, "hello.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempDir, "goodbye.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempDir, "batch.bat"), binaryPaths);
+                Assert.Contains(Path.Combine(tempSubDir, "good-day-sir.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempSubDir, "there-are-four-lights.txt"), binaryPaths);
+                Assert.Contains(Path.Combine(tempSubDir, "please-understand.bat"), binaryPaths);
+            }
+            finally
+            {
+                // make sure tempDir is always cleaned up
+                CleanUpDir(tempDir);
+            }
         }
 
         [Fact]
         public void XMLAppCastHasProperExtension()
         {
-            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
             Assert.Equal("xml", maker.GetAppCastExtension());
         }
 
         [Fact]
         public void CanGetItemsAndProductNameFromExistingAppCast()
         {
-            var maker = new XMLAppCastMaker(fixture.GetSignatureManager(), new Options());
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
             // create fake app cast file
             var appCastData = @"";
             var fakeAppCastFilePath = Path.GetTempFileName();
@@ -281,13 +299,11 @@ namespace NetSparkle.Tests.AppCastGenerator
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
-
             // create dummy files
             var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
             const int fileSizeBytes = 57;
             var tempData = RandomString(fileSizeBytes);
             File.WriteAllText(dummyFilePath, tempData);
-
             var opts = new Options()
             {
                 FileExtractVersion = true,
@@ -299,49 +315,54 @@ namespace NetSparkle.Tests.AppCastGenerator
                 BaseUrl = new Uri("https://example.com/downloads")
             };
 
-            var signatureManager = fixture.GetSignatureManager();
-            Assert.True(signatureManager.KeysExist());
-
-            var maker = new XMLAppCastMaker(signatureManager, opts);
-            var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
-            var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
-            if (items != null)
+            try
             {
-                maker.SerializeItemsToFile(items, productName, appCastFileName);
-                maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+
+                Assert.Single(items);
+                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
+                Assert.True(items[0].DownloadSignature.Length > 0);
+                Assert.True(items[0].IsWindowsUpdate);
+                Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+
+                // reading from the file, and using the data directly - should result in the same ed25519 signature.
+                // see also https://github.com/RubyCrypto/ed25519/blob/main/README.md
+                var sigFromFile = signatureManager.GetSignatureForFile(dummyFilePath);
+                var sigFromBinaryData = signatureManager.GetSignatureForData(File.ReadAllBytes(dummyFilePath));
+                Assert.Equal(sigFromFile, sigFromBinaryData);
+
+                // the sig embedded into the item should also be the same
+                Assert.Equal(items[0].DownloadSignature, sigFromFile);
+                Assert.True(signatureManager.VerifySignature(dummyFilePath, items[0].DownloadSignature));
+                Assert.True(signatureManager.VerifySignature(
+                    appCastFileName,
+                    File.ReadAllText(appCastFileName + "." + (opts.SignatureFileExtension ?? "signature"))));
+                // read back and make sure things are the same
+                (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(appCastFileName, true);
+                Assert.Single(items);
+                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
+                Assert.True(items[0].DownloadSignature.Length > 0);
+                Assert.True(items[0].IsWindowsUpdate);
+                Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+                Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
             }
-
-            Assert.Single(items);
-            Assert.Equal("1.0", items[0].Version);
-            Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
-            Assert.True(items[0].DownloadSignature.Length > 0);
-            Assert.True(items[0].IsWindowsUpdate);
-            Assert.Equal(fileSizeBytes, items[0].UpdateSize);
-
-            // reading from the file, and using the data directly - SHOULD result in the same signature.
-            var sigFromFile = signatureManager.GetSignatureForFile(dummyFilePath);
-            var sigFromBinaryData = signatureManager.GetSignatureForData(File.ReadAllBytes(dummyFilePath));
-            Assert.Equal(sigFromFile, sigFromBinaryData);
-
-            // the sig embedded into the item should also be the same
-            Assert.Equal(items[0].DownloadSignature, sigFromFile);
-
-            Console.WriteLine(items[0].DownloadSignature);
-
-            Console.WriteLine(signatureManager.GetSignatureForFile(dummyFilePath));
-            Assert.True(signatureManager.VerifySignature(dummyFilePath, items[0].DownloadSignature));
-            Assert.True(signatureManager.VerifySignature(
-                appCastFileName,
-                File.ReadAllText(appCastFileName + "." + (opts.SignatureFileExtension ?? "signature"))));
-            // read back and make sure things are the same
-            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(appCastFileName, true);
-            Assert.Single(items);
-            Assert.Equal("1.0", items[0].Version);
-            Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
-            Assert.True(items[0].DownloadSignature.Length > 0);
-            Assert.True(items[0].IsWindowsUpdate);
-            Assert.Equal(fileSizeBytes, items[0].UpdateSize);
-            Assert.True(signatureManager.VerifySignature(new FileInfo(dummyFilePath), items[0].DownloadSignature));
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
         }
     }
 }
