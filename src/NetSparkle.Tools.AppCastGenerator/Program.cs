@@ -113,7 +113,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 Console.WriteLine("Creating {0}", outputDirName);
                 Directory.CreateDirectory(outputDirName);
             }
-            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
+            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
             if (items != null)
             {
                 generator.SerializeItemsToFile(items, productName, appCastFileName);

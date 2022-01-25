@@ -313,7 +313,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Extensions = "txt",
                 OutputDirectory = tempDir,
                 OperatingSystem = "windows",
-                BaseUrl = new Uri("https://example.com/downloads")
+                BaseUrl = new Uri("https://example.com/downloads"),
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,                
             };
 
             try
@@ -323,7 +325,7 @@ namespace NetSparkle.Tests.AppCastGenerator
 
                 var maker = new XMLAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
-                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.OverwriteOldItemsInAppcast, appCastFileName);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 if (items != null)
                 {
                     maker.SerializeItemsToFile(items, productName, appCastFileName);
