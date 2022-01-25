@@ -505,6 +505,15 @@ Here are some things you can do to figure out how to get your app running:
 
 Yes! Please help us make this library awesome!
 
+### What's the tagging scheme, here?
+
+* 2.x.y (Core)
+* 2.x.y-app-cast-generator
+* 2.x.y-dsa-helper
+* 2.x.y-UI-Avalonia
+* 2.x.y-UI-WinForms
+* 2.x.y-UI-WPF
+
 ## Requirements
 
 - .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5+
