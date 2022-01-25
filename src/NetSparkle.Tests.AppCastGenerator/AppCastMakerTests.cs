@@ -75,7 +75,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             extensions = maker.GetSearchExtensionsFromString("exe,msi");
             Assert.Contains("*.exe", extensions);
             Assert.Contains("*.msi", extensions);
-            extensions = maker.GetSearchExtensionsFromString("exe,msi");
+            // duplicate extensions should be ignored
+            extensions = maker.GetSearchExtensionsFromString("exe,msi,msi,exe");
             Assert.Contains("*.exe", extensions);
             Assert.Contains("*.msi", extensions);
             Assert.Equal(2, extensions.Count());
