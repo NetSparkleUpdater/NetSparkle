@@ -1,5 +1,9 @@
 name: Publish to NuGet
-on: push
+on: 
+  push:
+    branches:
+      - "*"
+  pull request:
 # to update branch that publish happens on, edit the if: statement for the publish job
 jobs:
   test:
