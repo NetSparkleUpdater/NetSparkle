@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - "*"
-  pull request:
+  pull_request:
 # to update branch that publish happens on, edit the if: statement for the publish job
 jobs:
   test:
