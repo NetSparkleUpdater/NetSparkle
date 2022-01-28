@@ -167,12 +167,13 @@ namespace NetSparkleUpdater.AppCastGenerator
                 changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
             }
 
+            var productVersionLastDotIndex = productVersion?.LastIndexOf('.') ?? -1;
             var item = new AppCastItem()
             {
                 Title = itemTitle?.Trim(),
                 DownloadLink = remoteUpdateFile?.Trim(),
                 Version = productVersion?.Trim(),
-                ShortVersion = productVersion?.Substring(0, productVersion.LastIndexOf('.'))?.Trim(),
+                ShortVersion = productVersionLastDotIndex >= 0 ? productVersion?.Substring(0, productVersionLastDotIndex)?.Trim() : productVersion,
                 PublicationDate = binaryFileInfo.CreationTime,
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
@@ -260,6 +261,11 @@ namespace NetSparkleUpdater.AppCastGenerator
                 {
                     var fileInfo = new FileInfo(binary);
                     string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion);
+
+                    if (!string.IsNullOrWhiteSpace(productVersion))
+                    {
+                        Console.WriteLine($"Found a binary with version {productVersion}");
+                    }
 
                     if (productVersion == null)
                     {

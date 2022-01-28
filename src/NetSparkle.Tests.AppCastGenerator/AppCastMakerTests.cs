@@ -367,5 +367,97 @@ namespace NetSparkle.Tests.AppCastGenerator
                 CleanUpDir(tempDir);
             }
         }
+
+        [Fact]
+        public void SingleDigitVersionDoesNotFail()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = new Uri("https://example.com/downloads"),
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,                
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+
+                Assert.Single(items);
+                Assert.Equal("1", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%201.txt", items[0].DownloadLink);
+                Assert.True(items[0].DownloadSignature.Length > 0);
+                Assert.True(items[0].IsWindowsUpdate);
+                Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Fact]
+        public void NoVersionCausesEmptyAppCast()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = new Uri("https://example.com/downloads"),
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,                
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // shouldn't have any items
+                Assert.Empty(items);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
     }
 }

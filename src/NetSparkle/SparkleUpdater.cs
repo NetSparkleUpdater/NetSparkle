@@ -306,7 +306,7 @@ namespace NetSparkleUpdater
                 }
 #endif
                 // we cannot just use Path.GetFileName because on .NET Framework it can fail with
-                // invalid chars in the path, so we do some crazy things to get the file name anotehr way
+                // invalid chars in the path, so we do some crazy things to get the file name another way
                 var cmdLine = Environment.CommandLine.Trim().TrimStart('"').TrimEnd('"');
                 return cmdLine.Substring(cmdLine.LastIndexOf(Path.DirectorySeparatorChar) + 1).Trim();
             }
