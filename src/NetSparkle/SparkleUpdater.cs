@@ -65,6 +65,7 @@ namespace NetSparkleUpdater
         private string _restartExecutablePath;
 
         private IAppCastHandler _appCastHandler;
+        private IAppCastFilter _appCastFilter;
 
         #endregion
 
@@ -86,7 +87,7 @@ namespace NetSparkleUpdater
         /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
-            : this(appcastUrl, signatureVerifier, referenceAssembly, null)
+            : this(appcastUrl, signatureVerifier, referenceAssembly, null, null)
         { }
 
         /// <summary>
@@ -96,10 +97,12 @@ namespace NetSparkleUpdater
         /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
-        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory)
+        /// <param name="matcher">The optional matching delegate that can be used to filter appcastitem elements in/out of the upgrade process</param>
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory, IAppCastFilter matcher)
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
+            AppCastFilter = matcher;
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
             // Syncronization Context
@@ -428,7 +431,14 @@ namespace NetSparkleUpdater
             set => _appCastHandler = value;
         }
 
-#endregion
+        /// <summary>
+        /// The custom appcast filter instance - can also be null; usually used to implement a downgrade strategy
+        /// <seealso cref="IAppCastFilter"/>
+        /// </summary>
+        /// <remarks>Note: calls to methods on this interface are made from background threads - dont access UI objects from within this method</remarks>
+        public IAppCastFilter AppCastFilter { get => _appCastFilter; set => _appCastFilter = value; }
+
+        #endregion
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
@@ -618,7 +628,7 @@ namespace NetSparkleUpdater
                     if (AppCastHandler.DownloadAndParse())
                     {
                         LogWriter.PrintMessage("App cast successfully downloaded and parsed. Getting available updates...");
-                        updates = AppCastHandler.GetAvailableUpdates();
+                        updates = AppCastHandler.GetAvailableUpdates(AppCastFilter);
                     }
                 });
             }
