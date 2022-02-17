@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NetSparkleUpdater.Enums;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -11,17 +10,22 @@ namespace NetSparkleUpdater.Interfaces
     /// than anything in the "stable" app cast list.
     /// 
     /// To indicate to NetSparkle that you want to upgrade to a lower version number, return true
-    /// in DetectVersionFromFilteredList and filter out any AppCastItem elements from the provided list of items that are
+    /// in GetFilteredAppCastItems and filter out any AppCastItem elements from the provided list of items that are
     /// higher than the version you want to install.  When you return true, NetSparkle will force re-install
-    /// the highest app cast element held in this list. 
+    /// the highest app cast element held in this list.
+    ///
+    /// If you only want filtering; then return false from the method but make sure to return a filtered set of app cast items.
     /// </summary>
     public interface IAppCastFilter
     {
-        ///  <summary>
-        ///  Returns a filtered list of AppCastItem elements.
-        ///  </summary>
+        /// <summary>
+        /// Returns a filtered list of AppCastItem elements.  The filtering system result can also be used to
+        /// indicate that a forced install of the latest version is required in the situation where a rollback is
+        /// being performed.
+        /// </summary>
         /// <example>
-        /// This code shows how to do no filtering at all.  Just return false for the first Tuple value.
+        /// This code shows how to do no filtering at all, by returning false for the first parameter of the
+        /// FilterResult object.  
         /// <code>
         /// if(noFilteringRequired)
         /// {
@@ -37,15 +41,17 @@ namespace NetSparkleUpdater.Interfaces
         ///            return false;
         ///        return true;
         ///    }).ToList();
+        ///
+        ///    // note: returning true here will FORCE the installation of whatever is the latest version in itemsWithoutBeta
         ///    return new FilterResult(true, itemsWithoutBeta); 
         /// }
         /// </code> 
         /// </example>
-        ///  <remarks>If there is no need to force install nor filter then simply return false in the Tuple</remarks>
-        ///  <remarks>Note: calls to methods on this interface are made from background threads - dont access UI objects from within this method</remarks>
+        ///  <remarks>You must always return a list of filtered items - if null is returned then the whole method is treated as a no-op</remarks>
+        ///  <remarks>This methods being called on a background thread - do not access UI objects directly from within this method</remarks>
         ///  <param name="installed">The currently detected version of this application</param>
         ///  <param name="items">The current set of AppCastItem objects</param>
-        ///  <returns>A tuple.  The bool indicates whether or not NetSparkle should force install the latest
+        ///  <returns>A FilterResult instance.  The bool indicates whether or not NetSparkle should force install the latest
         ///  version in the resulting app-cast list, and the List&lt;AppCastItem&gt; is the replacement list of
         ///  items that NetSparkle should use for the rest of the update process</returns>
         FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items);

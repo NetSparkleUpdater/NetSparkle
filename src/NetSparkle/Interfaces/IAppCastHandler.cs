@@ -47,17 +47,7 @@ namespace NetSparkleUpdater.Interfaces
         /// This should be called after <see cref="DownloadAndParse"/> has
         /// successfully completed.
         /// </summary>
-        /// <param name="customFilter">A filter interface used to influence what will be included in the set of <see cref="AppCastItem"/>s</param>
         /// <returns>a list of <see cref="AppCastItem"/> updates. Can be empty if no updates are available.</returns>
-        List<AppCastItem> GetAvailableUpdates(IAppCastFilter customFilter = null);
-
-        /// <summary>
-        /// Check if an <see cref="AppCastItem"/> update is valid, according to platform, signature requirements and current installed version number.
-        /// </summary>
-        /// <param name="installed">the currently installed Version</param>
-        /// <param name="signatureNeeded">whether or not a signature is required</param>
-        /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
-        /// <returns>MatchingResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
-        MatchingResult IsMatchingUpdate(Version installed, bool signatureNeeded, AppCastItem item);
+        List<AppCastItem> GetAvailableUpdates();
     }
 }

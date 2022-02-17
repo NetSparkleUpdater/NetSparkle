@@ -20,6 +20,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         private ISignatureVerifier _signatureVerifier;
         private ILogger _logWriter;
 
+        /// <summary>
+        /// The optional filtering component.
+        /// </summary>
+        public IAppCastFilter AppCastFilter { get; set; }
+
         private IAppCastDataDownloader _dataDownloader;
 
         /// <summary>
@@ -30,23 +35,39 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// App cast title (usually the name of the application)
         /// </summary>
-        public string Title { get; set; }
+        public string Title
+        {
+            get => _title;
+            set => _title = value;
+        }
 
         /// <summary>
         /// App cast language (e.g. "en")
         /// </summary>
-        public string Language { get; set; }
+        public string Language
+        {
+            get => _language;
+            set => _language = value;
+        }
 
         /// <summary>
         /// Extension (WITHOUT the "." at the start) for the signature
         /// file. Defaults to "signature".
         /// </summary>
-        public string SignatureFileExtension { get; set; }
+        public string SignatureFileExtension
+        {
+            get => _signatureFileExtension;
+            set => _signatureFileExtension = value;
+        }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
+
+        private string _title;
+        private string _language;
+        private string _signatureFileExtension;
 
         /// <summary>
         /// Create a new object with an empty list of <seealso cref="AppCastItem"/> items
@@ -247,22 +268,26 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Currently installed version is NOT included in the output.
         /// </summary>
         /// <returns>A list of <seealso cref="AppCastItem"/> updates that could be installed</returns>
-        public virtual List<AppCastItem> GetAvailableUpdates(IAppCastFilter customFilter = null)
+        public virtual List<AppCastItem> GetAvailableUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
             List<AppCastItem> appCastItems = Items;
 
-            if (customFilter != null)
+            if (AppCastFilter != null)
             {
-                var result = customFilter.GetFilteredAppCastItems(installed, Items);
-                if (result.ForceInstallOfLatestInFilteredList)
+                var result = AppCastFilter.GetFilteredAppCastItems(installed, Items);
+                if (result.FilteredAppCastItems != null)
                 {
-                    // if there is just a single version in the FilterResult; we'll fake up a version number - so that the
-                    // NetSparkle code will request a re-install of that version (and it'll shown only a single .md file in the changelog)
-                    if (result.FilteredAppCastItems.Count == 1)
-                        installed = new Version("0.0.0");
-                    else if (result.FilteredAppCastItems.Count > 1)
-                        installed = new Version(result.FilteredAppCastItems[1].Version);
+                    if (result.ForceInstallOfLatestInFilteredList)
+                    {
+                        // if there is just a single version in the FilterResult; we'll fake up a version number - so that the
+                        // NetSparkle code will request a re-install of that version (and it'll shown only a single .md file in the changelog)
+                        if (result.FilteredAppCastItems.Count == 1)
+                            installed = new Version("0.0.0");
+                        else if (result.FilteredAppCastItems.Count > 1)
+                            installed = new Version(result.FilteredAppCastItems[1].Version);
+                    }
+
                     appCastItems = result.FilteredAppCastItems;
                 }
             }

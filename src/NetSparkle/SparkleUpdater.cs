@@ -628,7 +628,7 @@ namespace NetSparkleUpdater
                     if (AppCastHandler.DownloadAndParse())
                     {
                         LogWriter.PrintMessage("App cast successfully downloaded and parsed. Getting available updates...");
-                        updates = AppCastHandler.GetAvailableUpdates(AppCastFilter);
+                        updates = AppCastHandler.GetAvailableUpdates();
                     }
                 });
             }

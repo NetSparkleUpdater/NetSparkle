@@ -137,13 +137,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("xml", maker.GetAppCastExtension());
         }
 
-        
-        [Fact]
-        public void CanFilterOutSpecificVersions()
-        {
-
-        }
-
+       
         [Fact]
         public void CanGetItemsAndProductNameFromExistingAppCast()
         {
