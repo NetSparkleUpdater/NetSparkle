@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace NetSparkleUpdater.AppCastHandlers
 {
     /// <summary>
-    /// An XML-based appcast document downloader and handler
+    /// An XML-based app-cast document downloader and handler
     /// </summary>
     public class XMLAppCast : IAppCastHandler
     {
@@ -254,12 +254,17 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             if (customFilter != null)
             {
-                Tuple<Version, List<AppCastItem>> result = customFilter.GetFilteredAppCastItems(installed, Items);
-                
-                // force a low version number, this in turn means the rest of the code will just pick the highest one
-                // TODO: find a way to decrement System.Version by 1 properly; so that the releases notes window only shows the last update.
-                installed = result.Item1;
-                appCastItems = result.Item2;
+                var result = customFilter.GetFilteredAppCastItems(installed, Items);
+                if (result.ForceInstallOfLatestInFilteredList)
+                {
+                    // if there is just a single version in the FilterResult; we'll fake up a version number - so that the
+                    // NetSparkle code will request a re-install of that version (and it'll shown only a single .md file in the changelog)
+                    if (result.FilteredAppCastItems.Count == 1)
+                        installed = new Version("0.0.0");
+                    else if (result.FilteredAppCastItems.Count > 1)
+                        installed = new Version(result.FilteredAppCastItems[1].Version);
+                    appCastItems = result.FilteredAppCastItems;
+                }
             }
 
             var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);

@@ -14,7 +14,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
+using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Events;
+using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.SignatureVerifiers;
 
 namespace NetSparkleUpdater.Samples.HandleEventsYourself
@@ -22,11 +24,18 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IAppCastFilter
     {
         private SparkleUpdater _sparkle;
         private UpdateInfo _updateInfo;
         private string _downloadPath = null;
+        
+        /// <summary>
+        /// this isn't hooked up to anything - imagine though that this flag indicates the apps desire to switch
+        /// from a beta channel to a stable channel.
+        /// <seealso cref="GetFilteredAppCastItems"/>
+        /// </summary>
+        private bool filterOutBetaItems = true;
 
         public MainWindow()
         {
@@ -34,17 +43,25 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
 
             try
             {
-                Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree("Software\\Microsoft\\NetSparkle.TestAppNetCoreWPF");
+                Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree(
+                    "Software\\Microsoft\\NetSparkle.TestAppNetCoreWPF");
             }
-            catch { }
+            catch
+            {
+            }
 
             // get sparkle ready
             DownloadUpdateButton.IsEnabled = false;
             InstallUpdateButton.IsEnabled = false;
 
-            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
+            _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml",
+                new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = null,
+
+                // the AppCastFilter interface implementation is only ever required if you want a stable/beta channel arrangement for your appcast.xml;
+                // such that users can choose to opt-in to beta updates.  The filter is used when users downgrade to a stable version.
+                AppCastFilter = this
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
@@ -166,6 +183,39 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             RunFullUpdateUpdateStatusLabel.Text = "Closing application...";
             await Task.Delay(2000);
             System.Windows.Application.Current.Shutdown();
+        }
+
+        /// <summary>
+        /// Filters out appcast items that are not relevant to the current update loop, and returns the appropriate runtime
+        /// Version value for this update.
+        /// The logic to decide whether the app is downgrading from beta to a stable channel is not part of NetSparkle.
+        /// </summary>
+        /// <param name="installed">Currently installed version of the app that's running</param>
+        /// <param name="items">The list of appcast items retrieved from whatever URL the SparkleUpdater is using</param>
+        /// <returns>A Version object representing the highest version number that the update process should consider
+        /// and a list of appcast items that have potentially been filtered to remove those that don't apply to the current
+        /// requirements, specifically when downgrading from beta to a stable channel we do not want to present the NetSparkle
+        /// system with appcast items that are part of the beta channel</returns>
+        public FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items)
+        {
+            // if we don't need to filter, then this is essentially a no-op.
+            if (!filterOutBetaItems)
+                return new FilterResult(false);
+
+            // here we need to remove any items that are beta - since the appcast object does not expose channel
+            // information as a first class citizen (yet); I'll just check the URL to see if it contains the word beta.
+            // note: this is a per-app decision, and the code here just demonstrates how to detect and remove beta
+            // app cast elements - you will need to have your own logic to handle this for your appcast situation. 
+            List<AppCastItem> itemsWithoutBeta = items.Where((item) =>
+            {
+                if (item.DownloadLink.Contains("/beta/"))
+                    return false;
+                return true;
+            }).ToList();
+
+            // here's how you indicate that the filtering has taken place and that you want NetSparkle for force
+            // the installation of whatever the latest version is within the resulting appcast item list.
+            return new FilterResult(true, itemsWithoutBeta);
         }
     }
 }

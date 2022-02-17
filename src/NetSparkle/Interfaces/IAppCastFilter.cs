@@ -1,39 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using NetSparkleUpdater.Enums;
 
 namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
-    /// This provides a way to filter out AppCast item instances that do not apply to the current update process.  Originally
-    /// used to make it possible to revert from a "beta" version to a "stable" one - where the current runtime System.Version value 
-    /// is by definition higher than anything in the "stable" app cast list.
+    /// Provides a way to filter out AppCast item instances that do not apply to the current update process.  
+    /// Used to make it possible to revert from a "beta" version to a "stable" one - where the current runtime
+    /// System.Version value of the <seealso cref="Configurations">Configurations</seealso> is by definition higher
+    /// than anything in the "stable" app cast list.
     /// 
-    /// To force NetSparkle to upgrade to a lower version number, return a System.Version("0.0.0.0") and a list of app cast items that are valid candidates to update - the
-    /// GetFilteredAppCastItems() method allows you to remove elements from this list before the standard NetSparkle code does its thing.  
-    /// 
+    /// To indicate to NetSparkle that you want to upgrade to a lower version number, return true
+    /// in DetectVersionFromFilteredList and filter out any AppCastItem elements from the provided list of items that are
+    /// higher than the version you want to install.  When you return true, NetSparkle will force re-install
+    /// the highest app cast element held in this list. 
     /// </summary>
     public interface IAppCastFilter
     {
-        /// <summary>
-        /// Returns a new "minimum" version number and a potentially modified list of app cast items, e.g. maybe you want to remove the beta ones when reverting to stable.
-        /// </summary>
-        /**
-            <example>
-            This code shows how to do no filtering at all.
-            <code>
-            if(noFilteringRequired)
-            {
-                return new Tuple&lt;installed, List&lt;AppCastItem&gt;&gt;(installed, items);
-            }
-            </code> 
-            </example>
-        */
-        /// <remarks>The app must return a version and list of app cast items.  If there is no need to filter then simply return the values that were passed in.</remarks>
-        /// <remarks>Note: calls to methods on this interface are made from background threads - dont access UI objects from within this method</remarks>
-        /// <param name="installed">The currently detected version of this application</param>
-        /// <param name="items">The current set of AppCastItem objects</param>
-        /// <returns>A replacement list of items derived from the input set</returns>
-        Tuple<Version, List<AppCastItem>> GetFilteredAppCastItems(Version installed, List<AppCastItem> items);
+        ///  <summary>
+        ///  Returns a filtered list of AppCastItem elements.
+        ///  </summary>
+        /// <example>
+        /// This code shows how to do no filtering at all.  Just return false for the first Tuple value.
+        /// <code>
+        /// if(noFilteringRequired)
+        /// {
+        ///     return new FilterResult(false);
+        /// }
+        /// else
+        /// {
+        ///    // remove all beta items from the app-cast we were given, if the download link contains the word
+        ///    // beta then we strip that element out.
+        ///    List&lt;AppCastItem&gt; itemsWithoutBeta = items.Where((item) =&gt;
+        ///    {
+        ///        if (item.DownloadLink.Contains("/beta/"))
+        ///            return false;
+        ///        return true;
+        ///    }).ToList();
+        ///    return new FilterResult(true, itemsWithoutBeta); 
+        /// }
+        /// </code> 
+        /// </example>
+        ///  <remarks>If there is no need to force install nor filter then simply return false in the Tuple</remarks>
+        ///  <remarks>Note: calls to methods on this interface are made from background threads - dont access UI objects from within this method</remarks>
+        ///  <param name="installed">The currently detected version of this application</param>
+        ///  <param name="items">The current set of AppCastItem objects</param>
+        ///  <returns>A tuple.  The bool indicates whether or not NetSparkle should force install the latest
+        ///  version in the resulting app-cast list, and the List&lt;AppCastItem&gt; is the replacement list of
+        ///  items that NetSparkle should use for the rest of the update process</returns>
+        FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items);
     }
 }

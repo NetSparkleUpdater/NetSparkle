@@ -1,4 +1,6 @@
-﻿namespace NetSparkleUpdater.Interfaces
+﻿using NetSparkleUpdater.Interfaces;
+
+namespace NetSparkleUpdater.Enums
 {
     /// <summary>
     /// Provides the return values for the GetAvailableUpdates call on the IAppCastHandler.  When an appcast is downloaded,
@@ -12,7 +14,7 @@
         /// </summary>
         MatchOk = 0,
         /// <summary>
-        /// The AppCastItem is for a different operating system that this one, and must be ignored.
+        /// The AppCastItem is for a different operating system than this one, and must be ignored.
         /// </summary>
         NotThisPlatform = 1,
         /// <summary>
