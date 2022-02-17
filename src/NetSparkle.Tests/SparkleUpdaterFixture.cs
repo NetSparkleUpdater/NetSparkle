@@ -1,20 +1,35 @@
 ﻿using System;
+using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 
 namespace NetSparkleUnitTests
 {
-    public class XmlAppCastFixture : IDisposable
+    public class SparkleUpdaterFixture : IDisposable
     {
         public const string CollectionName = "xmlappcast-fixture";
 
-        private XMLAppCast _xmlAppCast;
+        public SparkleUpdater Updater { get; set; }
 
-        public XmlAppCastFixture()
+        public SparkleUpdaterFixture()
         {
-            _xmlAppCast = new XMLAppCast();            
+        }
+        
+        public SparkleUpdater CreateUpdater(string xmlData, string installedVersion)
+        {
+            Updater = new SparkleUpdater("test-url", new AlwaysSucceedSignatureChecker());
+            Updater.AppCastDataDownloader = new StringCastDataDownloader(xmlData);
+            Updater.Configuration = new SparkleTestDataConfguration(new SparkleTestDataAssemblyAccessor()
+            {
+                AssemblyCompany = "NetSparkle Test App",
+                AssemblyCopyright = "@ (C) Thinking",
+                AssemblyProduct = "Test",
+                AssemblyVersion = installedVersion
+            });
+
+            return Updater;
         }
 
-        public XMLAppCast GetSimpleXmlAppCastData()
+        public string GetSimpleXmlAppCastData()
         {
             var appCastData = @"
 <?xml version=""1.0"" encoding=""UTF-8""?>
@@ -53,12 +68,11 @@ namespace NetSparkleUnitTests
     </channel>
 </rss>
 ".Trim();
-            return null;
+            return appCastData;
         }
         
         public void Dispose()
         {
-            _xmlAppCast = null;
         }
     }
 }
