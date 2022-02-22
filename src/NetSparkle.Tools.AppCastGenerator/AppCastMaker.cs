@@ -52,16 +52,25 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// does not contain a product name)</returns>
         public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
 
-        public static string GetVersionFromName(string fullFileNameWithPath)
+        public static string GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "")
         {
             // get the numbers at the end of the string in case the app is something like 1.0application1.0.0.dmg
             // this solution is a mix of https://stackoverflow.com/a/22704755/3938401
             // and https://stackoverflow.com/a/31926058/3938401
             // basically, we pull out the last numbers out of the name that are separated by '.'
+            if (string.IsNullOrWhiteSpace(fullFileNameWithPath))
+            {
+                return null;
+            }
             if (fullFileNameWithPath.EndsWith("."))
             {
                 // don't allow raw files that end in '.'
                 return null;
+            }
+            // don't search above initial binary directory
+            if (!string.IsNullOrWhiteSpace(binaryDirectory))
+            {
+                fullFileNameWithPath = fullFileNameWithPath.Replace(binaryDirectory, "");
             }
             var folderSplit = fullFileNameWithPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             var numFolderSectionsChecked = 0;
@@ -159,9 +168,13 @@ namespace NetSparkleUpdater.AppCastGenerator
             return extensionsStringForSearch.SelectMany(search => Directory.GetFiles(binaryDirectory, search, searchOption));
         }
 
-        public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion)
+        public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory)
         {
-            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName) : GetVersionFromAssembly(binaryFileInfo.FullName);
+            if (binaryDirectory == ".")
+            {
+                binaryDirectory = Environment.CurrentDirectory;
+            }
+            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
                 Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
@@ -291,7 +304,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
-                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion);
+                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory);
 
                     if (!string.IsNullOrWhiteSpace(productVersion))
                     {

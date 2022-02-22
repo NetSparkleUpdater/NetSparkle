@@ -22,7 +22,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('r', "search-binary-subdirectories", SetName = "local", Required = false, HelpText = "Search subdirectories of --binaries for binaries", Default = false)]
         public bool SearchBinarySubDirectories { get; set; }
 
-        [Option('f', "file-extract-version", SetName = "local", Required = false, HelpText = "Determine the version from the file path. Tries each string in between directory separators that contains a version number starting from the end of the path. Only searches the last four directory items (incl. the file name). See unit tests for what is parseable.", Default = false)]
+        [Option('f', "file-extract-version", SetName = "local", Required = false, HelpText = "Determine the version from the file path. Tries each string in between directory separators that contains a version number starting from the end of the path. Only searches the last four directory items (incl. the file name) and does not search 'above' the binary directory (-b option). See unit tests for what is parseable.", Default = false)]
         public bool FileExtractVersion { get; set; }
 
         [Option('o', "os", Required = false, HelpText = "Operating System (windows, macos, linux)", Default = "windows")]
