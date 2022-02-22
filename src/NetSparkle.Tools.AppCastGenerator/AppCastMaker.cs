@@ -63,38 +63,69 @@ namespace NetSparkleUpdater.AppCastGenerator
                 // don't allow raw files that end in '.'
                 return null;
             }
-            var split = fullFileNameWithPath.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-            var temp = 0;
+            var folderSplit = fullFileNameWithPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+            var numFolderSectionsChecked = 0;
             var nums = new List<int>();
-
-            for (int i = split.Length - 1; i >= 0; i--)
+            for (int j = folderSplit.Length - 1; j >= 0; j--)
             {
-                var splitItem = split[i];
-                if (int.TryParse(splitItem, out temp))
+                var split = folderSplit[j].Split('.', StringSplitOptions.RemoveEmptyEntries);
+                // start on last item and go until first item in file name
+                for (int i = split.Length - 1; i >= 0; i--)
                 {
-                    nums.Add(temp);
-                }
-                else
-                {
-                    var regexPattern = @"\d+$";
-                    var regex = new Regex(regexPattern);
-                    var match = regex.Match(splitItem);
-                    if (match.Success)
+                    var splitItem = split[i];
+                    var foundAtEnd = false;
+                    if (int.TryParse(splitItem, out int temp))
                     {
-                        nums.Add(int.Parse(match.Captures[^1].Value));
+                        nums.Add(temp);
+                    }
+                    else
+                    {
+                        // look at the end of the string by default, then the start of the string
+                        var regexPatternEndOfStr = @"\d+$";
+                        var regexEndOfStr = new Regex(regexPatternEndOfStr);
+                        var matchEndOfStr = regexEndOfStr.Match(splitItem);
+                        if (matchEndOfStr.Success)
+                        {
+                            var matchNum = int.Parse(matchEndOfStr.Captures[^1].Value);
+                            nums.Add(matchNum);
+                            foundAtEnd = true;
+                        }
+                        else
+                        {
+                            // look at start of string instead
+                            // in case we get something like 3 foo bar
+                            var regexPatternStartOfStr = @"(^\d+)";
+                            var regexStartOfStr = new Regex(regexPatternStartOfStr);
+                            var startOfStrMatch = regexStartOfStr.Match(splitItem);
+                            if (startOfStrMatch.Success)
+                            {
+                                var matchNum = int.Parse(startOfStrMatch.Captures[^1].Value);
+                                nums.Add(matchNum);
+                            }
+                        }
+                    }
+                    if (splitItem.Contains(" ") && foundAtEnd)
+                    {
+                        // item had a space, so we're going to assume that the version was at the end
+                        // of the string
                         break;
                     }
-                    else if (i != split.Length - 1)
+                    if (nums.Count >= 4)
                     {
-                        // only break if we haven't tried at least 1 item more than the last item
-                        // (allows for skipping extension)
-                        break;
+                        break; // Major.Minor.Revision.Patch is all we allow
                     }
                 }
-                if (nums.Count >= 4)
+                if (nums.Count > 0)
                 {
-                    break; // Major.Minor.Revision.Patch is all we allow
+                    // we found some part of a version number we can use, bail out!
+                    break;
+                }
+                numFolderSectionsChecked++;
+                // check up to 4 folders -- 4 is arbitrary but we don't want to
+                // crawl up the entire folder directory tree/path
+                if (numFolderSectionsChecked >= 4)
+                {
+                    break;
                 }
             }
             if (nums.Count > 0)

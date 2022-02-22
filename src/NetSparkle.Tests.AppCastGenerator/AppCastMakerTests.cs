@@ -55,13 +55,79 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("foo1.0"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo0.1"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1foo"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1 My App"));
             Assert.Equal("0.0.3.1", AppCastMaker.GetVersionFromName("foo0.0.3.1"));
             Assert.Equal("1.2.4", AppCastMaker.GetVersionFromName("foo1.2.4"));
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("foo1.2.4.8"));
             Assert.Equal("1.2.4.8", AppCastMaker.GetVersionFromName("1.0bar7.8foo 1.2.4.8"));
             Assert.Equal("2.0", AppCastMaker.GetVersionFromName("1.0bar7.8foo6.3 2.0"));
+            Assert.Equal("6.3.2.0", AppCastMaker.GetVersionFromName("1.0bar7.8foo6.3.2.0"));
             // test that it limits version to 4 digits
             Assert.Equal("3.2.1.0", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.1.0.zip"));
+            // test with 0's and with .tar.gz (more than one "piece" to the extension)
+            Assert.Null(AppCastMaker.GetVersionFromName(".tar.gz"));
+            Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.tar.gz"));
+            Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.tar.gz"));
+            Assert.Equal("0.0.0", AppCastMaker.GetVersionFromName("My Favorite Tools (Linux-x64) 0.0.0.tar.gz"));
+        }
+
+        [Fact]
+        public void CanGetVersionFromFolderPath()
+        {
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/2.0.4/file.ext"));
+            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName("myapp/bin/100.2.303/myapp.zip"));
+            Assert.Equal("1.4.3.1", AppCastMaker.GetVersionFromName("myapp/1.4.3.1/bin/myapp.zip"));
+            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName("foo 100.2.303/myapp.zip"));
+            // takes first version that it finds
+            Assert.Equal("3.1", AppCastMaker.GetVersionFromName("myapp/1.4/3.1/bin/myapp.zip"));
+            // only searches 4 folders up
+            Assert.Null(AppCastMaker.GetVersionFromName("boo/moo/1.0/dir/dir/myapp/bin/myapp.zip"));
+            Assert.Null(AppCastMaker.GetVersionFromName("boo/moo/3.0/1.0/dir/myapp/bin/myapp.zip"));
+            Assert.Equal("1.0", AppCastMaker.GetVersionFromName("boo/moo/3.0/dir/1.0/myapp/bin/myapp.zip"));
+        }
+
+        [Fact]
+        public void CanGetVersionFromFullPathOnDisk()
+        {
+            // test a full file path by using the tmp dir
+            var tempDir = GetCleanTempDir();
+            var subFolder = "foo 100.0.302";
+            var subFolderPath = Path.Combine(tempDir, subFolder);
+            Directory.CreateDirectory(subFolderPath);
+            // create dummy files
+            var dummyFilePath = Path.Combine(subFolderPath, "hello.tar.gz");
+            // path is now something like c:/tempDir/foo 1.0/hello.tar.gz
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "tar.gz",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = new Uri("https://example.com/downloads"),
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+            };
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                Assert.Equal("100.0.302", items[0].Version);
+            }
+            finally
+            {
+                // make sure tempDir is always cleaned up
+                CleanUpDir(tempDir);
+            }
         }
 
         [Fact]
@@ -80,6 +146,12 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Contains("*.exe", extensions);
             Assert.Contains("*.msi", extensions);
             Assert.Equal(2, extensions.Count());
+            // make sure .tar.gz works
+            extensions = maker.GetSearchExtensionsFromString("tar.gz, tar, gz");
+            Assert.Contains("*.tar.gz", extensions);
+            Assert.Contains("*.tar", extensions);
+            Assert.Contains("*.gz", extensions);
+            Assert.Equal(3, extensions.Count());
         }
 
         [Fact]
