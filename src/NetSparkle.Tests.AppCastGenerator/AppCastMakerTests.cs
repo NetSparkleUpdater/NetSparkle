@@ -77,28 +77,28 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Fact]
         public void CanGetVersionFromFolderPath()
         {
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/2.0.4/file.ext"));
-            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName("myapp/bin/100.2.303/myapp.zip"));
-            Assert.Equal("1.4.3.1", AppCastMaker.GetVersionFromName("myapp/1.4.3.1/bin/myapp.zip"));
-            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName("foo 100.2.303/myapp.zip"));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "2.0.4", "file.ext")));
+            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName(Path.Combine("myapp", "bin", "100.2.303", "myapp.zip")));
+            Assert.Equal("1.4.3.1", AppCastMaker.GetVersionFromName(Path.Combine("myapp", "1.4.3.1", "bin", "myapp.zip")));
+            Assert.Equal("100.2.303", AppCastMaker.GetVersionFromName(Path.Combine("foo 100.2.303", "myapp.zip")));
             // takes first version that it finds
-            Assert.Equal("3.1", AppCastMaker.GetVersionFromName("myapp/1.4/3.1/bin/myapp.zip"));
+            Assert.Equal("3.1", AppCastMaker.GetVersionFromName(Path.Combine("myapp", "1.4", "3.1", "bin", "myapp.zip")));
             // only searches 4 folders up
-            Assert.Null(AppCastMaker.GetVersionFromName("boo/moo/1.0/dir/dir/myapp/bin/myapp.zip"));
-            Assert.Null(AppCastMaker.GetVersionFromName("boo/moo/3.0/1.0/dir/myapp/bin/myapp.zip"));
-            Assert.Equal("1.0", AppCastMaker.GetVersionFromName("boo/moo/3.0/dir/1.0/myapp/bin/myapp.zip"));
+            Assert.Null(AppCastMaker.GetVersionFromName(Path.Combine("boo", "moo", "1.0", "dir", "dir", "myapp", "bin", "myapp.zip")));
+            Assert.Null(AppCastMaker.GetVersionFromName(Path.Combine("boo", "moo", "3.0", "1.0", "dir", "myapp", "bin", "myapp.zip")));
+            Assert.Equal("1.0", AppCastMaker.GetVersionFromName(Path.Combine("boo", "moo", "3.0", "dir", "1.0", "myapp", "bin", "myapp.zip")));
         }
 
         [Fact]
         public void CanGetVersionFromFolderPathWithInitialBinaryDir()
         {
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/2.0.4/file.ext", ""));
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/2.0.4/file.ext", null));
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/2.0.4/file.ext", "output/"));
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/foo/2.0.4/file.ext", "output/foo"));
-            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName("output/1.0/foo/2.0.4/file.ext", "output/1.0/foo"));
-            Assert.Null(AppCastMaker.GetVersionFromName("output/1.0/file.ext", "output/1.0"));
-            Assert.Null(AppCastMaker.GetVersionFromName("output/1.0/file.ext", "output/1.0/file.ext"));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "2.0.4", "file.ext"), ""));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "2.0.4", "file.ext"), null));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "2.0.4", "file.ext"), "output" + Path.DirectorySeparatorChar));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "foo", "2.0.4", "file.ext"), Path.Combine("output", "foo")));
+            Assert.Equal("2.0.4", AppCastMaker.GetVersionFromName(Path.Combine("output", "1.0", "foo", "2.0.4", "file.ext"), Path.Combine("output", "1.0", "foo")));
+            Assert.Null(AppCastMaker.GetVersionFromName(Path.Combine("output", "1.0", "file.ext"), Path.Combine("output", "1.0")));
+            Assert.Null(AppCastMaker.GetVersionFromName(Path.Combine("output", "1.0", "file.ext"), Path.Combine("output", "1.0", "file.ext")));
         }
 
         [Fact]
