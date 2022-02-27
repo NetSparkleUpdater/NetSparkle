@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"><channel><title>Application</title><language>en</language><item><title>Application 2.1.2</title><description># My Big Update
+
+Wow, this is a great update! :)
+
+* This changed
+* That changed
+* Changes for everybody!</description><pubDate>Sun, 27 Feb 2022 17:45:57 -05:00</pubDate><enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-tar/SimpleApp%202.1.2.app.tar" sparkle:version="2.1.2" sparkle:shortVersionString="2.1" length="253440" sparkle:os="macos" type="application/x-tar" sparkle:signature="zocucOlzr71VbIJb7suiBORZ5SlsU1rkDFlU0lEupNjNr8zgWcxL9w9Efd85vALXxlAMOCoezxHcwUdsE8hSBQ==" /></item></channel></rss>
