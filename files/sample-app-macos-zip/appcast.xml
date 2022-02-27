@@ -1,1 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"><channel><title>Application</title><language>en</language><item><title>Application 2.1.2</title><pubDate>Sun, 27 Feb 2022 16:23:15 -05:00</pubDate><enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-zip/MySampleApp%202.1.2.zip" sparkle:version="2.1.2" sparkle:shortVersionString="2.1" length="62947" sparkle:os="macos" type="application/zip" sparkle:signature="laKPInnUu5uosQ1uUjrdKzSVhYveYcql7d+izpkZBujGuCE8RDPng3NbpFMIlusIZ1KCUAXHOyMnhZIXj+KsBg==" /></item></channel></rss>
+<?xml version="1.0" encoding="utf-8"?><rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"><channel><title>Application</title><language>en</language><item><title>Application 2.1.2</title><description># My Big Update
+
+Wow, this is a great update! :)
+
+* This changed
+* That changed
+* Changes for everybody!</description><pubDate>Sun, 27 Feb 2022 16:23:15 -05:00</pubDate><enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-zip/MySampleApp%202.1.2.zip" sparkle:version="2.1.2" sparkle:shortVersionString="2.1" length="62947" sparkle:os="macos" type="application/zip" sparkle:signature="laKPInnUu5uosQ1uUjrdKzSVhYveYcql7d+izpkZBujGuCE8RDPng3NbpFMIlusIZ1KCUAXHOyMnhZIXj+KsBg==" /></item></channel></rss>
