@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5</TargetFramework>
+    <ApplicationIcon>software-update-available.ico</ApplicationIcon>
+    <RootNamespace>NetSparkleUpdater.Samples.Avalonia</RootNamespace>
+    <AssemblyName>NetSparkleUpdater.Samples.Avalonia</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Assets\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="software-update-available.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="software-update-available.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />
+  </ItemGroup>
+</Project>
