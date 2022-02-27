@@ -18,7 +18,7 @@ NetSparkle 2.0 brings the ability to customize most of NetSparkle -- custom UIs 
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
-* macOS -- .zip, .pkg, .dmg
+* macOS -- .tar, .tar.gz, .zip, .pkg, .dmg
 * Linux -- .tar.gz, .deb, .rpm
 
 ## Getting Started

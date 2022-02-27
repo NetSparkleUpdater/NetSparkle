@@ -1225,7 +1225,7 @@ namespace NetSparkleUpdater
         /// Get the install command for the file at the given path. Figures out which
         /// command to use based on the download file path's file extension.
         /// <para>Windows: currently supports .exe, .msi, and .msp.</para>
-        /// <para>macOS: currently supports .pkg, .dmg, and .zip.</para>
+        /// <para>macOS: currently supports .tar, .tar.gz, .pkg, .dmg, and .zip.</para>
         /// <para>Linux: currently supports .tar.gz, .deb, and .rpm.</para>
         /// </summary>
         /// <param name="downloadFilePath">Path to the downloaded update file</param>
@@ -1269,7 +1269,7 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Checks to see if the file at the path is a zip download.
-        /// If user is on macOS and extension is a .zip, returns true.
+        /// If user is on macOS and extension is a .tar/.tar.gz/.zip, returns true.
         /// If user is on Linux and extension is a .tar.gz, returns true.
         /// Otherwise returns false. Always returns false on .NET Framework.
         /// </summary>
@@ -1282,7 +1282,10 @@ namespace NetSparkleUpdater
             string installerExt = Path.GetExtension(downloadFilePath);
             bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-            if ((isMacOS && DoExtensionsMatch(installerExt, ".zip")) ||
+            if ((isMacOS && (
+                    DoExtensionsMatch(installerExt, ".zip") || 
+                    DoExtensionsMatch(installerExt, ".tar") || 
+                    downloadFilePath.EndsWith(".tar.gz"))) ||
                 (isLinux && downloadFilePath.EndsWith(".tar.gz")))
             {
                 return true;
