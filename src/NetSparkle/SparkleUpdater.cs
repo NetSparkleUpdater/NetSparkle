@@ -285,7 +285,7 @@ namespace NetSparkleUpdater
         /// This defaults to <see cref="Environment.CommandLine"/>.
         /// Used in conjunction with RestartExecutablePath to restart the application --
         /// cd "{RestartExecutablePath}"
-        /// "{RestartExecutableName}" is what is called to restart the app.
+        /// {RelaunchAfterUpdateCommandPrefix} "{RestartExecutableName}" is what is called to restart the app.
         /// </summary>
         public string RestartExecutableName
         {
@@ -315,6 +315,13 @@ namespace NetSparkleUpdater
                 _restartExecutableName = value;
             }
         }
+
+        /// <summary>
+        /// Defines a command prefix that will be used to open the executable (like "dotnet " or "./" on Linux systems).
+        /// This prefix command will not be auto-escaped with quotes for you, so if that's needed, make sure to do it yourself.
+        /// Contribution from @daniel-pastalab
+        /// </summary>
+        public string RelaunchAfterUpdateCommandPrefix { get; set; }
 
         /// <summary>
         /// The object that verifies signatures (DSA, Ed25519, or otherwise) of downloaded items
@@ -1342,7 +1349,7 @@ namespace NetSparkleUpdater
             {
                 relaunchAfterUpdate = $@"
                     cd ""{workingDir}""
-                    ""{executableName}""";
+                    {RelaunchAfterUpdateCommandPrefix?.Trim() ?? ""} ""{executableName}""";
             }
 
             using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
@@ -1395,8 +1402,8 @@ namespace NetSparkleUpdater
                     {
                         // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
                         // use tar to extract
-                        var tarCommand = isMacOS ? $"tar -x -f {downloadFilePath} -C \"{workingDir}\"" 
-                            : $"tar -xf {downloadFilePath} -C \"{workingDir}\" --overwrite ";
+                        var tarCommand = isMacOS ? $"tar -x -f \"{downloadFilePath}\" -C \"{workingDir}\"" 
+                            : $"tar -xf \"{downloadFilePath}\" -C \"{workingDir}\" --overwrite ";
                         var output = $@"
                             {waitForFinish}
                             {tarCommand}
