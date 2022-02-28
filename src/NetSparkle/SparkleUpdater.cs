@@ -98,7 +98,7 @@ namespace NetSparkleUpdater
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
         /// <param name="matcher">The optional matching delegate that can be used to filter appcastitem elements in/out of the upgrade process</param>
-        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory, IAppCastFilter matcher)
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory, IAppCastFilter matcher = null)
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;

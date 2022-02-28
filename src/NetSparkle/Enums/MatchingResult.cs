@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.Enums
         /// <summary>
         /// Indicates that the AppCastItem is a validate candidate for installation.
         /// </summary>
-        MatchOk = 0,
+        Valid = 0,
         /// <summary>
         /// The AppCastItem is for a different operating system than this one, and must be ignored.
         /// </summary>

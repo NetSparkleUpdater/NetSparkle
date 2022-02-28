@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace NetSparkleUpdater.AppCastHandlers
 {
     /// <summary>
-    /// An XML-based app-cast document downloader and handler
+    /// An XML-based app cast document downloader and handler
     /// </summary>
     public class XMLAppCast : IAppCastHandler
     {
@@ -35,40 +35,24 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// App cast title (usually the name of the application)
         /// </summary>
-        public string Title
-        {
-            get => _title;
-            set => _title = value;
-        }
+        public string Title { get; set; }
 
         /// <summary>
         /// App cast language (e.g. "en")
         /// </summary>
-        public string Language
-        {
-            get => _language;
-            set => _language = value;
-        }
+        public string Language { get; set; }
 
         /// <summary>
         /// Extension (WITHOUT the "." at the start) for the signature
         /// file. Defaults to "signature".
         /// </summary>
-        public string SignatureFileExtension
-        {
-            get => _signatureFileExtension;
-            set => _signatureFileExtension = value;
-        }
+        public string SignatureFileExtension { get; set; }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
-
-        private string _title;
-        private string _language;
-        private string _signatureFileExtension;
-
+        
         /// <summary>
         /// Create a new object with an empty list of <seealso cref="AppCastItem"/> items
         /// </summary>
@@ -260,7 +244,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 return MatchingResult.SignatureIsMissing;
             }
 
-            return MatchingResult.MatchOk;
+            return MatchingResult.Valid;
         }
 
         /// <summary>
@@ -297,7 +281,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
             return appCastItems.Where((item) =>
             {
-                if(IsMatchingUpdate(installed, signatureNeeded, item) == MatchingResult.MatchOk)
+                if(IsMatchingUpdate(installed, signatureNeeded, item) == MatchingResult.Valid)
                 {
                     // accept everything else
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,

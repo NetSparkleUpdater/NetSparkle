@@ -33,7 +33,7 @@ namespace NetSparkleUpdater.Interfaces
         /// }
         /// else
         /// {
-        ///    // remove all beta items from the app-cast we were given, if the download link contains the word
+        ///    // remove all beta items from the app cast we were given, if the download link contains the word
         ///    // beta then we strip that element out.
         ///    List&lt;AppCastItem&gt; itemsWithoutBeta = items.Where((item) =&gt;
         ///    {
@@ -52,7 +52,7 @@ namespace NetSparkleUpdater.Interfaces
         ///  <param name="installed">The currently detected version of this application</param>
         ///  <param name="items">The current set of AppCastItem objects</param>
         ///  <returns>A FilterResult instance.  The bool indicates whether or not NetSparkle should force install the latest
-        ///  version in the resulting app-cast list, and the List&lt;AppCastItem&gt; is the replacement list of
+        ///  version in the resulting app cast list, and the List&lt;AppCastItem&gt; is the replacement list of
         ///  items that NetSparkle should use for the rest of the update process</returns>
         FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items);
     }
