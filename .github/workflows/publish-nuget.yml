@@ -13,7 +13,7 @@ jobs:
         matrix:
             os: [windows-latest, macos-latest, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - uses: nuget/setup-nuget@v1
         with:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
@@ -43,7 +43,7 @@ jobs:
     #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     # microsoft/setup-msbuild@v1.0.2 fixes that deprecation issue.
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - uses: nuget/setup-nuget@v1
         with:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
