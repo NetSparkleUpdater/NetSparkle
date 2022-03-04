@@ -285,7 +285,8 @@ namespace NetSparkleUpdater
         /// This defaults to <see cref="Environment.CommandLine"/>.
         /// Used in conjunction with RestartExecutablePath to restart the application --
         /// cd "{RestartExecutablePath}"
-        /// {RelaunchAfterUpdateCommandPrefix} "{RestartExecutableName}" is what is called to restart the app.
+        /// {RelaunchAfterUpdateCommandPrefix}"{RestartExecutableName}" is what is called to restart the app,
+        /// so make sure you add a space after RelaunchAfterUpdateCommandPrefix if needed.
         /// </summary>
         public string RestartExecutableName
         {
@@ -1347,9 +1348,10 @@ namespace NetSparkleUpdater
             string relaunchAfterUpdate = "";
             if (RelaunchAfterUpdate)
             {
+                var relaunchLine = $@"{RelaunchAfterUpdateCommandPrefix ?? ""}""{executableName}""";
                 relaunchAfterUpdate = $@"
                     cd ""{workingDir}""
-                    {RelaunchAfterUpdateCommandPrefix?.Trim() ?? ""} ""{executableName}""";
+                    {relaunchLine.Trim()}";
             }
 
             using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))

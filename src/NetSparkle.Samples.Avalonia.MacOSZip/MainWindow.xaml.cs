@@ -34,12 +34,12 @@ namespace NetSparkleUpdater.Samples.Avalonia
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
 
                 // if you want to restart your dotnet app without a bundle, you can do something like this:
-                //RelaunchAfterUpdateCommandPrefix = "dotnet",
+                //RelaunchAfterUpdateCommandPrefix = "dotnet ",
                 //RestartExecutableName = "NetSparkleUpdater.Samples.Avalonia.dll"
                 // for this sample app's purposes, since it's downloading a .app that doesn't match this sample binary, we do this:
                 // xattr -dr SimpleApp.app ---- this removes the com.apple.quarantine bit which fixes an issue launching the app.
                 // Your milage may vary, please test yourself!
-                RelaunchAfterUpdateCommandPrefix = "xattr -dr SimpleApp.app; open -n",
+                RelaunchAfterUpdateCommandPrefix = "xattr -dr SimpleApp.app; open -n ",
                 RestartExecutableName = "SimpleApp.app", // path to binary inside .app
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
