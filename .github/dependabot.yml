@@ -13,8 +13,8 @@ updates:
     directory: "/src/NetSparkle" # Location of package manifests
     schedule:
       interval: "daily"
-    assignees:
-      - "Deadpikle"
+    #assignees:
+    #  - "Deadpikle"
     target-branch: "develop"
     commit-message:
       # Prefix all commit messages with "npm"
@@ -22,14 +22,14 @@ updates:
     labels:
       - "dependabot"
       - "awaiting triage"
-    reviewers:
-      - "Deadpikle"
+    #reviewers:
+    #  - "Deadpikle"
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/src/NetSparkle.UI.Avalonia" # Location of package manifests
     schedule:
       interval: "daily"
-    assignees:
-      - "Deadpikle"
+    #assignees:
+    #  - "Deadpikle"
     target-branch: "develop"
     commit-message:
       # Prefix all commit messages with "npm"
@@ -37,14 +37,14 @@ updates:
     labels:
       - "dependabot"
       - "awaiting triage"
-    reviewers:
-      - "Deadpikle"
+    #reviewers:
+    #  - "Deadpikle"
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/src/NetSparkle.Samples.Avalonia" # Location of package manifests
     schedule:
       interval: "daily"
-    assignees:
-      - "Deadpikle"
+    #assignees:
+    #  - "Deadpikle"
     target-branch: "develop"
     commit-message:
       # Prefix all commit messages with "npm"
@@ -52,14 +52,14 @@ updates:
     labels:
       - "dependabot"
       - "awaiting triage"
-    reviewers:
-      - "Deadpikle"
+    #reviewers:
+    #  - "Deadpikle"
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/src/NetSparkle.Tools.AppCastGenerator" # Location of package manifests
     schedule:
       interval: "daily"
-    assignees:
-      - "Deadpikle"
+    #assignees:
+    #  - "Deadpikle"
     target-branch: "develop"
     commit-message:
       # Prefix all commit messages with "npm"
@@ -67,5 +67,5 @@ updates:
     labels:
       - "dependabot"
       - "awaiting triage"
-    reviewers:
-      - "Deadpikle"
+    #reviewers:
+    #  - "Deadpikle"
