@@ -49,7 +49,9 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     using (StreamReader reader = new StreamReader(response.GetResponseStream(), GetAppCastEncoding()))
                     {
-                        return reader.ReadToEnd();
+                        var appCastData = reader.ReadToEnd();
+                        ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+                        return appCastData;
                     }
                 }
                 catch
@@ -98,7 +100,7 @@ namespace NetSparkleUpdater.Downloaders
                     httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
                     if (TrustEverySSLConnection)
                     {
-                        httpRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                        httpRequest.ServerCertificateValidationCallback += AlwaysTrustRemoteCert;
                     }
 
                     // http://stackoverflow.com/a/10027534/3938401
@@ -116,10 +118,19 @@ namespace NetSparkleUpdater.Downloaders
                     }
 
                     // request the cast and build the stream
+                    if (TrustEverySSLConnection)
+                    {
+                        httpRequest.ServerCertificateValidationCallback -= AlwaysTrustRemoteCert;
+                    }
                     return httpRequest.GetResponse();
                 }
             }
             return null;
+        }
+
+        private bool AlwaysTrustRemoteCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
         }
 
         /// <summary>
