@@ -47,9 +47,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EF1CB9-F6D1-4D71-87C2-F2E80DD53968}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec = nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
+		.github\workflows\publish-nuget.yml = .github\workflows\publish-nuget.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.Avalonia.MacOSZip", "src\NetSparkle.Samples.Avalonia.MacOSZip\NetSparkle.Samples.Avalonia.MacOSZip.csproj", "{314E5B47-24FA-42F5-9975-3E4252853576}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia.MacOSZip", "src\NetSparkle.Samples.Avalonia.MacOSZip\NetSparkle.Samples.Avalonia.MacOSZip.csproj", "{314E5B47-24FA-42F5-9975-3E4252853576}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -440,10 +441,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{FD76C04C-3E89-4422-A818-4BD80E7AEAA7} = {79C02DF2-6AE7-42AB-8274-56C87A280408}
-		{314E5B47-24FA-42F5-9975-3E4252853576} = {79C02DF2-6AE7-42AB-8274-56C87A280408}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3A84A257-B554-4263-8E94-0D8097282331}
