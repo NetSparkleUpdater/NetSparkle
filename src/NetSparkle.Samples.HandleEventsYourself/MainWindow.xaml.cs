@@ -57,11 +57,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml",
                 new DSAChecker(Enums.SecurityMode.Strict))
             {
-                UIFactory = null,
-
-                // the AppCastFilter interface implementation is only ever required if you want a stable/beta channel arrangement for your appcast.xml;
-                // such that users can choose to opt-in to beta updates.  The filter is used when users downgrade to a stable version.
-                AppCastFilter = this
+                UIFactory = null
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
