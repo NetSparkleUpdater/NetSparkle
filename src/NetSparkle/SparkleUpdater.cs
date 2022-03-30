@@ -205,8 +205,8 @@ namespace NetSparkleUpdater
         /// Factory for creating UI elements like progress window, etc.
         /// </summary>
         public IUIFactory UIFactory
-        { 
-            get { return _uiFactory; } 
+        {
+            get { return _uiFactory; }
             set { _uiFactory = value; _uiFactory?.Init(this); }
         }
 
@@ -232,8 +232,8 @@ namespace NetSparkleUpdater
         /// The configuration object for a given assembly that has information on when
         /// updates were checked last, any updates that have been skipped, etc.
         /// </summary>
-        public Configuration Configuration 
-        { 
+        public Configuration Configuration
+        {
             get
             {
                 if (_configuration == null)
@@ -252,7 +252,7 @@ namespace NetSparkleUpdater
 #endif
                 }
                 return _configuration;
-            } 
+            }
             set { _configuration = value; }
         }
 
@@ -300,7 +300,7 @@ namespace NetSparkleUpdater
                 try
                 {
                     return Path.GetFileName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
-                } 
+                }
                 catch (Exception e)
                 {
                     LogWriter?.PrintMessage("Unable to get executable name: " + e.Message);
@@ -436,7 +436,7 @@ namespace NetSparkleUpdater
             set => _appCastHandler = value;
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
@@ -508,7 +508,7 @@ namespace NetSparkleUpdater
             //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             //_taskWorker.Start(scheduler);
             // don't allow starting the task 2x
-            if (_taskWorker.IsCompleted == false && _taskWorker.Status != TaskStatus.Running && 
+            if (_taskWorker.IsCompleted == false && _taskWorker.Status != TaskStatus.Running &&
                 _taskWorker.Status != TaskStatus.WaitingToRun && _taskWorker.Status != TaskStatus.WaitingForActivation)
             {
                 _taskWorker.Start();
@@ -532,7 +532,7 @@ namespace NetSparkleUpdater
             Dispose(false);
         }
 
-#region IDisposable
+        #region IDisposable
 
         /// <summary>
         /// Inherited from IDisposable. Stops all background activities.
@@ -590,7 +590,7 @@ namespace NetSparkleUpdater
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// This method checks if an update is required. During this process the appcast
@@ -880,9 +880,9 @@ namespace NetSparkleUpdater
                         // we won't be able to download anyway since we couldn't delete the file :( we'll try next time the
                         // update loop goes around.
                         needsToDownload = false;
-                        CallFuncConsideringUIThreads(() => 
+                        CallFuncConsideringUIThreads(() =>
                         {
-                            DownloadHadError?.Invoke(item, _downloadTempFileName, 
+                            DownloadHadError?.Invoke(item, _downloadTempFileName,
                                 new Exception(string.Format("Unable to delete old download at {0}", _downloadTempFileName)));
                         });
                     }
@@ -913,7 +913,7 @@ namespace NetSparkleUpdater
         {
             CallFuncConsideringUIThreads(() =>
             {
-                DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args); 
+                DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args);
             });
         }
 
@@ -1038,7 +1038,19 @@ namespace NetSparkleUpdater
                 _hasAttemptedFileRedownload = false;
                 if (File.Exists(_downloadTempFileName))
                 {
-                    File.Delete(_downloadTempFileName);
+                    try
+                    {
+                        File.Delete(_downloadTempFileName);
+                    }
+                    catch (Exception deleteEx)
+                    {
+                        string cleanUpErrorMessage = "Download canceled (Cleanup error): " + deleteEx.Message;
+                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                        {
+                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                        }
+                    }
+
                 }
                 LogWriter.PrintMessage("Download was canceled");
                 string errorMessage = "Download canceled";
@@ -1055,7 +1067,18 @@ namespace NetSparkleUpdater
                 // Clean temp files on error too
                 if (File.Exists(_downloadTempFileName))
                 {
-                    File.Delete(_downloadTempFileName);
+                    try
+                    {
+                        File.Delete(_downloadTempFileName);
+                    }
+                    catch (Exception deleteEx)
+                    {
+                        string cleanUpErrorMessage = "Error while downloading (Cleanup error): " + deleteEx.Message;
+                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                        {
+                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                        }
+                    }
                 }
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
                 if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
@@ -1089,7 +1112,8 @@ namespace NetSparkleUpdater
                     try
                     {
                         validationRes = SignatureVerifier.VerifySignatureOfFile(_itemBeingDownloaded?.DownloadSignature, _downloadTempFileName);
-                    } catch (Exception exc)
+                    }
+                    catch (Exception exc)
                     {
                         LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
                         validationRes = ValidationResult.Invalid;
@@ -1291,8 +1315,8 @@ namespace NetSparkleUpdater
             bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
             bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             if ((isMacOS && (
-                    DoExtensionsMatch(installerExt, ".zip") || 
-                    DoExtensionsMatch(installerExt, ".tar") || 
+                    DoExtensionsMatch(installerExt, ".zip") ||
+                    DoExtensionsMatch(installerExt, ".tar") ||
                     downloadFilePath.EndsWith(".tar.gz"))) ||
                 (isLinux && downloadFilePath.EndsWith(".tar.gz")))
             {
@@ -1404,7 +1428,7 @@ namespace NetSparkleUpdater
                     {
                         // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
                         // use tar to extract
-                        var tarCommand = isMacOS ? $"tar -x -f \"{downloadFilePath}\" -C \"{workingDir}\"" 
+                        var tarCommand = isMacOS ? $"tar -x -f \"{downloadFilePath}\" -C \"{workingDir}\""
                             : $"tar -xf \"{downloadFilePath}\" -C \"{workingDir}\" --overwrite ";
                         var output = $@"
                             {waitForFinish}
@@ -1474,16 +1498,18 @@ namespace NetSparkleUpdater
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
             var shell = "";
-            try {
+            try
+            {
                 // leave nothing up to chance :)
                 shell = System.Environment.GetEnvironmentVariable("SHELL");
-            } catch { }
+            }
+            catch { }
             if (string.IsNullOrWhiteSpace(shell))
             {
                 shell = "/bin/sh";
             }
             LogWriter.PrintMessage("Shell is {0}", shell);
-                
+
             _installerProcess = new Process()
             {
                 StartInfo = new ProcessStartInfo
@@ -1600,7 +1626,7 @@ namespace NetSparkleUpdater
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
-                CallFuncConsideringUIThreads(() => 
+                CallFuncConsideringUIThreads(() =>
                 {
                     switch (updateData.Status)
                     {
@@ -1686,7 +1712,7 @@ namespace NetSparkleUpdater
                             {
                                 LogWriter.PrintMessage("Showing standard update UI");
                                 // don't show UI if we are quietly checking for updates with no UI
-                                if (!isUserManuallyCheckingForUpdates) 
+                                if (!isUserManuallyCheckingForUpdates)
                                 {
                                     UpdatesHaveBeenDownloaded(updates);
                                 }
@@ -1777,7 +1803,7 @@ namespace NetSparkleUpdater
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
-                await CallFuncConsideringUIThreadsAsync(async () => 
+                await CallFuncConsideringUIThreadsAsync(async () =>
                 {
                     UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
                     if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
