@@ -78,8 +78,8 @@ namespace NetSparkleUpdater
             ReleaseNotesTemplate =
                 !string.IsNullOrEmpty(releaseNotesTemplate) ?
                     releaseNotesTemplate :
-                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; padding: 5px;\"><span style=\"float: right;\">" +
-                    "{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
+                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; background-color: {3}; padding: 5px;\">" + 
+                    "<span style=\"float: right;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
             AdditionalHeaderHTML = htmlHeadAddition;
             _sparkle = sparkle;
             ChecksReleaseNotesSignature = false;
