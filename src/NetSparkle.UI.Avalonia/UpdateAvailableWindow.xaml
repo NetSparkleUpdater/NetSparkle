@@ -47,7 +47,8 @@
         Grid.Column="1"
         Grid.Row="2"
         HorizontalScrollBarVisibility="Disabled">
-      <html:HtmlLabel Name="ChangeNotesHTMLLabel"/>
+      <html:HtmlLabel Name="ChangeNotesHTMLLabel"
+                      Background="White" />
     </ScrollViewer>
     <Button Name="SkipButton"
             IsEnabled="{Binding IsSkipEnabled}"
