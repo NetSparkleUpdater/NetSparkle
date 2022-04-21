@@ -27,7 +27,7 @@
                Text="{Binding TitleHeaderText}"
                TextWrapping="Wrap"
                FontSize="16"
-               Margin="10,5,5,0"
+               Margin="10,10,10,0"
                Grid.Column="1"
                Grid.Row="0" />
     <TextBlock Name="InfoText"
