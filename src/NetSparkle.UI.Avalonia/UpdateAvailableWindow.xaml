@@ -46,7 +46,8 @@
     <ScrollViewer
         Grid.Column="1"
         Grid.Row="2"
-        HorizontalScrollBarVisibility="Disabled">
+        HorizontalScrollBarVisibility="Disabled"
+        Margin="0,4,0,0">
       <html:HtmlLabel Name="ChangeNotesHTMLLabel"
                       Background="White" />
     </ScrollViewer>
