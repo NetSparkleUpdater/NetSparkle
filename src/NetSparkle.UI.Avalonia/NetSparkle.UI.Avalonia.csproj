@@ -73,6 +73,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.13" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+    <PackageReference Include="Avalonia.HtmlRenderer" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
@@ -81,11 +82,4 @@
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Avalonia.HtmlRenderer">
-      <HintPath>Lib\Avalonia.HtmlRenderer.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
