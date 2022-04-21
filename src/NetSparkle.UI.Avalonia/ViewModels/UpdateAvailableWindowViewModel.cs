@@ -205,8 +205,19 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 "<div style=\"border: #ccc 1px solid;\">" + 
                     "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 10px;\">" + 
                         "{0} ({1})" +
-                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div><br/>";
-            if (string.IsNullOrEmpty(releaseNotesHTMLTemplate)) {
+                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
+            if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML)) {
+                additionalReleaseNotesHeaderHTML = @"
+                <style>
+                    body { position: fixed; padding-left: 8px; padding-right: 0px; margin-right: 0; padding-top: 14px; padding-bottom: 0px; } 
+                    h1, h2, h3, h4, h5 { margin: 4px; margin-top: 8px; } 
+                    li, li li { margin: 4px; } 
+                    li, p { font-size: 18px; } 
+                    li p, li ul { margin-top: 0px; margin-bottom: 0px; }
+                    ul { margin-top: 2px; margin-bottom: 2px; }
+                </style>";
+            }
+            if (string.IsNullOrWhiteSpace(releaseNotesHTMLTemplate)) {
                 releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
             }
             ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);

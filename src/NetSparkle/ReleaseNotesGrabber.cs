@@ -79,7 +79,7 @@ namespace NetSparkleUpdater
                 !string.IsNullOrEmpty(releaseNotesTemplate) ?
                     releaseNotesTemplate :
                     "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; background-color: {3}; padding: 5px;\">" + 
-                    "<span style=\"float: right;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div><br/>";
+                    "<span style=\"float: right;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div>";
             AdditionalHeaderHTML = htmlHeadAddition;
             _sparkle = sparkle;
             ChecksReleaseNotesSignature = false;
@@ -107,16 +107,19 @@ namespace NetSparkleUpdater
         {
             _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
             StringBuilder sb = new StringBuilder(InitialHTML);
+            var hasAddedFirstItem = false;
+            //items.Add(items.First()); // DEBUG -- use to test with multiple release note items in samples
             foreach (AppCastItem castItem in items)
             {
                 _sparkle.LogWriter.PrintMessage("Initializing release notes for {0}", castItem.Version);
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
-                sb.Append(string.Format(ReleaseNotesTemplate,
+                sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
                                         castItem.Version,
                                         castItem.PublicationDate.ToString("D"), // was dd MMM yyyy
                                         releaseNotes,
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
+                hasAddedFirstItem = true; // after first item added, need to add line breaks between release note items
             }
             sb.Append("</body></html>");
 
