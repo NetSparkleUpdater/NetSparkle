@@ -201,7 +201,14 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             _sparkle = sparkle;
             _updates = items;
-
+            var defaultReleaseNotesAvaloniaTemplate = 
+                "<div style=\"border: #ccc 1px solid;\">" + 
+                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 10px;\">" + 
+                        "{0} ({1})" +
+                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div><br/>";
+            if (string.IsNullOrEmpty(releaseNotesHTMLTemplate)) {
+                releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
+            }
             ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);
 
             AppCastItem item = items.FirstOrDefault();
