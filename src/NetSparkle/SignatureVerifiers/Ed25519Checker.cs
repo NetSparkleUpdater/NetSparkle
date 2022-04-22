@@ -46,15 +46,11 @@ namespace NetSparkleUpdater.SignatureVerifiers
 
             if (string.IsNullOrEmpty(publicKey))
             {
-                Stream data = TryGetResourceStream(publicKeyFile);
-                if (data == null)
-                {
-                    data = TryGetFileResource(publicKeyFile);
-                }
+                var data = TryGetResourceStream(publicKeyFile) ?? TryGetFileResource(publicKeyFile);
 
                 if (data != null)
                 {
-                    using (StreamReader reader = new StreamReader(data))
+                    using (var reader = new StreamReader(data))
                     {
                         publicKey = reader.ReadToEnd();
                     }
@@ -159,7 +155,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             }
 
             // convert signature
-            byte[] bHash = Convert.FromBase64String(signature);
+            var bHash = Convert.FromBase64String(signature);
             _signer.BlockUpdate(dataToVerify, 0, dataToVerify.Length);
             // verify
             return _signer.VerifySignature(bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
@@ -178,12 +174,12 @@ namespace NetSparkleUpdater.SignatureVerifiers
 
                 // convert signature
                 // code for reading stream in chunks modified from https://stackoverflow.com/a/7542077/3938401
-                byte[] bHash = Convert.FromBase64String(signature);
+                var bHash = Convert.FromBase64String(signature);
                 var chunkSize = ChunkSize > 0 ? ChunkSize : 1024 * 1024 * 25;
                 using (Stream inputStream = File.OpenRead(binaryPath))
                 {
                     // read file in chunks
-                    byte[] buffer = new byte[chunkSize]; // read in chunks of ChunkSize
+                    var buffer = new byte[chunkSize]; // read in chunks of ChunkSize
                     int bytesRead;
                     while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
@@ -192,12 +188,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     return _signer.VerifySignature(bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
                 }
             }
-            else
+
+            using (Stream inputStream = File.OpenRead(binaryPath))
             {
-                using (Stream inputStream = File.OpenRead(binaryPath))
-                {
-                    return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
-                }
+                return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
             }
         }
 

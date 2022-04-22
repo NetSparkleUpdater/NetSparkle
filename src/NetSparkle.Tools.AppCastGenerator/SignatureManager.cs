@@ -63,12 +63,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public bool KeysExist()
         {
-            if (GetPublicKey() != null && GetPrivateKey() != null)
-            {
-                return true;
-            }
-
-            return false;
+            return GetPublicKey() != null && GetPrivateKey() != null;
         }
 
         public bool Generate(bool force = false)
@@ -84,10 +79,10 @@ namespace NetSparkleUpdater.AppCastGenerator
             Console.WriteLine("Generating key pair...");
 
 
-            var Random = new SecureRandom();
+            var random = new SecureRandom();
 
             Ed25519KeyPairGenerator kpg = new Ed25519KeyPairGenerator();
-            kpg.Init(new Ed25519KeyGenerationParameters(Random));
+            kpg.Init(new Ed25519KeyGenerationParameters(random));
 
             AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
             Ed25519PrivateKeyParameters privateKey = (Ed25519PrivateKeyParameters)kp.Private;

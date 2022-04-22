@@ -45,8 +45,8 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public ILogger LogWriter
         {
-            set { _logger = value; }
-            get { return _logger; }
+            set => _logger = value;
+            get => _logger;
         }
 
         /// <summary>

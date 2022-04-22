@@ -81,7 +81,7 @@ namespace NetSparkleUpdater.Downloaders
         /// succeeded!</returns>
         public WebResponse GetWebContentResponse(string url)
         {
-            WebRequest request = WebRequest.Create(url);
+            var request = WebRequest.Create(url);
             if (request != null)
             {
                 if (request is FileWebRequest)

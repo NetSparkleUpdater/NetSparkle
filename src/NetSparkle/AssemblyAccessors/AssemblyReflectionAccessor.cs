@@ -34,7 +34,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
             else
             {
-                string absolutePath = Path.GetFullPath(assemblyName);
+                var absolutePath = Path.GetFullPath(assemblyName);
                 if (!File.Exists(absolutePath))
                 {
                     throw new FileNotFoundException();
@@ -51,7 +51,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             // read the attributes            
             foreach (CustomAttributeData data in _assembly.GetCustomAttributesData())
             {
-                Attribute a = CreateAttribute(data);
+                var a = CreateAttribute(data);
                 if (a != null)
                 {
                     _assemblyAttributes.Add(a);

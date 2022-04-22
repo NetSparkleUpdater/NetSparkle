@@ -31,6 +31,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <returns>Extension for the app cast file</returns>
         public abstract string GetAppCastExtension();
+        
         /// <summary>
         /// Serialize a list of AppCastItem items to a file at the given path with the given title.
         /// Overwrites any file at the given path. Does not verify that the given directory structure
@@ -40,6 +41,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <param name="applicationTitle">Title of application (or app cast)</param>
         /// <param name="path">Output file path/name</param>
         public abstract void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path);
+        
         /// <summary>
         /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
         /// Should not return duplicate versions.
@@ -75,11 +77,11 @@ namespace NetSparkleUpdater.AppCastGenerator
             var folderSplit = fullFileNameWithPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             var numFolderSectionsChecked = 0;
             var nums = new List<int>();
-            for (int j = folderSplit.Length - 1; j >= 0; j--)
+            for (var j = folderSplit.Length - 1; j >= 0; j--)
             {
                 var split = folderSplit[j].Split('.', StringSplitOptions.RemoveEmptyEntries);
                 // start on last item and go until first item in file name
-                for (int i = split.Length - 1; i >= 0; i--)
+                for (var i = split.Length - 1; i >= 0; i--)
                 {
                     var splitItem = split[i];
                     var foundAtEnd = false;
@@ -174,7 +176,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             {
                 binaryDirectory = Environment.CurrentDirectory;
             }
-            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) : GetVersionFromAssembly(binaryFileInfo.FullName);
+            
+            var productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) : GetVersionFromAssembly(binaryFileInfo.FullName);
+            
             if (productVersion == null)
             {
                 Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
@@ -190,14 +194,17 @@ namespace NetSparkleUpdater.AppCastGenerator
             var urlToUse = !string.IsNullOrWhiteSpace(_opts.BaseUrl?.ToString())
                 ? (_opts.BaseUrl.ToString().EndsWith("/") ? _opts.BaseUrl.ToString() : _opts.BaseUrl + "/")
                 : "";
+            
             if (_opts.PrefixVersion)
             {
                 urlToUse += $"{productVersion}/";
             }
+            
             if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
             {
                 urlEncodedFileName = urlEncodedFileName.Substring(1);
             }
+            
             var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
 
             // changelog stuff
@@ -304,7 +311,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
-                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory);
+                    var productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory);
 
                     if (!string.IsNullOrWhiteSpace(productVersion))
                     {
@@ -324,6 +331,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                         items.Remove(itemFoundInAppcast); // remove old item.
                         itemFoundInAppcast = null;
                     }
+                    
                     if (itemFoundInAppcast == null)
                     {
                         var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs);
@@ -373,10 +381,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                     Console.WriteLine($"Wrote {signatureFileName}", Color.Green);
                     return true;
                 }
-                else
-                {
-                    Console.WriteLine($"Failed to verify {signatureFileName}", Color.Red);
-                }
+
+                Console.WriteLine($"Failed to verify {signatureFileName}", Color.Red);
             }
             else
             {

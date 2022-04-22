@@ -35,19 +35,15 @@ namespace NetSparkleUpdater.SignatureVerifiers
         {
             SecurityMode = mode;
 
-            string key = publicKey;
+            var key = publicKey;
 
             if (string.IsNullOrEmpty(key))
             {
-                Stream data = TryGetResourceStream(publicKeyFile);
-                if (data == null)
-                {
-                    data = TryGetFileResource(publicKeyFile);
-                }
+                var data = TryGetResourceStream(publicKeyFile) ?? TryGetFileResource(publicKeyFile);
 
                 if (data != null)
                 {
-                    using (StreamReader reader = new StreamReader(data))
+                    using (var reader = new StreamReader(data))
                     {
                         key = reader.ReadToEnd();
                     }
@@ -128,14 +124,14 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <inheritdoc/>
         public ValidationResult VerifySignature(string signature, byte[] dataToVerify)
         {
-            ValidationResult res = ValidationResult.Invalid;
+            var res = ValidationResult.Invalid;
             if (!CheckSecurityMode(signature, ref res))
             {
                 return res;
             }
 
             // convert signature
-            byte[] bHash = Convert.FromBase64String(signature);
+            var bHash = Convert.FromBase64String(signature);
 
             // verify
             return _cryptoProvider.VerifyData(dataToVerify, bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
@@ -188,7 +184,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
         private static Stream TryGetResourceStream(string publicKey)
         {
             Stream data = null;
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 string[] resources;
                 try

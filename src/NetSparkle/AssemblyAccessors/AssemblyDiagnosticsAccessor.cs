@@ -34,7 +34,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             if (assemblyName != null)
             {
-                string absolutePath = Path.GetFullPath(assemblyName);
+                var absolutePath = Path.GetFullPath(assemblyName);
                 if (!File.Exists(absolutePath))
                 {
                     throw new FileNotFoundException();
