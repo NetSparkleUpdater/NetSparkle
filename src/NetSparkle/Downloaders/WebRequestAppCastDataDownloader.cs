@@ -69,7 +69,6 @@ namespace NetSparkleUpdater.Downloaders
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             // use HttpClient synchronously: https://stackoverflow.com/a/53529122/3938401
             var handler = new HttpClientHandler();
-            handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
             if (TrustEverySSLConnection)
             {
 #if NETCORE

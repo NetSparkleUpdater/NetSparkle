@@ -144,14 +144,12 @@ namespace NetSparkleUpdater.Downloaders
                             await fileStream.WriteAsync(buffer, 0, bytesRead);
                             totalRead += bytesRead;
                             readCount += 1;
-                            if (readCount % 10 != 0)
-                            {
-                                continue;
-                            }
-
                             UpdateDownloadProgress(totalRead, totalLength);
                         } while (IsDownloading);
                         IsDownloading = false;
+                        fileStream.Close();
+                        contentStream.Close();
+                        UpdateDownloadProgress(totalRead, totalLength);
                         DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
                     }
                 }

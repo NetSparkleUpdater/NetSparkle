@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using NetSparkleUpdater.Enums;
 using System.Net;
+using System.Net.Http;
 
 namespace NetSparkleUpdater
 {
@@ -245,6 +246,7 @@ namespace NetSparkleUpdater
         {
             try
             {
+#if NET452
                 using (var webClient = new WebClient())
                 {
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
@@ -258,6 +260,13 @@ namespace NetSparkleUpdater
                     }
                     return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, sparkle.AppCastUrl));
                 }
+#else
+                var httpClient = new HttpClient();
+                using (cancellationToken.Register(() => httpClient.CancelPendingRequests()))
+                {
+                    return await httpClient.GetStringAsync(link);
+                }
+#endif
             }
             catch (WebException ex)
             {
