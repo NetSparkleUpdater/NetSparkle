@@ -3,6 +3,9 @@ using System.Globalization;
 using Microsoft.Win32;
 using NetSparkleUpdater.AssemblyAccessors;
 using NetSparkleUpdater.Interfaces;
+#if (NETSTANDARD || NET6)
+using System.Runtime.InteropServices;
+#endif
 
 namespace NetSparkleUpdater.Configurations
 {
@@ -135,6 +138,12 @@ namespace NetSparkleUpdater.Configurations
         /// <returns><c>true</c> if the items were loaded successfully; false otherwise</returns>
         private bool LoadValuesFromPath(string regPath)
         {
+#if (NETSTANDARD || NET6)
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+#endif
             RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
             {
@@ -201,6 +210,12 @@ namespace NetSparkleUpdater.Configurations
         /// <returns><c>true</c> if the values were saved to the registry; false otherwise</returns>
         private bool SaveValuesToPath(string regPath)
         {
+#if (NETSTANDARD || NET6)
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
+#endif
             RegistryKey key = Registry.CurrentUser.CreateSubKey(regPath);
             if (key == null)
             { 
