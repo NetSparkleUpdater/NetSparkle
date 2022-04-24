@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Downloaders
 {
@@ -40,7 +42,8 @@ namespace NetSparkleUpdater.Downloaders
         public string DownloadAndGetAppCastData(string url)
         {
             _appcastUrl = url;
-            // configure ssl cert link
+#if NET452
+            // old implementation, non-HttpClient
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             var response = GetWebContentResponse(url);
             if (response != null)
@@ -61,6 +64,60 @@ namespace NetSparkleUpdater.Downloaders
             }
             ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
             return null;
+#else
+            // configure ssl cert link
+            ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
+            // use HttpClient synchronously: https://stackoverflow.com/a/53529122/3938401
+            var handler = new HttpClientHandler();
+            handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+            if (TrustEverySSLConnection)
+            {
+#if NETCORE
+                handler.ServerCertificateCustomValidationCallback =
+                    (httpRequestMessage, cert, cetChain, policyErrors) =>
+                    {
+                        return true;
+                    };
+#endif
+            }
+
+            var httpClient = new HttpClient(handler);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(ExtraJsonData))
+                {
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+                    request.Content = new StringContent(ExtraJsonData, Encoding.UTF8, "application/json");
+                    var postTask = Task.Run(() => httpClient.SendAsync(request));
+                    postTask.Wait();
+                    if (postTask.Result.IsSuccessStatusCode)
+                    {
+                        var postTaskStream = Task.Run(() => postTask.Result.Content.ReadAsStreamAsync());
+                        postTask.Wait();
+                        ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+                        using (StreamReader reader = new StreamReader(postTaskStream.Result, GetAppCastEncoding()))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
+                else
+                {
+                    var task = Task.Run(() => httpClient.GetStreamAsync(url));
+                    task.Wait();
+                    var responseStream = task.Result;
+                    ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+                    using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
+                    {
+                        return reader.ReadToEnd();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return "";
+#endif
         }
 
         /// <inheritdoc/>
@@ -79,6 +136,9 @@ namespace NetSparkleUpdater.Downloaders
         /// <returns>the response from the web server if creating the request
         /// succeeded; null otherwise. The response is not guaranteed to have
         /// succeeded!</returns>
+#if NETCORE
+        [Obsolete("GetWebContentResponse is deprecated, please use DownloadAndGetAppCastData instead. This method should never have been public. :)")]
+#endif
         public WebResponse GetWebContentResponse(string url)
         {
             WebRequest request = WebRequest.Create(url);
