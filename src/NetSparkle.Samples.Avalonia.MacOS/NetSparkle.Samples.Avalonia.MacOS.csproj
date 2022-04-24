@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5</TargetFramework>
+    <TargetFramework>net6</TargetFramework>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
     <RootNamespace>NetSparkleUpdater.Samples.Avalonia</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Samples.Avalonia</AssemblyName>

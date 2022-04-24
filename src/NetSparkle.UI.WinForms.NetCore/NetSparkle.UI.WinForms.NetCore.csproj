@@ -4,7 +4,7 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net5-windows;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net5-windows;net6-windows;netcoreapp3.1</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
     <Copyright>Copyright © 2022</Copyright>
@@ -158,12 +158,13 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Include="System.Drawing.Common" Version="4.7.1">
-    </PackageReference>
+	<PackageReference Include="System.Drawing.Common" Version="4.7.1"/>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5-windows'">
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2">
-    </PackageReference>
+	<PackageReference Include="System.Drawing.Common" Version="5.0.2"/>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6-windows'">
+	<PackageReference Include="System.Drawing.Common" Version="6.0.0"/>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
