@@ -75,11 +75,28 @@ namespace NetSparkleUpdater
         /// <param name="sparkle">Sparkle updater being used</param>
         public ReleaseNotesGrabber(string releaseNotesTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
         {
-            ReleaseNotesTemplate =
-                !string.IsNullOrEmpty(releaseNotesTemplate) ?
-                    releaseNotesTemplate :
-                    "<div style=\"border: #ccc 1px solid;\"><div style=\"background: {3}; background-color: {3}; padding: 5px;\">" + 
-                    "<span style=\"float: right;\">{1}</span>{0}</div><div style=\"padding: 5px;\">{2}</div></div>";
+            if (string.IsNullOrWhiteSpace(htmlHeadAddition))
+            {
+                htmlHeadAddition = @"
+                <style>
+                    body { position: fixed; padding-left: 8px; padding-right: 16px; margin-right: 0; padding-top: 14px; padding-bottom: 8px; } 
+                    h1, h2, h3, h4, h5 { margin: 4px; margin-top: 8px; } 
+                    li, li li { margin: 4px; } 
+                    li, p { } 
+                    li p, li ul { margin-top: 0px; margin-bottom: 0px; }
+                    ul { margin-top: 2px; margin-bottom: 2px; }
+                </style>";
+            }
+            if (string.IsNullOrWhiteSpace(releaseNotesTemplate))
+            {
+                releaseNotesTemplate =
+                    "<div style=\"border: #ccc 1px solid;\">" +
+                        "<div style=\"background: {3}; background-color: {3}; padding: 5px; padding-top: 10px;\">" +
+                            "<span style=\"float: right;\">{1}</span>{0}" +
+                    "</div><div style=\"padding: 5px;\">{2}</div></div>";
+            }
+
+            ReleaseNotesTemplate = releaseNotesTemplate;
             AdditionalHeaderHTML = htmlHeadAddition;
             _sparkle = sparkle;
             ChecksReleaseNotesSignature = false;
