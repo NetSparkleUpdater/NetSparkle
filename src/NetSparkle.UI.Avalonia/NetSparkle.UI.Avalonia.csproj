@@ -15,7 +15,7 @@
     <PackageIcon>software-update-available.png</PackageIcon>
     <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all beta information and to file issues/pull requests for and ask questions about this project.</PackageReleaseNotes>
+    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all information and to file issues/pull requests for and ask questions about this project.</PackageReleaseNotes>
     <RootNamespace>NetSparkleUpdater.UI.Avalonia</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
@@ -79,12 +79,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.13" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+    <PackageReference Include="Avalonia" Version="0.10.14" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
     <PackageReference Include="Avalonia.HtmlRenderer" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.14" />
   </ItemGroup>
 
   <ItemGroup>

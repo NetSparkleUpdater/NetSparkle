@@ -20,7 +20,7 @@
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all beta information and to file issues/pull requests for and ask questions about this project.</PackageReleaseNotes>
+    <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all information and to file issues/pull requests for and ask questions about this project.</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
