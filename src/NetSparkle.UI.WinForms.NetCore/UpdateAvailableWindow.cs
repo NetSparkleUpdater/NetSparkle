@@ -20,12 +20,6 @@ namespace NetSparkleUpdater.UI.WinForms
         private System.Windows.Forms.Timer _ensureDialogShownTimer;
 
         /// <summary>
-        /// Event fired when the user has responded to the 
-        /// skip, later, install question.
-        /// </summary>
-        public event UserRespondedToUpdate UserResponded;
-
-        /// <summary>
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
         private CancellationToken _cancellationToken;
@@ -33,6 +27,12 @@ namespace NetSparkleUpdater.UI.WinForms
 
         private bool _didSendResponse = false;
 
+
+        /// <summary>
+        /// Event fired when the user has responded to the 
+        /// skip, later, install question.
+        /// </summary>
+        public event UserRespondedToUpdate UserResponded;
 
         /// <summary>
         /// Object responsible for downloading and formatting markdown release notes for display in HTML
@@ -46,8 +46,8 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="items">List of updates to show. Should contain at least one item.</param>
         /// <param name="applicationIcon">The icon to display</param>
         /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show for the release notes</param>
-        /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
+        /// <param name="releaseNotesHTMLTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
+        /// <param name="additionalReleaseNotesHeaderHTML">Additional text they will inserted into HTML Head. For Stylesheets.</param>
         public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
             string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "")
         {
@@ -199,12 +199,12 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             if (InvokeRequired && !IsDisposed && !Disposing)
             {
-                this.Invoke((MethodInvoker)delegate () 
-                { 
-                    if (!IsDisposed && !Disposing) 
-                    { 
-                        Close(); 
-                    } 
+                this.Invoke((MethodInvoker)delegate ()
+                {
+                    if (!IsDisposed && !Disposing)
+                    {
+                        Close();
+                    }
                 });
             }
             else if (!IsDisposed && !Disposing)
