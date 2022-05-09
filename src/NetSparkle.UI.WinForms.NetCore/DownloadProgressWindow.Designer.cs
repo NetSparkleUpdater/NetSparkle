@@ -86,12 +86,12 @@ namespace NetSparkleUpdater.UI.WinForms
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.lblHeader, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.imgAppIcon, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.progressDownload, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.lblHeader, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnInstallAndReLaunch, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.downloadProgressLbl, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.progressDownload, 0, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // DownloadProgressWindow
