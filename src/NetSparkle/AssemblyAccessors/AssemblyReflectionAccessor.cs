@@ -39,9 +39,16 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 {
                     throw new FileNotFoundException();
                 }
-
-                _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath);
-
+#if NETFRAMEWORK
+                _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
+#else
+                // try loading the assembly in ways compliant with .NET Core/.NET 5+
+                _assembly = Assembly.LoadFrom(absolutePath);
+                if (_assembly == null)
+                {
+                    _assembly = Assembly.LoadFile(absolutePath);
+                }
+#endif
                 if (_assembly == null)
                 {
                     throw new ArgumentNullException("Unable to load assembly " + absolutePath);                
@@ -116,7 +123,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             return null;
         }
 
-        #region Assembly Attribute Accessors
+#region Assembly Attribute Accessors
 
         /// <inheritdoc/>
         public string AssemblyTitle
@@ -176,6 +183,6 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 return a?.Company ?? "";                  
             }
         }
-        #endregion
+#endregion
     }
 }

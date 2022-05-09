@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5;netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6;net5;netcoreapp3.1;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.UI.Avalonia</PackageId>
-    <Version>2.0.18-preview20220420002</Version>
+    <Version>2.1.0-preview20220509001</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
     <Product>NetSparkleUpdater.UI.Avalonia</Product>
@@ -39,6 +39,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
 
   <ItemGroup>
     <None Remove="CheckingForUpdatesWindow.xaml" />

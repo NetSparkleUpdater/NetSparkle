@@ -22,16 +22,24 @@ jobs:
       # - name: Add MSBuild to PATH
       #   uses: microsoft/setup-msbuild@v1.0.2
       
-      - name: Setup .NET 5.0 for tests
+      - name: Setup .NET 5.0, 6.0 for tests
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: |
+            5.0.x
+            6.0.x
 
-      - name: Run NetSparkle.Tests
+      - name: Run NetSparkle.Tests in .NET 5
         run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
-      - name: Run NetSparkle.Tests.AppCastGenerator
+      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 5
         run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
+
+      - name: Run NetSparkle.Tests in .NET 6
+        run: dotnet test -f net6 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+
+      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 6
+        run: dotnet test -f net6 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
   publish:
     name: Build and publish all packages to NuGet
@@ -52,13 +60,14 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
       
-      - name: Setup .NET 3.0, 3.1, 5.0
+      - name: Setup .NET 3.0, 3.1, 5.0, 6.0
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
             3.0
             3.1.x
             5.0.x
+            6.0.x
           
       - name: Build NetSparkle in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release

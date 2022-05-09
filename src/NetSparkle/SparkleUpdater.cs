@@ -19,7 +19,7 @@ using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.AssemblyAccessors;
 using System.Text;
 using System.Globalization;
-#if NETSTANDARD
+#if (NETSTANDARD || NET6)
 using System.Runtime.InteropServices;
 #endif
 
@@ -65,6 +65,15 @@ namespace NetSparkleUpdater
         private string _restartExecutablePath;
 
         private IAppCastHandler _appCastHandler;
+
+        /// <summary>
+        /// The progress window is shown on a separate thread.
+        /// In order to ensure that the download starts after the progress window is shown,
+        /// we create an Action to run after things are ready.
+        /// It would be better if things ran using async/await, but this will
+        /// suffice as a "fix" for now.
+        /// </summary>
+        private Action _actionToRunOnProgressWindowShown;
 
         #endregion
 
@@ -238,7 +247,7 @@ namespace NetSparkleUpdater
             {
                 if (_configuration == null)
                 {
-#if NETSTANDARD
+#if (NETSTANDARD || NET6)
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
@@ -855,13 +864,16 @@ namespace NetSparkleUpdater
                     needsToDownload = false;
                     // Still need to set up the ProgressWindow for non-silent downloads, though,
                     // so that the user can actually perform the install
-                    CreateAndShowProgressWindow(item, true);
-                    CallFuncConsideringUIThreads(() => { DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
-                    bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
-                    if (shouldInstallAndRelaunch)
+                    _actionToRunOnProgressWindowShown = () =>
                     {
-                        CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
-                    }
+                        CallFuncConsideringUIThreads(() => { DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName); });
+                        bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
+                        if (shouldInstallAndRelaunch)
+                        {
+                            CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
+                        }
+                    };
+                    CreateAndShowProgressWindow(item, true);
                 }
                 else if (!_hasAttemptedFileRedownload)
                 {
@@ -897,15 +909,16 @@ namespace NetSparkleUpdater
                 // remove any old event handlers so we don't fire 2x
                 UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
-
-                CreateAndShowProgressWindow(item, false);
                 UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
-
-                Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
-                LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
-                CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(item, _downloadTempFileName); });
+                _actionToRunOnProgressWindowShown = () =>
+                {
+                    Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
+                    LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
+                    UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
+                    CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(item, _downloadTempFileName); });
+                };
+                CreateAndShowProgressWindow(item, false);
             }
         }
 
@@ -967,7 +980,12 @@ namespace NetSparkleUpdater
                             if (shouldShowAsDownloadedAlready)
                             {
                                 ProgressWindow?.FinishedDownloadingFile(true);
-                                _syncContext.Post((state2) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                                _syncContext.Post((state2) => 
+                                {
+                                    OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
+                                    _actionToRunOnProgressWindowShown?.Invoke();
+                                    _actionToRunOnProgressWindowShown = null;
+                                }, null);
                             }
                         }
                     };
@@ -979,12 +997,16 @@ namespace NetSparkleUpdater
                             _syncContext.Post((state) =>
                             {
                                 showSparkleDownloadUI(null);
+                                _actionToRunOnProgressWindowShown?.Invoke();
+                                _actionToRunOnProgressWindowShown = null;
                                 ProgressWindow?.Show(ShowsUIOnMainThread);
                             }, null);
                         }
                         else
                         {
                             showSparkleDownloadUI(null);
+                            _actionToRunOnProgressWindowShown?.Invoke();
+                            _actionToRunOnProgressWindowShown = null;
                             ProgressWindow?.Show(ShowsUIOnMainThread);
                         }
                     });
