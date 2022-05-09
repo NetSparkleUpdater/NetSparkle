@@ -72,86 +72,11 @@
     <EmbeddedResource Update="CheckingForUpdatesWindow.resx">
       <DependentUpon>CheckingForUpdatesWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.bg.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.de.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.es-MX.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.fr.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.it.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.lt.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.nl.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.pt-BR.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.ru.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.zh-CN.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="DownloadProgressWindow.zh-TW.resx">
-      <DependentUpon>DownloadProgressWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="MessageNotificationWindow.resx">
       <DependentUpon>MessageNotificationWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="ToastNotifier.resx">
       <DependentUpon>ToastNotifier.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.bg.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.de.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.es-MX.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.fr.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.it.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.JA.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.lt.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.nl.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.pt-BR.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.ru.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.zh-CN.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="UpdateAvailableWindow.zh-TW.resx">
-      <DependentUpon>UpdateAvailableWindow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
