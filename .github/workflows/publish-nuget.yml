@@ -68,6 +68,14 @@ jobs:
             3.1.x
             5.0.x
             6.0.x
+
+      - name: Clean things to be safe
+        run: |
+          dotnet clean ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
+          dotnet clean ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj --configuration Release
+          dotnet clean ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj --configuration Release
+          dotnet clean ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj --configuration Release
+          dotnet clean ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
           
       - name: Build NetSparkle in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj --configuration Release
