@@ -203,7 +203,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _updates = items;
             var defaultReleaseNotesAvaloniaTemplate = 
                 "<div style=\"border: #ccc 1px solid;\">" + 
-                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 10px;\">" + 
+                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px;\">" + 
                         "{0} ({1})" +
                 "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
             if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML)) {
