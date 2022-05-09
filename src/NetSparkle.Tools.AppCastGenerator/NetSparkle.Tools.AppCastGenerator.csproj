@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Tools.AppCastGenerator</AssemblyName>
-    <TargetFramework>net5</TargetFramework>
+    <TargetFrameworks>net6;net5</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
