@@ -29,16 +29,16 @@ jobs:
             5.0.x
             6.0.x
 
-      - name: Run NetSparkle.Tests
+      - name: Run NetSparkle.Tests in .NET 5
         run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
-      - name: Run NetSparkle.Tests.AppCastGenerator
+      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 5
         run: dotnet test -f net5 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
-      - name: Run NetSparkle.Tests
+      - name: Run NetSparkle.Tests in .NET 6
         run: dotnet test -f net6 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
-      - name: Run NetSparkle.Tests.AppCastGenerator
+      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 6
         run: dotnet test -f net6 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
   publish:
