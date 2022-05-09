@@ -909,11 +909,10 @@ namespace NetSparkleUpdater
                 // remove any old event handlers so we don't fire 2x
                 UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
                 UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
+                UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
+                UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
                 _actionToRunOnProgressWindowShown = () =>
                 {
-                    UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
-                    UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
-
                     Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                     LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                     UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
@@ -981,7 +980,12 @@ namespace NetSparkleUpdater
                             if (shouldShowAsDownloadedAlready)
                             {
                                 ProgressWindow?.FinishedDownloadingFile(true);
-                                _syncContext.Post((state2) => OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null)), null);
+                                _syncContext.Post((state2) => 
+                                {
+                                    OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
+                                    _actionToRunOnProgressWindowShown?.Invoke();
+                                    _actionToRunOnProgressWindowShown = null;
+                                }, null);
                             }
                         }
                     };
@@ -993,17 +997,17 @@ namespace NetSparkleUpdater
                             _syncContext.Post((state) =>
                             {
                                 showSparkleDownloadUI(null);
-                                ProgressWindow?.Show(ShowsUIOnMainThread);
                                 _actionToRunOnProgressWindowShown?.Invoke();
                                 _actionToRunOnProgressWindowShown = null;
+                                ProgressWindow?.Show(ShowsUIOnMainThread);
                             }, null);
                         }
                         else
                         {
                             showSparkleDownloadUI(null);
-                            ProgressWindow?.Show(ShowsUIOnMainThread);
                             _actionToRunOnProgressWindowShown?.Invoke();
                             _actionToRunOnProgressWindowShown = null;
+                            ProgressWindow?.Show(ShowsUIOnMainThread);
                         }
                     });
 #if NETFRAMEWORK
