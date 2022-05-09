@@ -12,7 +12,7 @@
 
 # 
 
-NetSparkle is a software update framework for C# that is compatible with .NET Core 3+ (.NET 5+) and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core (WinForms, WPF, Avalonia), uses Ed25519 or other signatures, and even allows for custom UIs or no UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
+NetSparkle is a software update framework for C# that is compatible with .NET Core 3+/.NET 5+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core/.NET 5+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
 NetSparkle 2.0 brings the ability to customize most of NetSparkle -- custom UIs are now possible, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts), and many more enhancements are available!
 
@@ -219,11 +219,11 @@ _Note:_ the app cast generator tool creates both of these signatures for you whe
 
 ### Ed25519 Signatures
 
-You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 5 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
+You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 5 or .NET 6 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
 
 ### DSA Signatures
 
-DSA signatures are not recommended for 2.0+. They are insecure!
+DSA signatures are not recommended when using NetSparkleUpdater 2.0+. They are considered insecure!
 
 You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
 
@@ -516,7 +516,7 @@ Yes! Please help us make this library awesome!
 
 ## Requirements
 
-- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5+
+- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5 | .NET 6+
 
 ## License
 
