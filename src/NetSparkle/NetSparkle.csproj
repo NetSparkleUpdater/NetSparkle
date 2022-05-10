@@ -69,12 +69,12 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
-	<PackageReference Include="System.Text.Json" Version="6.0.3" />
+	<PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6'">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
 	<PackageReference Include="NSec.Cryptography" Version="22.4.0" />
-	<PackageReference Include="System.Text.Json" Version="6.0.3" />
+	<PackageReference Include="System.Text.Json" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup>
 	<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
