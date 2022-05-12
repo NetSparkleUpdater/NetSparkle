@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NetSparkleUpdater.Interfaces
+namespace NetSparkleUpdater.AppCastHandlers
 {
     /// <summary>
     /// Result of the filtering process.  

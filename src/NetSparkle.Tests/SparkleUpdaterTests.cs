@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using NetSparkleUpdater;
+using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using Xunit;
