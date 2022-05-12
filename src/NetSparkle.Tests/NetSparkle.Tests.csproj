@@ -33,4 +33,12 @@
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="appcast_with_beta_items.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appcast_simple.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
