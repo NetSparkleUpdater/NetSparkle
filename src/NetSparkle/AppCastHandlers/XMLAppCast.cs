@@ -193,10 +193,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// the beta AppCastItem elements, and that the latest stable element should be installed.  
         /// </summary>
         /// <param name="installed">the currently installed Version</param>
+        /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
         /// <param name="signatureNeeded">whether or not a signature is required</param>
         /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
         /// <returns>MatchingResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
-        public MatchingResult IsMatchingUpdate(Version installed, bool signatureNeeded, AppCastItem item)
+        public MatchingResult IsMatchingUpdate(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
         {
 #if NETFRAMEWORK
                 // don't allow non-windows updates
@@ -228,13 +229,20 @@ namespace NetSparkleUpdater.AppCastHandlers
                 return MatchingResult.NotThisPlatform;
             }
 #endif
-            // filter smaller versions
-            if (new Version(item.Version).CompareTo(installed) <= 0)
+
+            if (discardVersionsSmallerThanInstalled)
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}", item.Version,
-                    item.ShortVersion, item.Title, installed);
-                return MatchingResult.VersionIsOlderThanCurrent;
+                // filter smaller versions
+                if (new Version(item.Version).CompareTo(installed) <= 0)
+                {
+                    _logWriter.PrintMessage(
+                        "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
+                        item.Version,
+                        item.ShortVersion, item.Title, installed);
+                    return MatchingResult.VersionIsOlderThanCurrent;
+                }
             }
+
             // filter versions without signature if we need signatures. But accept version without downloads.
             if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
             {
@@ -256,7 +264,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             Version installed = new Version(_config.InstalledVersion);
             List<AppCastItem> appCastItems = Items;
-
+            bool shouldFilterOutSmallerVersions = true;
+            
             if (AppCastFilter != null)
             {
                 var result = AppCastFilter.GetFilteredAppCastItems(installed, Items);
@@ -264,12 +273,21 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     if (result.ForceInstallOfLatestInFilteredList)
                     {
-                        // if there is just a single version in the FilterResult; we'll fake up a version number - so that the
-                        // NetSparkle code will request a re-install of that version (and it'll shown only a single .md file in the changelog)
-                        if (result.FilteredAppCastItems.Count == 1)
-                            installed = new Version("0.0.0");
-                        else if (result.FilteredAppCastItems.Count > 1)
-                            installed = new Version(result.FilteredAppCastItems[1].Version);
+                        // 'installed' represents just the version that is presently on the computer
+                        //
+                        // when ForceInstallOfLatestInFilteredList is true; the intent is as the name
+                        // suggests - to force the re-installation of the existing version. 
+                        //
+                        // the IsMatchingUpdate() method used below will by default filter out versions that
+                        // are lower or equal to the 'installed' version value.
+                        //
+                        // therefore, when forcing an update the idea is to override this behaviour - so we set
+                        // the shouldFilterOutSmallerVersions to false, indicating to the IsMatchingUpdate method that
+                        // it must not filter out items based on the 'installed' parameter.
+                        //
+                        // IsMatchingUpdate still serves the valuable task of filtering out the platform irrelevant items.
+
+                        shouldFilterOutSmallerVersions = false;
                     }
 
                     appCastItems = result.FilteredAppCastItems;
@@ -281,7 +299,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
             return appCastItems.Where((item) =>
             {
-                if(IsMatchingUpdate(installed, signatureNeeded, item) == MatchingResult.Valid)
+                if(IsMatchingUpdate(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == MatchingResult.Valid)
                 {
                     // accept everything else
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
