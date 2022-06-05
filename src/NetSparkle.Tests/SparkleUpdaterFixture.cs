@@ -4,6 +4,9 @@ using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 using Xunit;
+#if (NETSTANDARD || NET6)
+using System.Runtime.InteropServices;
+#endif
 
 namespace NetSparkleUnitTests
 {
@@ -35,7 +38,18 @@ namespace NetSparkleUnitTests
 
         public string GetSimpleXmlAppCastData()
         {
-            return ReadXmlFile("appcast_simple.xml");
+            var data = ReadXmlFile("appcast_simple.xml");
+#if NETCORE
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                data = data.Replace("sparkle:os=\"windows\"", "sparkle:os=\"mac\"");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                data = data.Replace("sparkle:os=\"windows\"", "sparkle:os=\"linux\"");
+            }
+#endif
+            return data;
         }
 
         public void Dispose()
@@ -49,7 +63,18 @@ namespace NetSparkleUnitTests
             // 2.0
             // 1.3
             //
-            return ReadXmlFile("appcast_with_beta_items.xml");
+            var data = ReadXmlFile("appcast_with_beta_items.xml");
+#if NETCORE
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                data = data.Replace("sparkle:os=\"windows\"", "sparkle:os=\"mac\"");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                data = data.Replace("sparkle:os=\"windows\"", "sparkle:os=\"linux\"");
+            }
+#endif
+            return data;
         }
 
         private static string ReadXmlFile(string localFileName)
