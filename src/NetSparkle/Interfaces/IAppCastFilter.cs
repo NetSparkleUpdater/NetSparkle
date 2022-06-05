@@ -28,7 +28,7 @@ namespace NetSparkleUpdater.Interfaces
         /// This code shows how to do no filtering at all, by returning false for the first parameter of the
         /// FilterResult object.  
         /// <code>
-        /// if(noFilteringRequired)
+        /// if (noFilteringRequired)
         /// {
         ///     return new FilterResult(false);
         /// }
@@ -48,13 +48,13 @@ namespace NetSparkleUpdater.Interfaces
         /// }
         /// </code> 
         /// </example>
-        ///  <remarks>You must always return a list of filtered items - if null is returned then the whole method is treated as a no-op</remarks>
-        ///  <remarks>This methods being called on a background thread - do not access UI objects directly from within this method</remarks>
-        ///  <param name="installed">The currently detected version of this application</param>
-        ///  <param name="items">The current set of AppCastItem objects</param>
-        ///  <returns>A FilterResult instance.  The bool indicates whether or not NetSparkle should force install the latest
-        ///  version in the resulting app cast list, and the List&lt;AppCastItem&gt; is the replacement list of
-        ///  items that NetSparkle should use for the rest of the update process</returns>
+        /// <remarks>You must always return a list of filtered items - if null is returned then the whole method is treated as a no-op</remarks>
+        /// <remarks>This methods being called on a background thread - do not access UI objects directly from within this method</remarks>
+        /// <param name="installed">The currently detected version of this application</param>
+        /// <param name="items">The current set of AppCastItem objects</param>
+        /// <returns>A FilterResult instance. The bool indicates whether or not NetSparkle should force install the latest
+        /// version in the resulting app cast list, and the List&lt;AppCastItem&gt; is the replacement list of
+        /// items that NetSparkle should use for the rest of the update process</returns>
         FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items);
     }
 }

@@ -20,11 +20,6 @@ namespace NetSparkleUpdater.AppCastHandlers
         private ISignatureVerifier _signatureVerifier;
         private ILogger _logWriter;
 
-        /// <summary>
-        /// The optional filtering component.
-        /// </summary>
-        public IAppCastFilter AppCastFilter { get; set; }
-
         private IAppCastDataDownloader _dataDownloader;
 
         /// <summary>
@@ -47,6 +42,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// file. Defaults to "signature".
         /// </summary>
         public string SignatureFileExtension { get; set; }
+
+        /// <summary>
+        /// The optional filtering component.
+        /// </summary>
+        public IAppCastFilter AppCastFilter { get; set; }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
@@ -316,12 +316,12 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
 
-            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
+            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
             return appCastItems.Where((item) =>
             {
                 if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
-                    // accept everything else
+                    // accept all valid items
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
                         item.ShortVersion, item.DownloadLink);
                     return true;
