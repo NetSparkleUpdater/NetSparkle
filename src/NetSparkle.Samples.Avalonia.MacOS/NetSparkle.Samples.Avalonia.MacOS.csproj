@@ -26,8 +26,8 @@
     <EmbeddedResource Include="NetSparkle_DSA.pub" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.14" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
+    <PackageReference Include="Avalonia" Version="0.10.15" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.15" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />

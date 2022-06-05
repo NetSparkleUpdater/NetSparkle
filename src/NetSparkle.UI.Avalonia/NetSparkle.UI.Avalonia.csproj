@@ -79,12 +79,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.14" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.14" />
+    <PackageReference Include="Avalonia" Version="0.10.15" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.15" />
     <PackageReference Include="Avalonia.HtmlRenderer" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.14" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.15" />
   </ItemGroup>
 
   <ItemGroup>
