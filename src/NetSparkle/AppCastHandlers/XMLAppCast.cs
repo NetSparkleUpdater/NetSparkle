@@ -159,6 +159,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Parse the app cast XML string into a list of <see cref="AppCastItem"/> objects.
         /// When complete, the Items list should contain the parsed information
         /// as <see cref="AppCastItem"/> objects.
+        /// NOTE TO SELF: In a new version of NetSparkle with breaking changes, for more flexibility, 
+        /// this should probably return the list of parsed items rather than setting a member value.
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
         protected virtual void ParseAppCast(string appCast)
@@ -186,27 +188,24 @@ namespace NetSparkleUpdater.AppCastHandlers
             Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         }
 
+
         /// <summary>
-        /// Check if an AppCastItem update is valid, according to platform, signature requirements and current installed version number.
-        /// In the case where your app implements a downgrade strategy, e.g. when switching from a beta to a 
-        /// stable channel - there has to be a way to tell the update mechanism that you wish to ignore 
-        /// the beta AppCastItem elements, and that the latest stable element should be installed.  
+        /// Check if an AppCastItem update is valid based on operating system. The user's current operating system
+        /// needs to match the operating system of the AppCastItem for the AppCastItem to be valid.
         /// </summary>
-        /// <param name="installed">the currently installed Version</param>
-        /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
-        /// <param name="signatureNeeded">whether or not a signature is required</param>
-        /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
-        /// <returns>FilterItemResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
-        public FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        /// <param name="item">the AppCastItem under consideration</param>
+        /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation;
+        /// FilterItemResult.NotThisPlatform otherwise.</returns>
+        protected FilterItemResult FilterAppCastItemByOS(AppCastItem item)
         {
 #if NETFRAMEWORK
-                // don't allow non-windows updates
-                if (!item.IsWindowsUpdate)
-                {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
-                        item.ShortVersion, item.Title);
-                    return FilterItemResult.NotThisPlatform;
-                }
+            // don't allow non-windows updates
+            if (!item.IsWindowsUpdate)
+            {
+                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
+                    item.ShortVersion, item.Title);
+                return FilterItemResult.NotThisPlatform;
+            }
 #else
             // check operating system and filter out ones that don't match the current
             // operating system
@@ -229,6 +228,27 @@ namespace NetSparkleUpdater.AppCastHandlers
                 return FilterItemResult.NotThisPlatform;
             }
 #endif
+            return FilterItemResult.Valid;
+        }
+
+        /// <summary>
+        /// Check if an AppCastItem update is valid, according to platform, signature requirements and current installed version number.
+        /// In the case where your app implements a downgrade strategy, e.g. when switching from a beta to a 
+        /// stable channel - there has to be a way to tell the update mechanism that you wish to ignore 
+        /// the beta AppCastItem elements, and that the latest stable element should be installed.  
+        /// </summary>
+        /// <param name="installed">the currently installed Version</param>
+        /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
+        /// <param name="signatureNeeded">whether or not a signature is required</param>
+        /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
+        /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation.</returns>
+        public FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        {
+            var osFilterResult = FilterAppCastItemByOS(item);
+            if (osFilterResult != FilterItemResult.Valid)
+            {
+                return osFilterResult;
+            }
 
             if (discardVersionsSmallerThanInstalled)
             {
