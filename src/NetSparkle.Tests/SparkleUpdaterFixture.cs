@@ -4,6 +4,9 @@ using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 using Xunit;
+#if (NETSTANDARD || NET5 || NET6)
+using System.Runtime.InteropServices;
+#endif
 
 namespace NetSparkleUnitTests
 {
@@ -26,20 +29,38 @@ namespace NetSparkleUnitTests
             if (filter != null)
             {
                 XMLAppCast cast = updater.AppCastHandler as XMLAppCast;
-                if(cast != null)
+                if (cast != null)
+                {
                     cast.AppCastFilter = filter;
+                }
             }
 
             return updater;
         }
 
-        public string GetSimpleXmlAppCastData()
-        {
-            return ReadXmlFile("appcast_simple.xml");
-        }
-
         public void Dispose()
         {
+        }
+
+        private string FixOSIfNeeded(string input)
+        {
+#if NETCORE
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                input = input.Replace("sparkle:os=\"windows\"", "sparkle:os=\"mac\"");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                input = input.Replace("sparkle:os=\"windows\"", "sparkle:os=\"linux\"");
+            }
+#endif
+            return input;
+        }
+
+        public string GetSimpleXmlAppCastData()
+        {
+            var data = ReadXmlFile("appcast_simple.xml");
+            return FixOSIfNeeded(data);
         }
 
         public string GetXmlAppCastDataWithBetaItems()
@@ -49,7 +70,8 @@ namespace NetSparkleUnitTests
             // 2.0
             // 1.3
             //
-            return ReadXmlFile("appcast_with_beta_items.xml");
+            var data = ReadXmlFile("appcast_with_beta_items.xml");
+            return FixOSIfNeeded(data);
         }
 
         private static string ReadXmlFile(string localFileName)

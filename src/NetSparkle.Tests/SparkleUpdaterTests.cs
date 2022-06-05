@@ -48,7 +48,8 @@ namespace NetSparkleUnitTests
         [InlineData(false, false, "1.9", "2.1", UpdateStatus.UpdateAvailable)]
         public async void TestFilteringAndForceInstalls(bool removeBetaItems, bool alwaysInstallLatest, string currentInstalledVersion, string expectedVersionToInstall, UpdateStatus expectedStatus)
         {
-            SparkleUpdater updater = _fixture.CreateUpdater(_fixture.GetXmlAppCastDataWithBetaItems(), currentInstalledVersion, this);
+            var appCast = _fixture.GetXmlAppCastDataWithBetaItems();
+            SparkleUpdater updater = _fixture.CreateUpdater(appCast, currentInstalledVersion, this);
 
             // engage filtering... 
             this._filterOutBetaAppCastItems = removeBetaItems;

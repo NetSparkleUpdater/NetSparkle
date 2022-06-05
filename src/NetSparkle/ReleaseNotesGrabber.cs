@@ -55,6 +55,12 @@ namespace NetSparkleUpdater
         public string AdditionalHeaderHTML { get; set; }
 
         /// <summary>
+        /// The DateTime.ToString() format used when formatting dates to show in the release notes
+        /// header. NetSparkle is not responsible for what happens if you send a bad format! :)
+        /// </summary>
+        public string DateFormat { get; set; }
+
+        /// <summary>
         /// The initial HTML to use for the changelog. This is everything before the 
         /// body tag and includes the html and head elements/tags. This ends with an
         /// open body tag.
@@ -76,6 +82,7 @@ namespace NetSparkleUpdater
         /// <param name="sparkle">Sparkle updater being used</param>
         public ReleaseNotesGrabber(string releaseNotesTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
         {
+            DateFormat = "D";
             if (string.IsNullOrWhiteSpace(htmlHeadAddition))
             {
                 htmlHeadAddition = @"
@@ -134,7 +141,7 @@ namespace NetSparkleUpdater
                 var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
                                         castItem.Version,
-                                        castItem.PublicationDate.ToString("D"), // was dd MMM yyyy
+                                        castItem.PublicationDate.ToString(DateFormat), // was dd MMM yyyy
                                         releaseNotes,
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
                 hasAddedFirstItem = true; // after first item added, need to add line breaks between release note items

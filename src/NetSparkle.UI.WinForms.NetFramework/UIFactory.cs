@@ -45,11 +45,17 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <inheritdoc/>
         public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
+        /// <summary>
+        /// The DateTime.ToString() format used when formatting dates to show in the release notes
+        /// header. NetSparkle is not responsible for what happens if you send a bad format! :)
+        /// </summary>
+        public string ReleaseNotesDateTimeFormat { get; set; } = "D";
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded,
-                ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML);
+                ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();

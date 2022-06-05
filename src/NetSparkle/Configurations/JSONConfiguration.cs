@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-#if (NETSTANDARD || NET6)
+#if (NETSTANDARD || NET5 || NET6)
 using System.Text.Json;
 #endif
 
@@ -138,7 +138,7 @@ namespace NetSparkleUpdater.Configurations
                 try
                 {
                     string json = File.ReadAllText(saveLocation);
-#if (NETSTANDARD || NET6)
+#if (NETSTANDARD || NET5 || NET6)
                     var data = JsonSerializer.Deserialize<SavedConfigurationData>(json);
 #else
                     var data = JsonConvert.DeserializeObject<SavedConfigurationData>(json);
@@ -201,7 +201,7 @@ namespace NetSparkleUpdater.Configurations
             };
             LastConfigUpdate = savedConfig.LastConfigUpdate;
 
-#if (NETSTANDARD || NET6)
+#if (NETSTANDARD || NET5 || NET6)
             string json = JsonSerializer.Serialize(savedConfig);
 #else
             string json = JsonConvert.SerializeObject(savedConfig);
