@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6;netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>net6;net5;netstandard2.0;net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
     <Version>2.1.0-preview20220509001</Version>
@@ -45,6 +45,16 @@
     <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
     <DefineConstants>DEBUG;TRACE;NETCORE;NETSTANDARD</DefineConstants>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5|AnyCPU'">
+		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>TRACE;NETCORE;NET5</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5|AnyCPU'">
+		<OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>DEBUG;TRACE;NETCORE;NET5</DefineConstants>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6|AnyCPU'">
 		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
 		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
@@ -68,14 +78,19 @@
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+	  <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
-	<PackageReference Include="System.Text.Json" Version="6.0.3" />
+	  <PackageReference Include="System.Text.Json" Version="6.0.3" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
+    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6'">
-	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-	<PackageReference Include="NSec.Cryptography" Version="22.4.0" />
-	<PackageReference Include="System.Text.Json" Version="6.0.3" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
   <ItemGroup>
 	<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
