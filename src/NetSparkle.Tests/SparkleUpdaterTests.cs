@@ -6,9 +6,6 @@ using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using Xunit;
-#if (NETSTANDARD || NET6)
-using System.Runtime.InteropServices;
-#endif
 
 namespace NetSparkleUnitTests
 {
