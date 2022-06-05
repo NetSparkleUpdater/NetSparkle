@@ -196,14 +196,15 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <param name="isUpdateAlreadyDownloaded">Whether or not the update is already downloaded ot the user's computer</param>
         /// <param name="releaseNotesHTMLTemplate">The HTML string template to show in the release notes</param>
         /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
+        /// <param name="releaseNotesDateFormat">Date format for release notes</param>
         public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
         {
             _sparkle = sparkle;
             _updates = items;
             var defaultReleaseNotesAvaloniaTemplate = 
                 "<div style=\"border: #ccc 1px solid;\">" + 
-                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px;\">" + 
+                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px; padding-bottom: 0;\">" + 
                         "{0} ({1})" +
                 "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
             if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML)) {
@@ -220,7 +221,10 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             if (string.IsNullOrWhiteSpace(releaseNotesHTMLTemplate)) {
                 releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
             }
-            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);
+            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+            {
+                DateFormat = releaseNotesDateFormat
+            };
 
             AppCastItem item = items.FirstOrDefault();
 

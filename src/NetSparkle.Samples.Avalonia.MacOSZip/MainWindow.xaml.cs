@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             this.AttachDevTools();
 #endif
             // set icon in project properties!
-            var zipAppcast = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-zip/appcast.xml";
+            //var zipAppcast = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-zip/appcast.xml";
             var tarAppcast = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-tar/appcast.xml";
             var appcastToUse = tarAppcast; // can swap to zipAppcast when testing
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;

@@ -61,6 +61,12 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <inheritdoc/>
         public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
+        /// <summary>
+        /// The DateTime.ToString() format used when formatting dates to show in the release notes
+        /// header. NetSparkle is not responsible for what happens if you send a bad format! :)
+        /// </summary>
+        public string ReleaseNotesDateTimeFormat { get; set; } = "D";
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -81,7 +87,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 (window as IUpdateAvailable).HideRemindMeLaterButton();
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML);
+            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
             return window;
         }
 

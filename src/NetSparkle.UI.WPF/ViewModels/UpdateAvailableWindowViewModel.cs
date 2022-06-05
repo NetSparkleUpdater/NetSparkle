@@ -196,12 +196,16 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         /// <param name="isUpdateAlreadyDownloaded">Whether or not the update is already downloaded ot the user's computer</param>
         /// <param name="releaseNotesHTMLTemplate">The HTML string template to show for the release notes</param>
         /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
+        /// <param name="releaseNotesDateFormat">Date format for release notes</param>
         public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
         {
             _sparkle = sparkle;
             _updates = items;
-            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle);
+            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+            {
+                DateFormat = releaseNotesDateFormat
+            };
 
             AppCastItem item = items.FirstOrDefault();
 
