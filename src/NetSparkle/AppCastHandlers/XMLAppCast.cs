@@ -86,7 +86,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// Download castUrl resource and parse it
         /// </summary>
-        public bool DownloadAndParse()
+        public virtual bool DownloadAndParse()
         {
             try
             {
