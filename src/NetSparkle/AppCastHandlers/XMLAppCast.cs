@@ -196,8 +196,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
         /// <param name="signatureNeeded">whether or not a signature is required</param>
         /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
-        /// <returns>MatchingResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
-        public MatchingResult IsMatchingUpdate(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        /// <returns>FilterItemResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
+        public FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
         {
 #if NETFRAMEWORK
                 // don't allow non-windows updates
@@ -205,7 +205,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
                         item.ShortVersion, item.Title);
-                    return MatchingResult.NotThisPlatform;
+                    return FilterItemResult.NotThisPlatform;
                 }
 #else
             // check operating system and filter out ones that don't match the current
@@ -214,19 +214,19 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version,
                     item.ShortVersion, item.Title);
-                return MatchingResult.NotThisPlatform;
+                return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
             {
                 _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
                     item.ShortVersion, item.Title);
-                return MatchingResult.NotThisPlatform;
+                return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
             {
                 _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
                     item.ShortVersion, item.Title);
-                return MatchingResult.NotThisPlatform;
+                return FilterItemResult.NotThisPlatform;
             }
 #endif
 
@@ -239,7 +239,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                         "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
                         item.Version,
                         item.ShortVersion, item.Title, installed);
-                    return MatchingResult.VersionIsOlderThanCurrent;
+                    return FilterItemResult.VersionIsOlderThanCurrent;
                 }
             }
 
@@ -249,10 +249,10 @@ namespace NetSparkleUpdater.AppCastHandlers
                 _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
                     "the item has no signature yet has a download link of {3}", item.Version,
                     item.ShortVersion, item.Title, item.DownloadLink);
-                return MatchingResult.SignatureIsMissing;
+                return FilterItemResult.SignatureIsMissing;
             }
 
-            return MatchingResult.Valid;
+            return FilterItemResult.Valid;
         }
 
         /// <summary>
@@ -278,14 +278,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                         // when ForceInstallOfLatestInFilteredList is true; the intent is as the name
                         // suggests - to force the re-installation of the existing version. 
                         //
-                        // the IsMatchingUpdate() method used below will by default filter out versions that
+                        // the FilterAppCastItem() method used below will by default filter out versions that
                         // are lower or equal to the 'installed' version value.
                         //
                         // therefore, when forcing an update the idea is to override this behaviour - so we set
-                        // the shouldFilterOutSmallerVersions to false, indicating to the IsMatchingUpdate method that
+                        // the shouldFilterOutSmallerVersions to false, indicating to the FilterAppCastItem method that
                         // it must not filter out items based on the 'installed' parameter.
                         //
-                        // IsMatchingUpdate still serves the valuable task of filtering out the platform irrelevant items.
+                        // FilterAppCastItem still serves the valuable task of filtering out the platform irrelevant items.
 
                         shouldFilterOutSmallerVersions = false;
                     }
@@ -299,15 +299,13 @@ namespace NetSparkleUpdater.AppCastHandlers
             _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
             return appCastItems.Where((item) =>
             {
-                if(IsMatchingUpdate(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == MatchingResult.Valid)
+                if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
                     // accept everything else
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
                         item.ShortVersion, item.DownloadLink);
-
                     return true;
                 }
-
                 return false;
             }).ToList();
         }

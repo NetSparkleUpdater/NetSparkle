@@ -3,11 +3,11 @@
 namespace NetSparkleUpdater.Enums
 {
     /// <summary>
-    /// Provides the return values for the GetAvailableUpdates call on the IAppCastHandler.  When an appcast is downloaded,
+    /// Provides the return values for the GetAvailableUpdates call on the IAppCastHandler. When an appcast is downloaded,
     /// the IAppCastHandler will work out which AppCastItem instances match criteria for an update.  
     /// </summary>
     /// <seealso cref="IAppCastHandler.GetAvailableUpdates"/>
-    public enum MatchingResult
+    public enum FilterItemResult
     {
         /// <summary>
         /// Indicates that the AppCastItem is a validate candidate for installation.
@@ -24,6 +24,11 @@ namespace NetSparkleUpdater.Enums
         /// <summary>
         /// A signature is required to validate the item - but it's missing from the AppCastItem
         /// </summary>
-        SignatureIsMissing = 3
+        SignatureIsMissing = 3,
+        /// <summary>
+        /// Some other issue is going on with this AppCastItem that causes us not to want to use it.
+        /// Use this FilterItemResult if it doens't fit into one of the other categories.
+        /// </summary>
+        SomeOtherProblem = 4,
     }
 }
