@@ -1,7 +1,9 @@
-﻿using NetSparkleUpdater.Configurations;
+﻿using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NetSparkleUpdater.Enums;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -35,7 +37,7 @@ namespace NetSparkleUpdater.Interfaces
         /// If this function is successful, <see cref="SparkleUpdater"/> will call <see cref="GetAvailableUpdates"/>
         /// to get the <see cref="AppCastItem"/> information.
         /// Note that you must handle your own exceptions if they occur. Otherwise, <see cref="SparkleUpdater"/>
-        /// will act as though the appc ast failed to download.
+        /// will act as though the appcast failed to download.
         /// </summary>
         /// <returns>true if downloading and parsing succeeded; false otherwise</returns>
         bool DownloadAndParse();

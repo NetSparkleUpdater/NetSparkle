@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace NetSparkleUpdater.AppCastHandlers
 {
     /// <summary>
-    /// An XML-based appcast document downloader and handler
+    /// An XML-based app cast document downloader and handler
     /// </summary>
     public class XMLAppCast : IAppCastHandler
     {
@@ -19,6 +19,11 @@ namespace NetSparkleUpdater.AppCastHandlers
 
         private ISignatureVerifier _signatureVerifier;
         private ILogger _logWriter;
+
+        /// <summary>
+        /// The optional filtering component.
+        /// </summary>
+        public IAppCastFilter AppCastFilter { get; set; }
 
         private IAppCastDataDownloader _dataDownloader;
 
@@ -47,7 +52,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
-
+        
         /// <summary>
         /// Create a new object with an empty list of <seealso cref="AppCastItem"/> items
         /// </summary>
@@ -182,6 +187,75 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
+        /// Check if an AppCastItem update is valid, according to platform, signature requirements and current installed version number.
+        /// In the case where your app implements a downgrade strategy, e.g. when switching from a beta to a 
+        /// stable channel - there has to be a way to tell the update mechanism that you wish to ignore 
+        /// the beta AppCastItem elements, and that the latest stable element should be installed.  
+        /// </summary>
+        /// <param name="installed">the currently installed Version</param>
+        /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
+        /// <param name="signatureNeeded">whether or not a signature is required</param>
+        /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
+        /// <returns>MatchingResult.MatchOk if the AppCastItem should be considered as a valid target for installation.</returns>
+        public MatchingResult IsMatchingUpdate(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        {
+#if NETFRAMEWORK
+                // don't allow non-windows updates
+                if (!item.IsWindowsUpdate)
+                {
+                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
+                        item.ShortVersion, item.Title);
+                    return MatchingResult.NotThisPlatform;
+                }
+#else
+            // check operating system and filter out ones that don't match the current
+            // operating system
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
+            {
+                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version,
+                    item.ShortVersion, item.Title);
+                return MatchingResult.NotThisPlatform;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
+            {
+                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
+                    item.ShortVersion, item.Title);
+                return MatchingResult.NotThisPlatform;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
+            {
+                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
+                    item.ShortVersion, item.Title);
+                return MatchingResult.NotThisPlatform;
+            }
+#endif
+
+            if (discardVersionsSmallerThanInstalled)
+            {
+                // filter smaller versions
+                if (new Version(item.Version).CompareTo(installed) <= 0)
+                {
+                    _logWriter.PrintMessage(
+                        "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
+                        item.Version,
+                        item.ShortVersion, item.Title, installed);
+                    return MatchingResult.VersionIsOlderThanCurrent;
+                }
+            }
+
+            // filter versions without signature if we need signatures. But accept version without downloads.
+            if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
+            {
+                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
+                    "the item has no signature yet has a download link of {3}", item.Version,
+                    item.ShortVersion, item.Title, item.DownloadLink);
+                return MatchingResult.SignatureIsMissing;
+            }
+
+            return MatchingResult.Valid;
+        }
+
+        /// <summary>
         /// Returns sorted list of updates between current installed version and latest version in <see cref="Items"/>. 
         /// Currently installed version is NOT included in the output.
         /// </summary>
@@ -189,59 +263,52 @@ namespace NetSparkleUpdater.AppCastHandlers
         public virtual List<AppCastItem> GetAvailableUpdates()
         {
             Version installed = new Version(_config.InstalledVersion);
-            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
-            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
-            return Items.Where((item) =>
+            List<AppCastItem> appCastItems = Items;
+            bool shouldFilterOutSmallerVersions = true;
+            
+            if (AppCastFilter != null)
             {
-#if NETFRAMEWORK
-                // don't allow non-windows updates
-                if (!item.IsWindowsUpdate)
+                var result = AppCastFilter.GetFilteredAppCastItems(installed, Items);
+                if (result.FilteredAppCastItems != null)
                 {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
-                        item.ShortVersion, item.Title);
-                    return false;
+                    if (result.ForceInstallOfLatestInFilteredList)
+                    {
+                        // 'installed' represents just the version that is presently on the computer
+                        //
+                        // when ForceInstallOfLatestInFilteredList is true; the intent is as the name
+                        // suggests - to force the re-installation of the existing version. 
+                        //
+                        // the IsMatchingUpdate() method used below will by default filter out versions that
+                        // are lower or equal to the 'installed' version value.
+                        //
+                        // therefore, when forcing an update the idea is to override this behaviour - so we set
+                        // the shouldFilterOutSmallerVersions to false, indicating to the IsMatchingUpdate method that
+                        // it must not filter out items based on the 'installed' parameter.
+                        //
+                        // IsMatchingUpdate still serves the valuable task of filtering out the platform irrelevant items.
+
+                        shouldFilterOutSmallerVersions = false;
+                    }
+
+                    appCastItems = result.FilteredAppCastItems;
                 }
-#else
-                // check operating system and filter out ones that don't match the current
-                // operating system
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
+            }
+
+            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
+
+            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}", installed, signatureNeeded);
+            return appCastItems.Where((item) =>
+            {
+                if(IsMatchingUpdate(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == MatchingResult.Valid)
                 {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
-                        item.ShortVersion, item.Title);
-                    return false;
+                    // accept everything else
+                    _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
+                        item.ShortVersion, item.DownloadLink);
+
+                    return true;
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
-                {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
-                        item.ShortVersion, item.Title);
-                    return false;
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
-                {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
-                        item.ShortVersion, item.Title);
-                    return false;
-                }
-#endif
-                // filter smaller versions
-                if (new Version(item.Version).CompareTo(installed) <= 0)
-                {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}", item.Version,
-                        item.ShortVersion, item.Title, installed);
-                    return false;
-                }
-                // filter versions without signature if we need signatures. But accept version without downloads.
-                if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
-                {
-                    _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
-                        "the item has no signature yet has a download link of {3}", item.Version,
-                        item.ShortVersion, item.Title, item.DownloadLink);
-                    return false;
-                }
-                // accept everything else
-                _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
-                    item.ShortVersion, item.DownloadLink);
-                return true;
+
+                return false;
             }).ToList();
         }
 

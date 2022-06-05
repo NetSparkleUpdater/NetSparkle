@@ -21,7 +21,7 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         string AssemblyCompany { get; }
         /// <summary>
-        /// The copyright for the application (e.g. © 2020)
+        /// The copyright for the application (e.g. Â© 2020)
         /// </summary>
         string AssemblyCopyright { get; }
         /// <summary>

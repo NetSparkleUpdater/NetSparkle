@@ -109,6 +109,7 @@ namespace NetSparkleUpdater
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
+            
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
             // Syncronization Context
