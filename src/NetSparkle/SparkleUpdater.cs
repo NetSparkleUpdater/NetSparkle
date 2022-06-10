@@ -917,7 +917,10 @@ namespace NetSparkleUpdater
                     Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                     LogWriter.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                     UpdateDownloader.StartFileDownload(url, _downloadTempFileName);
-                    CallFuncConsideringUIThreads(() => { DownloadStarted?.Invoke(item, _downloadTempFileName); });
+                    CallFuncConsideringUIThreads(() => 
+                    { 
+                        DownloadStarted?.Invoke(item, _downloadTempFileName);
+                    });
                 };
                 CreateAndShowProgressWindow(item, false);
             }
@@ -966,62 +969,60 @@ namespace NetSparkleUpdater
                 UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
                 ProgressWindow = null;
             }
+            Action<object> showSparkleDownloadUI = (state) => {};
             if (ProgressWindow == null && UIFactory != null && !IsDownloadingSilently())
             {
-                if (!IsDownloadingSilently() && ProgressWindow == null)
+                // create the form
+                showSparkleDownloadUI = (state) =>
                 {
-                    // create the form
-                    Action<object> showSparkleDownloadUI = (state) =>
+                    ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
+                    if (ProgressWindow != null)
                     {
-                        ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
-                        if (ProgressWindow != null)
+                        ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
+                        UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
+                        if (shouldShowAsDownloadedAlready)
                         {
-                            ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
-                            UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-                            if (shouldShowAsDownloadedAlready)
+                            ProgressWindow?.FinishedDownloadingFile(true);
+                            _syncContext.Post((state2) =>
                             {
-                                ProgressWindow?.FinishedDownloadingFile(true);
-                                _syncContext.Post((state2) => 
-                                {
-                                    OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
-                                    _actionToRunOnProgressWindowShown?.Invoke();
-                                    _actionToRunOnProgressWindowShown = null;
-                                }, null);
-                            }
-                        }
-                    };
-                    Thread thread = new Thread(() =>
-                    {
-                        // call action
-                        if (ShowsUIOnMainThread)
-                        {
-                            _syncContext.Post((state) =>
-                            {
-                                showSparkleDownloadUI(null);
+                                OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
                                 _actionToRunOnProgressWindowShown?.Invoke();
                                 _actionToRunOnProgressWindowShown = null;
-                                ProgressWindow?.Show(ShowsUIOnMainThread);
                             }, null);
                         }
-                        else
-                        {
-                            showSparkleDownloadUI(null);
-                            _actionToRunOnProgressWindowShown?.Invoke();
-                            _actionToRunOnProgressWindowShown = null;
-                            ProgressWindow?.Show(ShowsUIOnMainThread);
-                        }
-                    });
-#if NETFRAMEWORK
-                    thread.SetApartmentState(ApartmentState.STA);
-#else
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
                     }
-#endif
-                    thread.Start();
-                }
+                };
             }
+            Thread thread = new Thread(() =>
+            {
+                // call action
+                if (ShowsUIOnMainThread)
+                {
+                    _syncContext.Post((state) =>
+                    {
+                        showSparkleDownloadUI(null);
+                        _actionToRunOnProgressWindowShown?.Invoke();
+                        _actionToRunOnProgressWindowShown = null;
+                        ProgressWindow?.Show(ShowsUIOnMainThread);
+                    }, null);
+                }
+                else
+                {
+                    showSparkleDownloadUI(null);
+                    _actionToRunOnProgressWindowShown?.Invoke();
+                    _actionToRunOnProgressWindowShown = null;
+                    ProgressWindow?.Show(ShowsUIOnMainThread);
+                }
+            });
+#if NETFRAMEWORK
+            thread.SetApartmentState(ApartmentState.STA);
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
+            }
+#endif
+            thread.Start();
         }
 
         private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
@@ -1057,7 +1058,6 @@ namespace NetSparkleUpdater
 
             if (e.Cancelled)
             {
-                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 _hasAttemptedFileRedownload = false;
                 if (File.Exists(_downloadTempFileName))
                 {
@@ -1067,26 +1067,31 @@ namespace NetSparkleUpdater
                     }
                     catch (Exception deleteEx)
                     {
-                        string cleanUpErrorMessage = "Download canceled (Cleanup error): " + deleteEx.Message;
-                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                        CallFuncConsideringUIThreads(() =>
                         {
-                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
-                        }
+                            string cleanUpErrorMessage = "Download canceled (Cleanup error): " + deleteEx.Message;
+                            if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                            {
+                                UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                            }
+                        });
                     }
 
                 }
                 LogWriter.PrintMessage("Download was canceled");
                 string errorMessage = "Download canceled";
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                CallFuncConsideringUIThreads(() =>
                 {
-                    UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
-                }
-                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
+                    {
+                        UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
+                    }
+                    DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                });
                 return;
             }
             if (e.Error != null)
             {
-                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
                 // Clean temp files on error too
                 if (File.Exists(_downloadTempFileName))
                 {
@@ -1097,18 +1102,24 @@ namespace NetSparkleUpdater
                     catch (Exception deleteEx)
                     {
                         string cleanUpErrorMessage = "Error while downloading (Cleanup error): " + deleteEx.Message;
-                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                        CallFuncConsideringUIThreads(() =>
                         {
-                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
-                        }
+                            if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
+                            {
+                                UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                            }
+                        });
                     }
                 }
                 LogWriter.PrintMessage("Error on download finished: {0}", e.Error.Message);
-                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                CallFuncConsideringUIThreads(() =>
                 {
-                    UIFactory?.ShowDownloadErrorMessage(this, e.Error.Message, AppCastUrl);
-                }
-                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(e.Error.Message));
+                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
+                    {
+                        UIFactory?.ShowDownloadErrorMessage(this, e.Error.Message, AppCastUrl);
+                    }
+                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
+                });
                 return;
             }
             // test the item for signature
@@ -1128,7 +1139,10 @@ namespace NetSparkleUpdater
                     {
                         var message = "File not found even though it was reported as downloading successfully!";
                         LogWriter.PrintMessage(message);
-                        DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
+                        CallFuncConsideringUIThreads(() =>
+                        {
+                            DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
+                        });
                     }
 
                     // check the signature
@@ -1140,7 +1154,10 @@ namespace NetSparkleUpdater
                     {
                         LogWriter.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
                         validationRes = ValidationResult.Invalid;
-                        DownloadedFileThrewWhileCheckingSignature?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                        CallFuncConsideringUIThreads(() =>
+                        {
+                            DownloadedFileThrewWhileCheckingSignature?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                        });
                     }
                 }
             }
@@ -1155,10 +1172,10 @@ namespace NetSparkleUpdater
             {
                 LogWriter.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
-                DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
                 CallFuncConsideringUIThreads(() =>
                 {
+                    DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                     if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                     {
                         UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
@@ -1169,12 +1186,15 @@ namespace NetSparkleUpdater
             else
             {
                 LogWriter.PrintMessage("Signature is valid. File successfully downloaded!");
-                DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
-                if (shouldInstallAndRelaunch)
-                {
-                    CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
-                }
+                CallFuncConsideringUIThreads(() => 
+                { 
+                    DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                    bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
+                    if (shouldInstallAndRelaunch)
+                    {
+                        ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
+                    }
+                });
             }
             _itemBeingDownloaded = null;
         }
