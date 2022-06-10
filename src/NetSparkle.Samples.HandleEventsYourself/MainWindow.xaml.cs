@@ -30,6 +30,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
         private SparkleUpdater _sparkle;
         private UpdateInfo _updateInfo;
         private string _downloadPath = null;
+        private bool _hasDownloadFinished = false;
         
         /// <summary>
         /// this isn't hooked up to anything - imagine though that this flag indicates the apps desire to switch
@@ -110,13 +111,17 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
 
             _sparkle.DownloadMadeProgress += _sparkle_DownloadMadeProgress;
 
+            _hasDownloadFinished = false;
             await _sparkle.InitAndBeginDownload(_updateInfo.Updates.First());
             // ok, the file is downloading now
         }
 
         private void _sparkle_DownloadMadeProgress(object sender, AppCastItem item, ItemDownloadProgressEventArgs e)
         {
-            DownloadInfo.Text = string.Format("The download made some progress! {0}% done.", e.ProgressPercentage);
+            if (!_hasDownloadFinished)
+            {
+                DownloadInfo.Text = string.Format("The download made some progress! {0}% done.", e.ProgressPercentage);
+            }
         }
 
         private void _sparkle_DownloadError(AppCastItem item, string path, Exception exception)
@@ -127,12 +132,16 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
 
         private void _sparkle_StartedDownloading(AppCastItem item, string path)
         {
-            DownloadInfo.Text = "Started downloading...";
-            InstallUpdateButton.IsEnabled = false;
+            if (!_hasDownloadFinished)
+            {
+                DownloadInfo.Text = "Started downloading...";
+                InstallUpdateButton.IsEnabled = false;
+            }
         }
 
         private void _sparkle_FinishedDownloading(AppCastItem item, string path)
         {
+            _hasDownloadFinished = true;
             DownloadInfo.Text = "Done downloading!";
             InstallUpdateButton.IsEnabled = true;
             _downloadPath = path;
