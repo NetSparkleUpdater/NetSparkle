@@ -344,12 +344,12 @@ namespace NetSparkleUpdater.AppCastHandlers
             var channel = new XElement("channel");
             channel.Add(new XElement("title", title));
 
-            if (!string.IsNullOrEmpty(link))
+            if (!string.IsNullOrWhiteSpace(link))
             {
                 channel.Add(new XElement("link", link));
             }
 
-            if (!string.IsNullOrEmpty(description))
+            if (!string.IsNullOrWhiteSpace(description))
             {
                 channel.Add(new XElement("description", description));
             }

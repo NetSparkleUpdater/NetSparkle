@@ -28,6 +28,12 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('o', "os", Required = false, HelpText = "Operating System (windows, macos, linux)", Default = "windows")]
         public string OperatingSystem { get; set; }
 
+        [Option("description-tag", Required = false, HelpText = "Text to put in the app cast <description> tag", Default = "Most recent changes with links to updates")]
+        public string AppCastDescription { get; set; }
+
+        [Option("link-tag", Required = false, HelpText = "Text to put in the app cast <link> tag. Should be your app cast download URL if you use this.", Default = "")]
+        public string AppCastLink { get; set; }
+
         [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
         public Uri BaseUrl { get; set; }
 

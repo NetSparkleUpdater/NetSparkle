@@ -86,7 +86,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <inheritdoc/>
         public override void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
         {
-            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle);
+            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink, _opts.AppCastDescription);
             Console.WriteLine("Writing app cast to {0}", path);
             using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
             {

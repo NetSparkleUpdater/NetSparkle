@@ -14,7 +14,7 @@ namespace NetSparkleUpdater.AppCastGenerator
     {
         private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
         
-        private Options _opts;
+        protected Options _opts;
         private SignatureManager _signatureManager;
 
         public AppCastMaker(SignatureManager signatureManager, Options options)
