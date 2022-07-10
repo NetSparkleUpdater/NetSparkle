@@ -191,7 +191,7 @@ namespace NetSparkleUpdater.Downloaders
                     {
                         Method = HttpMethod.Head,
                         RequestUri = new Uri(item.DownloadLink)
-                    }).ConfigureAwait(false))
+                    }, HttpCompletionOption.ResponseHeadersRead, _cts.Token).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode)
                     {
