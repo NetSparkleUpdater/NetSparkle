@@ -596,6 +596,14 @@ namespace NetSparkleUpdater
             if (ProgressWindow != null)
             {
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
+                if (UpdateDownloader != null)
+                {
+                    UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                }
+                if (ProgressWindow is IWindowHandler iwh)
+                {
+                    iwh.WindowHasBeenShown -= ProgressWindowHasBeenShown;
+                }
                 ProgressWindow = null;
             }
         }
@@ -971,6 +979,10 @@ namespace NetSparkleUpdater
                 LogWriter.PrintMessage("Destroying previously created progress window");
                 ProgressWindow.DownloadProcessCompleted -= ProgressWindowCompleted;
                 UpdateDownloader.DownloadProgressChanged -= ProgressWindow.OnDownloadProgressChanged;
+                if (ProgressWindow is IWindowHandler iwh)
+                {
+                    iwh.WindowHasBeenShown -= ProgressWindowHasBeenShown;
+                }
                 ProgressWindow = null;
             }
             Action<object> showSparkleDownloadUI = (state) => {};
@@ -1013,22 +1025,24 @@ namespace NetSparkleUpdater
                     {
                         LogWriter.PrintMessage("Inside _syncContext post to show download UI, progress window");
                         showSparkleDownloadUI(null);
+                        if (ProgressWindow is IWindowHandler iwh)
+                        {
+                            iwh.WindowHasBeenShown += ProgressWindowHasBeenShown;
+                        }
+                        ProgressWindow?.Show(ShowsUIOnMainThread);
                         LogWriter.PrintMessage("About to invoke _actionToRunOnProgressWindowShown; is it null? {0}",
                             _actionToRunOnProgressWindowShown == null ? "Yes" : "No");
-                        _actionToRunOnProgressWindowShown?.Invoke();
-                        _actionToRunOnProgressWindowShown = null;
-                        ProgressWindow?.Show(ShowsUIOnMainThread);
                     }, null);
                 }
                 else // not showing UI on a separate thread
                 {
                     LogWriter.PrintMessage("Showing download UI, progress window (non-_syncContext)");
                     showSparkleDownloadUI(null);
-                    LogWriter.PrintMessage("About to invoke _actionToRunOnProgressWindowShown; is it null? {0}",
-                        _actionToRunOnProgressWindowShown == null ? "Yes" : "No");
-                    _actionToRunOnProgressWindowShown?.Invoke();
-                    _actionToRunOnProgressWindowShown = null;
                     LogWriter.PrintMessage("Showing progress window");
+                    if (ProgressWindow is IWindowHandler iwh)
+                    {
+                        iwh.WindowHasBeenShown += ProgressWindowHasBeenShown;
+                    }
                     ProgressWindow?.Show(ShowsUIOnMainThread); // this blocks on WPF due to Dispatcher.Run()
                     LogWriter.PrintMessage("Done showing progress window");
                 }
@@ -1042,6 +1056,14 @@ namespace NetSparkleUpdater
             }
 #endif
             thread.Start();
+        }
+
+        private void ProgressWindowHasBeenShown(object sender)
+        {
+            LogWriter.PrintMessage("About to invoke _actionToRunOnProgressWindowShown; is it null? {0}",
+                _actionToRunOnProgressWindowShown == null ? "Yes" : "No");
+            _actionToRunOnProgressWindowShown?.Invoke();
+            _actionToRunOnProgressWindowShown = null;
         }
 
         private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)

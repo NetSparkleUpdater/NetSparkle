@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetSparkleUpdater.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace NetSparkleUpdater.UI.WPF.Controls
     /// Base <see cref="Window"/> class for most WPF update windows.
     /// Provides utilities and common code for windows that are shown.
     /// </summary>
-    public class BaseWindow : Window
+    public class BaseWindow : Window, NetSparkleUpdater.Interfaces.IWindowHandler
     {
         /// <summary>
         /// Whether or not this Window is on the main thread or not
@@ -21,6 +22,8 @@ namespace NetSparkleUpdater.UI.WPF.Controls
         /// (so that it is not called more than one time).
         /// </summary>
         protected bool _hasInitiatedShutdown = false;
+
+        public event WindowHandlerShown WindowHasBeenShown;
 
         /// <summary>
         /// Public, default construtor for BaseWindow objects
@@ -64,6 +67,7 @@ namespace NetSparkleUpdater.UI.WPF.Controls
             try
             {
                 Show();
+                WindowHasBeenShown?.Invoke(this);
                 _isOnMainThread = isOnMainThread;
                 if (!isOnMainThread)
                 {
