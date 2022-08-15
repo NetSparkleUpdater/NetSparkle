@@ -84,7 +84,7 @@
     <PackageReference Include="Avalonia.HtmlRenderer" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.16" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
   </ItemGroup>
 
   <ItemGroup>
