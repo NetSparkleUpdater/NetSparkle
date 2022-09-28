@@ -23,7 +23,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
-                UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
+                UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(null /* Icon; this throws null from 0.10.16 to 0.10.18 and don't have time to debug */),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
                 ShowsUIOnMainThread = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
