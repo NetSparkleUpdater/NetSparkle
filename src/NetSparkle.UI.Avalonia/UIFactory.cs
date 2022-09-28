@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.Properties;
@@ -27,6 +28,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            UpdateWindowGridBackgroundBrush = (IBrush)new BrushConverter().ConvertFrom("#EEEEEE");
         }
 
         /// <inheritdoc/>
@@ -62,6 +64,11 @@ namespace NetSparkleUpdater.UI.Avalonia
         public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <summary>
+        /// Brush for the background of the main grid on the update (changelog) window
+        /// </summary>
+        public IBrush UpdateWindowGridBackgroundBrush { get; set; }
+
+        /// <summary>
         /// The DateTime.ToString() format used when formatting dates to show in the release notes
         /// header. NetSparkle is not responsible for what happens if you send a bad format! :)
         /// </summary>
@@ -75,6 +82,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 Icon = _applicationIcon
             };
+            window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();

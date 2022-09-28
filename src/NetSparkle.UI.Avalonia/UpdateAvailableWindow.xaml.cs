@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Html;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using NetSparkleUpdater.Enums;
@@ -63,6 +64,19 @@ namespace NetSparkleUpdater.UI.Avalonia
             _dataContext.ReleaseNotesDisplayer = this;
             _dataContext.UserRespondedHandler = this;
             Closing += UpdateAvailableWindow_Closing;
+        }
+
+        /// <summary>
+        /// Change the main grid's background color. Use new SolidColorBrush(Colors.Transparent) or null to clear.
+        /// </summary>
+        /// <param name="solidColorBrush"></param>
+        public void ChangeMainGridBackgroundColor(IBrush solidColorBrush)
+        {
+            var grid = this.FindControl<Grid>("MainGrid");
+            if (grid != null)
+            {
+                grid.Background = solidColorBrush;
+            }
         }
 
         private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
