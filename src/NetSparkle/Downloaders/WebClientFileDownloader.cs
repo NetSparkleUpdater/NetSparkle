@@ -121,7 +121,7 @@ namespace NetSparkleUpdater.Downloaders
                         long totalLength = response.Content.Headers.ContentLength ?? 0;
                         long totalRead = 0;
                         long readCount = 0;
-                        byte[] buffer = new byte[8192]; // read 4 KB at a time
+                        byte[] buffer = new byte[32*1024]; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
                         UpdateDownloadProgress(0, totalLength);
                         IsDownloading = true;
 
