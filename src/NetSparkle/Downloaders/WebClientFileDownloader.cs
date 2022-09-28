@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +78,33 @@ namespace NetSparkleUpdater.Downloaders
             }
             _logger?.PrintMessage("IUpdateDownloader: Creating new HttpClient...");
             _cts = new CancellationTokenSource();
-            _httpClient = new HttpClient();
+            _httpClient = CreateHttpClient();
+        }
+
+        /// <summary>
+        /// Create the HttpClient used for file downloads
+        /// </summary>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient()
+        {
+            return CreateHttpClient(null);
+        }
+
+        /// <summary>
+        /// Create the HttpClient used for file downloads (with nullable handler)
+        /// </summary>
+        /// <param name="handler">HttpClientHandler for messages</param>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        {
+            if (handler != null)
+            {
+                return new HttpClient(handler);
+            }
+            else
+            {
+                return new HttpClient();
+            }
         }
 
         /// <inheritdoc/>
@@ -181,7 +208,8 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
-            var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+            var httpClient = CreateHttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
             try
             {
                 using (var response =

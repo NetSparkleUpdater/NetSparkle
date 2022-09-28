@@ -268,7 +268,7 @@ namespace NetSparkleUpdater
                     return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, sparkle.AppCastUrl));
                 }
 #else
-                var httpClient = new HttpClient();
+                var httpClient = CreateHttpClient();
                 using (cancellationToken.Register(() => httpClient.CancelPendingRequests()))
                 {
                     return await httpClient.GetStringAsync(link);
@@ -281,5 +281,33 @@ namespace NetSparkleUpdater
                 return "";
             }
         }
+#if !NET452
+
+        /// <summary>
+        /// Create the HttpClient used for file downloads
+        /// </summary>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient()
+        {
+            return CreateHttpClient(null);
+        }
+
+        /// <summary>
+        /// Create the HttpClient used for file downloads (with nullable handler)
+        /// </summary>
+        /// <param name="handler">HttpClientHandler for messages</param>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        {
+            if (handler != null)
+            {
+                return new HttpClient(handler);
+            }
+            else
+            {
+                return new HttpClient();
+            }
+        }
+#endif
     }
 }

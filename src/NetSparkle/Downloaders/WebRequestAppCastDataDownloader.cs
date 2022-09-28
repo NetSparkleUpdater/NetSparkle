@@ -80,7 +80,7 @@ namespace NetSparkleUpdater.Downloaders
 #endif
             }
 
-            var httpClient = new HttpClient(handler);
+            var httpClient = CreateHttpClient(handler);
             try
             {
                 if (!string.IsNullOrWhiteSpace(ExtraJsonData))
@@ -118,6 +118,34 @@ namespace NetSparkleUpdater.Downloaders
             return "";
 #endif
         }
+
+#if !NET452
+        /// <summary>
+        /// Create the HttpClient used for file downloads
+        /// </summary>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient()
+        {
+            return CreateHttpClient(null);
+        }
+
+        /// <summary>
+        /// Create the HttpClient used for file downloads (with nullable handler)
+        /// </summary>
+        /// <param name="handler">HttpClientHandler for messages</param>
+        /// <returns>The client used for file downloads</returns>
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        {
+            if (handler != null)
+            {
+                return new HttpClient(handler);
+            }
+            else
+            {
+                return new HttpClient();
+            }
+        }
+#endif
 
         /// <inheritdoc/>
         public Encoding GetAppCastEncoding()
