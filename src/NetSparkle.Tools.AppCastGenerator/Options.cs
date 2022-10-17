@@ -34,8 +34,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option("link-tag", Required = false, HelpText = "Text to put in the app cast <link> tag. Should be your app cast download URL if you use this.", Default = "")]
         public string AppCastLink { get; set; }
 
-        [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = null)]
-        public Uri BaseUrl { get; set; }
+        [Option('u', "base-url", SetName = "local", Required = false, HelpText = "Base URL for downloads", Default = "")]
+        public string BaseUrl { get; set; }
 
         [Option('l', "change-log-url", SetName = "local", Required = false, HelpText = "Base URL to the location for your changelog files on " +
             "some server for downloading", Default = "")]
