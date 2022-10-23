@@ -187,8 +187,8 @@ namespace NetSparkleUpdater.AppCastGenerator
             var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
             var urlEncodedFileName = Uri.EscapeDataString(binaryFileInfo.Name);
-            var urlToUse = !string.IsNullOrWhiteSpace(_opts.BaseUrl?.ToString())
-                ? (_opts.BaseUrl.ToString().EndsWith("/") ? _opts.BaseUrl.ToString() : _opts.BaseUrl + "/")
+            var urlToUse = !string.IsNullOrWhiteSpace(_opts.BaseUrl)
+                ? (_opts.BaseUrl.EndsWith("/") ? _opts.BaseUrl : _opts.BaseUrl + "/")
                 : "";
             if (_opts.PrefixVersion)
             {

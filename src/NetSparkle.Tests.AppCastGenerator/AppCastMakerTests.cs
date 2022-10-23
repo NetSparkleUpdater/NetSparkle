@@ -123,7 +123,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Extensions = "tar.gz",
                 OutputDirectory = tempDir,
                 OperatingSystem = "windows",
-                BaseUrl = new Uri("https://example.com/downloads"),
+                BaseUrl = "https://example.com/downloads",
                 OverwriteOldItemsInAppcast = false,
                 ReparseExistingAppCast = false,
             };
@@ -400,9 +400,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Extensions = "txt",
                 OutputDirectory = tempDir,
                 OperatingSystem = "windows",
-                BaseUrl = new Uri("https://example.com/downloads"),
+                BaseUrl = "https://example.com/downloads",
                 OverwriteOldItemsInAppcast = false,
-                ReparseExistingAppCast = false,                
+                ReparseExistingAppCast = false,
             };
 
             try
@@ -473,9 +473,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Extensions = "txt",
                 OutputDirectory = tempDir,
                 OperatingSystem = "windows",
-                BaseUrl = new Uri("https://example.com/downloads"),
+                BaseUrl = "https://example.com/downloads",
                 OverwriteOldItemsInAppcast = false,
-                ReparseExistingAppCast = false,                
+                ReparseExistingAppCast = false,
             };
 
             try
@@ -524,9 +524,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Extensions = "txt",
                 OutputDirectory = tempDir,
                 OperatingSystem = "windows",
-                BaseUrl = new Uri("https://example.com/downloads"),
+                BaseUrl = "https://example.com/downloads",
                 OverwriteOldItemsInAppcast = false,
-                ReparseExistingAppCast = false,                
+                ReparseExistingAppCast = false,
             };
 
             try
