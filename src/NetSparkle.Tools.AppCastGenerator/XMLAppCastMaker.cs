@@ -17,7 +17,14 @@ namespace NetSparkleUpdater.AppCastGenerator
     {
         public XMLAppCastMaker(SignatureManager signatureManager, Options options) : base(signatureManager, options)
         {
+            HumanReadableOutput = options.HumanReadableOutput;
         }
+
+        /// <summary>
+        /// True if output should be human readable (indents, newslines). 
+        /// False by default.
+        /// </summary>
+        public bool HumanReadableOutput { get; set; }
 
         /// <inheritdoc/>
         public override string GetAppCastExtension()
@@ -88,7 +95,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
             var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink, _opts.AppCastDescription);
             Console.WriteLine("Writing app cast to {0}", path);
-            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false), Indent = true}))
+            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", 
+                    Encoding = new UTF8Encoding(false), Indent = HumanReadableOutput}))
             {
                 appcastXmlDocument.Save(xmlWriter);
             }

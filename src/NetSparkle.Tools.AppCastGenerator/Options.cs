@@ -85,6 +85,10 @@ namespace NetSparkleUpdater.AppCastGenerator
             "will be the one in your app cast!", Default = false)]
         public bool OverwriteOldItemsInAppcast { get; set; }
 
+        [Option("human-readable", SetName = "local", Required = false, Default = false,
+            HelpText = "If true, makes the output app cast file human readable (newslines, indents)")]
+        public bool HumanReadableOutput { get; set; }
+
         #region Key Generation
 
         [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys", Default = false)]
