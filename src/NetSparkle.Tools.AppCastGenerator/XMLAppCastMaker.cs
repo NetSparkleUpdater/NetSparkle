@@ -88,7 +88,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
             var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink, _opts.AppCastDescription);
             Console.WriteLine("Writing app cast to {0}", path);
-            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false) }))
+            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings { NewLineChars = "\n", Encoding = new UTF8Encoding(false), Indent = true}))
             {
                 appcastXmlDocument.Save(xmlWriter);
             }
