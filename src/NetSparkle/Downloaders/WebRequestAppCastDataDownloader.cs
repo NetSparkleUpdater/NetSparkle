@@ -42,29 +42,6 @@ namespace NetSparkleUpdater.Downloaders
         public string DownloadAndGetAppCastData(string url)
         {
             _appcastUrl = url;
-#if NET452
-            // old implementation, non-HttpClient
-            ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
-            var response = GetWebContentResponse(url);
-            if (response != null)
-            {
-                try
-                {
-                    using (StreamReader reader = new StreamReader(response.GetResponseStream(), GetAppCastEncoding()))
-                    {
-                        var appCastData = reader.ReadToEnd();
-                        ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
-                        return appCastData;
-                    }
-                }
-                catch
-                {
-
-                }
-            }
-            ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
-            return null;
-#else
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             // use HttpClient synchronously: https://stackoverflow.com/a/53529122/3938401
@@ -72,6 +49,7 @@ namespace NetSparkleUpdater.Downloaders
             if (TrustEverySSLConnection)
             {
 #if NETCORE
+                // ServerCertificateCustomValidationCallback not available on .NET 4.5.2
                 handler.ServerCertificateCustomValidationCallback =
                     (httpRequestMessage, cert, cetChain, policyErrors) =>
                     {
@@ -116,10 +94,8 @@ namespace NetSparkleUpdater.Downloaders
             {
             }
             return "";
-#endif
         }
 
-#if !NET452
         /// <summary>
         /// Create the HttpClient used for file downloads
         /// </summary>
@@ -145,7 +121,6 @@ namespace NetSparkleUpdater.Downloaders
                 return new HttpClient();
             }
         }
-#endif
 
         /// <inheritdoc/>
         public Encoding GetAppCastEncoding()
