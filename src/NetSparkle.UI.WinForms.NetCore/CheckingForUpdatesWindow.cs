@@ -74,12 +74,14 @@ namespace NetSparkleUpdater.UI.WinForms
                 {
                     if (!IsDisposed && !Disposing)
                     {
+                        UpdatesUIClosing?.Invoke(this, new EventArgs());
                         Close();
                     }
                 });
             }
             else if (!IsDisposed && !Disposing)
             {
+                UpdatesUIClosing?.Invoke(this, new EventArgs());
                 Close();
             }
         }

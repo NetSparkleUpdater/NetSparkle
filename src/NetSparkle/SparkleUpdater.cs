@@ -1691,6 +1691,11 @@ namespace NetSparkleUpdater
 
         private void CheckingForUpdatesWindow_Closing(object sender, EventArgs e)
         {
+            if (CheckingForUpdatesWindow != null)
+            {
+                // make sure event is removed just in case
+                CheckingForUpdatesWindow.UpdatesUIClosing -= CheckingForUpdatesWindow_Closing;
+            }
             CheckingForUpdatesWindow = null;
         }
 
