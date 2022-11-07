@@ -18,6 +18,9 @@ namespace NetSparkleUpdater.UI.WinForms
         private readonly SparkleUpdater _sparkle;
         private readonly List<AppCastItem> _updates;
         private System.Windows.Forms.Timer _ensureDialogShownTimer;
+        private string _releaseNotesHTMLTemplate;
+        private string _additionalReleaseNotesHeaderHTML;
+        private string _releaseNotesDateFormat;
 
         /// <summary>
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
@@ -54,10 +57,9 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             _sparkle = sparkle;
             _updates = items;
-            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
-            {
-                DateFormat = releaseNotesDateFormat
-            };
+            _releaseNotesHTMLTemplate = releaseNotesHTMLTemplate;
+            _additionalReleaseNotesHeaderHTML = additionalReleaseNotesHeaderHTML;
+            _releaseNotesDateFormat = releaseNotesDateFormat;
 
             InitializeComponent();
 
@@ -118,10 +120,24 @@ namespace NetSparkleUpdater.UI.WinForms
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
 
+            FormClosing += UpdateAvailableWindow_FormClosing;
+        }
+
+        /// <summary>
+        /// Setup the ReleaseNotesGrabber (if needed) and load the release notes
+        /// </summary>
+        public void Initialize()
+        {
+            if (ReleaseNotesGrabber == null)
+            {
+                ReleaseNotesGrabber = new ReleaseNotesGrabber(_releaseNotesHTMLTemplate, _additionalReleaseNotesHeaderHTML, _sparkle)
+                {
+                    DateFormat = _releaseNotesDateFormat
+                };
+            }
             ReleaseNotesBrowser.DocumentText = ReleaseNotesGrabber.GetLoadingText();
             EnsureDialogShown();
-            LoadReleaseNotes(items);
-            FormClosing += UpdateAvailableWindow_FormClosing;
+            LoadReleaseNotes(_updates);
         }
 
         private async void LoadReleaseNotes(List<AppCastItem> items)

@@ -202,10 +202,13 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         {
             _sparkle = sparkle;
             _updates = items;
-            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+            if (ReleaseNotesGrabber == null)
             {
-                DateFormat = releaseNotesDateFormat
-            };
+                ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+                {
+                    DateFormat = releaseNotesDateFormat
+                };
+            }
 
             AppCastItem item = items.FirstOrDefault();
 

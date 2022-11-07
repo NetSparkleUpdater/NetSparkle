@@ -47,6 +47,40 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         }
 
         /// <summary>
+        /// Get the default release notes HTML template. Use this if you're
+        /// creating your own subclass and you want things to be styled the same
+        /// as the default.
+        /// </summary>
+        /// <returns>The default release notes HTML template</returns>
+        public static string GetDefaultReleaseNotesTemplate()
+        {
+            return
+                "<div style=\"border: #ccc 1px solid;\">" +
+                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px; padding-bottom: 0;\">" +
+                        "{0} ({1})" +
+                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
+        }
+
+        /// <summary>
+        /// Get the default additional header HTML CSS. Use this if you're
+        /// creating your own subclass and you want things to be styled the same
+        /// as the default.
+        /// </summary>
+        /// <returns>The default additional header HTML CSS.</returns>
+        public static string GetDefaultAdditionalHeaderHTML()
+        {
+            return @"
+                <style>
+                    body { position: fixed; padding-left: 8px; padding-right: 0px; margin-right: 0; padding-top: 14px; padding-bottom: 0px; } 
+                    h1, h2, h3, h4, h5 { margin: 4px; margin-top: 8px; } 
+                    li, li li { margin: 4px; } 
+                    li, p { font-size: 18px; } 
+                    li p, li ul { margin-top: 0px; margin-bottom: 0px; }
+                    ul { margin-top: 2px; margin-bottom: 2px; }
+                </style>";
+        }
+
+        /// <summary>
         /// Interface object for the object that will be displaying the release notes
         /// </summary>
         public IReleaseNotesDisplayer ReleaseNotesDisplayer { get; set; }
@@ -202,29 +236,22 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             _sparkle = sparkle;
             _updates = items;
-            var defaultReleaseNotesAvaloniaTemplate = 
-                "<div style=\"border: #ccc 1px solid;\">" + 
-                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px; padding-bottom: 0;\">" + 
-                        "{0} ({1})" +
-                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
-            if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML)) {
-                additionalReleaseNotesHeaderHTML = @"
-                <style>
-                    body { position: fixed; padding-left: 8px; padding-right: 0px; margin-right: 0; padding-top: 14px; padding-bottom: 0px; } 
-                    h1, h2, h3, h4, h5 { margin: 4px; margin-top: 8px; } 
-                    li, li li { margin: 4px; } 
-                    li, p { font-size: 18px; } 
-                    li p, li ul { margin-top: 0px; margin-bottom: 0px; }
-                    ul { margin-top: 2px; margin-bottom: 2px; }
-                </style>";
-            }
-            if (string.IsNullOrWhiteSpace(releaseNotesHTMLTemplate)) {
-                releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
-            }
-            ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+            if (ReleaseNotesGrabber != null)
             {
-                DateFormat = releaseNotesDateFormat
-            };
+                var defaultReleaseNotesAvaloniaTemplate = GetDefaultReleaseNotesTemplate();
+                if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML))
+                {
+                    additionalReleaseNotesHeaderHTML = UpdateAvailableWindowViewModel.GetDefaultAdditionalHeaderHTML();
+                }
+                if (string.IsNullOrWhiteSpace(releaseNotesHTMLTemplate))
+                {
+                    releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
+                }
+                ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+                {
+                    DateFormat = releaseNotesDateFormat
+                };
+            }
 
             AppCastItem item = items.FirstOrDefault();
 

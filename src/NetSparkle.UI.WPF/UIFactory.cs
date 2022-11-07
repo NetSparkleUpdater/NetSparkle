@@ -61,6 +61,19 @@ namespace NetSparkleUpdater.UI.WPF
         /// </summary>
         public string ReleaseNotesDateTimeFormat { get; set; } = "D";
 
+        /// <summary>
+        /// <para>
+        /// Easily set / override the ReleaseNotesGrabber used by the <see cref="UpdateAvailableWindowViewModel"/>.
+        /// Note that this will NOT automatically use the <see cref="UIFactory"/> ReleaseNotesHTMLTemplate,
+        /// AdditionalReleaseNotesHeaderHTML, and ReleaseNotesDateTimeFormat that you may have set on 
+        /// the UIFactory - you must set these on this manual override yourself!
+        /// </para>
+        /// <para>
+        /// Use this if you want to easily override the ReleaseNotesGrabber with your own subclass.
+        /// </para>
+        /// </summary>
+        public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -80,6 +93,10 @@ namespace NetSparkleUpdater.UI.WPF
             if (HideRemindMeLaterButton)
             {
                 (window as IUpdateAvailable).HideRemindMeLaterButton();
+            }
+            if (ReleaseNotesGrabberOverride != null)
+            {
+                viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
             viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
             return window;
