@@ -18,8 +18,6 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class LocalFileAppCastDownloader : IAppCastDataDownloader
     {
-        private string _appcastUrl = "";
-
         /// <summary>
         /// Default constructor for the app cast data downloader. Basically
         /// does nothing. :)
