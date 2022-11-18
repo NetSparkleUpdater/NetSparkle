@@ -236,7 +236,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             _sparkle = sparkle;
             _updates = items;
-            if (ReleaseNotesGrabber != null)
+            if (ReleaseNotesGrabber == null)
             {
                 var defaultReleaseNotesAvaloniaTemplate = GetDefaultReleaseNotesTemplate();
                 if (string.IsNullOrWhiteSpace(additionalReleaseNotesHeaderHTML))
