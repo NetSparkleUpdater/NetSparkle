@@ -96,9 +96,9 @@
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
-  <ImportGroup>
+  <ItemGroup>
 	<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
-  </ImportGroup>
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="nuget\**" />
     <EmbeddedResource Remove="nuget\**" />
