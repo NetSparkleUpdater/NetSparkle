@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net6-windows</TargetFrameworks>
+    <TargetFrameworks>net7.0-windows</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
   </PropertyGroup>

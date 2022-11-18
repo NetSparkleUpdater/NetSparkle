@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net6-windows</TargetFrameworks>
+    <TargetFrameworks>net7.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
   </PropertyGroup>

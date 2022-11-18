@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Tools.DSAHelper</AssemblyName>
-    <TargetFrameworks>net6;net5</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6;net5</TargetFrameworks>
     <AssemblyTitle>NetSparkle</AssemblyTitle>
     <Product>NetSparkleUpdater.Tools.DSAHelper</Product>
     <Description>Command line tool 'netsparkle-dsa' to generate and use DSA signatures. WARNING: DSA signatures are insecure. If possible, please use NetSparkleUpdater.Tools.AppCastGenerator instead to use ed25519 signatures. Use in conjunction with the NetSparkleUpdater library.</Description>

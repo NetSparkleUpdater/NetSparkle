@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6;net5;netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6;net5;netstandard2.0;net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
     <Version>2.1.4-preview20221106001</Version>
@@ -65,6 +65,16 @@
 		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET6</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+		<OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>DEBUG;TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
   <!-- .NET 4.5.2 references, compilation flags and build options -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
@@ -81,7 +91,7 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
@@ -93,7 +103,13 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net6'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.6" />
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
+	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+	<PackageReference Include="NSec.Cryptography" Version="22.4.0" />
+	<PackageReference Include="System.Text.Json" Version="7.0.0" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup>

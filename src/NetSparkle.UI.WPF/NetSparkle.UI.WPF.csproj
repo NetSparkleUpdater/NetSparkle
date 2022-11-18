@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
     <UseWPF>true</UseWPF>
-	<TargetFrameworks>net5-windows;net6-windows;netcoreapp3.1;net452</TargetFrameworks>
+	<TargetFrameworks>net7.0-windows;net5-windows;net6-windows;netcoreapp3.1;net452</TargetFrameworks>
     <AssemblyTitle>NetSparkleUpdater.UI.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
     <Copyright>Copyright © 2022</Copyright>
@@ -57,6 +57,9 @@
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6-windows'">
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows'">
 		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 	</ItemGroup>
   <ItemGroup>
