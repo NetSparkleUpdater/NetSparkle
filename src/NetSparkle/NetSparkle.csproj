@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net6;net5;netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6;net5;netstandard2.0;netcoreapp3.1;net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
     <Version>2.2.0</Version>
@@ -35,6 +35,16 @@
     <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
     <DefineConstants>DEBUG;TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
+		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>TRACE;NETCORE;NETFULL;NET31</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
+		<OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>DEBUG;TRACE;NETCORE;NETFULL;NET31</DefineConstants>
+	</PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <OutputPath>..\bin\Release\NetSparkle\</OutputPath>
     <DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
@@ -87,6 +97,12 @@
     <Reference Include="System.Xml.Linq" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	<!--<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />-->
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+	<PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+	<PackageReference Include="System.Text.Json" Version="6.0.6" />
+	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
