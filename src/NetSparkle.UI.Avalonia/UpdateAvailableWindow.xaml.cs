@@ -24,6 +24,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     {
         private UpdateAvailableWindowViewModel _dataContext;
         private RowDefinition _releaseNotesRow;
+        private ScrollViewer _htmlLabelContainer;
 
         private HtmlLabel _htmlLabel;
         private bool _wasResponseSent = false;
@@ -91,6 +92,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             var grid = this.FindControl<Grid>("MainGrid");
             _releaseNotesRow = grid.RowDefinitions[2];
             _htmlLabel = this.FindControl<HtmlLabel>("ChangeNotesHTMLLabel");
+            _htmlLabelContainer = this.FindControl<ScrollViewer>("ChangeNotesScrollViewer");
             //_htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true); // throws on 0.10.0 for some reason?
         }
 
@@ -130,7 +132,9 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 _dataContext.AreReleaseNotesVisible = false;
             }
-            _releaseNotesRow.Height = new GridLength(10);
+            _releaseNotesRow.Height = new GridLength(0);
+            _htmlLabelContainer.IsVisible = false;
+            Height = 225;
         }
 
         void IUpdateAvailable.HideRemindMeLaterButton()

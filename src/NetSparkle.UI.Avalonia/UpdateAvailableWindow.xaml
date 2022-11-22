@@ -8,7 +8,7 @@
                  x:Class="NetSparkleUpdater.UI.Avalonia.UpdateAvailableWindow"
                  Title="Software Update"
                  MinWidth="500"
-                 MinHeight="350"
+                 MinHeight="225"
                  Width="700"
                  Height="600"
                  WindowStartupLocation="CenterScreen">
@@ -47,6 +47,7 @@
         Grid.Column="1"
         Grid.Row="2"
         HorizontalScrollBarVisibility="Disabled"
+        x:Name="ChangeNotesScrollViewer"
         Margin="0,4,0,0">
       <html:HtmlLabel Name="ChangeNotesHTMLLabel"
                       Background="White" />
