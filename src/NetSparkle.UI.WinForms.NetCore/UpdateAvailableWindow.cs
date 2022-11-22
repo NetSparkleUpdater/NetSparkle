@@ -242,12 +242,11 @@ namespace NetSparkleUpdater.UI.WinForms
                 return;
 
             // calc new size
-            Size newSize = new Size(Size.Width, Size.Height - label3.Height - panel1.Height);
+            Size newSize = new Size(Size.Width, Size.Height - label3.Height - ReleaseNotesBrowser.Height);
 
             // remove the no more needed controls            
             label3.Parent.Controls.Remove(label3);
             ReleaseNotesBrowser.Parent.Controls.Remove(ReleaseNotesBrowser);
-            panel1.Parent.Controls.Remove(panel1);
 
             // resize the window
             /*this.MinimumSize = newSize;

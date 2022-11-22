@@ -641,7 +641,7 @@
     <value>6, 8, 6, 8</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing.Primitives">
-    <value>934, 556</value>
+    <value>934, 250</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
