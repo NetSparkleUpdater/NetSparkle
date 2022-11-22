@@ -105,7 +105,8 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 _dataContext.AreReleaseNotesVisible = false;
             }
-            ReleaseNotesRow.Height = new GridLength(10);
+            ReleaseNotesRow.Height = new GridLength(1);
+            Height = 225;
         }
 
         void IUpdateAvailable.HideRemindMeLaterButton()

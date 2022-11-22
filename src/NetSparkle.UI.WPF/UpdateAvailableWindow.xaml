@@ -9,7 +9,7 @@
                  x:Name="UpdateAvailableWindowControl"
                  Title="Software Update"
                  MinWidth="500"
-                 MinHeight="350"
+                 MinHeight="225"
                  Width="700"
                  Height="600"
                  WindowStartupLocation="CenterScreen">
