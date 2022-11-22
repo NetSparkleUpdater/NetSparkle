@@ -100,19 +100,19 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
 	<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-	<PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+	<PackageReference Include="NSec.Cryptography" Version="22.4.0" />
 	<PackageReference Include="System.Text.Json" Version="6.0.6" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+    <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
+    <PackageReference Include="NSec.Cryptography" Version="22.4.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
