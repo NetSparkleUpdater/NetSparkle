@@ -2067,7 +2067,10 @@ namespace NetSparkleUpdater
             } while (goIntoLoop);
 
             // reset the islooping handle
-            _loopingHandle.Reset();
+            if (!_disposed)
+            {
+                _loopingHandle?.Reset();
+            }
         }
 
         /// <summary>
