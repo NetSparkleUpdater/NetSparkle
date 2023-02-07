@@ -106,6 +106,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     IsDownloading = true;
                     var wasCanceled = false;
+                    long totalFileLength = sourceStream.Length;
                     while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                     {
                         await destinationStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
@@ -116,7 +117,7 @@ namespace NetSparkleUpdater.Downloaders
                             break;
                         }
                         totalRead += bytesRead;
-                        UpdateDownloadProgress(totalRead, bytesRead);
+                        UpdateDownloadProgress(totalRead, totalFileLength);
                     }
                     IsDownloading = false;
                     DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, wasCanceled, null));
