@@ -19,7 +19,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// Window that shows while SparkleUpdater is downloading the update
     /// for the user.
     /// </summary>
-    public class DownloadProgressWindow : BaseWindow, IDownloadProgress
+    public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {
         private bool _didCallDownloadProcessCompletedHandler = false;
 

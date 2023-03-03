@@ -3,7 +3,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:cont="clr-namespace:NetSparkleUpdater.UI.Avalonia.Controls"
-                 xmlns:html="clr-namespace:Avalonia.Controls.Html;assembly=Avalonia.HtmlRenderer"
+                 xmlns:html="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
                  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
                  x:Class="NetSparkleUpdater.UI.Avalonia.UpdateAvailableWindow"
                  Title="Software Update"

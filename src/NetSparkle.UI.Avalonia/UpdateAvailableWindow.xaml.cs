@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Html;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -12,6 +11,7 @@ using NetSparkleUpdater.UI.Avalonia.Controls;
 using NetSparkleUpdater.UI.Avalonia.Interfaces;
 using NetSparkleUpdater.UI.Avalonia.ViewModels;
 using System.Linq;
+using TheArtOfDev.HtmlRenderer.Avalonia;
 
 namespace NetSparkleUpdater.UI.Avalonia
 {
@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// 
     /// Window that shows the list of available updates to the user
     /// </summary>
-    public class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
+    public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
     {
         private UpdateAvailableWindowViewModel _dataContext;
         private RowDefinition _releaseNotesRow;
