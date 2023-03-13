@@ -181,7 +181,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
                         {
                             relaunchAfterUpdate = $@"
                                 cd ""{workingDir}""
-                                open ""{executableName}"""; // results in error, No application knows how to open URL
+                                open -a ""{executableName}"""; // results in error, No application knows how to open URL
                         }
                         var output = $@"
                             {waitForFinish}
