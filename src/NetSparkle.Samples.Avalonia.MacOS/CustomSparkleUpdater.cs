@@ -25,10 +25,24 @@ namespace NetSparkleUpdater.Samples.Avalonia
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                if (DoExtensionsMatch(installerExt, ".pkg") ||
-                    DoExtensionsMatch(installerExt, ".dmg"))
+                if (DoExtensionsMatch(installerExt, ".pkg"))
                 {
-                    return "sudo open \"" + downloadFilePath + "\""; // <----- added sudo for testing purposes
+                    return "open \"" + downloadFilePath + "\"";
+                }
+                else if (DoExtensionsMatch(installerExt, ".dmg"))
+                {
+                    return $@"
+                        listing=$(sudo hdiutil attach """ + downloadFilePath + $@""" | grep Volumes)
+                        volume=$(echo ""$listing"" | cut -f 3)
+                        if [ -e ""$volume""/*.app ]; then
+                            sudo cp -rf ""$volume""/*.app """ + RestartExecutablePath + $@"""
+                        elif [ -e ""$volume""/*.pkg ]; then
+                            package=$(ls -1 ""$volume"" | grep .pkg | head -1)
+                            sudo installer -pkg ""$volume""/""$package"" -target /
+                        fi
+                        sudo hdiutil unmount ""$volume""/*.app
+                        #sudo hdiutil detach ""$(echo \""$listing\"" | cut -f 1)""
+                    ";
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -159,15 +173,21 @@ namespace NetSparkleUpdater.Samples.Avalonia
                     else
                     {
                         string installerExt = Path.GetExtension(downloadFilePath);
-                        if (DoExtensionsMatch(installerExt, ".pkg") ||
-                            DoExtensionsMatch(installerExt, ".dmg"))
+                        if (DoExtensionsMatch(installerExt, ".pkg"))
                         {
-                            relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
+                            relaunchAfterUpdate = ""; // relaunching not supported for pkg download
+                        }
+                        else if (DoExtensionsMatch(installerExt, ".dmg"))
+                        {
+                            relaunchAfterUpdate = $@"
+                                cd ""{workingDir}""
+                                open -a ""{executableName}"""; // results in error, No application knows how to open URL
                         }
                         var output = $@"
                             {waitForFinish}
                             {installerCmd}
                             {relaunchAfterUpdate}";
+                        LogWriter.PrintMessage("Installer script is: {0}", output);
                         await write.WriteAsync(output.Replace("\r\n", "\n"));
                     }
                     write.Close();

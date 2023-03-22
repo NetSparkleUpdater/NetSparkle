@@ -3,7 +3,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:cont="clr-namespace:NetSparkleUpdater.UI.Avalonia.Controls"
-                 xmlns:html="clr-namespace:Avalonia.Controls.Html;assembly=Avalonia.HtmlRenderer"
+                 xmlns:html="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
                  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
                  x:Class="NetSparkleUpdater.UI.Avalonia.UpdateAvailableWindow"
                  Title="Software Update"
@@ -12,7 +12,7 @@
                  Width="700"
                  Height="600"
                  WindowStartupLocation="CenterScreen">
-  <Grid Background="#EEEEEE" ColumnDefinitions="Auto, *" Name="MainGrid"
+  <Grid ColumnDefinitions="Auto, *" Name="MainGrid"
         RowDefinitions="Auto, Auto, *, Auto">
     <Image Grid.Row="0"
            Grid.RowSpan="3"
@@ -50,7 +50,8 @@
         x:Name="ChangeNotesScrollViewer"
         Margin="0,4,0,0">
       <html:HtmlLabel Name="ChangeNotesHTMLLabel"
-                      Background="White" />
+                      Background="White"
+                      AutoSizeHeightOnly="True" />
     </ScrollViewer>
     <Button Name="SkipButton"
             IsEnabled="{Binding IsSkipEnabled}"

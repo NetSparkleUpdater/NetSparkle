@@ -4,7 +4,7 @@
     <TargetFrameworks>net7.0;net6;net5;netcoreapp3.1;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.UI.Avalonia</PackageId>
-    <Version>2.2.1</Version>
+    <Version>3.0.0-preview20230303001</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
     <Product>NetSparkleUpdater.UI.Avalonia</Product>
@@ -48,11 +48,19 @@
 		<DefineConstants>TRACE</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
   <ItemGroup>
-    <None Remove="CheckingForUpdatesWindow.xaml" />
-    <None Remove="DownloadProgressWindow.xaml" />
-    <None Remove="MessageNotificationWindow.xaml" />
-    <None Remove="UpdateAvailableWindow.xaml" />
+	  <AvaloniaXaml Include="CheckingForUpdatesWindow.xaml" />
+	  <AvaloniaXaml Include="DownloadProgressWindow.xaml" />
+	  <AvaloniaXaml Include="MessageNotificationWindow.xaml" />
+	  <AvaloniaXaml Include="UpdateAvailableWindow.xaml" />
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -64,27 +72,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="CheckingForUpdatesWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DownloadProgressWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MessageNotificationWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UpdateAvailableWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.18" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
-    <PackageReference Include="Avalonia.HtmlRenderer" Version="0.10.0" />
+    <PackageReference Include="Avalonia" Version="11.0.0-*" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-*" />
+    <PackageReference Include="Avalonia.HtmlRenderer" Version="11.0.0-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,7 +26,9 @@ namespace NetSparkleUpdater.Samples.Avalonia
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(null /* Icon; this throws null from 0.10.16 to 0.10.18 and don't have time to debug */),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
                 ShowsUIOnMainThread = true,
-                LogWriter = new LogWriter(true)
+                LogWriter = new LogWriter(true),
+                RelaunchAfterUpdate = true,
+                RestartExecutableName = "SimpleApp.app",
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)

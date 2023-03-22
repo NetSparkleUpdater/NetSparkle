@@ -13,7 +13,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// 
     /// Window that shows while NetSparkle is checking for updates.
     /// </summary>
-    public class CheckingForUpdatesWindow : Window, ICheckingForUpdates
+    public partial class CheckingForUpdatesWindow : Window, ICheckingForUpdates
     {
         /// <inheritdoc/>
         public event EventHandler UpdatesUIClosing;

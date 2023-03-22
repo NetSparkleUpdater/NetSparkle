@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// Window that shows a single message to the user (usually an error) regarding
     /// a software update.
     /// </summary>
-    public class MessageNotificationWindow : Window
+    public partial class MessageNotificationWindow : Window
     {
         /// <summary>
         /// Construct the notification window for the message notification with the default
