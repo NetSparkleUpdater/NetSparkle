@@ -516,7 +516,7 @@ Yes! Please help us make this library awesome!
 
 ## Requirements
 
-- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5 | .NET 6+
+- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5 | .NET 6 | .NET 7
 
 ## License
 
