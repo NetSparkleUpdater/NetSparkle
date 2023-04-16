@@ -52,6 +52,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Null(AppCastMaker.GetVersionFromName("foo"));
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
+            Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0            .txt")); // whitespace shouldn't matter
             Assert.Equal("0", AppCastMaker.GetVersionFromName("hello 1 .0.txt"));
             Assert.Equal("2.3", AppCastMaker.GetVersionFromName("hello a2.3.txt"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
@@ -539,6 +540,73 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // shouldn't have any items
                 Assert.Empty(items);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        // https://github.com/NetSparkleUpdater/NetSparkle/discussions/426
+        // attempts to reproduce bug but they are not using the --file-extract-version param
+        // so we went ahead and kept the test case but couldn't repro bug
+        [Fact]
+        public void CheckReleaseNotesLink()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            var innerAppcastOutputPath = Path.Combine(tempDir, "www");
+            var innerBuildPath = Path.Combine(tempDir, "www/builds");
+            var innerChangelogPath = Path.Combine(tempDir, "www/changelogs");
+            Directory.CreateDirectory(innerBuildPath);
+            Directory.CreateDirectory(innerChangelogPath);
+            // create dummy files
+            var dummyInstallerFilePath = Path.Combine(innerBuildPath, "build_1.0.exe");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyInstallerFilePath, tempData);
+            var dummyChangelogFilePath = Path.Combine(innerChangelogPath, "1.0.md");
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyChangelogFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = innerBuildPath,
+                ChangeLogPath = innerChangelogPath,
+                Extensions = "exe",
+                OutputDirectory = innerAppcastOutputPath,
+                OperatingSystem = "windows",
+                ProductName = "ProductName",
+                BaseUrl = "https://example.com/downloads",
+                ChangeLogUrl = "http://baseURL/appname/changelogs/",
+                OverwriteOldItemsInAppcast = true,
+                ReparseExistingAppCast = false,
+                HumanReadableOutput = true
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // shouldn't have any items
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+                Console.Write(File.ReadAllText(Path.Combine(innerAppcastOutputPath, "appcast.xml")));
+                Assert.Single(items);
+                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("http://baseURL/appname/changelogs/1.0.md", items[0].ReleaseNotesLink);
+                Assert.True(items[0].DownloadSignature.Length > 0);
+                Assert.True(items[0].IsWindowsUpdate);
+                Assert.Equal(fileSizeBytes, items[0].UpdateSize);
             }
             finally
             {
