@@ -678,6 +678,8 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Console.WriteLine(File.ReadAllText(appCastFileName));
                 // test NetSparkle reading file
                 var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
+                var publicKey = signatureManager.GetPublicKey();
+                var publicKeyString = Convert.ToBase64String(publicKey);
                 appCastHandler.SetupAppCastHandler(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
@@ -686,7 +688,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                             {
                                 AssemblyVersion = "1.0"
                             }), 
-                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(NetSparkleUpdater.Enums.SecurityMode.Unsafe),
+                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
+                            NetSparkleUpdater.Enums.SecurityMode.Strict,
+                            publicKeyString),
                         new NetSparkleUpdater.LogWriter(true));
                 var didSucceed = appCastHandler.DownloadAndParse();
                 var updates = appCastHandler.GetAvailableUpdates();
