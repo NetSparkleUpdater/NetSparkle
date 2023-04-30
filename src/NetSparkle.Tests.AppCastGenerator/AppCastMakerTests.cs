@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.CompilerServices;
 using Xunit;
+using System.Runtime.InteropServices;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -20,6 +21,23 @@ namespace NetSparkle.Tests.AppCastGenerator
         public AppCastMakerTests(SignatureManagerFixture fixture)
         {
             _fixture = fixture;
+        }
+
+        private string GetOperatingSystemForAppCastString()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return "windows";
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "macos";
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "linux";
+            }
+            return "";
         }
 
         private string GetCleanTempDir()
@@ -607,6 +625,74 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Assert.True(items[0].DownloadSignature.Length > 0);
                 Assert.True(items[0].IsWindowsUpdate);
                 Assert.Equal(fileSizeBytes, items[0].UpdateSize);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Fact]
+        public void NetSparkleCanParseHumanReadableAppCast()
+        {
+            var tempDir = GetCleanTempDir();
+            // create dummy file
+            var dummyFilePath = Path.Combine(tempDir, "hello 2.0.exe");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "exe",
+                ProductName = "My Application",
+                OutputDirectory = tempDir,
+                OperatingSystem = GetOperatingSystemForAppCastString(),
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                HumanReadableOutput = true,
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // should have one item
+                Assert.Single(items);
+                Assert.Equal("2.0", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%202.0.exe", items[0].DownloadLink);
+                // write to file
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
+                }
+                // for debugging print out app cast
+                Console.WriteLine(File.ReadAllText(appCastFileName));
+                // test NetSparkle reading file
+                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
+                appCastHandler.SetupAppCastHandler(
+                        new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
+                        appCastFileName,
+                        new EmptyTestDataConfguration(
+                            new FakeTestDataAssemblyAccessor() 
+                            {
+                                AssemblyVersion = "1.0"
+                            }), 
+                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(NetSparkleUpdater.Enums.SecurityMode.Unsafe),
+                        new NetSparkleUpdater.LogWriter(true));
+                var didSucceed = appCastHandler.DownloadAndParse();
+                var updates = appCastHandler.GetAvailableUpdates();
+                Assert.Single(updates);
+                Assert.Equal("2.0", updates[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%202.0.exe", updates[0].DownloadLink);
             }
             finally
             {
