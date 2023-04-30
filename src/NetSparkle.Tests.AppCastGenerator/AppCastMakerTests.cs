@@ -693,6 +693,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                             publicKeyString),
                         new NetSparkleUpdater.LogWriter(true));
                 var didSucceed = appCastHandler.DownloadAndParse();
+                Assert.True(didSucceed);
                 var updates = appCastHandler.GetAvailableUpdates();
                 Assert.Single(updates);
                 Assert.Equal("2.0", updates[0].Version);
