@@ -48,10 +48,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
-    <AssemblyVersion>2.2.0.0</AssemblyVersion>
-    <FileVersion>2.2.0.0</FileVersion>
+    <AssemblyVersion>2.2.1.0</AssemblyVersion>
+    <FileVersion>2.2.1.0</FileVersion>
     <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <Authors>Deadpikle</Authors>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
@@ -67,7 +67,7 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Colorful.Console" Version="1.2.15" />
-    <PackageReference Include="MimeTypes" Version="2.4.0">
+    <PackageReference Include="MimeTypes" Version="2.4.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

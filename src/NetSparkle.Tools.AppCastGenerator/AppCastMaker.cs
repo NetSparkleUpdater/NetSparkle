@@ -147,7 +147,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public static string GetVersionFromAssembly(string fullFileNameWithPath)
         {
-            return FileVersionInfo.GetVersionInfo(fullFileNameWithPath).ProductVersion;
+            return FileVersionInfo.GetVersionInfo(fullFileNameWithPath).ProductVersion?.Trim();
         }
 
         public IEnumerable<string> GetSearchExtensionsFromString(string extensions)
@@ -174,7 +174,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             {
                 binaryDirectory = Environment.CurrentDirectory;
             }
-            string productVersion = useFileNameForVersion ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) : GetVersionFromAssembly(binaryFileInfo.FullName);
+            string productVersion = useFileNameForVersion 
+                ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) 
+                : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
                 Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
