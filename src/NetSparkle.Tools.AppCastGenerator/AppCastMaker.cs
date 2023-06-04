@@ -233,7 +233,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             if (hasChangelogForFile)
             {
+                Console.WriteLine($"Change log for version {productVersion} was successfully found: {changelogPath}", Color.LightBlue);
                 changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
+            }
+            if (useChangelogs && !hasChangelogForFile)
+            {
+                Console.WriteLine($"Unable to find change log for {productVersion}. The app cast will still be generated, but without a change log for this version.", Color.Yellow);
             }
 
             var productVersionLastDotIndex = productVersion?.LastIndexOf('.') ?? -1;
