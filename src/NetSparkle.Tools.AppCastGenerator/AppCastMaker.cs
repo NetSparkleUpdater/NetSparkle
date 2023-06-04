@@ -317,7 +317,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     {
                         if (hasUsedOverrideVersion)
                         {
-                            throw new Exception("More than 1 binary found that did not have a file version, and the file version parameter was set. This is not an allowed configuration since the app cast generator does not know which binary to apply the version to.");
+                            throw new NetSparkleException("More than 1 binary found that did not have a file version, and the file version parameter was set. This is not an allowed configuration since the app cast generator does not know which binary to apply the version to.");
                         }
                         productVersion = _opts.FileVersion;
                         hasUsedOverrideVersion = true;
