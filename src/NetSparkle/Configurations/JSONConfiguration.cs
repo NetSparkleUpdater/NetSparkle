@@ -48,7 +48,7 @@ namespace NetSparkleUpdater.Configurations
         public JSONConfiguration(IAssemblyAccessor assemblyAccessor, string savePath)
             : base(assemblyAccessor)
         {
-            _savePath = savePath != null && string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
+            _savePath = savePath != null && !string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
             try
             {
                 // get the save path
