@@ -705,5 +705,95 @@ namespace NetSparkle.Tests.AppCastGenerator
                 CleanUpDir(tempDir);
             }
         }
+
+        [Fact]
+        public void CanSetVersionViaCLI()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                FileVersion = "1.4.1"
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // should have 1 item since we set the version via CLI
+                Assert.Single(items);
+                Assert.Equal("1.4.1", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello.txt", items[0].DownloadLink);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+
+        [Fact]
+        public void CannotSetVersionViaCLIWithTwoItemsHavingNoVersion()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello.txt");
+            var dummyFilePath2 = Path.Combine(tempDir, "goodbye.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath2, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                FileVersion = "1.4.1"
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // items should be null since this is a failure case
+                Assert.Null(items);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
     }
 }
