@@ -49,6 +49,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.ExportKeys)
             {
+                if (!signatureManager.KeysExist())
+                {
+                    Console.WriteLine("Error: You must first generate keys before trying to export them!", Color.Red);
+                    return;
+                }
                 Console.WriteLine("Private Key:");
                 Console.WriteLine(Convert.ToBase64String(signatureManager.GetPrivateKey()));
                 Console.WriteLine("Public Key:");
