@@ -48,6 +48,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             "version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
         public string ChangeLogPath { get; set; }
 
+        [Option("change-log-name-prefix", SetName = "local", Required = false, HelpText = "Prefix for change log file names. By default, the generator searches for file names with the format \"[Version].md\". If you set this to (for example) \"My App\", it will search for file names with the format \"My App [Version].md\" as well as \"[Version].md\".", Default = "")]
+        public string ChangeLogFileNamePrefix { get; set; }
+
         [Option('n', "product-name", Required = false, HelpText = "Product name. This will be used in the app cast <title>. " +
             "If you use --reparse-existing, then this field will be ignored and the existing product name will be used (if available).", Default = "Application")]
         public string ProductName { get; set; }

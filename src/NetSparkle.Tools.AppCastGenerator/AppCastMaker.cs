@@ -184,7 +184,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, string productVersion, bool useChangelogs)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, string productVersion, bool useChangelogs, string changelogFileNamePrefix)
         {
             var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
@@ -206,6 +206,17 @@ namespace NetSparkleUpdater.AppCastGenerator
             var changelogFileName = productVersion + ".md";
             var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
             var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
+            if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
+            {
+                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + " " + changelogFileName);
+                hasChangelogForFile = File.Exists(changelogPath);
+                if (!hasChangelogForFile)
+                {
+                    // make one more last ditch effort if user doesn't want the space in there
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
+                    hasChangelogForFile = File.Exists(changelogPath);
+                }
+            }
             var changelogSignature = "";
 
             if (hasChangelogForFile)
@@ -338,7 +349,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
                         if (item != null)
                         {
                             items.Add(item);
