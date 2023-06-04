@@ -103,7 +103,7 @@ namespace NetSparkleUpdater.Downloaders
                                 return DownloadAndGetAppCastData(redirectURI.ToString());
                             }
                         }
-                        else if ((int)response.StatusCode >= 200 && (int)response.StatusCode <= 299)
+                        else if (response.IsSuccessStatusCode)
                         {
                             var readTask = Task.Run(() => response.Content.ReadAsStringAsync());
                             readTask.Wait();
