@@ -179,7 +179,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
-                Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
+                Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try --file-extract-version parameter to determine version from file name", Color.Red);
             }
             return productVersion;
         }
