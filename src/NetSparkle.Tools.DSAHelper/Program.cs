@@ -172,7 +172,7 @@ namespace NetSparkleUpdater.DSAHelper
         private static void ShowHeadLine()
         {
             Console.WriteLine("NetSparkle DSA Helper");
-            Console.WriteLine("(c) 2011 Dirk Eisenberg, 2020-2022 Deadpikle under the terms of MIT license");
+            Console.WriteLine("(c) 2011 Dirk Eisenberg, 2020-2023 Deadpikle under the terms of MIT license");
             Console.WriteLine("[NOTE] DSA signatures are considered insecure. Please consider using the");
             Console.WriteLine("[NOTE] NetSparkleUpdater.Tools.AppCastGenerator package instead to make use of");
             Console.WriteLine("[NOTE] ed25519 signatures instead. Thanks!");
