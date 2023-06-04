@@ -52,7 +52,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
         public bool PrefixVersion { get; set; }
 
-        [Option("key-path", SetName = "local", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
+        [Option("key-path", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
         public string PathToKeyFiles { get; set; }
 
         [Option("signature-file-extension", SetName = "local", Required = false,
