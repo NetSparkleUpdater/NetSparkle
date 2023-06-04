@@ -212,8 +212,20 @@ namespace NetSparkleUpdater.AppCastGenerator
                 hasChangelogForFile = File.Exists(changelogPath);
                 if (!hasChangelogForFile)
                 {
-                    // make one more last ditch effort if user doesn't want the space in there
+                    // make one more effort if user doesn't want the space in there
                     changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
+                    hasChangelogForFile = File.Exists(changelogPath);
+                }
+            }
+            // make an additional effort to find the changelog file if they didn't use the file name prefix and used their app's name instead.
+            if (useChangelogs && !hasChangelogForFile)
+            {
+                changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + " " + changelogFileName);
+                hasChangelogForFile = File.Exists(changelogPath);
+                if (!hasChangelogForFile)
+                {
+                    // make one more last, last ditch effort if user doesn't want the space in there
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + changelogFileName);
                     hasChangelogForFile = File.Exists(changelogPath);
                 }
             }
