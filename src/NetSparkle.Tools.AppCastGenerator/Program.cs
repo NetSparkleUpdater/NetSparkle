@@ -137,8 +137,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 #### Key Generation
 # Generate Ed25519 keys for the first time
 netsparkle-generate-appcast --generate-keys
-# Store keys in a custom location
-netsparkle-generate-appcast --key-path path/to/store/keys
+# Store keys in a custom location (use the same --key-path param when creating an app cast if storing in a custom location!)
+netsparkle-generate-appcast --generate-keys --key-path path/to/store/keys
 # Pass in public key via command line
 netsparkle-generate-appcast --public-key-override [YourPublicKeyHere]
 # Pass in private key via command line
@@ -189,6 +189,9 @@ netsparkle-generate-appcast --reparse-existing
 
 # Don't overwrite the entire app cast file, but do overwrite items that are still on disk
 netsparkle-generate-appcast --reparse-existing --overwrite-old-items
+
+# Don't overwrite the entire app cast file and manually set the file version for one binary (if multiple binaries are found without corresponding version numbers, this will result in an error; you can use --file-extract-version instead and make sure your file/folder names contain version numbers)
+netsparkle-generate-appcast --reparse-existing --file-version 1.2.1
 
 ";
             Console.Write(examples);
