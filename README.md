@@ -271,6 +271,7 @@ _Missing some option you'd like to see? File an issue on this repo or add it you
 * `--key-path`: Path to `NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` files, which are your private and public Ed25519 keys for your software updates, respectively.  Example use: `--key-path my/path/to/keys`
   * If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
 * `--signature-file-extension`: Extension (WITHOUT the `.`) to use for the appcast xml signature file. Defaults to `signature`. Example use: `--signature-file-extension txt`.
+* `--file-version`: Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the `--reparse-existing` parameter so that old items get picked up. If the generator finds 2 binaries without any known version and `--file-version` is set, then an error will be emitted.
 
 #### Options for Key Generation
 
