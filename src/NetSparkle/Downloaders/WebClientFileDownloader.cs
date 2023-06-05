@@ -156,7 +156,8 @@ namespace NetSparkleUpdater.Downloaders
                         }
                         else
                         {
-                            throw new NetSparkleException(string.Format("Cannot download file at {0}: status code of {1} returned", uri.ToString(), response.StatusCode));
+                            throw new NetSparkleException(string.Format("Cannot download file (status code: {1}). {2}", uri.ToString(), response.StatusCode,
+                                !response.Content.Headers.ContentLength.HasValue ? "No content length header sent." : ""));
                         }
                         return;
                     }
@@ -201,7 +202,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 LogWriter.PrintMessage("Error: {0}", e.Message);
                 IsDownloading = false;
-                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
+                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
             }
         }
 
