@@ -642,7 +642,7 @@ namespace NetSparkleUpdater
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Couldn't read/parse the app cast: {0}", e.Message);
+                LogWriter.PrintMessage("Couldn't read/parse the app cast: {0}; {1}", e.Message, e.StackTrace);
                 updates = null;
             }
 
