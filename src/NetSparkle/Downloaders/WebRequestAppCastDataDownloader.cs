@@ -47,15 +47,22 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
         {
+            return DownloadAndGetAppCastDataAsync(url).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> DownloadAndGetAppCastDataAsync(string url)
+        {
             _appcastUrl = url;
             // configure ssl cert link
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
-            // use HttpClient synchronously: https://stackoverflow.com/a/53529122/3938401
+
             var handler = new HttpClientHandler();
             if (RedirectHandler != null)
             {
                 handler.AllowAutoRedirect = false;
             }
+
             if (TrustEverySSLConnection)
             {
 #if NETCORE
@@ -75,16 +82,16 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(ExtraJsonData, Encoding.UTF8, "application/json");
-                    var postTask = Task.Run(() => httpClient.SendAsync(request));
-                    postTask.Wait();
-                    if (postTask.Result.IsSuccessStatusCode)
+                    HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var postTaskStream = Task.Run(() => postTask.Result.Content.ReadAsStreamAsync());
-                        postTask.Wait();
+                        Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
-                        using (StreamReader reader = new StreamReader(postTaskStream.Result, GetAppCastEncoding()))
+                        using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
-                            return reader.ReadToEnd();
+                            return await reader.ReadToEndAsync().ConfigureAwait(false);
                         }
                     }
                 }
@@ -92,32 +99,29 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     if (RedirectHandler != null)
                     {
-                        var task = Task.Run(() => httpClient.GetAsync(url));
-                        task.Wait();
-                        var response = task.Result;
+                        HttpResponseMessage response = await httpClient.GetAsync(url).ConfigureAwait(false);
+
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
                         {
                             var redirectURI = response.Headers.Location;
                             if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
                             {
-                                return DownloadAndGetAppCastData(redirectURI.ToString());
+                                return await DownloadAndGetAppCastDataAsync(redirectURI.ToString()).ConfigureAwait(false);
                             }
                         }
                         else if (response.IsSuccessStatusCode)
                         {
-                            var readTask = Task.Run(() => response.Content.ReadAsStringAsync());
-                            readTask.Wait();
-                            return readTask.Result;
+                            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         }
                     }
-                    else 
+                    else
                     {
-                        var task = Task.Run(() => httpClient.GetStreamAsync(url));
-                        var responseStream = task.Result;
+                        Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);
+
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
-                            return reader.ReadToEnd();
+                            return await reader.ReadToEndAsync().ConfigureAwait(false);
                         }
                     }
                 }
