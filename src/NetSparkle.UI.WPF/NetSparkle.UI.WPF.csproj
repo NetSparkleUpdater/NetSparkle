@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
     <UseWPF>true</UseWPF>
-	<TargetFrameworks>net7.0-windows;net5-windows;net6-windows;netcoreapp3.1;net452</TargetFrameworks>
+	<TargetFrameworks>net7.0-windows;net5-windows;net6-windows;netcoreapp3.1;net462</TargetFrameworks>
     <AssemblyTitle>NetSparkleUpdater.UI.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
     <Copyright>Copyright © 2022</Copyright>
@@ -36,7 +36,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
     <DocumentationFile>..\bin\Debug\NetSparkle.UI.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Drawing" />

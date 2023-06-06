@@ -253,7 +253,7 @@ namespace NetSparkleUpdater
         {
             try
             {
-#if NET452
+#if NET462
                 using (var webClient = new WebClient())
                 {
                     webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
@@ -281,7 +281,7 @@ namespace NetSparkleUpdater
                 return "";
             }
         }
-#if !NET452
+#if !NET462
 
         /// <summary>
         /// Create the HttpClient used for file downloads
