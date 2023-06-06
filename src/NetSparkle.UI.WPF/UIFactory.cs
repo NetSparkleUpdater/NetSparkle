@@ -27,6 +27,9 @@ namespace NetSparkleUpdater.UI.WPF
             HideSkipButton = false;
             ReleaseNotesHTMLTemplate = "";
             AdditionalReleaseNotesHeaderHTML = "";
+            UseStaticUpdateWindowBackgroundColor = true;
+            UpdateWindowGridBackgroundBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFrom("#EEEEEE");
+            UpdateWindowGridBackgroundBrush.Freeze();
         }
 
         /// <summary>
@@ -74,6 +77,17 @@ namespace NetSparkleUpdater.UI.WPF
         /// </summary>
         public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
 
+        /// <summary>
+        /// Whether or not a hardcoded window background color is set on the updates window.
+        /// Defaults to true.
+        /// </summary>
+        public bool UseStaticUpdateWindowBackgroundColor { get; set; }
+
+        /// <summary>
+        /// Brush for the background of the main grid on the update (change log) window
+        /// </summary>
+        public System.Windows.Media.Brush UpdateWindowGridBackgroundBrush { get; set; }
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -82,6 +96,10 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 Icon = _applicationIcon
             };
+            if (UseStaticUpdateWindowBackgroundColor)
+            {
+                window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            }
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();

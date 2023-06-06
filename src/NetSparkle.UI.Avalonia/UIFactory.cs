@@ -28,6 +28,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            UseStaticUpdateWindowBackgroundColor = true;
             UpdateWindowGridBackgroundBrush = (IBrush)new BrushConverter().ConvertFrom("#EEEEEE");
         }
 
@@ -64,7 +65,13 @@ namespace NetSparkleUpdater.UI.Avalonia
         public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <summary>
-        /// Brush for the background of the main grid on the update (changelog) window
+        /// Whether or not a hardcoded window background color is set on the updates window.
+        /// Defaults to true.
+        /// </summary>
+        public bool UseStaticUpdateWindowBackgroundColor { get; set; }
+
+        /// <summary>
+        /// Brush for the background of the main grid on the update (change log) window
         /// </summary>
         public IBrush UpdateWindowGridBackgroundBrush { get; set; }
 
@@ -99,7 +106,10 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 Icon = _applicationIcon
             };
-            window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            if (UseStaticUpdateWindowBackgroundColor)
+            {
+                window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            }
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
