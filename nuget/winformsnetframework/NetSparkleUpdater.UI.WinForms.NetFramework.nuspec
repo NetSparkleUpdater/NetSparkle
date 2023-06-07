@@ -3,7 +3,7 @@
  <metadata>
    <id>NetSparkleUpdater.UI.WinForms.NetFramework</id>
    <title>NetSparkleUpdater WinForms .NET Framework UI</title>
-   <version>2.3.0-preview20230605001</version>
+   <version>2.3.0-preview20230606002</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <license type="file">LICENSE.md</license>
