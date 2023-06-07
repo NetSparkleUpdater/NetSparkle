@@ -6,6 +6,7 @@ using NetSparkleUpdater.Properties;
 using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace NetSparkleUpdater.UI.WinForms
 {
@@ -67,6 +68,19 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
 
+        /// <summary>
+        /// A delegate for handling forms that are created by a <see cref="UIFactory"/>
+        /// </summary>
+        /// <param name="form"><see cref="Form"/> that has been created and initialized</param>
+        /// <param name="factory"><see cref="UIFactory"/> that created the given <see cref="Form"/></param>
+        public delegate void FormHandler(Form form, UIFactory factory);
+
+        /// <summary>
+        /// Set this property to manually do any other setup on a <see cref="Form"/> after it has been created by the <see cref="UIFactory"/>.
+        /// Can be used to tweak styles or perform other operations on the <see cref="Form"/>, etc.
+        /// </summary>
+        public FormHandler ProcessFormAfterInit { get; set; }
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -89,22 +103,27 @@ namespace NetSparkleUpdater.UI.WinForms
                 window.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
             window.Initialize();
+            ProcessFormAfterInit?.Invoke(window, this);
             return window;
         }
 
         /// <inheritdoc/>
         public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
         {
-            return new DownloadProgressWindow(item, _applicationIcon)
+            var window = new DownloadProgressWindow(item, _applicationIcon)
             {
                 SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
+            ProcessFormAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
         public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
         {
-            return new CheckingForUpdatesWindow(_applicationIcon);
+            var window = new CheckingForUpdatesWindow(_applicationIcon);
+            ProcessFormAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
@@ -156,6 +175,7 @@ namespace NetSparkleUpdater.UI.WinForms
                     ClickAction = clickHandler,
                     Updates = updates
                 };
+                ProcessFormAfterInit?.Invoke(toast, this);
                 toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
                 Application.Run(toast);
             });
@@ -173,6 +193,7 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             var messageWindow = new MessageNotificationWindow(title, message, _applicationIcon);
             messageWindow.StartPosition = FormStartPosition.CenterScreen;
+            ProcessFormAfterInit?.Invoke(messageWindow, this);
             messageWindow.ShowDialog();
         }
 
