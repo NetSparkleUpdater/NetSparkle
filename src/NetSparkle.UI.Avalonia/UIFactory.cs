@@ -229,7 +229,7 @@ namespace NetSparkleUpdater.UI.Avalonia
                 Icon = _applicationIcon
             };
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ProcessWindowAfterInit?.Invoke(window, this);
+            ProcessWindowAfterInit?.Invoke(messageWindow, this);
             messageWindow.Show(); // TODO: This was ShowDialog; will this break anything?
         }
 
