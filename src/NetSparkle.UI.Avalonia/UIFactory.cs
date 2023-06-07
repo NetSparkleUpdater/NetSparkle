@@ -18,7 +18,10 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// </summary>
     public class UIFactory : IUIFactory
     {
-        private WindowIcon _applicationIcon = null;
+        /// <summary>
+        /// Icon used on various windows shown by NetSparkleUpdater
+        /// </summary>
+        protected WindowIcon _applicationIcon = null;
 
         private Bitmap _iconBitmap;
 

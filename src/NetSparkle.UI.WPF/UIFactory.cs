@@ -15,7 +15,10 @@ namespace NetSparkleUpdater.UI.WPF
     /// </summary>
     public class UIFactory : IUIFactory
     {
-        private ImageSource _applicationIcon = null;
+        /// <summary>
+        /// Icon used on various windows shown by NetSparkleUpdater
+        /// </summary>
+        protected ImageSource _applicationIcon = null;
 
         /// <summary>
         /// Create a new UIFactory for WPF applications

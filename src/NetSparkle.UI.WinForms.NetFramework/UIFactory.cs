@@ -14,7 +14,10 @@ namespace NetSparkleUpdater.UI.WinForms
     /// </summary>
     public class UIFactory : IUIFactory
     {
-        private Icon _applicationIcon = null;
+        /// <summary>
+        /// Icon used on various windows shown by NetSparkleUpdater
+        /// </summary>
+        protected Icon _applicationIcon = null;
 
         /// <inheritdoc/>
         public UIFactory()
