@@ -53,7 +53,7 @@
     <PackageReference Include="System.Drawing.Common" Version="4.7.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net5-windows'">
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
   </ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6-windows'">
 		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
