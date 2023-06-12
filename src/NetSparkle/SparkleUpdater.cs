@@ -1216,6 +1216,7 @@ namespace NetSparkleUpdater
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
+                CreateUpdateDownloaderIfNeeded(); // so GetDownloadPathForAppCastItem returns proper data
                 var path = installPath != null && File.Exists(installPath) ? installPath : await GetDownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
@@ -1841,6 +1842,7 @@ namespace NetSparkleUpdater
             {
                 // we need the download file name in order to tell the user the skipped version
                 // file path and/or to run the installer
+                CreateUpdateDownloaderIfNeeded();
                 _downloadTempFileName = await GetDownloadPathForAppCastItem(currentItem);
             }
             if (result == UpdateAvailableResult.SkipUpdate)
