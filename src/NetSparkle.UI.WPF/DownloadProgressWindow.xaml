@@ -48,13 +48,14 @@
                    HorizontalAlignment="Left"
                    FontWeight="Bold"
                    FontSize="24" />
-        <Label Name="DownloadProgress"
+        <TextBlock Name="DownloadProgress"
                Grid.Row="1"
                Grid.Column="1"
-               Content="{Binding UserReadableDownloadProgress}"
+               Text="{Binding UserReadableDownloadProgress}"
                HorizontalAlignment="Left"
                FontWeight="Bold"
-               FontSize="20" />
+               FontSize="20"
+               Margin="5,5,5,5"/>
         <ProgressBar Name="ProgressBar"
                      Grid.Row="2"
                      Grid.Column="0"
