@@ -1,6 +1,10 @@
 using NetSparkleUpdater.SignatureVerifiers;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Color = System.Windows.Media.Color;
+using ColorConverter = System.Windows.Media.ColorConverter;
 
 
 namespace NetSparkleUpdater.Samples.NetFramework.WPF
@@ -26,9 +30,25 @@ namespace NetSparkleUpdater.Samples.NetFramework.WPF
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             var icon = System.Drawing.Icon.ExtractAssociatedIcon(manifestModuleName);
+
+            //var fac = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon))
+            //{
+            //    ProcessWindowAfterInit = (window, factory) =>
+            //{
+            //    TextBlock.SetFontStyle(window, FontStyles.Italic);
+            //}
+            //};
+
+
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
-                UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
+                UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon))
+                {
+                    ProcessWindowAfterInit = (window, factory) =>
+                    {
+                        TextBlock.SetFontStyle(window, FontStyles.Italic);
+                    }
+                },
                 ShowsUIOnMainThread = false,
                 //RelaunchAfterUpdate = true,
                 //UseNotificationToast = true
