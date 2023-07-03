@@ -1838,7 +1838,7 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Update window response: {0}", args.Result);
             var currentItem = args.UpdateItem;
             var result = args.Result;
-            if (string.IsNullOrWhiteSpace(_downloadTempFileName))
+            if (result != UpdateAvailableResult.None && string.IsNullOrWhiteSpace(_downloadTempFileName))
             {
                 // we need the download file name in order to tell the user the skipped version
                 // file path and/or to run the installer
