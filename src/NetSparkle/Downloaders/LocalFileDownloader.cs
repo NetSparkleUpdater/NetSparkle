@@ -57,6 +57,12 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public bool IsDownloading { get; private set; }
 
+        /// <summary>
+        /// When handling the string url in StartFileDownload, 
+        /// use Uri.LocalPath as the path to read text from.
+        /// </summary>
+        public bool UseLocalUriPath { get; set; } = false;
+
         /// <inheritdoc/>
         public event DownloadProgressEvent DownloadProgressChanged;
         /// <inheritdoc/>
@@ -85,7 +91,8 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public async void StartFileDownload(Uri uri, string downloadFilePath)
         {
-            await CopyFileAsync(uri.AbsolutePath, downloadFilePath, _cancellationTokenSource.Token);
+            var path = UseLocalUriPath ? uri.LocalPath : uri.AbsolutePath;
+            await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
         }
 
         // https://stackoverflow.com/a/36925751/3938401 and

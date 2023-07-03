@@ -26,9 +26,19 @@ namespace NetSparkleUpdater.Downloaders
         {
         }
 
+        /// <summary>
+        /// When handling the string url in DownloadAndGetAppCastData, treat the 
+        /// url as a Uri and use Uri.LocalPath as the path to read text from.
+        /// </summary>
+        public bool UseLocalUriPath { get; set; } = false;
+
         /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
         {
+            if (UseLocalUriPath)
+            {
+                return File.ReadAllText(new Uri(url).LocalPath);
+            }
             return File.ReadAllText(url);
         }
 
