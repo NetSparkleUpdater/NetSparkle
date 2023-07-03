@@ -105,7 +105,7 @@ jobs:
         run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
         
       - name: Publish NetsparkleUpdater.NetSparkle on version change
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle/NetSparkle.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -117,7 +117,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WPF on version change
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WPF/NetSparkle.UI.WPF.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -129,7 +129,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.Avalonia on version change
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.Avalonia/NetSparkle.UI.Avalonia.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -141,7 +141,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetCore/NetSparkle.UI.WinForms.NetCore.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -170,7 +170,7 @@ jobs:
           cd ${{ github.workspace }}
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
@@ -182,7 +182,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Publish NetSparkleUpdater.Tools.AppCastGenerator
-        uses: nitz/publish-nuget@13cf3a0ec3840b62a0fd20d559ab1e2a63b0d75a
+        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
           PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.Tools.AppCastGenerator/NetSparkle.Tools.AppCastGenerator.csproj # Relative to repository root
           # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
