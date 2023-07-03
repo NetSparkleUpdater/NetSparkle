@@ -50,7 +50,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <param name="viewModel">View model with info on the updates that are available
         /// to the user</param>
         /// <param name="iconBitmap">Bitmap to use for the app's logo/graphic</param>
-        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, IBitmap iconBitmap) : base(true)
+        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, Bitmap iconBitmap) : base(true)
         {
             this.InitializeComponent();
             var imageControl = this.FindControl<Image>("AppIcon");

@@ -36,7 +36,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// for updates with a given bitmap to use as an icon/graphic
         /// </summary>
         /// <param name="iconBitmap">The bitmap to use for the application logo/graphic</param>
-        public CheckingForUpdatesWindow(IBitmap iconBitmap)
+        public CheckingForUpdatesWindow(Bitmap iconBitmap)
         {
             this.InitializeComponent();
 #if DEBUG
