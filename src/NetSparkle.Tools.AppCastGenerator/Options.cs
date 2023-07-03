@@ -25,6 +25,9 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('f', "file-extract-version", SetName = "local", Required = false, HelpText = "Determine the version from the file path. Tries each string in between directory separators that contains a version number starting from the end of the path. Only searches the last four directory items (incl. the file name) and does not search 'above' the binary directory (-b option). See unit tests for what is parseable.", Default = false)]
         public bool FileExtractVersion { get; set; }
 
+        [Option("file-version", SetName="local", Required = false, HelpText = "Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the --reparse-existing parameter so that old items get picked up. If the generator finds 2 binaries without any known version and --file-version is set, then an error will be emitted.", Default = null)]
+        public string FileVersion { get; set; }
+
         [Option('o', "os", Required = false, HelpText = "Operating System (windows, macos, linux)", Default = "windows")]
         public string OperatingSystem { get; set; }
 
@@ -45,6 +48,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             "version must match AssemblyVersion, e.g. MyApp 1.0.0.md).", Default = "")]
         public string ChangeLogPath { get; set; }
 
+        [Option("change-log-name-prefix", SetName = "local", Required = false, HelpText = "Prefix for change log file names. By default, the generator searches for file names with the format \"[Version].md\". If you set this to (for example) \"My App\", it will search for file names with the format \"My App [Version].md\" as well as \"[Version].md\".", Default = "")]
+        public string ChangeLogFileNamePrefix { get; set; }
+
         [Option('n', "product-name", Required = false, HelpText = "Product name. This will be used in the app cast <title>. " +
             "If you use --reparse-existing, then this field will be ignored and the existing product name will be used (if available).", Default = "Application")]
         public string ProductName { get; set; }
@@ -52,7 +58,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option('x', "url-prefix-version", SetName = "local", Required = false, HelpText = "Add the version as a prefix to the download url", Default = false)]
         public bool PrefixVersion { get; set; }
 
-        [Option("key-path", SetName = "local", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
+        [Option("key-path", Required = false, HelpText = "Path to NetSparkle_Ed25519.priv and NetSparkle_Ed25519.pub files")]
         public string PathToKeyFiles { get; set; }
 
         [Option("signature-file-extension", SetName = "local", Required = false,

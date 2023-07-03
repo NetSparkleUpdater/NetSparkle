@@ -15,7 +15,10 @@ namespace NetSparkleUpdater.UI.WPF
     /// </summary>
     public class UIFactory : IUIFactory
     {
-        private ImageSource _applicationIcon = null;
+        /// <summary>
+        /// Icon used on various windows shown by NetSparkleUpdater
+        /// </summary>
+        protected ImageSource _applicationIcon = null;
 
         /// <summary>
         /// Create a new UIFactory for WPF applications
@@ -27,6 +30,9 @@ namespace NetSparkleUpdater.UI.WPF
             HideSkipButton = false;
             ReleaseNotesHTMLTemplate = "";
             AdditionalReleaseNotesHeaderHTML = "";
+            UseStaticUpdateWindowBackgroundColor = true;
+            UpdateWindowGridBackgroundBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFrom("#EEEEEE");
+            UpdateWindowGridBackgroundBrush.Freeze();
         }
 
         /// <summary>
@@ -74,6 +80,30 @@ namespace NetSparkleUpdater.UI.WPF
         /// </summary>
         public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
 
+        /// <summary>
+        /// Whether or not a hardcoded window background color is set on the updates window.
+        /// Defaults to true.
+        /// </summary>
+        public bool UseStaticUpdateWindowBackgroundColor { get; set; }
+
+        /// <summary>
+        /// Brush for the background of the main grid on the update (change log) window
+        /// </summary>
+        public System.Windows.Media.Brush UpdateWindowGridBackgroundBrush { get; set; }
+
+        /// <summary>
+        /// A delegate for handling windows that are created by a <see cref="UIFactory"/>
+        /// </summary>
+        /// <param name="window"><see cref="Window"/> that has been created and initialized (with view model, if applicable)</param>
+        /// <param name="factory"><see cref="UIFactory"/> that created the given <see cref="Window"/></param>
+        public delegate void WindowHandler(Window window, UIFactory factory);
+
+        /// <summary>
+        /// Set this property to manually do any other setup on a <see cref="Window"/> after it has been created by the <see cref="UIFactory"/>.
+        /// Can be used to tweak view models, change styles on the <see cref="Window"/>, etc.
+        /// </summary>
+        public WindowHandler ProcessWindowAfterInit { get; set; }
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -82,6 +112,10 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 Icon = _applicationIcon
             };
+            if (UseStaticUpdateWindowBackgroundColor)
+            {
+                window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            }
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
@@ -99,6 +133,7 @@ namespace NetSparkleUpdater.UI.WPF
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
             viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
+            ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
 
@@ -110,16 +145,20 @@ namespace NetSparkleUpdater.UI.WPF
                 ItemToDownload = item,
                 SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
-            return new DownloadProgressWindow(viewModel)
+            var window = new DownloadProgressWindow(viewModel)
             {
                 Icon = _applicationIcon
             };
+            ProcessWindowAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
         public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
         {
-            return new CheckingForUpdatesWindow { Icon = _applicationIcon };
+            var window = new CheckingForUpdatesWindow() { Icon = _applicationIcon };
+            ProcessWindowAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
@@ -171,6 +210,7 @@ namespace NetSparkleUpdater.UI.WPF
                 };
                 try
                 {
+                    ProcessWindowAfterInit?.Invoke(toast, this);
                     toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
                     System.Windows.Threading.Dispatcher.Run();
                 }
@@ -197,6 +237,7 @@ namespace NetSparkleUpdater.UI.WPF
                 Icon = _applicationIcon
             };
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            ProcessWindowAfterInit?.Invoke(messageWindow, this);
             messageWindow.ShowDialog();
         }
 

@@ -48,7 +48,7 @@ namespace NetSparkleUpdater.Configurations
         public JSONConfiguration(IAssemblyAccessor assemblyAccessor, string savePath)
             : base(assemblyAccessor)
         {
-            _savePath = savePath != null && string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
+            _savePath = savePath != null && !string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
             try
             {
                 // get the save path
@@ -110,10 +110,10 @@ namespace NetSparkleUpdater.Configurations
             else
             {
 
-                if (string.IsNullOrEmpty(AssemblyAccessor.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor.AssemblyProduct))
+                if (string.IsNullOrEmpty(AssemblyAccessor?.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor?.AssemblyProduct))
                 {
                     throw new NetSparkleException("Error: NetSparkleUpdater is missing the company or product name tag in the assembly accessor ("
-                        + AssemblyAccessor.GetType() + ")");
+                        + (AssemblyAccessor?.GetType().ToString() ?? "[null]") + ")");
                 }
                 var applicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
                 var saveFolder = Path.Combine(applicationFolder, AssemblyAccessor.AssemblyCompany, AssemblyAccessor.AssemblyProduct, "NetSparkleUpdater");

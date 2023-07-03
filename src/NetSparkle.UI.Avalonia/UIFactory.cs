@@ -18,7 +18,10 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// </summary>
     public class UIFactory : IUIFactory
     {
-        private WindowIcon _applicationIcon = null;
+        /// <summary>
+        /// Icon used on various windows shown by NetSparkleUpdater
+        /// </summary>
+        protected WindowIcon _applicationIcon = null;
 
         private Bitmap _iconBitmap;
 
@@ -28,7 +31,8 @@ namespace NetSparkleUpdater.UI.Avalonia
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
-            UpdateWindowGridBackgroundBrush = null;
+            UseStaticUpdateWindowBackgroundColor = false;
+            UpdateWindowGridBackgroundBrush = (IBrush)new BrushConverter().ConvertFrom("#EEEEEE");
         }
 
         /// <inheritdoc/>
@@ -64,7 +68,13 @@ namespace NetSparkleUpdater.UI.Avalonia
         public string AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <summary>
-        /// Brush for the background of the main grid on the update (changelog) window
+        /// Whether or not a hardcoded window background color is set on the updates window.
+        /// Defaults to true.
+        /// </summary>
+        public bool UseStaticUpdateWindowBackgroundColor { get; set; }
+
+        /// <summary>
+        /// Brush for the background of the main grid on the update (change log) window
         /// </summary>
         public IBrush UpdateWindowGridBackgroundBrush { get; set; }
 
@@ -91,6 +101,19 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// </summary>
         public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
 
+        /// <summary>
+        /// A delegate for handling windows that are created by a <see cref="UIFactory"/>
+        /// </summary>
+        /// <param name="window"><see cref="Window"/> that has been created and initialized (with view model, if applicable)</param>
+        /// <param name="factory"><see cref="UIFactory"/> that created the given <see cref="Window"/></param>
+        public delegate void WindowHandler(Window window, UIFactory factory);
+
+        /// <summary>
+        /// Set this property to manually do any other setup on a <see cref="Window"/> after it has been created by the <see cref="UIFactory"/>.
+        /// Can be used to tweak view models, change styles on the <see cref="Window"/>, etc.
+        /// </summary>
+        public WindowHandler ProcessWindowAfterInit { get; set; }
+
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
@@ -99,7 +122,10 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 Icon = _applicationIcon
             };
-            window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            if (UseStaticUpdateWindowBackgroundColor)
+            {
+                window.ChangeMainGridBackgroundColor(UpdateWindowGridBackgroundBrush);
+            }
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
@@ -117,6 +143,7 @@ namespace NetSparkleUpdater.UI.Avalonia
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
             viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
+            ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
 
@@ -128,19 +155,23 @@ namespace NetSparkleUpdater.UI.Avalonia
                 ItemToDownload = item,
                 SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
-            return new DownloadProgressWindow(viewModel, _iconBitmap)
+            var window = new DownloadProgressWindow(viewModel, _iconBitmap)
             {
                 Icon = _applicationIcon
             };
+            ProcessWindowAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
         public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
         {
-            return new CheckingForUpdatesWindow(_iconBitmap)
+            var window = new CheckingForUpdatesWindow(_iconBitmap)
             { 
                 Icon = _applicationIcon
             };
+            ProcessWindowAfterInit?.Invoke(window, this);
+            return window;
         }
 
         /// <inheritdoc/>
@@ -198,6 +229,7 @@ namespace NetSparkleUpdater.UI.Avalonia
                 Icon = _applicationIcon
             };
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            ProcessWindowAfterInit?.Invoke(messageWindow, this);
             messageWindow.Show(); // TODO: This was ShowDialog; will this break anything?
         }
 

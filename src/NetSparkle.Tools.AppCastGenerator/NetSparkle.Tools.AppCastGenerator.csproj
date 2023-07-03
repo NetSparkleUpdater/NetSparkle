@@ -24,7 +24,7 @@
     <AssemblyTitle>NetSparkleUpdaterAppCastGenerator</AssemblyTitle>
     <Product>NetSparkleUpdater.Tools.AppCastGenerator</Product>
     <Description>Command line tool 'netsparkle-generate-appcast' to scan a directory for update files and generate appcast.xml. Can also be used to generate ed25519 keys/etc. for that app cast. Use in conjunction with the NetSparkleUpdater library.</Description>
-    <Copyright>Copyright © ndreisg 2019, Deadpikle 2020-2022</Copyright>
+    <Copyright>Copyright © ndreisg 2019, Deadpikle 2020-2023</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
@@ -48,10 +48,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <FileVersion>2.3.0.0</FileVersion>
     <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
-    <Version>2.2.1</Version>
+    <Version>2.3.0</Version>
     <Authors>Deadpikle</Authors>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>

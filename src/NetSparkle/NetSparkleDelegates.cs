@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -99,4 +100,12 @@ namespace NetSparkleUpdater
     /// <param name="path">The path to the place where the file was being downloaded</param>
     /// <param name="exception">The <seealso cref="Exception"/> that occurred to cause the error</param>
     public delegate void DownloadErrorEvent(AppCastItem item, string path, Exception exception);
+
+    /// <summary>
+    /// A delegate for a handling redirects from one URL to another URL manually
+    /// </summary>
+    /// <param name="fromURL">The original URL that was going to be downloaded from</param>
+    /// <param name="toURL">The location that the redirect is pointing to</param>
+    /// <param name="responseMessage">The <seealso cref="HttpResponseMessage"/> for the response from the server</param>
+    public delegate bool RedirectHandler(string fromURL, string toURL, HttpResponseMessage responseMessage);
 }

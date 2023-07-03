@@ -38,6 +38,12 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public string ExtraJsonData { get; set; } = "";
 
+        /// <summary>
+        /// Set this to handle redirects that manually, e.g. redirects that go from HTTPS to HTTP (which are not allowed
+        /// by default)
+        /// </summary>
+        public RedirectHandler RedirectHandler { get; set; }
+
         /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
         {
@@ -46,6 +52,10 @@ namespace NetSparkleUpdater.Downloaders
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
             // use HttpClient synchronously: https://stackoverflow.com/a/53529122/3938401
             var handler = new HttpClientHandler();
+            if (RedirectHandler != null)
+            {
+                handler.AllowAutoRedirect = false;
+            }
             if (TrustEverySSLConnection)
             {
 #if NETCORE
@@ -80,18 +90,41 @@ namespace NetSparkleUpdater.Downloaders
                 }
                 else
                 {
-                    var task = Task.Run(() => httpClient.GetStreamAsync(url));
-                    task.Wait();
-                    var responseStream = task.Result;
-                    ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
-                    using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
+                    if (RedirectHandler != null)
                     {
-                        return reader.ReadToEnd();
+                        var task = Task.Run(() => httpClient.GetAsync(url));
+                        task.Wait();
+                        var response = task.Result;
+                        if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
+                        {
+                            var redirectURI = response.Headers.Location;
+                            if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
+                            {
+                                return DownloadAndGetAppCastData(redirectURI.ToString());
+                            }
+                        }
+                        else if (response.IsSuccessStatusCode)
+                        {
+                            var readTask = Task.Run(() => response.Content.ReadAsStringAsync());
+                            readTask.Wait();
+                            return readTask.Result;
+                        }
+                    }
+                    else 
+                    {
+                        var task = Task.Run(() => httpClient.GetStreamAsync(url));
+                        var responseStream = task.Result;
+                        ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+                        using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
+                        {
+                            return reader.ReadToEnd();
+                        }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
             }
             return "";
         }

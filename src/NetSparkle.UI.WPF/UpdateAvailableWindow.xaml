@@ -16,7 +16,7 @@
     <cont:BaseWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </cont:BaseWindow.Resources>
-    <Grid Background="#EEEEEE">
+    <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />

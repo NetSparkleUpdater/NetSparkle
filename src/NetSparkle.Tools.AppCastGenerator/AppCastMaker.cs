@@ -179,12 +179,12 @@ namespace NetSparkleUpdater.AppCastGenerator
                 : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
-                Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try -f parameter to determine version from file name", Color.Red);
+                Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try --file-extract-version parameter to determine version from file name", Color.Red);
             }
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, string productVersion, bool useChangelogs)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, string productVersion, bool useChangelogs, string changelogFileNamePrefix)
         {
             var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
 
@@ -206,11 +206,39 @@ namespace NetSparkleUpdater.AppCastGenerator
             var changelogFileName = productVersion + ".md";
             var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
             var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
+            if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
+            {
+                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + " " + changelogFileName);
+                hasChangelogForFile = File.Exists(changelogPath);
+                if (!hasChangelogForFile)
+                {
+                    // make one more effort if user doesn't want the space in there
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
+                    hasChangelogForFile = File.Exists(changelogPath);
+                }
+            }
+            // make an additional effort to find the changelog file if they didn't use the file name prefix and used their app's name instead.
+            if (useChangelogs && !hasChangelogForFile)
+            {
+                changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + " " + changelogFileName);
+                hasChangelogForFile = File.Exists(changelogPath);
+                if (!hasChangelogForFile)
+                {
+                    // make one more last, last ditch effort if user doesn't want the space in there
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + changelogFileName);
+                    hasChangelogForFile = File.Exists(changelogPath);
+                }
+            }
             var changelogSignature = "";
 
             if (hasChangelogForFile)
             {
+                Console.WriteLine($"Change log for version {productVersion} was successfully found: {changelogPath}", Color.LightBlue);
                 changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
+            }
+            if (useChangelogs && !hasChangelogForFile)
+            {
+                Console.WriteLine($"Unable to find change log for {productVersion}. The app cast will still be generated, but without a change log for this version.", Color.Yellow);
             }
 
             var productVersionLastDotIndex = productVersion?.LastIndexOf('.') ?? -1;
@@ -303,6 +331,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 }
 
                 var usesChangelogs = !string.IsNullOrWhiteSpace(_opts.ChangeLogPath) && Directory.Exists(_opts.ChangeLogPath);
+                var hasUsedOverrideVersion = false;
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
@@ -312,7 +341,16 @@ namespace NetSparkleUpdater.AppCastGenerator
                     {
                         Console.WriteLine($"Found a binary with version {productVersion}");
                     }
-
+                    if (productVersion == null && !string.IsNullOrWhiteSpace(_opts.FileVersion))
+                    {
+                        if (hasUsedOverrideVersion)
+                        {
+                            throw new NetSparkleException("More than 1 binary found that did not have a file version, and the file version parameter was set. This is not an allowed configuration since the app cast generator does not know which binary to apply the version to.");
+                        }
+                        productVersion = _opts.FileVersion;
+                        hasUsedOverrideVersion = true;
+                        Console.WriteLine($"Using product version from command line of {productVersion}");
+                    }
                     if (productVersion == null)
                     {
                         Console.WriteLine($"Skipping {binary} because it has no product version...");
@@ -328,7 +366,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
                         if (item != null)
                         {
                             items.Add(item);

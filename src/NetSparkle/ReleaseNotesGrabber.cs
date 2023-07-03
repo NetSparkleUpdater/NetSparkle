@@ -141,7 +141,9 @@ namespace NetSparkleUpdater
                 var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
                                         castItem.Version,
-                                        castItem.PublicationDate.ToString(DateFormat), // was dd MMM yyyy
+                                        castItem.PublicationDate != DateTime.MinValue && castItem.PublicationDate != DateTime.MaxValue
+                                            ? castItem.PublicationDate.ToString(DateFormat) 
+                                            : "", // was dd MMM yyyy
                                         releaseNotes,
                                         latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
                 hasAddedFirstItem = true; // after first item added, need to add line breaks between release note items

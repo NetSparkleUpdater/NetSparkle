@@ -57,6 +57,12 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <summary>
+        /// Set this to handle redirects that manually, e.g. redirects that go from HTTPS to HTTP (which are not allowed
+        /// by default)
+        /// </summary>
+        public RedirectHandler RedirectHandler { get; set; }
+
+        /// <summary>
         /// Do preparation work necessary to download a file,
         /// aka set up the WebClient for use.
         /// </summary>
@@ -140,6 +146,19 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     if (!response.IsSuccessStatusCode || !response.Content.Headers.ContentLength.HasValue)
                     {
+                        if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
+                        {
+                            var redirectURI = response.Headers.Location;
+                            if (RedirectHandler.Invoke(uri.ToString(), redirectURI.ToString(), response))
+                            {
+                                await StartFileDownloadAsync(redirectURI, downloadFilePath);
+                            }
+                        }
+                        else
+                        {
+                            throw new NetSparkleException(string.Format("Cannot download file (status code: {1}). {2}", uri.ToString(), response.StatusCode,
+                                !response.Content.Headers.ContentLength.HasValue ? "No content length header sent." : ""));
+                        }
                         return;
                     }
                     using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
@@ -183,7 +202,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 LogWriter.PrintMessage("Error: {0}", e.Message);
                 IsDownloading = false;
-                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
+                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
             }
         }
 
@@ -205,8 +224,7 @@ namespace NetSparkleUpdater.Downloaders
             } catch {}
         }
 
-        /// <inheritdoc/>
-        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        private async Task<string> RetrieveDestinationFileNameAsyncForUri(Uri uri)
         {
             var httpClient = CreateHttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(30);
@@ -216,7 +234,7 @@ namespace NetSparkleUpdater.Downloaders
                     await httpClient.SendAsync(new HttpRequestMessage
                     {
                         Method = HttpMethod.Head,
-                        RequestUri = new Uri(item.DownloadLink)
+                        RequestUri = uri
                     }, HttpCompletionOption.ResponseHeadersRead, _cts.Token).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode)
@@ -225,6 +243,13 @@ namespace NetSparkleUpdater.Downloaders
                         string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
 
                         return Path.GetFileName(destFilename);
+                    } else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
+                    {
+                        var redirectURI = response.Headers.Location;
+                        if (RedirectHandler.Invoke(uri.ToString(), redirectURI.ToString(), response))
+                        {
+                            return await RetrieveDestinationFileNameAsyncForUri(redirectURI);
+                        }
                     }
                     return null;
                 }
@@ -233,6 +258,12 @@ namespace NetSparkleUpdater.Downloaders
             {
             }
             return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        {
+            return await RetrieveDestinationFileNameAsyncForUri(new Uri(item.DownloadLink));
         }
     }
 }

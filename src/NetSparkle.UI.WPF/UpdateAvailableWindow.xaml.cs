@@ -6,6 +6,7 @@ using NetSparkleUpdater.UI.WPF.Interfaces;
 using NetSparkleUpdater.UI.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -140,6 +141,18 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 _wasResponseSent = true;
                 UserResponded?.Invoke(this, new UpdateResponseEventArgs(_dataContext?.UserResponse ?? UpdateAvailableResult.None, CurrentItem));
+            }
+        }
+
+        /// <summary>
+        /// Change the main grid's background color. Use new SolidColorBrush(Colors.Transparent) or null to clear.
+        /// </summary>
+        /// <param name="brush">Brush to use as the main grid's background color</param>
+        public void ChangeMainGridBackgroundColor(System.Windows.Media.Brush brush)
+        {
+            if (MainGrid != null)
+            {
+                MainGrid.Background = brush;
             }
         }
 
