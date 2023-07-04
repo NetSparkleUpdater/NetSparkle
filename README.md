@@ -52,16 +52,6 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 | App Cast Generator Tool | `netsparkle-generate-appcast` CLI tool (incl. Ed25519 helpers) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.AppCastGenerator.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) |
 | DSA Helper Tool | `netsparkle-dsa` CLI tool (DSA helpers) | [![NuGet](https://img.shields.io/nuget/v/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) | [![NuGet](https://img.shields.io/nuget/vpre/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square&label=nuget-pre)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) | [![NuGet](https://img.shields.io/nuget/dt/NetSparkleUpdater.Tools.DSAHelper.svg?style=flat-square)](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) |
 
-All notable changes to this project will be documented in the [changelog](CHANGELOG.md).
-
-DEPRECATED:
-
-* [`com.pikleproductions.netsparkle`](https://www.nuget.org/packages/com.pikleproductions.netsparkle/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
-* [`com.pikleproductions.netsparkle.tools`](https://www.nuget.org/packages/com.pikleproductions.netsparkle.tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
-* [`NetSparkle.New`](https://www.nuget.org/packages/NetSparkle.New/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
-* [`NetSparkle.New.Tools`](https://www.nuget.org/packages/NetSparkle.New.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
-* [`NetSparkleUpdater.Tools`](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
-
 Quick info for tool installations:
 * App cast generator -- `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`; available as `netsparkle-generate-appcast` on your command line after installation
 * DSA Helper -- `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`; available as `netsparkle-dsa` on your command line after installation
@@ -440,6 +430,14 @@ See #238 [and this documentation](https://docs.microsoft.com/en-us/dotnet/deskto
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
 `NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library. Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
+
+Here is the full list of deprecated packages:
+
+* [`com.pikleproductions.netsparkle`](https://www.nuget.org/packages/com.pikleproductions.netsparkle/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
+* [`com.pikleproductions.netsparkle.tools`](https://www.nuget.org/packages/com.pikleproductions.netsparkle.tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+* [`NetSparkle.New`](https://www.nuget.org/packages/NetSparkle.New/) -- replaced by `NetSparkleUpdater.SparkleUpdater`
+* [`NetSparkle.New.Tools`](https://www.nuget.org/packages/NetSparkle.New.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
+* [`NetSparkleUpdater.Tools`](https://www.nuget.org/packages/NetSparkleUpdater.Tools/) -- replaced by `NetSparkleUpdater.Tools.AppCastGenerator` and `NetSparkleUpdater.Tools.DSAHelper`
 
 ### Must I put all my release versions into a single app cast file?
 
