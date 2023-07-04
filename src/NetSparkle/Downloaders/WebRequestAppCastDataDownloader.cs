@@ -50,7 +50,14 @@ namespace NetSparkleUpdater.Downloaders
             return DownloadAndGetAppCastDataAsync(url).GetAwaiter().GetResult();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Used for both async downloading app cast and the app cast's .signature file.
+        /// Note that you must handle your own exceptions if they occur. 
+        /// Otherwise, <see cref="SparkleUpdater"></see> will act as though the appcast 
+        /// failed to download.
+        /// </summary>
+        /// <param name="url">string URL for the place where the app cast can be downloaded</param>
+        /// <returns>The Task to retrieve the app cast data encoded as a string</returns>
         public async Task<string> DownloadAndGetAppCastDataAsync(string url)
         {
             _appcastUrl = url;
@@ -87,7 +94,6 @@ namespace NetSparkleUpdater.Downloaders
                     if (response.IsSuccessStatusCode)
                     {
                         Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
@@ -100,7 +106,6 @@ namespace NetSparkleUpdater.Downloaders
                     if (RedirectHandler != null)
                     {
                         HttpResponseMessage response = await httpClient.GetAsync(url).ConfigureAwait(false);
-
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
                         {
                             var redirectURI = response.Headers.Location;
@@ -117,7 +122,6 @@ namespace NetSparkleUpdater.Downloaders
                     else
                     {
                         Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);
-
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
