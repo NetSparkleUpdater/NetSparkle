@@ -49,6 +49,16 @@ namespace NetSparkleUpdater.AppCastHandlers
         public IAppCastFilter AppCastFilter { get; set; }
 
         /// <summary>
+        /// An optional filtering component.
+        /// </summary>
+        public AppCastReducerDelegate AppCastReducer { get; set; }
+
+        /// <summary>
+        /// Convert SemVer or something to .NET Version style
+        /// </summary>
+        public VersionTrimmerDelegate VersionTrimmer { get; set; }
+
+        /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
@@ -282,13 +292,19 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns>A list of <seealso cref="AppCastItem"/> updates that could be installed</returns>
         public virtual List<AppCastItem> GetAvailableUpdates()
         {
-            Version installed = new Version(_config.InstalledVersion);
+            SemVerLike installed = SemVerLike.Parse(_config.InstalledVersion);
             List<AppCastItem> appCastItems = Items;
             bool shouldFilterOutSmallerVersions = true;
-            
+            VersionTrimmerDelegate versionTrimmer = VersionTrimmer ?? VersionTrimmers.DefaultVersionTrimmer;
+
+            if (AppCastReducer != null)
+            {
+                appCastItems = AppCastReducer(installed, Items).ToList();
+            }
+
             if (AppCastFilter != null)
             {
-                var result = AppCastFilter.GetFilteredAppCastItems(installed, Items);
+                var result = AppCastFilter.GetFilteredAppCastItems(versionTrimmer(installed), appCastItems);
                 if (result.FilteredAppCastItems != null)
                 {
                     if (result.ForceInstallOfLatestInFilteredList)
@@ -319,7 +335,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
             return appCastItems.Where((item) =>
             {
-                if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
+                if (FilterAppCastItem(versionTrimmer(installed), shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
                     // accept all valid items
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
