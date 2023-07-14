@@ -254,6 +254,22 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation.</returns>
         public FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
         {
+            return FilterAppCastItem(SemVerLike.Parse(installed.ToString()), discardVersionsSmallerThanInstalled, signatureNeeded, item);
+        }
+
+        /// <summary>
+        /// Check if an AppCastItem update is valid, according to platform, signature requirements and current installed version number.
+        /// In the case where your app implements a downgrade strategy, e.g. when switching from a beta to a 
+        /// stable channel - there has to be a way to tell the update mechanism that you wish to ignore 
+        /// the beta AppCastItem elements, and that the latest stable element should be installed.  
+        /// </summary>
+        /// <param name="installed">the currently installed Version</param>
+        /// <param name="discardVersionsSmallerThanInstalled">if true, and the item's version is less than or equal to installed - the item will be discarded --> </param>
+        /// <param name="signatureNeeded">whether or not a signature is required</param>
+        /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
+        /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation.</returns>
+        public FilterItemResult FilterAppCastItem(SemVerLike installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        {
             var osFilterResult = FilterAppCastItemByOS(item);
             if (osFilterResult != FilterItemResult.Valid)
             {
@@ -263,7 +279,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             if (discardVersionsSmallerThanInstalled)
             {
                 // filter smaller versions
-                if (new Version(item.Version).CompareTo(installed) <= 0)
+                if (SemVerLike.Parse(item.Version).CompareTo(installed) <= 0)
                 {
                     _logWriter.PrintMessage(
                         "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
@@ -300,6 +316,10 @@ namespace NetSparkleUpdater.AppCastHandlers
             if (AppCastReducer != null)
             {
                 appCastItems = AppCastReducer(installed, Items).ToList();
+
+                // AppCastReducer user has responsibility to filter out both older and not needed versions.
+                // Also this allows to easily switch between pre-release and retail versions, on demand.
+                shouldFilterOutSmallerVersions = false;
             }
 
             if (AppCastFilter != null)
@@ -335,7 +355,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
             return appCastItems.Where((item) =>
             {
-                if (FilterAppCastItem(versionTrimmer(installed), shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
+                if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
                     // accept all valid items
                     _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
