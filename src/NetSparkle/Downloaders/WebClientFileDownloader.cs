@@ -161,7 +161,7 @@ namespace NetSparkleUpdater.Downloaders
                         }
                         return;
                     }
-                    using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                    using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, 8192, true))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
                         long totalLength = response.Content.Headers.ContentLength ?? 0;
@@ -191,11 +191,9 @@ namespace NetSparkleUpdater.Downloaders
                             UpdateDownloadProgress(totalRead, totalLength);
                         } while (IsDownloading);
                         IsDownloading = false;
-                        fileStream.Close();
-                        contentStream.Close();
-                        UpdateDownloadProgress(totalRead, totalLength);
-                        DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
                     }
+                    UpdateDownloadProgress(totalRead, totalLength);
+                    DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
                 }
             }
             catch (Exception e)

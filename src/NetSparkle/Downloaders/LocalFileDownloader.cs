@@ -109,7 +109,7 @@ namespace NetSparkleUpdater.Downloaders
                 using (var sourceStream =
                       new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions))
                 using (var destinationStream =
-                      new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize, fileOptions))
+                      new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write, FileShare.Read, bufferSize, fileOptions))
                 {
                     IsDownloading = true;
                     var wasCanceled = false;
@@ -127,8 +127,8 @@ namespace NetSparkleUpdater.Downloaders
                         UpdateDownloadProgress(totalRead, totalFileLength);
                     }
                     IsDownloading = false;
-                    DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, wasCanceled, null));
                 }
+                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, wasCanceled, null));
             }
             catch (Exception e)
             {
