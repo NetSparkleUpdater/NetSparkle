@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net6;net5;netstandard2.0;netcoreapp3.1;net452</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6;net5;netstandard2.0;netcoreapp3.1;net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
     <Version>2.3.0-preview20231004001</Version>
@@ -84,6 +84,16 @@
 		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET7</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+		<OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>DEBUG;TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
   <!-- .NET 4.5.2 references, compilation flags and build options -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
@@ -119,6 +129,10 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
 	<PackageReference Include="System.Text.Json" Version="7.0.3" />
 	<!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
+    <!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup>
 	<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />

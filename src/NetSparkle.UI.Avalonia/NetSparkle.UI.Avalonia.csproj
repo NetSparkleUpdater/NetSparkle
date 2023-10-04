@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net6;net5;netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6;net5;netcoreapp3.1;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.UI.Avalonia</PackageId>
     <Version>2.3.0-preview20231004001</Version>
@@ -45,6 +45,22 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
 		<DefineConstants>TRACE</DefineConstants>
 	</PropertyGroup>
 

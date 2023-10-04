@@ -4,7 +4,7 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net7.0-windows;net5-windows;net6-windows;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net7.0-windows;net5-windows;net6-windows;netcoreapp3.1</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -94,6 +94,9 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows'">
 	<PackageReference Include="System.Drawing.Common" Version="7.0.0"/>
   </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.1.23419.5" />
+	</ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

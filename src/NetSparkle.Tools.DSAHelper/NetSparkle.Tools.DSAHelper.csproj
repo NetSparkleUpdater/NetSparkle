@@ -5,17 +5,17 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Tools.DSAHelper</AssemblyName>
-    <TargetFrameworks>net7.0;net6;net5</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6;net5</TargetFrameworks>
     <AssemblyTitle>NetSparkle</AssemblyTitle>
     <Product>NetSparkleUpdater.Tools.DSAHelper</Product>
     <Description>Command line tool 'netsparkle-dsa' to generate and use DSA signatures. WARNING: DSA signatures are insecure. If possible, please use NetSparkleUpdater.Tools.AppCastGenerator instead to use ed25519 signatures. Use in conjunction with the NetSparkleUpdater library.</Description>
     <Copyright>Copyright © Dirk Eisenberg 2010, Deadpikle 2020-2023</Copyright>
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
-    <FileVersion>2.2.1.0</FileVersion>
+    <AssemblyVersion>2.2.2.0</AssemblyVersion>
+    <FileVersion>2.2.2.0</FileVersion>
     <OutputPath>..\..\bin\$(Configuration)\NetSparkle.Tools.DSAHelper\</OutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.2.1</Version>
+    <Version>2.2.2</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
     <PackAsTool>true</PackAsTool>

@@ -3,7 +3,7 @@
     <ProjectGuid>{E50AC3A5-6C63-40D7-A4C4-9B359EFD5707}</ProjectGuid>
     <RootNamespace>NetSparkleUnitTests</RootNamespace>
     <AssemblyName>NetSparkleUnitTests</AssemblyName>
-    <TargetFrameworks>net7.0;net6;net5;net452</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6;net5;net452</TargetFrameworks>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
@@ -44,10 +44,16 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6|AnyCPU'">
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET6</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7/0|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
 		<DefineConstants>TRACE;NETCORE;NET7</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+		<DefineConstants>TRACE;NETCORE;NET7</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET7</DefineConstants>
 	</PropertyGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
