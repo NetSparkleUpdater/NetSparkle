@@ -161,12 +161,15 @@ namespace NetSparkleUpdater.Downloaders
                         }
                         return;
                     }
+                    long totalLength = 0;
+                    long totalRead = 0;
+                    long readCount = 0;
                     using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, 8192, true))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
-                        long totalLength = response.Content.Headers.ContentLength ?? 0;
-                        long totalRead = 0;
-                        long readCount = 0;
+                        totalLength = response.Content.Headers.ContentLength ?? 0;
+                        totalRead = 0;
+                        readCount = 0;
                         byte[] buffer = new byte[32*1024]; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
                         UpdateDownloadProgress(0, totalLength);
                         IsDownloading = true;

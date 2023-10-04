@@ -106,13 +106,13 @@ namespace NetSparkleUpdater.Downloaders
             long totalRead = 0;
             try
             {
+                var wasCanceled = false;
                 using (var sourceStream =
                       new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions))
                 using (var destinationStream =
                       new FileStream(destinationFile, FileMode.CreateNew, FileAccess.Write, FileShare.Read, bufferSize, fileOptions))
                 {
                     IsDownloading = true;
-                    var wasCanceled = false;
                     long totalFileLength = sourceStream.Length;
                     while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                     {
