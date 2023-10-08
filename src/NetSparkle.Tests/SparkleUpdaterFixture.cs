@@ -4,7 +4,7 @@ using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 using Xunit;
-#if (NETSTANDARD || NET5 || NET6 || NET7)
+#if (NETSTANDARD || NET5 || NET6 || NET7 || NET8)
 using System.Runtime.InteropServices;
 #endif
 
