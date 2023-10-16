@@ -49,7 +49,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             _sparkle.StartLoop(true, true);
         }
 
-        private async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
+        private async Task ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
         {
             await _sparkle.CheckForUpdatesAtUserRequest();
         }

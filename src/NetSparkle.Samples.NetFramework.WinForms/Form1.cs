@@ -39,7 +39,7 @@ namespace NetSparkleUpdater.Samples.NetFramework.WinForms
             Application.Exit();
         }
 
-        private async void AppBackgroundCheckButton_Click(object sender, EventArgs e)
+        private async Task AppBackgroundCheckButton_Click(object sender, EventArgs e)
         {
             // Manually check for updates, this will not show a ui
             var result = await _sparkleUpdateDetector.CheckForUpdatesQuietly();

@@ -46,7 +46,7 @@ namespace NetSparkleUnitTests
         [InlineData(false, true, "2.0", "2.1", UpdateStatus.UpdateAvailable)]
         [InlineData(false, true, "1.9", "2.1", UpdateStatus.UpdateAvailable)]
         [InlineData(false, false, "1.9", "2.1", UpdateStatus.UpdateAvailable)]
-        public async void TestFilteringAndForceInstalls(bool removeBetaItems, bool alwaysInstallLatest, string currentInstalledVersion, string expectedVersionToInstall, UpdateStatus expectedStatus)
+        public async Task TestFilteringAndForceInstalls(bool removeBetaItems, bool alwaysInstallLatest, string currentInstalledVersion, string expectedVersionToInstall, UpdateStatus expectedStatus)
         {
             var appCast = _fixture.GetXmlAppCastDataWithBetaItems();
             SparkleUpdater updater = _fixture.CreateUpdater(appCast, currentInstalledVersion, this);
@@ -67,7 +67,7 @@ namespace NetSparkleUnitTests
         }
         
         [Fact]
-        public async void TestFetchOfLatestAppCastItem()
+        public async Task TestFetchOfLatestAppCastItem()
         {
             SparkleUpdater updater = _fixture.CreateUpdater(_fixture.GetSimpleXmlAppCastData(), "1.9");
 

@@ -65,7 +65,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
         }
 
-        private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
+        private async Task CheckUpdates_Click(object sender, RoutedEventArgs e)
         {
             InstallUpdateButton.IsEnabled = false;
             UpdateInfo.Content = "Checking for updates...";
@@ -97,7 +97,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             }
         }
 
-        private async void DownloadUpdate_Click(object sender, RoutedEventArgs e)
+        private async Task DownloadUpdate_Click(object sender, RoutedEventArgs e)
         {
             // this is async so that it can grab the download file name from the server
             _sparkle.DownloadStarted -= _sparkle_StartedDownloading;
@@ -158,7 +158,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             System.Windows.Application.Current.Shutdown();
         }
 
-        private async void UpdateAutomaticallyButton_Click(object sender, RoutedEventArgs e)
+        private async Task UpdateAutomaticallyButton_Click(object sender, RoutedEventArgs e)
         {
             _sparkle.UserInteractionMode = Enums.UserInteractionMode.DownloadAndInstall;
             RunFullUpdateUpdateStatusLabel.Text = "Checking for update...";
@@ -184,7 +184,7 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             RunFullUpdateUpdateStatusLabel.Text = "Update is ready...";
         }
 
-        private async void _sparkle_FullUpdate_CloseApplication()
+        private async Task _sparkle_FullUpdate_CloseApplication()
         {
             RunFullUpdateUpdateStatusLabel.Text = "Closing application...";
             await Task.Delay(2000);

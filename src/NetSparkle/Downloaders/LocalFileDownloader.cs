@@ -89,7 +89,7 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri uri, string downloadFilePath)
+        public async Task StartFileDownload(Uri uri, string downloadFilePath)
         {
             var path = UseLocalUriPath ? uri.LocalPath : uri.AbsolutePath;
             await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);

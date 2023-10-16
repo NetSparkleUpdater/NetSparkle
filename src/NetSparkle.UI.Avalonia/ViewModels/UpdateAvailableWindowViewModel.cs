@@ -291,7 +291,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             LoadReleaseNotes(items);
         }
 
-        private async void LoadReleaseNotes(List<AppCastItem> items)
+        private async Task LoadReleaseNotes(List<AppCastItem> items)
         {
             AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
             string releaseNotes = await ReleaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
