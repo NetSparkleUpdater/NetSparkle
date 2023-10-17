@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.21" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.21" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />
