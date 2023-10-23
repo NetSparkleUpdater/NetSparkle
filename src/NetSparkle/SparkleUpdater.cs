@@ -620,7 +620,7 @@ namespace NetSparkleUpdater
             // init the appcast
             if (AppCastDataDownloader == null)
             {
-                AppCastDataDownloader = new WebRequestAppCastDataDownloader();
+                AppCastDataDownloader = new WebRequestAppCastDataDownloader(LogWriter);
             }
             if (AppCastHandler == null)
             {

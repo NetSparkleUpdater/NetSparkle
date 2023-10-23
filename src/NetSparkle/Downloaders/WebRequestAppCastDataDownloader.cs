@@ -1,4 +1,4 @@
-﻿using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,14 +18,34 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
+        private ILogger _logger;
         private string _appcastUrl = "";
 
         /// <summary>
-        /// Default constructor for the app cast data downloader. Basically
-        /// does nothing. :)
+        /// Default constructor for the app cast data downloader.
         /// </summary>
-        public WebRequestAppCastDataDownloader()
+        public WebRequestAppCastDataDownloader() : this(new LogWriter())
         {
+        }
+
+        /// <summary>
+        /// Default constructor for the app cast data downloader.
+        /// </summary>
+        /// <param name="logger">ILogger to write logs to</param>
+        public WebRequestAppCastDataDownloader(ILogger logger)
+        {
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// ILogger to log data from WebRequestAppCastDataDownloader
+        /// </summary>
+        public ILogger LogWriter
+        {
+            set { _logger = value; }
+            get { return _logger; }
         }
 
         /// <summary>
@@ -132,7 +152,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                LogWriter.PrintMessage("Error: {0}", e.Message);
             }
             return "";
         }
