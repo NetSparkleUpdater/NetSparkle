@@ -296,7 +296,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         public (List<AppCastItem>, string) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName)
         {
             var items = new List<AppCastItem>();
-            var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions);
+            var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? "");
             var binaries = FindBinaries(sourceBinaryDirectory, dirFileSearches, _opts.SearchBinarySubDirectories);
             if (!binaries.Any())
             {
@@ -382,14 +382,17 @@ namespace NetSparkleUpdater.AppCastGenerator
                 items.Sort((a, b) => b.Version.CompareTo(a.Version));
 
                 // mark critical items as critical
-                var criticalVersions = _opts.CriticalVersions.Split(",").ToList()
+                var criticalVersions = _opts.CriticalVersions?.Split(",").ToList()
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct();
-                foreach (var item in items)
+                if (criticalVersions != null)
                 {
-                    if (criticalVersions.Contains(item.Version))
+                    foreach (var item in items)
                     {
-                        item.IsCriticalUpdate = true;
+                        if (criticalVersions.Contains(item.Version))
+                        {
+                            item.IsCriticalUpdate = true;
+                        }
                     }
                 }
 
