@@ -225,8 +225,8 @@ June 2016 Steffen Xonna: Forked the library to raise the security and change som
 
  - Introduce an SecurityMode
    - SecurityMode.Unsafe = Is nearly the same like before. If there isn't an Signature or an DSA Key the files will be accepted. If both is present the signature has to be valid. *i don't recommend this mode.* It has critical security issues.
-   - SecurityMode.UseIfPossible = If an local DSA key is available then an signature is neccessary. If both is present the signature has to be valid.
-   - SecurityMode.Strict = The default-mode. This mode enforce the avaibility of an local DSA Key. If none is available the updatefiles will be rejected. *I strongly recommend this mode.*
+   - SecurityMode.UseIfPossible = If an local DSA key is available then an signature is necessary. If both is present the signature has to be valid.
+   - SecurityMode.Strict = The default-mode. This mode enforce the availability of an local DSA Key. If none is available the updatefiles will be rejected. *I strongly recommend this mode.*
  - Added support for DSA public key as parameter for sparkle.
  - Added support for appcast sidecar file which contains the DSA signature. Depends on the same rules (SecurityMode) like all other files.
  - Added support for DSA signatures of release note links. Depends on the same rules (SecurityMode) like all other files.
