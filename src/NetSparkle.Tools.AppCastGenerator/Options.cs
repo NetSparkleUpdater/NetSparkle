@@ -95,6 +95,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             HelpText = "If true, makes the output app cast file human readable (newslines, indents)")]
         public bool HumanReadableOutput { get; set; }
 
+        [Option("critical-versions", SetName = "local", Required = false, HelpText = "Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., \"1.0.2,1.2.3.1\"", Default = "")]
+        public string CriticalVersions { get; set; }
+
         #region Key Generation
 
         [Option("generate-keys", SetName = "keys", Required = false, HelpText = "Generate keys", Default = false)]

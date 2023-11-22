@@ -750,7 +750,6 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-
         [Fact]
         public void CannotSetVersionViaCLIWithTwoItemsHavingNoVersion()
         {
@@ -788,6 +787,56 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // items should be null since this is a failure case
                 Assert.Null(items);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Fact]
+        public void CanSetCriticalVersion()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello myapp 1.3.txt");
+            var dummyFilePath2 = Path.Combine(tempDir, "hello myapp 1.4.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath2, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                CriticalVersions = "1.3"
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                // items should be null since this is a failure case
+                Assert.Equal(2, items.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", items[0].Version);
+                Assert.False(items[0].IsCriticalUpdate);
+                Assert.Equal("1.3", items[1].Version);
+                Assert.True(items[1].IsCriticalUpdate);
             }
             finally
             {

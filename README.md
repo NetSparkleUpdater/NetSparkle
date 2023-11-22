@@ -264,6 +264,7 @@ _Missing some option you'd like to see? File an issue on this repo or add it you
   * If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
 * `--signature-file-extension`: Extension (WITHOUT the `.`) to use for the appcast xml signature file. Defaults to `signature`. Example use: `--signature-file-extension txt`.
 * `--file-version`: Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the `--reparse-existing` parameter so that old items get picked up. If the generator finds 2 binaries without any known version and `--file-version` is set, then an error will be emitted.
+* `--critical-versions`: Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., "1.0.2,1.2.3.1".
 
 #### Options for Key Generation
 

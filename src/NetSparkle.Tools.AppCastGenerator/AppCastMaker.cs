@@ -380,6 +380,19 @@ namespace NetSparkleUpdater.AppCastGenerator
 
                 // order the list by version descending -- helpful when reparsing app cast to make sure things stay in order
                 items.Sort((a, b) => b.Version.CompareTo(a.Version));
+
+                // mark critical items as critical
+                var criticalVersions = _opts.CriticalVersions.Split(",").ToList()
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct();
+                foreach (var item in items)
+                {
+                    if (criticalVersions.Contains(item.Version))
+                    {
+                        item.IsCriticalUpdate = true;
+                    }
+                }
+
                 return (items, productName);
             }
             catch (Exception e)
