@@ -135,11 +135,7 @@ namespace NetSparkleUpdater.Configurations
                 try
                 {
                     string json = File.ReadAllText(saveLocation);
-#if (NETSTANDARD || NET6 || NET7 || NET8)
                     var data = JsonSerializer.Deserialize<SavedConfigurationData>(json);
-#else
-                    var data = JsonConvert.DeserializeObject<SavedConfigurationData>(json);
-#endif
                     CheckForUpdate = true;
                     LastCheckTime = data.LastCheckTime;
                     LastVersionSkipped = data.LastVersionSkipped;
@@ -198,11 +194,7 @@ namespace NetSparkleUpdater.Configurations
             };
             LastConfigUpdate = savedConfig.LastConfigUpdate;
 
-#if (NETSTANDARD || NET6 || NET7 || NET8)
             string json = JsonSerializer.Serialize(savedConfig);
-#else
-            string json = JsonConvert.SerializeObject(savedConfig);
-#endif
             try
             {
                 File.WriteAllText(savePath, json);
