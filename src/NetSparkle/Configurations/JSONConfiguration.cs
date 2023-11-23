@@ -1,8 +1,5 @@
 ﻿using NetSparkleUpdater.AssemblyAccessors;
 using NetSparkleUpdater.Interfaces;
-#if NETFRAMEWORK
-using Newtonsoft.Json;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Globalization;
