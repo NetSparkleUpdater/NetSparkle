@@ -57,10 +57,6 @@
 	</PropertyGroup>
 
   <ItemGroup>
-	  <AvaloniaXaml Include="CheckingForUpdatesWindow.xaml" />
-	  <AvaloniaXaml Include="DownloadProgressWindow.xaml" />
-	  <AvaloniaXaml Include="MessageNotificationWindow.xaml" />
-	  <AvaloniaXaml Include="UpdateAvailableWindow.xaml" />
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
