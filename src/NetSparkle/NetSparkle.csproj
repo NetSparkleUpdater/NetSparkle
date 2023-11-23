@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net7.0;net6;net5;netstandard2.0;netcoreapp3.1;net452</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6;net5;netstandard2.0;netcoreapp3.1;net462</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.SparkleUpdater</PackageId>
     <Version>2.3.0</Version>
@@ -24,15 +24,15 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
     <OutputPath>..\bin\Release\NetSparkle\</OutputPath>
     <DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
-    <DefineConstants>TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+    <DefineConstants>TRACE;NET462;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
     <OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
     <DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
-    <DefineConstants>DEBUG;TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET462;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
 		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
@@ -95,7 +95,7 @@
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET8</DefineConstants>
 	</PropertyGroup>
   <!-- .NET 4.5.2 references, compilation flags and build options -->
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -104,7 +104,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
 	<!--<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />-->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">

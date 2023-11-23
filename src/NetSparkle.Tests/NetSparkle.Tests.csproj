@@ -21,10 +21,10 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
-    <DefineConstants>TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+    <DefineConstants>TRACE;NET462;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE;NET452;NETFULL;NETFRAMEWORK</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET462;NETFULL;NETFRAMEWORK</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DefineConstants>TRACE;NETCORE;NETSTANDARD</DefineConstants>
