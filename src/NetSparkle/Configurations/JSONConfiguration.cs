@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-#if (NETSTANDARD || NET6 || NET7 || NET8)
 using System.Text.Json;
-#endif
 
 namespace NetSparkleUpdater.Configurations
 {
