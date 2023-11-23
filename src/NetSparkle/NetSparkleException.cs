@@ -19,14 +19,5 @@ namespace NetSparkleUpdater
         public NetSparkleException(string message) : base(message)
         {
         }
-
-        /// <summary>
-        /// Create an exception with the given serialization information and streaming context
-        /// </summary>
-        /// <param name="info">The serialized exception information</param>
-        /// <param name="context">the context of the serialization operation for this exception</param>
-        protected NetSparkleException(SerializationInfo info, StreamingContext context): base(info, context)
-        {
-        }
     }
 }
