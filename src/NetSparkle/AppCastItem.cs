@@ -322,6 +322,14 @@ namespace NetSparkleUpdater
                 enclosure.Add(new XAttribute(_typeAttribute, MIMEType ?? _defaultType));
                 enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _criticalAttribute, IsCriticalUpdate));
 
+                // enhance compatibility with Sparkle app casts (#275)
+                item.Add(new XElement(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
+                item.Add(new XElement(XMLAppCast.SparkleNamespace + _shortVersionAttribute, ShortVersion));
+                if (IsCriticalUpdate)
+                {
+                    item.Add(new XElement(XMLAppCast.SparkleNamespace + _criticalAttribute));
+                }
+
                 if (!string.IsNullOrEmpty(DownloadSignature))
                 {
                     enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _signatureAttribute, DownloadSignature));
