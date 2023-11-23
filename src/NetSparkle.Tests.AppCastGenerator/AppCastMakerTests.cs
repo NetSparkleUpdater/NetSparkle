@@ -675,7 +675,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                     maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
                 }
                 // for debugging print out app cast
-                Console.WriteLine(File.ReadAllText(appCastFileName));
+                // Console.WriteLine(File.ReadAllText(appCastFileName));
                 // test NetSparkle reading file
                 var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
                 var publicKey = signatureManager.GetPublicKey();
@@ -815,11 +815,11 @@ namespace NetSparkle.Tests.AppCastGenerator
                 SourceBinaryDirectory = tempDir,
                 Extensions = "txt",
                 OutputDirectory = tempDir,
-                OperatingSystem = "windows",
+                OperatingSystem = GetOperatingSystemForAppCastString(),
                 BaseUrl = "https://example.com/downloads",
                 OverwriteOldItemsInAppcast = false,
                 ReparseExistingAppCast = false,
-                CriticalVersions = "1.3"
+                CriticalVersions = "1.3",
             };
 
             try
@@ -830,13 +830,44 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var maker = new XMLAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
-                // items should be null since this is a failure case
                 Assert.Equal(2, items.Count());
                 // 1.4 should not be marked critical; 1.3 should be
                 Assert.Equal("1.4", items[0].Version);
                 Assert.False(items[0].IsCriticalUpdate);
                 Assert.Equal("1.3", items[1].Version);
                 Assert.True(items[1].IsCriticalUpdate);
+                // make sure data ends up in file, too
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+                // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
+                // test NetSparkle reading file
+                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
+                var publicKey = signatureManager.GetPublicKey();
+                var publicKeyString = Convert.ToBase64String(publicKey);
+                appCastHandler.SetupAppCastHandler(
+                        new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
+                        appCastFileName,
+                        new EmptyTestDataConfguration(
+                            new FakeTestDataAssemblyAccessor() 
+                            {
+                                AssemblyVersion = "1.0"
+                            }), 
+                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
+                            NetSparkleUpdater.Enums.SecurityMode.Strict,
+                            publicKeyString),
+                        new NetSparkleUpdater.LogWriter(true));
+                var didSucceed = appCastHandler.DownloadAndParse();
+                Assert.True(didSucceed);
+                var updates = appCastHandler.GetAvailableUpdates();
+                Assert.Equal(2, updates.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", updates[0].Version);
+                Assert.False(updates[0].IsCriticalUpdate);
+                Assert.Equal("1.3", updates[1].Version);
+                Assert.True(updates[1].IsCriticalUpdate);
             }
             finally
             {
