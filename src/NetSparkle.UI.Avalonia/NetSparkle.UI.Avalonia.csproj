@@ -80,12 +80,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.0-rc2.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc2.2" />
-    <PackageReference Include="Avalonia.HtmlRenderer" Version="11.0.0-*" />
+    <PackageReference Include="Avalonia" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+    <PackageReference Include="Avalonia.HtmlRenderer" Version="11.0.5" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-rc2.2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.5" />
   </ItemGroup>
 
   <ItemGroup>
