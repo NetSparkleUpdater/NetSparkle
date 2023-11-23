@@ -11,7 +11,7 @@ Lines ending in [**] are candidates for backporting to 2.x if time/desired by us
 * `WebClientFileDownloader` renamed to `WebFileDownloader` to better reflect functionality (e85235f512f4344c9a675e56e9a4d50434c33959)
 * Changed `net6` to `net6.0` to be consistent with newer versions
 * Removed `netcoreapp3.1` and `net5.0` compatibility as they are both EOL per https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core (87381f2d3422e36fe5f614c85e43687eed497c42)
-* Moved to official/non-preview builds of `System.Drawing.Common` for 8.x and bump up to `8.0.0` for older versions of .NET (87381f2d3422e36fe5f614c85e43687eed497c42)
+* Moved to official/non-preview builds of `System.Drawing.Common` for 8.x and bump up to `8.0.0` for older versions of .NET (87381f2d3422e36fe5f614c85e43687eed497c42) [**]
 * Use `.axaml` in all Avalonia-related projects (46de3e9c9525cac4026a7959e44764752cdf36ee, e6d5ad20fec37e018a23ab46ef34d728b8104e96)
 
 **Changes/Fixes**
