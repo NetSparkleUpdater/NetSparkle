@@ -56,9 +56,9 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             return
                 "<div style=\"border: #ccc 1px solid;\">" +
-                    "<div style=\"background: {3}; background-color: {3}; font-size: 20px; padding: 5px; padding-top: 4px; padding-bottom: 0;\">" +
+                    "<div style=\"background: {3}; background-color: {3}; font-size: 16px; padding: 5px; padding-top: 4px; padding-bottom: 0;\">" +
                         "{0} ({1})" +
-                "</div><div style=\"padding: 5px; font-size: 16px;\">{2}</div></div>";
+                "</div><div style=\"padding: 5px; font-size: 12px;\">{2}</div></div>";
         }
 
         /// <summary>

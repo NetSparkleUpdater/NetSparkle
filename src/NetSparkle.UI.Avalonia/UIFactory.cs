@@ -31,7 +31,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
-            UseStaticUpdateWindowBackgroundColor = true;
+            UseStaticUpdateWindowBackgroundColor = false;
             UpdateWindowGridBackgroundBrush = (IBrush)new BrushConverter().ConvertFrom("#EEEEEE");
         }
 

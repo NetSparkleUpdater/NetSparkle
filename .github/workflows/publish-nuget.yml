@@ -63,7 +63,7 @@ jobs:
     name: Build and publish all packages to NuGet
     runs-on: windows-latest
     needs: test
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview'
     # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
     #env:
     #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true

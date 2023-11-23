@@ -24,7 +24,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
-                UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(null /* Icon; this throws null from 0.10.16 to 0.10.18 and don't have time to debug */)
+                UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon)
                 {
                     // use the following property to change the main grid background on the update window. nullable.
                     //UpdateWindowGridBackgroundBrush = new SolidColorBrush(Colors.Purple) 

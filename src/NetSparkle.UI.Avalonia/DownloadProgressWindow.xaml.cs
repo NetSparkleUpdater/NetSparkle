@@ -19,7 +19,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// Window that shows while SparkleUpdater is downloading the update
     /// for the user.
     /// </summary>
-    public class DownloadProgressWindow : BaseWindow, IDownloadProgress
+    public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress
     {
         private bool _didCallDownloadProcessCompletedHandler = false;
 
@@ -47,7 +47,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <param name="viewModel"><see cref="DownloadProgressWindowViewModel"/> view model that
         /// this window will bind to as its DataContext</param>
         /// <param name="iconBitmap">Bitmap to use for the app's logo/graphic</param>
-        public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel, IBitmap iconBitmap)
+        public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel, Bitmap iconBitmap)
         {
             InitializeComponent();
 #if DEBUG
