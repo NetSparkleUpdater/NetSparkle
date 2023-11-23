@@ -320,6 +320,7 @@ namespace NetSparkleUpdater
                 enclosure.Add(new XAttribute(_lengthAttribute, UpdateSize));
                 enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _operatingSystemAttribute, OperatingSystemString ?? _defaultOperatingSystem));
                 enclosure.Add(new XAttribute(_typeAttribute, MIMEType ?? _defaultType));
+                enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _criticalAttribute, IsCriticalUpdate));
 
                 if (!string.IsNullOrEmpty(DownloadSignature))
                 {
