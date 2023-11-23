@@ -1,6 +1,7 @@
 ## Updating to 3.X
 
-Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
+* Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
+* Lines ending in [**!] have been backported.
 
 **Breaking Changes**
 
@@ -20,6 +21,8 @@ Lines ending in [**] are candidates for backporting to 2.x if time/desired by us
 * Fixed some documentation in `LocalFileDownloader` (6ca714ca62577bc7412353338a148a03810ba81a) [**]
 * Use net8.0 in Avalonia samples (46de3e9c9525cac4026a7959e44764752cdf36ee)
 * Remove obsolete NetSparkleException override (3f54a53c7839fb99b291f8bc15b751aceb2d28de)
+* Fixed `IsCriticalUpdate` not being written to the app cast (2142e8e0c277523ac33b2ba1d19d0e1fd9ca8483) [**!]
+* Added more compatibility with Sparkle feeds (c9e2ddb4eea291c7f12e7747d9822aaa7fdb8c29) - see #275 [**]
 
 ## Updating from 0.X or 1.X to 2.X
 
