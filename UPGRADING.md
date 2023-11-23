@@ -1,4 +1,27 @@
-## Updating from 0.X or 1.X
+## Updating to 3.X
+
+Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
+
+**Breaking Changes**
+
+* The built-in Avalonia UI now runs on version 11 of Avalonia (6a9a6426324e357daf0f9991d7a981b19a009b93, a0a7314317e9fc712270f75f31c6442a2d454da3, 46de3e9c9525cac4026a7959e44764752cdf36ee, `avalonia-preview` branch)
+* Bumped minimum version of .NET Framework from 4.5.2 to 4.6.2 (57fa9ad2597ec6615894464b8f2ccef881dda52b) as 4.5.2 is EOL per https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
+* Removed `Newtonsoft.Json` dependency for .NET Framework build and use `System.Text.Json` (57fa9ad2597ec6615894464b8f2ccef881dda52b)
+* .NET Framework `ReleaseNotesGrabber` uses an `HttpClient` instead of a `WebClient` for downloading (31523e95b50f00fab3fb3e043dea7d32227d5862)
+* `WebClientFileDownloader` renamed to `WebFileDownloader` to better reflect functionality (e85235f512f4344c9a675e56e9a4d50434c33959)
+* Changed `net6` to `net6.0` to be consistent with newer versions
+* Removed `netcoreapp3.1` and `net5.0` compatibility as they are both EOL per https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core (87381f2d3422e36fe5f614c85e43687eed497c42)
+* Moved to official/non-preview builds of `System.Drawing.Common` for 8.x and bump up to `8.0.0` for older versions of .NET (87381f2d3422e36fe5f614c85e43687eed497c42)
+* Use `.axaml` in all Avalonia-related projects (46de3e9c9525cac4026a7959e44764752cdf36ee, e6d5ad20fec37e018a23ab46ef34d728b8104e96)
+
+**Changes/Fixes**
+
+* Don't get download name if no need to (e63ebb054d62e26232b808189eb4619566952f3a) [**]
+* Fixed some documentation in `LocalFileDownloader` (6ca714ca62577bc7412353338a148a03810ba81a) [**]
+* Use net8.0 in Avalonia samples (46de3e9c9525cac4026a7959e44764752cdf36ee)
+
+
+## Updating from 0.X or 1.X to 2.X
 
 This section holds info on major changes when moving from versions 0.X or 1.Y. If we've forgotten something important, please [file an issue](https://github.com/NetSparkleUpdater/NetSparkle/issues).
 
