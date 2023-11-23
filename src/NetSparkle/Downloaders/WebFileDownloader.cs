@@ -18,10 +18,10 @@ namespace NetSparkleUpdater.Downloaders
 {
     /// <summary>
     /// Class that downloads files from the internet and reports
-    /// progress on those files being downloaded. Uses a <seealso cref="WebClient"/>
+    /// progress on those files being downloaded. Uses a <seealso cref="HttpClient"/>
     /// object as its main method for downloading.
     /// </summary>
-    public class WebClientFileDownloader : IUpdateDownloader, IDisposable
+    public class WebFileDownloader : IUpdateDownloader, IDisposable
     {
         private HttpClient _httpClient;
         private ILogger _logger;
@@ -31,24 +31,24 @@ namespace NetSparkleUpdater.Downloaders
         /// Default constructor for the web client file downloader.
         /// Uses default credentials and default proxy.
         /// </summary>
-        public WebClientFileDownloader()
+        public WebFileDownloader()
         {
             PrepareToDownloadFile();
         }
 
         /// <summary>
-        /// Default constructor for the web client file downloader.
+        /// Default constructor for the web file downloader.
         /// Uses default credentials and default proxy.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
-        public WebClientFileDownloader(ILogger logger)
+        public WebFileDownloader(ILogger logger)
         {
             _logger = logger;
             PrepareToDownloadFile();
         }
 
         /// <summary>
-        /// ILogger to log data from WebClientFileDownloader
+        /// ILogger to log data from WebFileDownloader
         /// </summary>
         public ILogger LogWriter
         {
@@ -64,7 +64,7 @@ namespace NetSparkleUpdater.Downloaders
 
         /// <summary>
         /// Do preparation work necessary to download a file,
-        /// aka set up the WebClient for use.
+        /// aka set up the HttpClient for use.
         /// </summary>
         public void PrepareToDownloadFile()
         {

@@ -953,11 +953,11 @@ namespace NetSparkleUpdater
         {
             if (UpdateDownloader == null)
             {
-                UpdateDownloader = new WebClientFileDownloader(LogWriter);
+                UpdateDownloader = new WebFileDownloader(LogWriter);
             }
-            else if (UpdateDownloader is WebClientFileDownloader webClientFileDownloader)
+            else if (UpdateDownloader is WebFileDownloader webFileDownloader)
             {
-                webClientFileDownloader.PrepareToDownloadFile(); // refresh download operations
+                webFileDownloader.PrepareToDownloadFile(); // refresh download operations
             }
         }
 
