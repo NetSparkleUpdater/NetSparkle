@@ -37,9 +37,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         public UpdateAvailableWindow() : base(true)
         {
             this.InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
+            InitViews();
         }
 
         /// <summary>
@@ -53,6 +51,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, Bitmap iconBitmap) : base(true)
         {
             this.InitializeComponent();
+            InitViews();
             var imageControl = this.FindControl<Image>("AppIcon");
             if (imageControl != null)
             {
@@ -65,6 +64,15 @@ namespace NetSparkleUpdater.UI.Avalonia
             _dataContext.ReleaseNotesDisplayer = this;
             _dataContext.UserRespondedHandler = this;
             Closing += UpdateAvailableWindow_Closing;
+        }
+
+        private void InitViews()
+        {
+            var grid = this.FindControl<Grid>("MainGrid");
+            _releaseNotesRow = grid.RowDefinitions[2];
+            _htmlLabel = this.FindControl<HtmlLabel>("ChangeNotesHTMLLabel");
+            _htmlLabelContainer = this.FindControl<ScrollViewer>("ChangeNotesScrollViewer");
+            //_htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true); // throws on 0.10.0 for some reason?
         }
 
         /// <summary>
@@ -84,16 +92,6 @@ namespace NetSparkleUpdater.UI.Avalonia
         {
             UserRespondedToUpdateCheck(UpdateAvailableResult.None); // just in case
             Closing -= UpdateAvailableWindow_Closing;
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            var grid = this.FindControl<Grid>("MainGrid");
-            _releaseNotesRow = grid.RowDefinitions[2];
-            _htmlLabel = this.FindControl<HtmlLabel>("ChangeNotesHTMLLabel");
-            _htmlLabelContainer = this.FindControl<ScrollViewer>("ChangeNotesScrollViewer");
-            //_htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true); // throws on 0.10.0 for some reason?
         }
 
         UpdateAvailableResult IUpdateAvailable.Result => _dataContext?.UserResponse ?? UpdateAvailableResult.None;

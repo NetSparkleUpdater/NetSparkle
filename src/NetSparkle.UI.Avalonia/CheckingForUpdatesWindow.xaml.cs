@@ -25,9 +25,6 @@ namespace NetSparkleUpdater.UI.Avalonia
         public CheckingForUpdatesWindow()
         {
             this.InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             Closing += CheckingForUpdatesWindow_Closing;
         }
 
@@ -64,11 +61,6 @@ namespace NetSparkleUpdater.UI.Avalonia
         void ICheckingForUpdates.Show()
         {
             Show();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }

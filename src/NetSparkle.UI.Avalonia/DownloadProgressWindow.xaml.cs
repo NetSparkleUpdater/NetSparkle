@@ -34,9 +34,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         public DownloadProgressWindow()
         {
             this.InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
+            _actionButton = this.FindControl<Button>("ActionButton");
             Closing += DownloadProgressWindow_Closing;
         }
 
@@ -50,9 +48,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         public DownloadProgressWindow(DownloadProgressWindowViewModel viewModel, Bitmap iconBitmap)
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
+            _actionButton = this.FindControl<Button>("ActionButton");
             Closing += DownloadProgressWindow_Closing;
             DataContext = _dataContext = viewModel;
             var imageControl = this.FindControl<Image>("AppIcon");
@@ -60,12 +56,6 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 imageControl.Source = iconBitmap;
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            _actionButton = this.FindControl<Button>("ActionButton");
         }
 
         private void DownloadProgressWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

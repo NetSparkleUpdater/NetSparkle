@@ -21,9 +21,6 @@ namespace NetSparkleUpdater.UI.Avalonia
         public MessageNotificationWindow()
         {
             this.InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             DataContext = new MessageNotificationWindowViewModel();
         }
 
@@ -36,20 +33,12 @@ namespace NetSparkleUpdater.UI.Avalonia
         public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel, Bitmap iconBitmap)
         {
             this.InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             DataContext = viewModel;
             /*var imageControl = this.FindControl<Image>("AppIcon");
             if (imageControl != null)
             {
                 imageControl.Source = iconBitmap;
             }*/
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         /// <summary>

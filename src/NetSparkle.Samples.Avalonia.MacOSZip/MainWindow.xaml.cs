@@ -9,16 +9,13 @@ using System.IO;
 
 namespace NetSparkleUpdater.Samples.Avalonia
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private SparkleUpdater _sparkle;
 
         public MainWindow()
         {
-            InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
+            this.InitializeComponent();
             // set icon in project properties!
             //var zipAppcast = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-zip/appcast.xml";
             var tarAppcast = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos-tar/appcast.xml";
@@ -50,11 +47,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
         public async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
         {
             await _sparkle.CheckForUpdatesAtUserRequest();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }

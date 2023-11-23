@@ -10,16 +10,13 @@ using System.IO;
 
 namespace NetSparkleUpdater.Samples.Avalonia
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private SparkleUpdater _sparkle;
 
         public MainWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
@@ -41,11 +38,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
         public async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
         {
             await _sparkle.CheckForUpdatesAtUserRequest();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
     }
 }
