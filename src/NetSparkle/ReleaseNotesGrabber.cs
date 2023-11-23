@@ -255,27 +255,11 @@ namespace NetSparkleUpdater
         {
             try
             {
-#if NET452
-                using (var webClient = new WebClient())
-                {
-                    webClient.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    webClient.Encoding = Encoding.UTF8;
-                    if (cancellationToken != null)
-                    {
-                        using (cancellationToken.Register(() => webClient.CancelAsync()))
-                        {
-                            return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, sparkle.AppCastUrl));
-                        }
-                    }
-                    return await webClient.DownloadStringTaskAsync(Utilities.GetAbsoluteURL(link, sparkle.AppCastUrl));
-                }
-#else
                 var httpClient = CreateHttpClient();
                 using (cancellationToken.Register(() => httpClient.CancelPendingRequests()))
                 {
                     return await httpClient.GetStringAsync(link);
                 }
-#endif
             }
             catch (WebException ex)
             {
@@ -283,7 +267,6 @@ namespace NetSparkleUpdater
                 return "";
             }
         }
-#if !NET452
 
         /// <summary>
         /// Create the HttpClient used for file downloads
@@ -310,6 +293,5 @@ namespace NetSparkleUpdater
                 return new HttpClient();
             }
         }
-#endif
     }
 }
