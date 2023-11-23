@@ -19,7 +19,7 @@ Lines ending in [**] are candidates for backporting to 2.x if time/desired by us
 * Don't get download name if no need to (e63ebb054d62e26232b808189eb4619566952f3a) [**]
 * Fixed some documentation in `LocalFileDownloader` (6ca714ca62577bc7412353338a148a03810ba81a) [**]
 * Use net8.0 in Avalonia samples (46de3e9c9525cac4026a7959e44764752cdf36ee)
-
+* Remove obsolete NetSparkleException override (3f54a53c7839fb99b291f8bc15b751aceb2d28de)
 
 ## Updating from 0.X or 1.X to 2.X
 
