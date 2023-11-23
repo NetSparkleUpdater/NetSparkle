@@ -17,8 +17,7 @@ namespace NetSparkleUpdater.Downloaders
 {
     /// <summary>
     /// Class that downloads files from the internet and reports
-    /// progress on those files being downloaded. Uses a <seealso cref="WebClient"/>
-    /// object as its main method for downloading.
+    /// progress on those files being downloaded.
     /// </summary>
     public class LocalFileDownloader : IUpdateDownloader, IDisposable
     {
@@ -35,7 +34,7 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <summary>
-        /// Default constructor for the web client file downloader.
+        /// Default constructor for the local file downloader.
         /// Uses default credentials and default proxy.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
@@ -46,7 +45,7 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <summary>
-        /// ILogger to log data from WebClientFileDownloader
+        /// ILogger to log data from LocalFileDownloader
         /// </summary>
         public ILogger LogWriter
         {
