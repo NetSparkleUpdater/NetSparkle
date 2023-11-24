@@ -12,7 +12,7 @@
 
 # 
 
-NetSparkle is a software update framework for C# that is compatible with .NET Core 3+/.NET 5+ and .NET Framework 4.5.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET Core/.NET 5+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
+NetSparkle is a software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
 NetSparkle 2.0 brings the ability to customize most of NetSparkle -- custom UIs are now possible, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts), and many more enhancements are available!
 
@@ -431,7 +431,7 @@ The "Handle Events Yourself" sample will be very helpful to you: https://github.
 
 ### Does this work with Avalonia version XYZ?
 
-Right now, we are compatible with 0.10. If you need to make changes, you can use your own `IUIFactory` implementation to fix any issues that come up.
+Right now, we are compatible with version 11. If you need to make changes, you can use your own `IUIFactory` implementation to fix any issues that come up.
 
 ### Things aren't working. Help!
 
@@ -457,7 +457,7 @@ Yes! Please help us make this library awesome!
 
 ## Requirements
 
-- .NET Framework 4.5.2+ | .NET Core 3+ | .NET 5 | .NET 6 | .NET 7
+- .NET Framework 4.6.2+ | .NET 6+
 
 ## License
 
