@@ -84,8 +84,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="appcastUrl">the URL of the app cast file</param>
         /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
-        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
-            : this(appcastUrl, signatureVerifier, null)
+        /// <param name="dontKillParentProcess">Optional. If set to true, the parent process will not be killed during the update process. Defaults to false.</param>
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, bool dontKillParentProcess = false)
+            : this(appcastUrl, signatureVerifier, null, dontKillParentProcess)
         { }
 
         /// <summary>
@@ -94,8 +95,9 @@ namespace NetSparkleUpdater
         /// <param name="appcastUrl">the URL of the app cast file</param>
         /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
-        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly)
-            : this(appcastUrl, signatureVerifier, referenceAssembly, null)
+        /// <param name="dontKillParentProcess">Optional. If set to true, the parent process will not be killed during the update process. Defaults to false.</param>
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, bool dontKillParentProcess = false)
+            : this(appcastUrl, signatureVerifier, referenceAssembly, null, dontKillParentProcess)
         { }
 
         /// <summary>
@@ -105,7 +107,8 @@ namespace NetSparkleUpdater
         /// <param name="signatureVerifier">the object that will verify your app cast signatures.</param>
         /// <param name="referenceAssembly">the name of the assembly to use for comparison when checking update versions</param>
         /// <param name="factory">a UI factory to use in place of the default UI</param>
-        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory)
+        /// <param name="dontKillParentProcess">Optional. If set to true, the parent process will not be killed during the update process. Defaults to false.</param>
+        public SparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier, string referenceAssembly, IUIFactory factory, bool dontKillParentProcess = false)
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
@@ -145,6 +148,8 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Using the following url for downloading the app cast: {0}", AppCastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
+
+            DontKillParentProcess = dontKillParentProcess;
         }
 
         #endregion
@@ -444,6 +449,22 @@ namespace NetSparkleUpdater
                 return _appCastHandler;
             }
             set => _appCastHandler = value;
+        }
+
+        /// <summary>
+        /// Specifies if you want to kill the process or not before installation.
+        /// </summary>
+        public bool DontKillParentProcess { get; set; }
+
+        /// <summary>
+        /// The <see cref="Process"/> responsible for launching the downloaded update.
+        /// Only valid once the application is about to quit and the update is going to
+        /// be launched. This is exposed to be able to obtain information about the installation
+        /// process
+        /// </summary>
+        public Process InstallerProcess
+        {
+            get { return _installerProcess; }
         }
 
         #endregion
@@ -1425,39 +1446,53 @@ namespace NetSparkleUpdater
             using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
             using (StreamWriter write = new StreamWriter(stream, new UTF8Encoding(false))/*new StreamWriter(batchFilePath, false, new UTF8Encoding(false))*/)
             {
+                string killprocessScript = "";
+                string output = "";
+
+                // We should wait until the host process has died before starting the installer.
+                // This way, any DLLs or other items can be replaced properly.
+                // Code from: http://stackoverflow.com/a/22559462/3938401
+                // This only applies if !DontKillParentProcess
+
                 if (isWindows)
                 {
-                    // We should wait until the host process has died before starting the installer.
-                    // This way, any DLLs or other items can be replaced properly.
-                    // Code from: http://stackoverflow.com/a/22559462/3938401
+                    if (!DontKillParentProcess)
+                    {
+                        // Windows-specific script to wait for process to end...
+                        killprocessScript = $@"
+                                @echo off
+                                chcp 65001 > nul
+                                set /A counter=0                       
+                                setlocal ENABLEDELAYEDEXPANSION
+                                :loop
+                                set /A counter=!counter!+1
+                                if !counter! == 90 (
+                                    exit /b 1
+                                )
+                                tasklist | findstr ""\<{processID}\>"" > nul
+                                if not errorlevel 1 (
+                                    timeout /t 1 > nul
+                                    goto :loop
+                                )";
+                    }
 
-                    string output = $@"
-                        @echo off
-                        chcp 65001 > nul
-                        set /A counter=0                       
-                        setlocal ENABLEDELAYEDEXPANSION
-                        :loop
-                        set /A counter=!counter!+1
-                        if !counter! == 90 (
-                            exit /b 1
-                        )
-                        tasklist | findstr ""\<{processID}\>"" > nul
-                        if not errorlevel 1 (
-                            timeout /t 1 > nul
-                            goto :loop
-                        )
-                        :install
-                        {installerCmd}
-                        :afterinstall
-                        {relaunchAfterUpdate.Trim()}
-                        endlocal";
+                    output = $@"
+                            {killprocessScript}
+                            :install
+                            {installerCmd}
+                            :afterinstall
+                            {relaunchAfterUpdate.Trim()}
+                            endlocal";
+
                     await write.WriteAsync(output);
                     write.Close();
                 }
                 else
                 {
-                    // We should wait until the host process has died before starting the installer.
-                    var waitForFinish = $@"
+                    if (!DontKillParentProcess)
+                    {
+                        // Unix-specific script to wait for process to end...
+                        killprocessScript = $@"
                         COUNTER=0;
                         while ps -p {processID} > /dev/null;
                             do sleep 1;
@@ -1467,15 +1502,17 @@ namespace NetSparkleUpdater
                                 exit -1;
                             fi;
                         done;
-                    ";
+                        ";
+                    }
+
                     if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
                     {
                         // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
                         // use tar to extract
                         var tarCommand = isMacOS ? $"tar -x -f \"{downloadFilePath}\" -C \"{workingDir}\""
                             : $"tar -xf \"{downloadFilePath}\" -C \"{workingDir}\" --overwrite ";
-                        var output = $@"
-                            {waitForFinish}
+                        output = $@"
+                            {killprocessScript}
                             {tarCommand}
                             {relaunchAfterUpdate}";
                         await write.WriteAsync(output.Replace("\r\n", "\n"));
@@ -1488,8 +1525,8 @@ namespace NetSparkleUpdater
                         {
                             relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
                         }
-                        var output = $@"
-                            {waitForFinish}
+                        output = $@"
+                            {killprocessScript}
                             {installerCmd}
                             {relaunchAfterUpdate}";
                         await write.WriteAsync(output.Replace("\r\n", "\n"));
@@ -1529,16 +1566,16 @@ namespace NetSparkleUpdater
             await QuitApplication();
         }
 
-        // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
-        // for easy shell commands
+    // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
+    // for easy shell commands
 
-        /// <summary>
-        /// Execute a shell script.
-        /// <para>https://stackoverflow.com/a/47918132/3938401</para>
-        /// </summary>
-        /// <param name="cmd">Path to script to run via a shell</param>
-        /// <param name="waitForExit">True for the calling process to wait for the command to finish before exiting; false otherwise</param>
-        protected void Exec(string cmd, bool waitForExit = true)
+    /// <summary>
+    /// Execute a shell script.
+    /// <para>https://stackoverflow.com/a/47918132/3938401</para>
+    /// </summary>
+    /// <param name="cmd">Path to script to run via a shell</param>
+    /// <param name="waitForExit">True for the calling process to wait for the command to finish before exiting; false otherwise</param>
+    protected void Exec(string cmd, bool waitForExit = true)
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
             var shell = "";
