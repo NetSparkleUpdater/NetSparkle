@@ -489,7 +489,7 @@ namespace NetSparkleUpdater
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public async void StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
+        public async Task StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
             {
@@ -1025,7 +1025,7 @@ namespace NetSparkleUpdater
             thread.Start();
         }
 
-        private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
+        private async Task ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
         {
             if (args.ShouldInstall)
             {
@@ -1211,7 +1211,7 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="item">AppCastItem to install</param>
         /// <param name="installPath">Install path to the executable. If not provided, will ask the server for the download path.</param>
-        public async void InstallUpdate(AppCastItem item, string installPath = null)
+        public async Task InstallUpdate(AppCastItem item, string installPath = null)
         {
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
@@ -1833,7 +1833,7 @@ namespace NetSparkleUpdater
             }
         }
 
-        private async void OnUpdateWindowUserResponded(object sender, UpdateResponseEventArgs args)
+        private async Task OnUpdateWindowUserResponded(object sender, UpdateResponseEventArgs args)
         {
             LogWriter.PrintMessage("Update window response: {0}", args.Result);
             var currentItem = args.UpdateItem;
@@ -1890,7 +1890,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Loop that occasionally checks for updates for the running application
         /// </summary>
-        private async void OnWorkerDoWork(object sender, DoWorkEventArgs e)
+        private async Task OnWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             // store the did run once feature
             bool goIntoLoop = true;
@@ -2101,7 +2101,7 @@ namespace NetSparkleUpdater
         /// If the user is not downloading silently, the update UI will be shown.
         /// </summary>
         /// <param name="updates">updates to be installed. If null, nothing will happen.</param>
-        private async void UpdatesHaveBeenDownloaded(List<AppCastItem> updates)
+        private async Task UpdatesHaveBeenDownloaded(List<AppCastItem> updates)
         {
             if (updates != null)
             {
