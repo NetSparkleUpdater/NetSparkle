@@ -14,6 +14,7 @@
 * Removed `netcoreapp3.1` and `net5.0` compatibility as they are both EOL per https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core (87381f2d3422e36fe5f614c85e43687eed497c42)
 * Moved to official/non-preview builds of `System.Drawing.Common` for 8.x and bump up to `8.0.0` for older versions of .NET (87381f2d3422e36fe5f614c85e43687eed497c42) [**]
 * Use `.axaml` in all Avalonia-related projects (46de3e9c9525cac4026a7959e44764752cdf36ee, e6d5ad20fec37e018a23ab46ef34d728b8104e96)
+* `Exec(string cmd, bool waitForExit = true)` now returns a `bool`: `true` for the process starting, `false` otherwise
 
 **Changes/Fixes**
 

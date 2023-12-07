@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace NetSparkleUpdater
 {
@@ -108,4 +109,14 @@ namespace NetSparkleUpdater
     /// <param name="toURL">The location that the redirect is pointing to</param>
     /// <param name="responseMessage">The <seealso cref="HttpResponseMessage"/> for the response from the server</param>
     public delegate bool RedirectHandler(string fromURL, string toURL, HttpResponseMessage responseMessage);
+
+    /// <summary>
+    /// A delegate to allow users to modify/see the installer process before it actually begins.
+    /// Return true to keep the installer process going, return false to cancel the installer process 
+    /// (stop it from running).
+    /// </summary>
+    /// <param name="process">The installer process about to be started</param>
+    /// <param name="downloadFilePath">The path to the downloaded installer that will be started by the new process</param>
+    /// <returns>true if the installer should continue, false to stop the installer from starting</returns>
+    public delegate bool BeforeBeginInstallerProcess(Process process, string downloadFilePath);
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Text;
+using System.Diagnostics;
 
 namespace NetSparkleUpdater
 {
@@ -112,5 +113,13 @@ namespace NetSparkleUpdater
         /// If you need an event that can be canceled, use <see cref="PreparingToExitAsync"/>.</para>
         /// </summary>
         public event CloseApplicationAsync CloseApplicationAsync;
+
+        /// <summary>
+        /// Event to modify/see the installer process before it actually begins. You can set properties on the <see cref="Process"/>
+        /// before it by using this event.
+        /// Return true to keep the installer process going, return false to cancel the installer process 
+        /// (stop it from running).
+        /// </summary>
+        public event BeforeBeginInstallerProcess InstallerProcessAboutToStart;
     }
 }

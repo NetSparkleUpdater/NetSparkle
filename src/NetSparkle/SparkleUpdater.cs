@@ -1566,6 +1566,7 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Going to execute script at path: {0}", batchFilePath);
 
             // init the installer helper
+            var didStartInstaller = true;
             if (isWindows)
             {
                 _installerProcess = new Process
@@ -1579,16 +1580,24 @@ namespace NetSparkleUpdater
                     }
                 };
                 // start the installer process. the batch file will wait for the host app to close before starting.
-                LogWriter.PrintMessage("Starting the installer process at {0}", batchFilePath);
-                _installerProcess.Start();
+                var shouldContinue = InstallerProcessAboutToStart?.Invoke(_installerProcess, downloadFilePath) ?? true;
+                if (shouldContinue)
+                {
+                    LogWriter.PrintMessage("Starting the installer process at {0}", batchFilePath);
+                    _installerProcess.Start();
+                }
+                else
+                {
+                    didStartInstaller = false;
+                }
             }
             else
             {
                 // on macOS need to use bash to execute the shell script
                 LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
-                Exec(batchFilePath, false); // _installerProcess will be set up in `Exec`
+                didStartInstaller = Exec(batchFilePath, false); // _installerProcess will be set up in `Exec`
             }
-            if (ShouldKillParentProcessWhenStartingInstaller)
+            if (didStartInstaller && ShouldKillParentProcessWhenStartingInstaller)
             {
                 await QuitApplication();
             }
@@ -1603,7 +1612,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="cmd">Path to script to run via a shell</param>
         /// <param name="waitForExit">True for the calling process to wait for the command to finish before exiting; false otherwise</param>
-        protected void Exec(string cmd, bool waitForExit = true)
+        /// <param name="downloadFilePath">Optional param for download file that is being executed via installer</param>
+        /// <returns>true if process started, false otherwise</returns>
+        protected bool Exec(string cmd, bool waitForExit = true, string downloadFilePath = "")
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
             var shell = "";
@@ -1631,13 +1642,19 @@ namespace NetSparkleUpdater
                     Arguments = $"-c \"{escapedArgs}\""
                 }
             };
-            LogWriter.PrintMessage("Starting the process via {1} -c \"{0}\"", escapedArgs, shell);
-            _installerProcess.Start();
-            if (waitForExit)
+            var shouldContinue = InstallerProcessAboutToStart?.Invoke(_installerProcess, downloadFilePath) ?? true;
+            if (shouldContinue)
             {
-                LogWriter.PrintMessage("Waiting for exit...");
-                _installerProcess.WaitForExit();
+                LogWriter.PrintMessage("Starting the process via {1} -c \"{0}\"", escapedArgs, shell);
+                _installerProcess.Start();
+                if (waitForExit)
+                {
+                    LogWriter.PrintMessage("Waiting for exit...");
+                    _installerProcess.WaitForExit();
+                }
+                return true;
             }
+            return false;
         }
 
         /// <summary>
