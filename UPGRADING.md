@@ -25,7 +25,7 @@
 * Added more compatibility with Sparkle feeds (c9e2ddb4eea291c7f12e7747d9822aaa7fdb8c29) - see #275 [**]
 * Added `InstallerProcess` public var for easier access of the installer process in case you are making an app that updates other apps (5e6c321846d08645e0fc891a33f1461780c4b405) [**]
 * Allow user to avoid killing the parent process that started the update process -- `ShouldKillParentProcessWhenStartingInstaller`; defaults to `true` (19fae1ab1766eafea5a07881ac2598b4355f69f6) [**]
-* Allow setting the process ID to kill when starting the installer -- `ProcessIDToKillBeforeInstallerRuns`; defaults to `null`(8cc81e0a561b82c220ecd3a86c5f424a236dc268)
+* Allow setting the process ID to kill when starting the installer -- `ProcessIDToKillBeforeInstallerRuns`; defaults to `null`(8cc81e0a561b82c220ecd3a86c5f424a236dc268) [**]
 
 ## Updating from 0.X or 1.X to 2.X
 
