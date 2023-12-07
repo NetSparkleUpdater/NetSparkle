@@ -1588,7 +1588,10 @@ namespace NetSparkleUpdater
                 LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
                 Exec(batchFilePath, false); // _installerProcess will be set up in `Exec`
             }
-            await QuitApplication();
+            if (ShouldKillParentProcessWhenStartingInstaller)
+            {
+                await QuitApplication();
+            }
         }
 
         // Exec grabbed from https://stackoverflow.com/a/47918132/3938401
