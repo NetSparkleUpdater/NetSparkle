@@ -43,6 +43,7 @@ namespace NetSparkleUpdater
         protected Process _installerProcess;
         // _shouldKillParentProcessWhenStartingInstaller defaults to true
         private bool _shouldKillParentProcessWhenStartingInstaller;
+        private string _processIDToKillBeforeInstallerRuns; // nullable
 
         private ILogger _logWriter;
         private readonly Task _taskWorker;
@@ -451,10 +452,40 @@ namespace NetSparkleUpdater
             set => _appCastHandler = value;
         }
 
+
+        /// <summary>
+        /// When running the downloaded installer/update file, before installing it,
+        /// whether or not to kill the parent process that initiated the software update
+        /// process (generally the thing that is controlling the SparkleUpdater instance).
+        /// Defaults to true. Set to false if for some reason you don't want your app to
+        /// restart or die when the installer starts (e.g. if it is an optional update or an
+        /// update for something outside of the software itself).
+        /// </summary>
         public bool ShouldKillParentProcessWhenStartingInstaller
         {
             get => _shouldKillParentProcessWhenStartingInstaller;
             set => _shouldKillParentProcessWhenStartingInstaller = value;
+        }
+
+        /// <summary>
+        /// The process ID that should be killed before the installer runs. This is nullable.
+        /// On starting the installer/updater file, if this property is null/whitespace, the process that
+        /// will be killed is Process.GetCurrentProcess().Id.ToString(), unless
+        /// ShouldKillParentProcessWhenStartingInstaller is set to false.
+        /// Does not matter what you set on this property if ShouldKillParentProcessWhenStartingInstaller
+        /// is false.
+        /// </summary>
+        public string ProcessIdToKillBeforeInstallerRuns
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_processIdToKillBeforeInstallerRuns))
+                {
+                    return Process.GetCurrentProcess().Id.ToString();
+                }
+                return _processIdToKillBeforeInstallerRuns;
+            }
+            set => _processIdToKillBeforeInstallerRuns = value;
         }
 
         /// <summary>
@@ -1436,7 +1467,7 @@ namespace NetSparkleUpdater
             // generate the batch file                
             LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
-            string processID = Process.GetCurrentProcess().Id.ToString();
+            string processID = ProcessIdToKillBeforeInstallerRuns;
             string relaunchAfterUpdate = "";
             if (RelaunchAfterUpdate)
             {
