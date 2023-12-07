@@ -117,8 +117,8 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Event to modify/see the installer process before it actually begins. You can set properties on the <see cref="Process"/>
         /// before it by using this event.
-        /// Return true to keep the installer process going, return false to cancel the installer process 
-        /// (stop it from running).
+        /// Return true to keep the installer process going, return false to have SparkleUpdater not run the installer
+        /// (you can choose not to run it at all or run it yourself after that).
         /// </summary>
         public event BeforeBeginInstallerProcess InstallerProcessAboutToStart;
     }
