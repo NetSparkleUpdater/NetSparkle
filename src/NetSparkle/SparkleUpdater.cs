@@ -151,6 +151,7 @@ namespace NetSparkleUpdater
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
             ShouldKillParentProcessWhenStartingInstaller = true;
+            ProcessIdToKillBeforeInstallerRuns = null;
         }
 
         #endregion
