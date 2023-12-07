@@ -41,6 +41,8 @@ namespace NetSparkleUpdater
         /// so you can monitor the installation process.
         /// </summary>
         protected Process _installerProcess;
+        // _shouldKillParentProcessWhenStartingInstaller defaults to true
+        private bool _shouldKillParentProcessWhenStartingInstaller;
 
         private ILogger _logWriter;
         private readonly Task _taskWorker;
@@ -147,6 +149,7 @@ namespace NetSparkleUpdater
             LogWriter.PrintMessage("Using the following url for downloading the app cast: {0}", AppCastUrl);
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
+            ShouldKillParentProcessWhenStartingInstaller = true;
         }
 
         #endregion
@@ -448,6 +451,11 @@ namespace NetSparkleUpdater
             set => _appCastHandler = value;
         }
 
+        public bool ShouldKillParentProcessWhenStartingInstaller
+        {
+            get => _shouldKillParentProcessWhenStartingInstaller;
+            set => _shouldKillParentProcessWhenStartingInstaller = value;
+        }
 
         /// <summary>
         /// The <see cref="Process"/> responsible for launching the downloaded update.
@@ -1441,27 +1449,32 @@ namespace NetSparkleUpdater
             using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
             using (StreamWriter write = new StreamWriter(stream, new UTF8Encoding(false))/*new StreamWriter(batchFilePath, false, new UTF8Encoding(false))*/)
             {
+                // We should wait until the host process has died before starting the installer.
+                // This way, any DLLs or other items can be replaced properly.
+                // Code from: http://stackoverflow.com/a/22559462/3938401
+                // This only applies if !ShouldKillParentProcessWhenStartingInstaller
+
                 if (isWindows)
                 {
-                    // We should wait until the host process has died before starting the installer.
-                    // This way, any DLLs or other items can be replaced properly.
-                    // Code from: http://stackoverflow.com/a/22559462/3938401
-
+                    var killProcessScript = ShouldKillParentProcessWhenStartingInstaller
+                        ? $@"
+                            set /A counter=0                       
+                            setlocal ENABLEDELAYEDEXPANSION
+                            :loop
+                            set /A counter=!counter!+1
+                            if !counter! == 90 (
+                                exit /b 1
+                            )
+                            tasklist | findstr ""\<{processID}\>"" > nul
+                            if not errorlevel 1 (
+                                timeout /t 1 > nul
+                                goto :loop
+                            )"
+                        : "";
                     string output = $@"
                         @echo off
                         chcp 65001 > nul
-                        set /A counter=0                       
-                        setlocal ENABLEDELAYEDEXPANSION
-                        :loop
-                        set /A counter=!counter!+1
-                        if !counter! == 90 (
-                            exit /b 1
-                        )
-                        tasklist | findstr ""\<{processID}\>"" > nul
-                        if not errorlevel 1 (
-                            timeout /t 1 > nul
-                            goto :loop
-                        )
+                        {killProcessScript}
                         :install
                         {installerCmd}
                         :afterinstall
@@ -1473,7 +1486,8 @@ namespace NetSparkleUpdater
                 else
                 {
                     // We should wait until the host process has died before starting the installer.
-                    var waitForFinish = $@"
+                    var killProcessScript = ShouldKillParentProcessWhenStartingInstaller
+                        ? $@"
                         COUNTER=0;
                         while ps -p {processID} > /dev/null;
                             do sleep 1;
@@ -1482,8 +1496,8 @@ namespace NetSparkleUpdater
                             then
                                 exit -1;
                             fi;
-                        done;
-                    ";
+                        done;"
+                        : "";
                     if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
                     {
                         // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
@@ -1491,7 +1505,7 @@ namespace NetSparkleUpdater
                         var tarCommand = isMacOS ? $"tar -x -f \"{downloadFilePath}\" -C \"{workingDir}\""
                             : $"tar -xf \"{downloadFilePath}\" -C \"{workingDir}\" --overwrite ";
                         var output = $@"
-                            {waitForFinish}
+                            {killProcessScript}
                             {tarCommand}
                             {relaunchAfterUpdate}";
                         await write.WriteAsync(output.Replace("\r\n", "\n"));
@@ -1505,7 +1519,7 @@ namespace NetSparkleUpdater
                             relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
                         }
                         var output = $@"
-                            {waitForFinish}
+                            {killProcessScript}
                             {installerCmd}
                             {relaunchAfterUpdate}";
                         await write.WriteAsync(output.Replace("\r\n", "\n"));
