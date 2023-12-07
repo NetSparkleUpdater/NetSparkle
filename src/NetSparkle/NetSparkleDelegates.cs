@@ -113,7 +113,7 @@ namespace NetSparkleUpdater
     /// <summary>
     /// A delegate to allow users to modify/see the installer process before it actually begins.
     /// Return true to keep the installer process going, return false to have SparkleUpdater not run the installer
-        /// (you can choose not to run it at all or run it yourself after that).
+    /// (you can choose not to run it at all or run it yourself after that).
     /// </summary>
     /// <param name="process">The installer process about to be started</param>
     /// <param name="downloadFilePath">The path to the downloaded installer that will be started by the new process</param>
