@@ -23,6 +23,7 @@
 * Remove obsolete NetSparkleException override (3f54a53c7839fb99b291f8bc15b751aceb2d28de)
 * Fixed `IsCriticalUpdate` not being written to the app cast (2142e8e0c277523ac33b2ba1d19d0e1fd9ca8483) [**!]
 * Added more compatibility with Sparkle feeds (c9e2ddb4eea291c7f12e7747d9822aaa7fdb8c29) - see #275 [**]
+* Added `InstallerProcess` public var for easier access of the installer process in case you are making an app that updates other apps (5e6c321846d08645e0fc891a33f1461780c4b405) [**]
 
 ## Updating from 0.X or 1.X to 2.X
 
