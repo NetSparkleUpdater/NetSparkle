@@ -37,6 +37,8 @@ namespace NetSparkleUpdater
         /// The <see cref="Process"/> responsible for launching the downloaded update.
         /// Only valid once the application is about to quit and the update is going to
         /// be launched.
+        /// Use `InstallerProcess` if you are a software app that updates other apps 
+        /// so you can monitor the installation process.
         /// </summary>
         protected Process _installerProcess;
 
@@ -444,6 +446,20 @@ namespace NetSparkleUpdater
                 return _appCastHandler;
             }
             set => _appCastHandler = value;
+        }
+
+
+        /// <summary>
+        /// The <see cref="Process"/> responsible for launching the downloaded update.
+        /// Only valid once the application is about to quit and the update is going to
+        /// be launched.
+        /// Use this if you are a software app that updates other apps 
+        /// so you can monitor the installation process. Otherwise, if you're just running
+        /// an installer for the software that's running, this will not be very helpful to use.
+        /// </summary>
+        public Process InstallerProcess
+        {
+            get => _installerProcess;
         }
 
         #endregion
@@ -1524,7 +1540,7 @@ namespace NetSparkleUpdater
             {
                 // on macOS need to use bash to execute the shell script
                 LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
-                Exec(batchFilePath, false);
+                Exec(batchFilePath, false); // _installerProcess will be set up in `Exec`
             }
             await QuitApplication();
         }
