@@ -151,7 +151,7 @@ namespace NetSparkleUpdater
             UserInteractionMode = UserInteractionMode.NotSilent;
             TmpDownloadFilePath = "";
             ShouldKillParentProcessWhenStartingInstaller = true;
-            ProcessIdToKillBeforeInstallerRuns = null;
+            ProcessIDToKillBeforeInstallerRuns = null;
         }
 
         #endregion
@@ -476,17 +476,17 @@ namespace NetSparkleUpdater
         /// Does not matter what you set on this property if ShouldKillParentProcessWhenStartingInstaller
         /// is false.
         /// </summary>
-        public string ProcessIdToKillBeforeInstallerRuns
+        public string ProcessIDToKillBeforeInstallerRuns
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_processIdToKillBeforeInstallerRuns))
+                if (string.IsNullOrWhiteSpace(_processIDToKillBeforeInstallerRuns))
                 {
                     return Process.GetCurrentProcess().Id.ToString();
                 }
-                return _processIdToKillBeforeInstallerRuns;
+                return _processIDToKillBeforeInstallerRuns;
             }
-            set => _processIdToKillBeforeInstallerRuns = value;
+            set => _processIDToKillBeforeInstallerRuns = value;
         }
 
         /// <summary>
@@ -1468,7 +1468,7 @@ namespace NetSparkleUpdater
             // generate the batch file                
             LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
-            string processID = ProcessIdToKillBeforeInstallerRuns;
+            string processID = ProcessIDToKillBeforeInstallerRuns;
             string relaunchAfterUpdate = "";
             if (RelaunchAfterUpdate)
             {
