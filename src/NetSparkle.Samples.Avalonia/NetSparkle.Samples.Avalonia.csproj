@@ -20,8 +20,8 @@
     <EmbeddedResource Include="NetSparkle_DSA.pub" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.5" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+    <PackageReference Include="Avalonia" Version="11.0.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.5" />
   </ItemGroup>
   <ItemGroup>
