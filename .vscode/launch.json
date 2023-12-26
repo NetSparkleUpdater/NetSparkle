@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/NetSparkle.Samples.Avalonia.MacOS/bin/Debug/net7.0/NetSparkleUpdater.Samples.Avalonia.dll",
+            "program": "${workspaceFolder}/src/NetSparkle.Samples.Avalonia.MacOS/bin/Debug/net8.0/NetSparkleUpdater.Samples.Avalonia.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/NetSparkle.Samples.Avalonia.MacOS",
             "console": "internalConsole",
