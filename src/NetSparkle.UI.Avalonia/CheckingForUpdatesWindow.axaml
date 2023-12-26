@@ -37,6 +37,6 @@
             HorizontalAlignment="Center"
             FontSize="16"
             Margin="0,10,0,0" 
-            Command="{Binding $parent[Window].Cancel}"/>
+            Command="{Binding $parent[Window].Close}"/>
   </Grid>
 </Window>
