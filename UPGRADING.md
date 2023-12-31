@@ -28,6 +28,7 @@
 * Allow user to avoid killing the parent process that started the update process -- `ShouldKillParentProcessWhenStartingInstaller`; defaults to `true` (19fae1ab1766eafea5a07881ac2598b4355f69f6) [**]
 * Allow setting the process ID to kill when starting the installer -- `ProcessIDToKillBeforeInstallerRuns`; defaults to `null`(8cc81e0a561b82c220ecd3a86c5f424a236dc268) [**]
 * Fixed Cancel button not working in Avalonia checking for updates window (f35e896) [**]
+* Added `InstallerProcessAboutToStart` event. You can use this to modify/see the installer process before it actually begins and optionally make `NetSparkleUpdater` not run the process (you'll have to run the process yourself in that case).
 
 ## Updating from 0.X or 1.X to 2.X
 
