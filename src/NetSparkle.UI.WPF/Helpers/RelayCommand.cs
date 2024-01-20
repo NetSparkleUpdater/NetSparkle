@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace WPFTemplate.Helpers
+namespace NetSparkleUpdater.UI.WPF.Helpers
 {
     /// <summary>
     /// Command (<see cref="Action"/>) that can be executed based on an optional

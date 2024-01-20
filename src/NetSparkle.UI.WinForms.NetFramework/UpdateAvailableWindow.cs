@@ -7,6 +7,7 @@ using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
 using NetSparkleUpdater.Events;
+using NetSparkleUpdater.AppCastHandlers;
 
 namespace NetSparkleUpdater.UI.WinForms
 {
@@ -85,8 +86,8 @@ namespace NetSparkleUpdater.UI.WinForms
                 {
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
-                    Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = NetSparkleUpdater.Utilities.GetVersionString(versionObj);
+                    var versionObj = SemVerLike.Parse(item.AppVersionInstalled);
+                    versionString = versionObj.ToString();
                 }
                 catch
                 {

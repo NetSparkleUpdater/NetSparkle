@@ -1,4 +1,5 @@
-﻿using NetSparkleUpdater.Enums;
+﻿using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.UI.Avalonia.Helpers;
 using NetSparkleUpdater.UI.Avalonia.Interfaces;
 using System;
@@ -265,8 +266,8 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 {
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
-                    Version versionObj = new Version(item.AppVersionInstalled);
-                    versionString = NetSparkleUpdater.Utilities.GetVersionString(versionObj);
+                    var versionObj = SemVerLike.Parse(item.AppVersionInstalled);
+                    versionString = versionObj.ToString();
                 }
                 catch
                 {

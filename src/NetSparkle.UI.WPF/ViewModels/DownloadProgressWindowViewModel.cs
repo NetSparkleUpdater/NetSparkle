@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WPFTemplate.Helpers;
+using NetSparkleUpdater.UI.WPF.Helpers;
 
 namespace NetSparkleUpdater.UI.WPF.ViewModels
 {

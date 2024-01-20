@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WPFTemplate.Helpers
+namespace NetSparkleUpdater.UI.WPF.Helpers
 {
     /// <summary>
     /// <see cref="INotifyPropertyChanged"/> implementation used for the WPF UI and its view models.

@@ -361,8 +361,8 @@ namespace NetSparkleUpdater
             {
                 return 0;
             }
-            Version v1 = new Version(Version);
-            Version v2 = new Version(other.Version);
+            SemVerLike v1 = SemVerLike.Parse(Version);
+            SemVerLike v2 = SemVerLike.Parse(other.Version);
             return v1.CompareTo(v2);
         }
 
