@@ -16,7 +16,7 @@
 * Use `.axaml` in all Avalonia-related projects (46de3e9c9525cac4026a7959e44764752cdf36ee, e6d5ad20fec37e018a23ab46ef34d728b8104e96)
 * `Exec(string cmd, bool waitForExit = true)` now returns a `bool`: `true` for the process starting, `false` otherwise
 * The `IAppCastFilter` API has changed to: `IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)`
-* `IAppCastFilter` now expects you to filter out old versions and do sorting yourself as needed (previously filtering out old versions could be avoided via a `bool` property on `FilterResult`)
+* `IAppCastFilter` now expects you to filter out old versions and do sorting yourself as needed (previously filtering out old versions yourself could be avoided via a `bool` property on `FilterResult`; to do this easily yourself now, use the `AppCastReducers.RemoveOlderVersions` reducer like so: `AppCastReducers.RemoveOlderVersions(installed, itemsToFilter)`)
 * The `FilterResult` class has been removed in its entirety
 * Used `SemVerLike` everywhere instead of `System.Version` for semver compatibility
 
