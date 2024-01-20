@@ -15,6 +15,10 @@
 * Moved to official/non-preview builds of `System.Drawing.Common` for 8.x and bump up to `8.0.0` for older versions of .NET (87381f2d3422e36fe5f614c85e43687eed497c42) [**]
 * Use `.axaml` in all Avalonia-related projects (46de3e9c9525cac4026a7959e44764752cdf36ee, e6d5ad20fec37e018a23ab46ef34d728b8104e96)
 * `Exec(string cmd, bool waitForExit = true)` now returns a `bool`: `true` for the process starting, `false` otherwise
+* The `IAppCastFilter` API has changed to: `IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)`
+* `IAppCastFilter` now expects you to filter out old versions and do sorting yourself as needed (previously filtering out old versions could be avoided via a `bool` property on `FilterResult`)
+* The `FilterResult` class has been removed in its entirety
+* Used `SemVerLike` everywhere instead of `System.Version` for semver compatibility
 
 **Changes/Fixes**
 
@@ -29,6 +33,9 @@
 * Allow setting the process ID to kill when starting the installer -- `ProcessIDToKillBeforeInstallerRuns`; defaults to `null`(8cc81e0a561b82c220ecd3a86c5f424a236dc268) [**]
 * Fixed Cancel button not working in Avalonia checking for updates window (f35e896) [**]
 * Added `InstallerProcessAboutToStart` event. You can use this to modify/see the installer process before it actually begins and optionally make `NetSparkleUpdater` not run the process (you'll have to run the process yourself in that case).
+* Added `SemVerLike` class that combines the normal .NET `System.Version` with semver properties (@kenjiuno)
+* Added `VersionTrimmers` for trimming `SemVerLike` versions to `System.Version` (@kenjiuno)
+* Added `AppCastReducers` helpers for common ways of filtering app cast items (@kenjiuno)
 
 ## Updating from 0.X or 1.X to 2.X
 
