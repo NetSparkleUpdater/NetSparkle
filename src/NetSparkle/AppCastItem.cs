@@ -29,6 +29,13 @@ namespace NetSparkleUpdater
         /// </summary>
         public string Version { get; set; }
         /// <summary>
+        /// The available version as a SemVerLike object (handles things like 1.2-alpha1)
+        /// </summary>
+        public SemVerLike SemVerLikeVersion
+        {
+            get => SemVerLike.Parse(Version);
+        }
+        /// <summary>
         /// Shortened version
         /// </summary>
         public string ShortVersion { get; set; }
