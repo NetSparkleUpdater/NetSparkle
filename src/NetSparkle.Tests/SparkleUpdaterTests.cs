@@ -78,9 +78,9 @@ namespace NetSparkleUnitTests
             Assert.Equal("2.0", item.Version);
         }
 
-        public FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items)
+        public IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)
         {
-            List<AppCastItem> results = items.Where((item) =>
+            var results = items.Where((item) =>
             {
                 if (_filterOutBetaAppCastItems)
                 {
@@ -89,9 +89,12 @@ namespace NetSparkleUnitTests
                 }
 
                 return true;
-            }).ToList();
-
-            return new FilterResult(_alwaysInstallLatest, results);
+            });
+            if (!_alwaysInstallLatest)
+            {
+                return AppCastReducers.RemoveOlderVersions(installed, results);
+            }
+            return results;
         }
     }
 }

@@ -202,26 +202,24 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
         /// and a list of appcast items that have potentially been filtered to remove those that don't apply to the current
         /// requirements, specifically when downgrading from beta to a stable channel we do not want to present the NetSparkle
         /// system with appcast items that are part of the beta channel</returns>
-        public FilterResult GetFilteredAppCastItems(Version installed, List<AppCastItem> items)
+        public IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)
         {
             // if we don't need to filter, then this is essentially a no-op.
             if (!filterOutBetaItems)
-                return new FilterResult(false);
+                return new List<AppCastItem>();
 
             // here we need to remove any items that are beta - since the appcast object does not expose channel
             // information as a first class citizen (yet); I'll just check the URL to see if it contains the word beta.
             // note: this is a per-app decision, and the code here just demonstrates how to detect and remove beta
             // app cast elements - you will need to have your own logic to handle this for your appcast situation. 
-            List<AppCastItem> itemsWithoutBeta = items.Where((item) =>
+            var itemsWithoutBeta = items.Where((item) =>
             {
                 if (item.DownloadLink.Contains("/beta/"))
                     return false;
                 return true;
-            }).ToList();
-
-            // here's how you indicate that the filtering has taken place and that you want NetSparkle for force
-            // the installation of whatever the latest version is within the resulting appcast item list.
-            return new FilterResult(true, itemsWithoutBeta);
+            });
+            
+            return itemsWithoutBeta;
         }
     }
 }

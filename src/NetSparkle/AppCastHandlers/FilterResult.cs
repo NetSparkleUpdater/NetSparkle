@@ -17,17 +17,27 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// The filtered list of AppCastItem objects.  This can be null if DetectVersionFromFilteredList is false,
         /// otherwise it must be a list of the valid AppCastItem instances that can be installed.  
         /// </summary>
-        public readonly List<AppCastItem> FilteredAppCastItems;
+        public readonly IEnumerable<AppCastItem> FilteredAppCastItems;
 
         /// <summary>
-        /// Construct a filter result. 
+        /// Construct a FilterResult. 
+        /// </summary>
+        /// <param name="filteredAppCastItems"></param>
+        public FilterResult(IEnumerable<AppCastItem> filteredAppCastItems)
+        {
+            ForceInstallOfLatestInFilteredList = false;
+            FilteredAppCastItems = filteredAppCastItems;
+        }
+
+        /// <summary>
+        /// Construct a FilterResult. 
         /// </summary>
         /// <param name="forceInstallOfLatestInFilteredList"></param>
         /// <param name="filteredAppCastItems"></param>
-        public FilterResult(bool forceInstallOfLatestInFilteredList, List<AppCastItem> filteredAppCastItems = null)
+        public FilterResult(IEnumerable<AppCastItem> filteredAppCastItems, bool forceInstallOfLatestInFilteredList)
         {
-            ForceInstallOfLatestInFilteredList = forceInstallOfLatestInFilteredList;
             FilteredAppCastItems = filteredAppCastItems;
+            ForceInstallOfLatestInFilteredList = forceInstallOfLatestInFilteredList;
         }
     }
 }

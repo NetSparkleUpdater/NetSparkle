@@ -44,14 +44,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         public string SignatureFileExtension { get; set; }
 
         /// <summary>
-        /// The optional filtering component.
+        /// An optional filtering component. Use this to manually filter
+        /// items for custom channels (e.g. beta or alpha) or run your own
+        /// logic on getting rid of older versions.
         /// </summary>
         public IAppCastFilter AppCastFilter { get; set; }
-
-        /// <summary>
-        /// An optional filtering component.
-        /// </summary>
-        public AppCastReducerDelegate AppCastReducer { get; set; }
 
         /// <summary>
         /// Convert SemVer or something to .NET Version style
@@ -313,41 +310,15 @@ namespace NetSparkleUpdater.AppCastHandlers
             bool shouldFilterOutSmallerVersions = true;
             VersionTrimmerDelegate versionTrimmer = VersionTrimmer ?? VersionTrimmers.DefaultVersionTrimmer;
 
-            if (AppCastReducer != null)
-            {
-                appCastItems = AppCastReducer(installed, Items).ToList();
-
-                // AppCastReducer user has responsibility to filter out both older and not needed versions.
-                // Also this allows to easily switch between pre-release and retail versions, on demand.
-                shouldFilterOutSmallerVersions = false;
-            }
-
             if (AppCastFilter != null)
             {
-                var result = AppCastFilter.GetFilteredAppCastItems(versionTrimmer(installed), appCastItems);
-                if (result.FilteredAppCastItems != null)
-                {
-                    if (result.ForceInstallOfLatestInFilteredList)
-                    {
-                        // 'installed' represents just the version that is presently on the computer
-                        //
-                        // when ForceInstallOfLatestInFilteredList is true; the intent is as the name
-                        // suggests - to force the re-installation of the existing version. 
-                        //
-                        // the FilterAppCastItem() method used below will by default filter out versions that
-                        // are lower or equal to the 'installed' version value.
-                        //
-                        // therefore, when forcing an update the idea is to override this behaviour - so we set
-                        // the shouldFilterOutSmallerVersions to false, indicating to the FilterAppCastItem method that
-                        // it must not filter out items based on the 'installed' parameter.
-                        //
-                        // FilterAppCastItem still serves the valuable task of filtering out the platform irrelevant items.
+                appCastItems = AppCastFilter.GetFilteredAppCastItems(installed, Items)?.ToList() ?? new List<AppCastItem>();
 
-                        shouldFilterOutSmallerVersions = false;
-                    }
-
-                    appCastItems = result.FilteredAppCastItems;
-                }
+                // AppCastReducer user has responsibility to filter out both older and not needed versions,
+                // so the XMLAppCast object no longer needs to handle filtering out old versions.
+                // Also this allows to easily switch between pre-release and retail versions, on demand.
+                // The XMLAppCast will still filter out items that don't match the current OS.
+                shouldFilterOutSmallerVersions = false;
             }
 
             var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
