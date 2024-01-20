@@ -32,6 +32,7 @@ namespace NetSparkleUnitTests
         [InlineData("100.0", "11.999.999", 1)]
         [InlineData("11.999.999", "100.0", -1)]
         [InlineData("1.0-alpha.1", "1.0-alpha.2", -1)]
+        [InlineData("1.0-alpha.2", "1.0-alpha.1", 1)]
         [InlineData("1.0-alpha.1", "1.0-beta.2", -1)]
         [InlineData("1.0-rc.1", "1.0-beta.2", 1)]
         public void CompareTest(string left, string right, int result)
