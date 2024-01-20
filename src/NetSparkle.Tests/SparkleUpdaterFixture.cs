@@ -14,7 +14,7 @@ namespace NetSparkleUnitTests
     {
         public const string CollectionName = "xmlappcast-fixture";
 
-        public SparkleUpdater CreateUpdater(string xmlData, string installedVersion, IAppCastFilter filter = null)
+        public SparkleUpdater CreateUpdater(string xmlData, string installedVersion, IAppCastFilter filter = null, AppCastReducerDelegate reducer = null)
         {
             SparkleUpdater updater = new SparkleUpdater("test-url", new AlwaysSucceedSignatureChecker());
             updater.AppCastDataDownloader = new StringCastDataDownloader(xmlData);
@@ -26,12 +26,16 @@ namespace NetSparkleUnitTests
                 AssemblyVersion = installedVersion
             });
 
-            if (filter != null)
+            XMLAppCast cast = updater.AppCastHandler as XMLAppCast;
+            if (cast != null)
             {
-                XMLAppCast cast = updater.AppCastHandler as XMLAppCast;
-                if (cast != null)
+                if (filter != null)
                 {
                     cast.AppCastFilter = filter;
+                }
+                if (reducer != null)
+                {
+                    cast.AppCastReducer = reducer;
                 }
             }
 

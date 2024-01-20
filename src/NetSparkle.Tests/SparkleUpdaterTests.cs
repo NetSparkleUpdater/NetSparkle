@@ -31,8 +31,8 @@ namespace NetSparkleUnitTests
         /// <param name="expectedStatus"></param>
         [Theory]
         // first param true - means effectively: we want to use a stable channel (beta items are being removed)
-        [InlineData(true, false, "2.1-prerelease", null, UpdateStatus.CouldNotDetermine)] // because System.Version() cannot handle semver. 
-        [InlineData(true, true,  "2.1-prerelease", null, UpdateStatus.CouldNotDetermine)] // because System.Version() cannot handle semver. 
+        [InlineData(true, false, "2.1-prerelease", null, UpdateStatus.UpdateNotAvailable)]
+        [InlineData(true, true,  "2.1-prerelease", null, UpdateStatus.UpdateAvailable)]
         [InlineData(true, false, "2.1", null, UpdateStatus.UpdateNotAvailable)]
         [InlineData(true, true,  "2.1", "2.0", UpdateStatus.UpdateAvailable)]
         [InlineData(true, false, "2.0", null, UpdateStatus.UpdateNotAvailable)]
@@ -54,7 +54,7 @@ namespace NetSparkleUnitTests
             // engage filtering... 
             this._filterOutBetaAppCastItems = removeBetaItems;
             this._alwaysInstallLatest = alwaysInstallLatest;
-            
+
             UpdateInfo after = await updater.CheckForUpdatesQuietly();
             Assert.Equal(expectedStatus, after.Status);
             if (expectedVersionToInstall != null)
@@ -65,7 +65,7 @@ namespace NetSparkleUnitTests
                 Assert.Equal(item.Version, expectedVersionToInstall);
             }
         }
-        
+
         [Fact]
         public async void TestFetchOfLatestAppCastItem()
         {
