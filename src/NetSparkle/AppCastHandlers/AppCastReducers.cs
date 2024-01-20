@@ -34,7 +34,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// Move newest version at top of the collecion
+        /// Move newest version at top of the collection
         /// </summary>
         /// <param name="installed"></param>
         /// <param name="items"></param>
