@@ -46,7 +46,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 // `1.0.0` is newer than `1.0.0-alpha.1`.
                 if ((diff = (AllSuffixes.Length == 0).CompareTo(other.AllSuffixes.Length == 0)) == 0)
                 {
-                    diff = TextHelper.ExpandDigits(AllSuffixes).CompareTo(TextHelper.ExpandDigits(AllSuffixes));
+                    diff = TextHelper.ExpandDigits(AllSuffixes).CompareTo(TextHelper.ExpandDigits(other.AllSuffixes));
                 }
             }
             return diff;
