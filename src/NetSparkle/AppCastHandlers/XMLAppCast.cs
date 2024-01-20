@@ -51,11 +51,6 @@ namespace NetSparkleUpdater.AppCastHandlers
         public IAppCastFilter AppCastFilter { get; set; }
 
         /// <summary>
-        /// Convert SemVer or something to .NET Version style
-        /// </summary>
-        public VersionTrimmerDelegate VersionTrimmer { get; set; }
-
-        /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
         /// </summary>
         public readonly List<AppCastItem> Items;
@@ -308,7 +303,6 @@ namespace NetSparkleUpdater.AppCastHandlers
             SemVerLike installed = SemVerLike.Parse(_config.InstalledVersion);
             List<AppCastItem> appCastItems = Items;
             bool shouldFilterOutSmallerVersions = true;
-            VersionTrimmerDelegate versionTrimmer = VersionTrimmer ?? VersionTrimmers.DefaultVersionTrimmer;
 
             if (AppCastFilter != null)
             {
