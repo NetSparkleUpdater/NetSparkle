@@ -16,9 +16,9 @@
     <Content Include="software-update-available.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.6" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.6" />
+    <PackageReference Include="Avalonia" Version="11.0.7" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj" />
