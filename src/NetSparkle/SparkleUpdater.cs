@@ -2103,7 +2103,7 @@ namespace NetSparkleUpdater
                 LoopFinished?.Invoke(this, isUpdateAvailable);
 
                 // report wait statement
-                LogWriter.PrintMessage("Sleeping for an other {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
+                LogWriter.PrintMessage("Sleeping for another {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
 
                 // wait for
                 if (!goIntoLoop || _cancelToken.IsCancellationRequested)
@@ -2138,7 +2138,7 @@ namespace NetSparkleUpdater
                     break;
                 }
 
-                // check an other check needed
+                // check another check needed
                 if (i == 1)
                 {
                     LogWriter.PrintMessage("Got force update check signal");
