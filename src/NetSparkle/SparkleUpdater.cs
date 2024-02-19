@@ -767,41 +767,28 @@ namespace NetSparkleUpdater
 
         private void ShowUpdateAvailableWindow(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            if (UpdateAvailableWindow != null)
+            CallFuncConsideringUIThreads(() =>
             {
                 // close old window
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
-                    {
-                        UpdateAvailableWindow.Close();
-                        UpdateAvailableWindow = null;
-                    }, null);
-                }
-                else
-                {
+                if (UpdateAvailableWindow != null)
                     UpdateAvailableWindow.Close();
-                    UpdateAvailableWindow = null;
-                }
-            }
+                UpdateAvailableWindow = null;
 
-            // create the form
-            Thread thread = new Thread(() =>
-            {
+                // define action
+                Action<object> showSparkleUI = (state) =>
+                {
+                    UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
+
+                    if (UpdateAvailableWindow != null)
+                    {
+                        UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
+                        UpdateAvailableWindow.Show(ShowsUIOnMainThread);
+                    }
+                };
+
+                // create the form
                 try
                 {
-                    // define action
-                    Action<object> showSparkleUI = (state) =>
-                    {
-                        UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
-
-                        if (UpdateAvailableWindow != null)
-                        {
-                            UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
-                            UpdateAvailableWindow.Show(ShowsUIOnMainThread);
-                        }
-                    };
-
                     // call action
                     if (ShowsUIOnMainThread)
                     {
@@ -817,15 +804,6 @@ namespace NetSparkleUpdater
                     LogWriter.PrintMessage("Error showing sparkle form: {0}", e.Message);
                 }
             });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
-            }
-#endif
-            thread.Start();
         }
 
         /// <summary>
@@ -1038,47 +1016,24 @@ namespace NetSparkleUpdater
                         UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
                         if (shouldShowAsDownloadedAlready)
                         {
-                            ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Post((state2) =>
+                            CallFuncConsideringUIThreads(() =>
                             {
+                                ProgressWindow?.FinishedDownloadingFile(true);
                                 OnDownloadFinished(null, new AsyncCompletedEventArgs(null, false, null));
                                 _actionToRunOnProgressWindowShown?.Invoke();
                                 _actionToRunOnProgressWindowShown = null;
-                            }, null);
+                            });
                         }
                     }
                 };
             }
-            Thread thread = new Thread(() =>
-            {
+            CallFuncConsideringUIThreads(() => {
                 // call action
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
-                    {
-                        showSparkleDownloadUI(null);
-                        _actionToRunOnProgressWindowShown?.Invoke();
-                        _actionToRunOnProgressWindowShown = null;
-                        ProgressWindow?.Show(ShowsUIOnMainThread);
-                    }, null);
-                }
-                else
-                {
-                    showSparkleDownloadUI(null);
-                    _actionToRunOnProgressWindowShown?.Invoke();
-                    _actionToRunOnProgressWindowShown = null;
-                    ProgressWindow?.Show(ShowsUIOnMainThread);
-                }
+                showSparkleDownloadUI(null);
+                _actionToRunOnProgressWindowShown?.Invoke();
+                _actionToRunOnProgressWindowShown = null;
+                ProgressWindow?.Show(ShowsUIOnMainThread);
             });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
-            }
-#endif
-            thread.Start();
         }
 
         private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
