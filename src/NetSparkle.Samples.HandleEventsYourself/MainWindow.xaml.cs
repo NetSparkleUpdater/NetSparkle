@@ -169,9 +169,10 @@ namespace NetSparkleUpdater.Samples.HandleEventsYourself
             await _sparkle.CheckForUpdatesQuietly();
         }
 
-        private void _sparkle_FullUpdate_UpdateDetected(object sender, Events.UpdateDetectedEventArgs e)
+        private Task _sparkle_FullUpdate_UpdateDetected(object sender, Events.UpdateDetectedEventArgs e)
         {
             RunFullUpdateUpdateStatusLabel.Text = "Found update...";
+            return Task.CompletedTask;
         }
 
         private void _sparkle_FullUpdate_StartedDownloading(AppCastItem item, string path)

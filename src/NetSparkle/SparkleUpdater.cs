@@ -1824,7 +1824,7 @@ namespace NetSparkleUpdater
                 // handling everything.
                 if (UpdateDetected != null)
                 {
-                    UpdateDetected(this, ev); // event's next action can change, here
+                    await UpdateDetected(this, ev); // event's next action can change, here
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.PerformUpdateUnattended:
@@ -2048,7 +2048,10 @@ namespace NetSparkleUpdater
                                     LatestVersion = updates[0],
                                     AppCastItems = updates
                                 };
-                                UpdateDetected?.Invoke(this, ev);
+            
+                                if (UpdateDetected != null)
+                                    await UpdateDetected.Invoke(this, ev);
+                                
                                 if (_cancelToken.IsCancellationRequested)
                                 {
                                     break;

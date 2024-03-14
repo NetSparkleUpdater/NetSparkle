@@ -1,18 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net;
-using System.Text;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater
 {
     public partial class SparkleUpdater : IDisposable
     {
         /// <summary>
+        /// Async event handler to allow awaiting of all event handlers.
+        /// </summary>
+        /// <typeparam name="TEventArgs">EventArgs to use with the handler.</typeparam>
+        public delegate Task AsyncEventHandler<TEventArgs>(object sender, TEventArgs e);
+        
+        /// <summary>
         /// This event will be raised when an update check is about to be started
         /// </summary>
         public event LoopStartedOperation LoopStarted;
+        
         /// <summary>
         /// This event will be raised when an update check has finished
         /// </summary>
@@ -22,11 +28,13 @@ namespace NetSparkleUpdater
         /// Called when update check has just begun
         /// </summary>
         public event UpdateCheckStarted UpdateCheckStarted;
+        
         /// <summary>
         /// This event can be used to override the standard user interface
         /// process when an update is detected
         /// </summary>
-        public event UpdateDetected UpdateDetected;
+        public event AsyncEventHandler<UpdateDetectedEventArgs> UpdateDetected;
+        
         /// <summary>
         /// Called when update check is all done. <see cref="UpdateDetected"/> may have been 
         /// called between the start and end of the update check.
