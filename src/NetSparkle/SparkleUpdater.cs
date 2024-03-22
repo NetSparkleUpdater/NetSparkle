@@ -19,6 +19,7 @@ using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.AssemblyAccessors;
 using System.Text;
 using System.Globalization;
+using Microsoft.VisualStudio.Threading;
 #if (NETSTANDARD || NET6 || NET7 || NET8)
 using System.Runtime.InteropServices;
 #endif
@@ -1824,7 +1825,7 @@ namespace NetSparkleUpdater
                 // handling everything.
                 if (UpdateDetected != null)
                 {
-                    await UpdateDetected(this, ev); // event's next action can change, here
+                    await UpdateDetected.InvokeAsync(this, ev); // event's next action can change, here
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.PerformUpdateUnattended:
@@ -2050,7 +2051,7 @@ namespace NetSparkleUpdater
                                 };
             
                                 if (UpdateDetected != null)
-                                    await UpdateDetected.Invoke(this, ev);
+                                    await UpdateDetected.InvokeAsync(this, ev);
                                 
                                 if (_cancelToken.IsCancellationRequested)
                                 {

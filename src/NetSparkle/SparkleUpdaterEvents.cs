@@ -2,18 +2,13 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
 using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater
 {
     public partial class SparkleUpdater : IDisposable
     {
-        /// <summary>
-        /// Async event handler to allow awaiting of all event handlers.
-        /// </summary>
-        /// <typeparam name="TEventArgs">EventArgs to use with the handler.</typeparam>
-        public delegate Task AsyncEventHandler<TEventArgs>(object sender, TEventArgs e);
-        
         /// <summary>
         /// This event will be raised when an update check is about to be started
         /// </summary>

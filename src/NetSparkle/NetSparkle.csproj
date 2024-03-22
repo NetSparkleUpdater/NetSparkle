@@ -19,6 +19,7 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <RootNamespace>NetSparkleUpdater</RootNamespace>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+      <NoWarn>VSTHRD200, VSTHRD100, VSTHRD002, VSTHRD001</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -100,6 +101,7 @@
     <!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.9.28" />
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
 	  <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
