@@ -204,28 +204,37 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             // changelog stuff
             var changelogFileName = productVersion + ".md";
-            var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
-            var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
+            var changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
+            var hasChangelogForFile = File.Exists(changelogPath);
+
+            // If not found, try with the changelog prefix and a space
             if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
             {
-                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + " " + changelogFileName);
+                changelogFileName = changelogFileNamePrefix.Trim() + " " + productVersion + ".md";
+                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
                 hasChangelogForFile = File.Exists(changelogPath);
-                if (!hasChangelogForFile)
-                {
-                    // make one more effort if user doesn't want the space in there
-                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
-                    hasChangelogForFile = File.Exists(changelogPath);
-                }
             }
-            // make an additional effort to find the changelog file if they didn't use the file name prefix and used their app's name instead.
+
+            // If still not found, try with the prefix attached directly to the version
             if (useChangelogs && !hasChangelogForFile)
             {
-                changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + " " + changelogFileName);
+                changelogFileName = changelogFileNamePrefix.Trim() + productVersion + ".md";
+                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
                 hasChangelogForFile = File.Exists(changelogPath);
+            }
+
+            // Lastly, try using the product name as the prefix
+            if (useChangelogs && !hasChangelogForFile)
+            {
+                changelogFileName = productName.Trim() + " " + productVersion + ".md";
+                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
+                hasChangelogForFile = File.Exists(changelogPath);
+
+                // Try without the space if still not found
                 if (!hasChangelogForFile)
                 {
-                    // make one more last, last ditch effort if user doesn't want the space in there
-                    changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + changelogFileName);
+                    changelogFileName = productName.Trim() + productVersion + ".md";
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileName);
                     hasChangelogForFile = File.Exists(changelogPath);
                 }
             }
