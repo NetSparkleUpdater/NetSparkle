@@ -235,6 +235,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             {
                 Console.WriteLine($"Change log for version {productVersion} was successfully found: {changelogPath}", Color.LightBlue);
                 changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
+                changelogFileName = Path.GetFileName(changelogPath); // use whatever filename was found
             }
             if (useChangelogs && !hasChangelogForFile)
             {
