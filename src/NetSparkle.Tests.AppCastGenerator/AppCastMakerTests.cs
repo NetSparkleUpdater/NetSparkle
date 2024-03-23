@@ -875,5 +875,55 @@ namespace NetSparkle.Tests.AppCastGenerator
                 CleanUpDir(tempDir);
             }
         }
+
+        [Fact]
+        public void ChangelogNameInAppcastMatchesFilesystem()
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+
+            var dummyChangelogFilePath = Path.Combine(tempDir, "change_log_1.0.md");
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyChangelogFilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                ChangeLogPath = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = "windows",
+                ProductName = "ProductName",
+                BaseUrl = "https://example.com/downloads",
+                ChangeLogUrl = "http://baseURL/appname/changelogs/",
+                ChangeLogFileNamePrefix = "change_log_",
+                OverwriteOldItemsInAppcast = true,
+                ReparseExistingAppCast = false,
+                HumanReadableOutput = true
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                var maker = new XMLAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                Assert.Single(items);
+                Assert.EndsWith("change_log_1.0.md", items[0].ReleaseNotesLink);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
     }
 }
