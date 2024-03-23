@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net;
-using System.Text;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
+using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater
 {
@@ -13,6 +13,7 @@ namespace NetSparkleUpdater
         /// This event will be raised when an update check is about to be started
         /// </summary>
         public event LoopStartedOperation LoopStarted;
+        
         /// <summary>
         /// This event will be raised when an update check has finished
         /// </summary>
@@ -22,11 +23,13 @@ namespace NetSparkleUpdater
         /// Called when update check has just begun
         /// </summary>
         public event UpdateCheckStarted UpdateCheckStarted;
+        
         /// <summary>
         /// This event can be used to override the standard user interface
         /// process when an update is detected
         /// </summary>
-        public event UpdateDetected UpdateDetected;
+        public event AsyncEventHandler<UpdateDetectedEventArgs> UpdateDetected;
+        
         /// <summary>
         /// Called when update check is all done. <see cref="UpdateDetected"/> may have been 
         /// called between the start and end of the update check.
