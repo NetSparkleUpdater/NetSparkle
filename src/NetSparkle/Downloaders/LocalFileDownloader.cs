@@ -23,6 +23,7 @@ namespace NetSparkleUpdater.Downloaders
     {
         private ILogger _logger;
         private CancellationTokenSource _cancellationTokenSource;
+        private string _downloadFileLocation;
 
         /// <summary>
         /// Default constructor for the local file downloader.
@@ -31,6 +32,7 @@ namespace NetSparkleUpdater.Downloaders
         {
             _logger = new LogWriter();
             _cancellationTokenSource = new CancellationTokenSource();
+            _downloadFileLocation = "";
         }
 
         /// <summary>
@@ -42,6 +44,7 @@ namespace NetSparkleUpdater.Downloaders
         {
             _logger = logger;
             _cancellationTokenSource = new CancellationTokenSource();
+            _downloadFileLocation = "";
         }
 
         /// <summary>
@@ -72,6 +75,14 @@ namespace NetSparkleUpdater.Downloaders
         {
             _cancellationTokenSource.Cancel();
             DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
+            _cancellationTokenSource = new CancellationTokenSource();
+            IsDownloading = false;
+            if (_downloadFileLocation != "" && File.Exists(_downloadFileLocation))
+            {
+                try {
+                    File.Delete(_downloadFileLocation);
+                } catch {}
+            }
         }
 
         /// <inheritdoc/>
@@ -102,6 +113,7 @@ namespace NetSparkleUpdater.Downloaders
             var bufferSize = 4096;
             var buffer = new byte[bufferSize];
             int bytesRead = 0;
+            _downloadFileLocation = destinationFile;
             long totalRead = 0;
             try
             {
@@ -118,6 +130,7 @@ namespace NetSparkleUpdater.Downloaders
                         await destinationStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            destinationStream.Close();
                             Cancel(destinationFile);
                             wasCanceled = true;
                             break;
@@ -134,6 +147,7 @@ namespace NetSparkleUpdater.Downloaders
                 LogWriter.PrintMessage("Error: {0}", e.Message);
                 Cancel(destinationFile);
                 DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
+                IsDownloading = false;
             }
         }
 
@@ -141,7 +155,9 @@ namespace NetSparkleUpdater.Downloaders
         {
             if (File.Exists(destinationFile))
             {
-                File.Delete(destinationFile);
+                try {
+                    File.Delete(destinationFile);
+                } catch {}
             }
             IsDownloading = false;
         }

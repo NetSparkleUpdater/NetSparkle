@@ -1,13 +1,9 @@
 ﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +22,7 @@ namespace NetSparkleUpdater.Downloaders
         private HttpClient _httpClient;
         private ILogger _logger;
         private CancellationTokenSource _cts;
+        private string _downloadFileLocation;
 
         /// <summary>
         /// Default constructor for the web client file downloader.
@@ -78,6 +75,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     try 
                     {
+                        _cts?.Cancel();
                         _httpClient.CancelPendingRequests();
                     } catch {}
                 }
@@ -164,6 +162,7 @@ namespace NetSparkleUpdater.Downloaders
                     long totalLength = 0;
                     long totalRead = 0;
                     long readCount = 0;
+                    _downloadFileLocation = downloadFilePath;
                     using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, 8192, true))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
@@ -223,6 +222,14 @@ namespace NetSparkleUpdater.Downloaders
                 _cts.Cancel();
                 _httpClient.CancelPendingRequests();
             } catch {}
+            if (File.Exists(_downloadFileLocation))
+            {
+                try {
+                    File.Delete(_downloadFileLocation);
+                } catch {}
+            }
+            IsDownloading = false;
+            _cts = new CancellationTokenSource();
         }
 
         private async Task<string> RetrieveDestinationFileNameAsyncForUri(Uri uri)
