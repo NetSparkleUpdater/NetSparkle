@@ -19,6 +19,7 @@
 * `IAppCastFilter` now expects you to filter out old versions and do sorting yourself as needed (previously filtering out old versions yourself could be avoided via a `bool` property on `FilterResult`; to do this easily yourself now, use the `AppCastReducers.RemoveOlderVersions` reducer like so: `AppCastReducers.RemoveOlderVersions(installed, itemsToFilter)`)
 * The `FilterResult` class has been removed in its entirety
 * Used `SemVerLike` everywhere instead of `System.Version` for semver compatibility
+* `WebFileDownloader` now deletes files on cancellation of a download like `LocalFileDownloader` did already (1cd2284c41bbe85d41566915965ad2acdb1a61f5)
 
 **Changes/Fixes**
 
