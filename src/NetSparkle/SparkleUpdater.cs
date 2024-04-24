@@ -843,6 +843,7 @@ namespace NetSparkleUpdater
                 string filename = string.Empty;
 
                 // default to using the server's file name as the download file name
+                CreateUpdateDownloaderIfNeeded();
                 if (CheckServerFileName && UpdateDownloader != null)
                 {
                     try
@@ -897,7 +898,6 @@ namespace NetSparkleUpdater
             }
             LogWriter.PrintMessage("Preparing to download {0}", item.DownloadLink);
             _itemBeingDownloaded = item;
-            CreateUpdateDownloaderIfNeeded();
             _downloadTempFileName = await GetDownloadPathForAppCastItem(item);
             // Make sure the file doesn't already exist on disk. If it's already downloaded and the
             // signature checks out, don't redownload the file!
@@ -1272,7 +1272,6 @@ namespace NetSparkleUpdater
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(false); // disable while we ask if we can close up the software
             if (await AskApplicationToSafelyCloseUp())
             {
-                CreateUpdateDownloaderIfNeeded(); // so GetDownloadPathForAppCastItem returns proper data
                 var path = installPath != null && File.Exists(installPath) ? installPath : await GetDownloadPathForAppCastItem(item);
                 if (File.Exists(path))
                 {
@@ -1291,6 +1290,16 @@ namespace NetSparkleUpdater
                     {
                         await RunDownloadedInstaller(path);
                     }
+                    else
+                    {
+                        LogWriter.PrintMessage("InstallUpdate was called, but the file validation result was {0}, so we could not install the file", result);
+                        InstallUpdateFailed?.Invoke(InstallUpdateFailureReason.InvalidSignature, path);
+                    }
+                }
+                else
+                {
+                    LogWriter.PrintMessage("InstallUpdate was called, but the file to install doesn't exist on disk at path {0}", path);
+                    InstallUpdateFailed?.Invoke(InstallUpdateFailureReason.FileNotFound, path);
                 }
             }
             ProgressWindow?.SetDownloadAndInstallButtonEnabled(true);
@@ -1461,7 +1470,9 @@ namespace NetSparkleUpdater
             }
             catch (InvalidDataException)
             {
+                LogWriter.PrintMessage("Unknown installer format at {0}", downloadFilePath);
                 UIFactory?.ShowUnknownInstallerFormatMessage(this, downloadFilePath);
+                InstallUpdateFailed?.Invoke(InstallUpdateFailureReason.CouldNotBuildInstallerCommand, downloadFilePath);
                 return;
             }
 
@@ -1588,7 +1599,9 @@ namespace NetSparkleUpdater
                 }
                 else
                 {
+                    LogWriter.PrintMessage("Starting installer was canceled by user via InstallerProcessAboutToStart");
                     didStartInstaller = false;
+                    InstallUpdateFailed?.Invoke(InstallUpdateFailureReason.CanceledByUserViaEvent, downloadFilePath);
                 }
             }
             else
@@ -1596,6 +1609,11 @@ namespace NetSparkleUpdater
                 // on macOS need to use bash to execute the shell script
                 LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
                 didStartInstaller = Exec(batchFilePath, false); // _installerProcess will be set up in `Exec`
+                if (!didStartInstaller)
+                {
+                    LogWriter.PrintMessage("Starting installer was canceled by user via InstallerProcessAboutToStart while in Exec()");
+                    InstallUpdateFailed?.Invoke(InstallUpdateFailureReason.CanceledByUserViaEvent, downloadFilePath);
+                }
             }
             if (didStartInstaller && ShouldKillParentProcessWhenStartingInstaller)
             {
@@ -1613,7 +1631,7 @@ namespace NetSparkleUpdater
         /// <param name="cmd">Path to script to run via a shell</param>
         /// <param name="waitForExit">True for the calling process to wait for the command to finish before exiting; false otherwise</param>
         /// <param name="downloadFilePath">Optional param for download file that is being executed via installer</param>
-        /// <returns>true if process started, false otherwise</returns>
+        /// <returns>true if process started, false if user canceled installer via InstallerProcessAboutToStart</returns>
         protected bool Exec(string cmd, bool waitForExit = true, string downloadFilePath = "")
         {
             var escapedArgs = cmd.Replace("\"", "\\\"");
@@ -1924,7 +1942,6 @@ namespace NetSparkleUpdater
             {
                 // we need the download file name in order to tell the user the skipped version
                 // file path and/or to run the installer
-                CreateUpdateDownloaderIfNeeded();
                 _downloadTempFileName = await GetDownloadPathForAppCastItem(currentItem);
             }
             if (result == UpdateAvailableResult.SkipUpdate)

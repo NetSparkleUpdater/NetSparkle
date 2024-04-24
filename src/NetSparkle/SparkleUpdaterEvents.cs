@@ -83,6 +83,11 @@ namespace NetSparkleUpdater
         public event DownloadEvent DownloadedFileThrewWhileCheckingSignature;
 
         /// <summary>
+        /// Called when InstallUpdate fails for one reason or another.
+        /// </summary>
+        public event InstallUpdateFailure InstallUpdateFailed;
+
+        /// <summary>
         /// Subscribe to this event to get a chance to shut down gracefully before the application is closed.
         /// If <see cref="PreparingToExitAsync"/> is set, this has no effect.
         /// </summary>

@@ -37,6 +37,7 @@
 * Added `SemVerLike` class that combines the normal .NET `System.Version` with semver properties (@kenjiuno)
 * Added `VersionTrimmers` for trimming `SemVerLike` versions to `System.Version` (@kenjiuno)
 * Added `AppCastReducers` helpers for common ways of filtering app cast items (@kenjiuno)
+* Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`.
 
 ## Updating from 0.X or 1.X to 2.X
 

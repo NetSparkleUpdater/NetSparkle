@@ -119,4 +119,12 @@ namespace NetSparkleUpdater
     /// <param name="downloadFilePath">The path to the downloaded installer that will be started by the new process</param>
     /// <returns>true if the installer should continue, false to not start the installer automatically</returns>
     public delegate bool BeforeBeginInstallerProcess(Process process, string downloadFilePath);
+
+    /// <summary>
+    /// Delegate that tells a user why the update installation failed
+    /// </summary>
+    /// <param name="failureReason"><seealso cref="InstallUpdateFailureReason"/> reason for failure</param>
+    /// <param name="installPath">Path for installer (can be null)</param>
+    /// <returns></returns>
+    public delegate bool InstallUpdateFailure(InstallUpdateFailureReason failureReason, string installPath);
 }
