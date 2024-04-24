@@ -1011,9 +1011,9 @@ namespace NetSparkleUpdater
             {
                 UpdateDownloader = new WebFileDownloader(LogWriter);
             }
-            else if (UpdateDownloader is WebFileDownloader webFileDownloader)
+            if (UpdateDownloader is WebFileDownloader webFileDownloader)
             {
-                webFileDownloader.PrepareToDownloadFile(); // refresh download operations
+                webFileDownloader.PrepareToDownloadFile(); // reset download operations
             }
         }
 
