@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater.Downloaders
 {
     /// <summary>
-    /// Class that downloads files from the internet and reports
+    /// Class that downloads files from local sources and reports
     /// progress on those files being downloaded.
     /// </summary>
     public class LocalFileDownloader : IUpdateDownloader, IDisposable
