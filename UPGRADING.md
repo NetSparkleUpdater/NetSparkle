@@ -17,9 +17,10 @@
 * `Exec(string cmd, bool waitForExit = true)` now returns a `bool`: `true` for the process starting, `false` otherwise
 * The `IAppCastFilter` API has changed to: `IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)`
 * `IAppCastFilter` now expects you to filter out old versions and do sorting yourself as needed (previously filtering out old versions yourself could be avoided via a `bool` property on `FilterResult`; to do this easily yourself now, use the `AppCastReducers.RemoveOlderVersions` reducer like so: `AppCastReducers.RemoveOlderVersions(installed, itemsToFilter)`)
-* The `FilterResult` class has been removed in its entirety
+* The `FilterResult` class has been removed in its entirety (882ee260dd24245c53d351d4151b8b4bd4a53588)
 * Used `SemVerLike` everywhere instead of `System.Version` for semver compatibility
 * `WebFileDownloader` now deletes files on cancellation of a download like `LocalFileDownloader` did already (1cd2284c41bbe85d41566915965ad2acdb1a61f5)
+* `WebFileDownloader` does not call `PrepareToDownloadFile()` in its constructor anymore. Now, it is called after the object is fully created. (420f961dfa9c9071332e2e0737b0f287d2cfa5dc)
 
 **Changes/Fixes**
 
@@ -32,12 +33,12 @@
 * Added `InstallerProcess` public var for easier access of the installer process in case you are making an app that updates other apps (5e6c321846d08645e0fc891a33f1461780c4b405) [**]
 * Allow user to avoid killing the parent process that started the update process -- `ShouldKillParentProcessWhenStartingInstaller`; defaults to `true` (19fae1ab1766eafea5a07881ac2598b4355f69f6) [**]
 * Allow setting the process ID to kill when starting the installer -- `ProcessIDToKillBeforeInstallerRuns`; defaults to `null`(8cc81e0a561b82c220ecd3a86c5f424a236dc268) [**]
-* Fixed Cancel button not working in Avalonia checking for updates window (f35e896) [**]
-* Added `InstallerProcessAboutToStart` event. You can use this to modify/see the installer process before it actually begins and optionally make `NetSparkleUpdater` not run the process (you'll have to run the process yourself in that case).
+* Fixed Cancel button not working in Avalonia checking for updates window (f35e8968c1c7167664f90f91835ea3019acd2046) [**]
+* Added `InstallerProcessAboutToStart` event. You can use this to modify/see the installer process before it actually begins and optionally make `NetSparkleUpdater` not run the process (you'll have to run the process yourself in that case). (a5cbbf1abce83de209f9d62a8fe2434f6b5cc85a)
 * Added `SemVerLike` class that combines the normal .NET `System.Version` with semver properties (@kenjiuno)
 * Added `VersionTrimmers` for trimming `SemVerLike` versions to `System.Version` (@kenjiuno)
 * Added `AppCastReducers` helpers for common ways of filtering app cast items (@kenjiuno)
-* Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`.
+* Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`. (fe546de8667b1a5d6e0c4a72a7c128dc954f4aba)
 
 ## Updating from 0.X or 1.X to 2.X
 
