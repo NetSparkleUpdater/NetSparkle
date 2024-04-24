@@ -3,7 +3,7 @@
  <metadata>
    <id>NetSparkleUpdater.UI.WinForms.NetFramework</id>
    <title>NetSparkleUpdater WinForms .NET Framework UI</title>
-   <version>3.0.0-preview20240404001</version>
+   <version>3.0.0-preview20240424001</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <license type="file">LICENSE.md</license>
@@ -18,8 +18,8 @@
    <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms software</tags>    
    <releaseNotes>2.0: See https://github.com/NetSparkleUpdater/NetSparkle for all information and to file issues/pull requests for and ask questions about this project.</releaseNotes>
     <dependencies>
-      <group targetFramework=".NETFramework4.5.2">
-        <dependency id="NetSparkleUpdater.SparkleUpdater" version="3.0.0-preview20240404001" exclude="Build,Analyzers" />
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="NetSparkleUpdater.SparkleUpdater" version="3.0.0-preview20240424001" exclude="Build,Analyzers" />
       </group>
     </dependencies>
  </metadata>

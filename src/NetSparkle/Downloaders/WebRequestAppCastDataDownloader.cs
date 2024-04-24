@@ -93,7 +93,7 @@ namespace NetSparkleUpdater.Downloaders
             if (TrustEverySSLConnection)
             {
 #if NETCORE
-                // ServerCertificateCustomValidationCallback not available on .NET 4.5.2
+                // ServerCertificateCustomValidationCallback not available on .NET 4.6.2 (first available in 4.7.1)
                 handler.ServerCertificateCustomValidationCallback =
                     (httpRequestMessage, cert, cetChain, policyErrors) =>
                     {
