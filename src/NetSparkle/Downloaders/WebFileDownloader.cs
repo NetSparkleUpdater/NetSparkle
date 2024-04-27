@@ -196,7 +196,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Error: {0}", e.Message);
+                _logger?.PrintMessage("Error: {0}", e.Message);
                 IsDownloading = false;
                 DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
             }
