@@ -39,6 +39,7 @@
 * Added `VersionTrimmers` for trimming `SemVerLike` versions to `System.Version` (@kenjiuno)
 * Added `AppCastReducers` helpers for common ways of filtering app cast items (@kenjiuno)
 * Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`. (fe546de8667b1a5d6e0c4a72a7c128dc954f4aba)
+* `WebFileDownloader.PrepareToDownloadFile` is now `virtual` (84df81122cfae9309de4f5b79489e46287bf3a62)
 
 ## Updating from 0.X or 1.X to 2.X
 
