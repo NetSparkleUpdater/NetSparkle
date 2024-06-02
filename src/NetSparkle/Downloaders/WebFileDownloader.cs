@@ -59,7 +59,7 @@ namespace NetSparkleUpdater.Downloaders
         /// Do preparation work necessary to download a file,
         /// aka set up the HttpClient for use.
         /// </summary>
-        public void PrepareToDownloadFile()
+        public virtual void PrepareToDownloadFile()
         {
             _logger?.PrintMessage("IUpdateDownloader: Preparing to download file...");
             if (_httpClient != null)
