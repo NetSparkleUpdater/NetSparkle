@@ -5,7 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using NetSparkleUpdater.AppCastHandlers;
 using Console = Colorful.Console;
 
 namespace NetSparkleUpdater.AppCastGenerator
@@ -184,9 +184,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, string productVersion, bool useChangelogs, string changelogFileNamePrefix)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, SemVerLike productVersion, bool useChangelogs, string changelogFileNamePrefix)
         {
-            var itemTitle = string.IsNullOrWhiteSpace(productName) ? productVersion : productName + " " + productVersion;
+            var fullProductVersionString = productVersion.ToString();
+            var itemTitle = string.IsNullOrWhiteSpace(productName) 
+                ? fullProductVersionString
+                : productName + " " + fullProductVersionString;
 
             var urlEncodedFileName = Uri.EscapeDataString(binaryFileInfo.Name);
             var urlToUse = !string.IsNullOrWhiteSpace(_opts.BaseUrl)
@@ -194,7 +197,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 : "";
             if (_opts.PrefixVersion)
             {
-                urlToUse += $"{productVersion}/";
+                urlToUse += $"{fullProductVersionString}/";
             }
             if (urlEncodedFileName.StartsWith("/") && urlEncodedFileName.Length > 1)
             {
@@ -203,7 +206,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
 
             // changelog stuff
-            var changelogFileName = productVersion + ".md";
+            var changelogFileName = fullProductVersionString + ".md";
             var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
             var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
             if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
@@ -242,13 +245,15 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Console.WriteLine($"Unable to find change log for {productVersion}. The app cast will still be generated, but without a change log for this version.", Color.Yellow);
             }
 
-            var productVersionLastDotIndex = productVersion?.LastIndexOf('.') ?? -1;
+            var productVersionLastDotIndex = productVersion.Version?.LastIndexOf('.') ?? -1;
             var item = new AppCastItem()
             {
                 Title = itemTitle?.Trim(),
                 DownloadLink = remoteUpdateFile?.Trim(),
-                Version = productVersion?.Trim(),
-                ShortVersion = productVersionLastDotIndex >= 0 ? productVersion?.Substring(0, productVersionLastDotIndex)?.Trim() : productVersion,
+                Version = fullProductVersionString?.Trim(),
+                ShortVersion = productVersionLastDotIndex >= 0 
+                    ? productVersion.Version?.Substring(0, productVersionLastDotIndex)?.Trim() 
+                    : productVersion.Version,
                 PublicationDate = binaryFileInfo.CreationTime,
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
@@ -357,17 +362,18 @@ namespace NetSparkleUpdater.AppCastGenerator
                         Console.WriteLine($"Skipping {binary} because it has no product version...");
                         continue;
                     }
+                    var semVerLikeVersion = SemVerLike.Parse(productVersion);
 
-                    var itemFoundInAppcast = items.Where(x => x.Version != null && x.Version == productVersion?.Trim()).FirstOrDefault();
+                    var itemFoundInAppcast = items.Where(x => x.SemVerLikeVersion != null && x.SemVerLikeVersion == semVerLikeVersion).FirstOrDefault();
                     if (itemFoundInAppcast != null && _opts.OverwriteOldItemsInAppcast)
                     {
-                        Console.WriteLine($"Removing existing app cast item with version {productVersion} so we can add the version on disk to the app cast...");
+                        Console.WriteLine($"Removing existing app cast item with version {semVerLikeVersion} so we can add the version on disk to the app cast...");
                         items.Remove(itemFoundInAppcast); // remove old item.
                         itemFoundInAppcast = null;
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName, productVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName, semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
                         if (item != null)
                         {
                             items.Add(item);
@@ -375,12 +381,12 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     else
                     {
-                        Console.WriteLine($"An app cast item with version {productVersion} is already in the file, not adding it again...");
+                        Console.WriteLine($"An app cast item with version {semVerLikeVersion} is already in the file, not adding it again...");
                     }
                 }
 
                 // order the list by version descending -- helpful when reparsing app cast to make sure things stay in order
-                items.Sort((a, b) => b.Version.CompareTo(a.Version));
+                items.Sort((a, b) => b.SemVerLikeVersion.CompareTo(a.SemVerLikeVersion));
 
                 // mark critical items as critical
                 var criticalVersions = _opts.CriticalVersions?.Split(",").ToList()
@@ -390,7 +396,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 {
                     foreach (var item in items)
                     {
-                        if (criticalVersions.Contains(item.Version))
+                        if (criticalVersions.Contains(item.SemVerLikeVersion.ToString()))
                         {
                             item.IsCriticalUpdate = true;
                         }
