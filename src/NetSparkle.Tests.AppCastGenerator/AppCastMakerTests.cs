@@ -998,6 +998,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("2.0", items[1].SemVerLikeVersion.Version);
             Assert.Equal(2337, items[1].UpdateSize);
             Assert.Equal("bar", items[1].DownloadSignature);
+            // make sure things stay in order when sorted (sort with latest first)
+            items.Sort((a, b) => b.SemVerLikeVersion.CompareTo(a.SemVerLikeVersion));
+            Assert.Equal("2.0-beta1", items[0].Version);
+            Assert.Equal("2.0-alpha.1", items[1].Version);
         }
     }
 }
