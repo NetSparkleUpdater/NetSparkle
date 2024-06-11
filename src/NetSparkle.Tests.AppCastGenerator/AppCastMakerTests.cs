@@ -10,6 +10,7 @@ using System.Text;
 using System.Runtime.CompilerServices;
 using Xunit;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -1002,6 +1003,127 @@ namespace NetSparkle.Tests.AppCastGenerator
             items.Sort((a, b) => b.SemVerLikeVersion.CompareTo(a.SemVerLikeVersion));
             Assert.Equal("2.0-beta1", items[0].Version);
             Assert.Equal("2.0-alpha.1", items[1].Version);
+        }
+
+        [Fact]
+        public void CanMakeAppCastWithAssemblyData()
+        {
+            var envVersion = Environment.Version;
+            var dotnetVersion = "net" + envVersion.Major + ".0";
+            var csproj = @"
+<Project Sdk=""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>" + dotnetVersion + @"</TargetFramework>
+    <RootNamespace>csharp_testing</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>2.0.1-beta-1</Version>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+  </PropertyGroup>
+</Project>".Trim();
+            var program = @"Console.WriteLine(""Hello, World!"");";
+            var tempDir = GetCleanTempDir();
+            var csprojPath = Path.Combine(tempDir, "proj.csproj");
+            var programPath = Path.Combine(tempDir, "Program.cs");
+            var innerFolder = RandomString(10);
+            var buildPath = Directory.CreateDirectory(Path.Combine(tempDir, innerFolder)).FullName;
+            try
+            {
+                
+                File.WriteAllText(csprojPath, csproj);
+                File.WriteAllText(programPath, program);
+                // compile it
+                var p = new Process()
+                {
+                    EnableRaisingEvents = true,
+                    StartInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "dotnet",
+                        WorkingDirectory = tempDir,
+                        Arguments = $"build --framework " + dotnetVersion + " --output \"" + buildPath + "\""
+                    }
+                };
+                p.OutputDataReceived += (o, e) => 
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                    {
+                        Console.WriteLine("OUTPUT: " + e.Data);
+                    }
+                };
+                p.ErrorDataReceived += (o, e) => 
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                    {
+                        Console.WriteLine("ERROR: " + e.Data);
+                    }
+                };
+                p.Start();
+                p.BeginErrorReadLine();
+                p.BeginOutputReadLine();     
+                p.WaitForExit();
+                // ok now that it has built, read the assembly
+                var dllPath = Path.Combine(buildPath, "proj.dll");
+                if (File.Exists(dllPath))
+                {
+                    var versionInfo = FileVersionInfo.GetVersionInfo(dllPath).ProductVersion?.Trim();
+                    Assert.Equal("2.0.1-beta-1", versionInfo);
+                    // ok, now use this for the app cast
+                    var dummyChangelogFilePath = Path.Combine(buildPath, "2.0.1-beta-1.md");
+                    const int fileSizeBytes = 123;
+                    var tempData = RandomString(fileSizeBytes);
+                    File.WriteAllText(dummyChangelogFilePath, tempData);
+                    var opts = new Options()
+                    {
+                        FileExtractVersion = false,
+                        SearchBinarySubDirectories = true,
+                        SourceBinaryDirectory = buildPath,
+                        ChangeLogPath = buildPath,
+                        Extensions = "dll",
+                        OutputDirectory = buildPath,
+                        OperatingSystem = "windows",
+                        ProductName = "ProductName",
+                        BaseUrl = "https://example.com/downloads",
+                        ChangeLogUrl = "http://baseURL/appname/changelogs/",
+                        ChangeLogFileNamePrefix = "change_log_",
+                        OverwriteOldItemsInAppcast = true,
+                        ReparseExistingAppCast = false,
+                        HumanReadableOutput = true
+                    };
+                    var signatureManager = _fixture.GetSignatureManager();
+                    Assert.True(signatureManager.KeysExist());
+
+                    var maker = new XMLAppCastMaker(signatureManager, opts);
+                    var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                    var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                    if (items != null)
+                    {
+                        maker.SerializeItemsToFile(items, productName, appCastFileName);
+                        maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                    }
+                    Assert.Single(items);
+                    Assert.Equal("2.0.1-beta-1", items[0].Version);
+                    Assert.Equal("2.0.1", items[0].ShortVersion);
+                    Assert.Equal("http://baseURL/appname/changelogs/2.0.1-beta-1.md", items[0].ReleaseNotesLink);
+                    Assert.True(items[0].DownloadSignature.Length > 0);
+                    Assert.True(items[0].IsWindowsUpdate);
+                    Assert.Equal(new FileInfo(dllPath).Length, items[0].UpdateSize);
+                }
+                else
+                {
+                    Assert.True(false, "Failed to build assembly");
+                }
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
         }
     }
 }
