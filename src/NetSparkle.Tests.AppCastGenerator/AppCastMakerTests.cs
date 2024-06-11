@@ -91,6 +91,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.tar.gz"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.tar.gz"));
             Assert.Equal("0.0.0", AppCastMaker.GetVersionFromName("My Favorite Tools (Linux-x64) 0.0.0.tar.gz"));
+            // semantic
+            //Assert.Equal("1.1.0", AppCastMaker.GetVersionFromName("1.1.0interruption.1.exe"));
         }
 
         [Fact]
@@ -924,6 +926,78 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // make sure tempDir always cleaned up
                 CleanUpDir(tempDir);
             }
+        }
+
+        [Fact]
+        public void CanGetSemVerLikeVersionsFromExistingAppCast()
+        {
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
+            // create fake app cast file
+            var appCastData = @"";
+            var fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            var (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Empty(items);
+            Assert.Null(productName);
+            // now create something with some actual data!
+            appCastData = @"
+<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0 Beta 1</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0-beta1""
+                       sparkle:shortVersionString=""2.0""
+                       sparkle:os=""windows""
+                       length=""1337""
+                       type=""application/octet-stream""
+                       sparkle:signature=""foo"" />
+        </item>
+        <item>
+            <title>Version 2.0 Alpha 1</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0-alpha.1""
+                       sparkle:shortVersionString=""2.0""
+                       sparkle:os=""windows""
+                       length=""2337""
+                       type=""application/octet-stream""
+                       sparkle:signature=""bar"" />
+        </item>
+    </channel>
+</rss>
+".Trim();
+            fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Equal(2, items.Count);
+            Assert.Equal("Version 2.0 Beta 1", items[0].Title);
+            Assert.Equal("2.0-beta1", items[0].Version);
+            Assert.Equal("2.0", items[0].ShortVersion);
+            Assert.Equal("-beta1", items[0].SemVerLikeVersion.AllSuffixes);
+            Assert.Equal("2.0", items[0].SemVerLikeVersion.Version);
+            Assert.Equal(1337, items[0].UpdateSize);
+            Assert.Equal("foo", items[0].DownloadSignature);
+
+            Assert.Equal("Version 2.0 Alpha 1", items[1].Title);
+            Assert.Equal("2.0-alpha.1", items[1].Version);
+            Assert.Equal("2.0", items[1].ShortVersion);
+            Assert.Equal("-alpha.1", items[1].SemVerLikeVersion.AllSuffixes);
+            Assert.Equal("2.0", items[1].SemVerLikeVersion.Version);
+            Assert.Equal(2337, items[1].UpdateSize);
+            Assert.Equal("bar", items[1].DownloadSignature);
         }
     }
 }
