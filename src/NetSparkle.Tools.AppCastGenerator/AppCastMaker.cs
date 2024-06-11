@@ -251,9 +251,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Title = itemTitle?.Trim(),
                 DownloadLink = remoteUpdateFile?.Trim(),
                 Version = fullProductVersionString?.Trim(),
-                ShortVersion = productVersionLastDotIndex >= 0 
-                    ? productVersion.Version?.Substring(0, productVersionLastDotIndex)?.Trim() 
-                    : productVersion.Version,
+                ShortVersion = productVersion.Version,
                 PublicationDate = binaryFileInfo.CreationTime,
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
