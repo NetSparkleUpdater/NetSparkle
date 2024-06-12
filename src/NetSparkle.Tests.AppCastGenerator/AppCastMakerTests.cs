@@ -72,7 +72,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0            .txt")); // whitespace shouldn't matter
-            Assert.Equal("0", AppCastMaker.GetVersionFromName("hello 1 .0.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("hello 1 .0.txt")); // I changed this to null as I think its a more suitable output versus a version of 0
             Assert.Equal("2.3", AppCastMaker.GetVersionFromName("hello a2.3.txt"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("foo1.0"));
@@ -92,8 +92,75 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.tar.gz"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.tar.gz"));
             Assert.Equal("0.0.0", AppCastMaker.GetVersionFromName("My Favorite Tools (Linux-x64) 0.0.0.tar.gz"));
-            // semantic
-            //Assert.Equal("1.1.0", AppCastMaker.GetVersionFromName("1.1.0interruption.1.exe"));
+
+            // Semantic version tests
+            // Test cases are from https://github.com/semver/semver/issues/232
+            // Valid semantic version tests
+            Assert.Equal("0.0.4", AppCastMaker.GetVersionFromName("app 0.0.4.txt"));
+            Assert.Equal("10.20.30", AppCastMaker.GetVersionFromName("app 10.20.30.txt"));
+            Assert.Equal("1.1.2-prerelease+meta", AppCastMaker.GetVersionFromName("app 1.1.2-prerelease+meta.txt"));
+            Assert.Equal("1.1.2+meta", AppCastMaker.GetVersionFromName("app 1.1.2+meta.txt"));
+            Assert.Equal("1.1.2+meta-valid", AppCastMaker.GetVersionFromName("app 1.1.2+meta-valid.txt"));
+            Assert.Equal("1.0.0-alpha", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.txt"));
+            Assert.Equal("1.0.0-beta", AppCastMaker.GetVersionFromName("app 1.0.0-beta.txt"));
+            Assert.Equal("1.0.0-alpha.beta", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.beta.txt"));
+            Assert.Equal("1.0.0-alpha.beta.1", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.beta.1.txt"));
+            Assert.Equal("1.0.0-alpha.1", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.1.txt"));
+            Assert.Equal("1.0.0-alpha0.valid", AppCastMaker.GetVersionFromName("app 1.0.0-alpha0.valid.txt"));
+            Assert.Equal("1.0.0-alpha.0valid", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.0valid.txt"));
+            Assert.Equal("1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay", AppCastMaker.GetVersionFromName("app 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay.txt"));
+            Assert.Equal("1.0.0-rc.1+build.1", AppCastMaker.GetVersionFromName("app 1.0.0-rc.1+build.1.txt"));
+            Assert.Equal("2.0.0-rc.1+build.123", AppCastMaker.GetVersionFromName("app 2.0.0-rc.1+build.123.txt"));
+            Assert.Equal("1.2.3-beta", AppCastMaker.GetVersionFromName("app 1.2.3-beta.txt"));
+            Assert.Equal("10.2.3-DEV-SNAPSHOT", AppCastMaker.GetVersionFromName("app 10.2.3-DEV-SNAPSHOT.txt"));
+            Assert.Equal("1.2.3-SNAPSHOT-123", AppCastMaker.GetVersionFromName("app 1.2.3-SNAPSHOT-123.txt"));
+            Assert.Equal("1.0.0", AppCastMaker.GetVersionFromName("app 1.0.0.txt"));
+            Assert.Equal("2.0.0", AppCastMaker.GetVersionFromName("app 2.0.0.txt"));
+            Assert.Equal("1.1.7", AppCastMaker.GetVersionFromName("app 1.1.7.txt"));
+            Assert.Equal("2.0.0+build.1848", AppCastMaker.GetVersionFromName("app 2.0.0+build.1848.txt"));
+            Assert.Equal("2.0.1-alpha.1227", AppCastMaker.GetVersionFromName("app 2.0.1-alpha.1227.txt"));
+            Assert.Equal("1.0.0-alpha+beta", AppCastMaker.GetVersionFromName("app 1.0.0-alpha+beta.txt"));
+            Assert.Equal("1.2.3----RC-SNAPSHOT.12.9.1--.12+788", AppCastMaker.GetVersionFromName("app 1.2.3----RC-SNAPSHOT.12.9.1--.12+788.txt"));
+            Assert.Equal("1.2.3----R-S.12.9.1--.12+meta", AppCastMaker.GetVersionFromName("app 1.2.3----R-S.12.9.1--.12+meta.txt"));
+            Assert.Equal("1.2.3----RC-SNAPSHOT.12.9.1--.12", AppCastMaker.GetVersionFromName("app 1.2.3----RC-SNAPSHOT.12.9.1--.12.txt"));
+            Assert.Equal("1.0.0+0.build.1-rc.10000aaa-kk-0.1", AppCastMaker.GetVersionFromName("app 1.0.0+0.build.1-rc.10000aaa-kk-0.1.txt"));
+            Assert.Equal("99999999999999999999999.999999999999999999.99999999999999999", AppCastMaker.GetVersionFromName("app 99999999999999999999999.999999999999999999.99999999999999999.txt"));
+            Assert.Equal("1.0.0-0A.is.legal", AppCastMaker.GetVersionFromName("app 1.0.0-0A.is.legal.txt"));
+
+            // Invalid semantic versions tests
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.0123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.1.2+.123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app +invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid+invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid.01.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.beta.1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha+beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha_beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha..txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha_beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -alpha.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha..txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha..1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha...1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha....1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha.....1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha......1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha.......1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3.DEV.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2-SNAPSHOT.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2-RC-SNAPSHOT.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -1.0.3-gamma+b7718.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app +justmeta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 9.8.7+meta+meta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 9.8.7-whatever+meta+meta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12.txt"));
         }
 
         [Fact]
