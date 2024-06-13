@@ -256,16 +256,21 @@ namespace NetSparkleUpdater
                 if (_configuration == null)
                 {
 #if (NETSTANDARD || NET6 || NET7 || NET8)
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
-                    }
-                    else
-                    {
-                        _configuration = new JSONConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
-                    }
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        {
+                            _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
+                        }
+                        else
+                        {
+                            try {
+                                _configuration = new JSONConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
+                            } catch (Exception e) {
+                                LogWriter.PrintMessage("Unable to create JSONConfiguration object: {0}", e.Message);
+                                _configuration = new DefaultConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
+                            }
+                        }
 #else
-                    _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
+                        _configuration = new RegistryConfiguration(new AssemblyReflectionAccessor(_appReferenceAssembly));
 #endif
                 }
                 return _configuration;
