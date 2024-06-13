@@ -70,6 +70,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Null(AppCastMaker.GetVersionFromName(null));
             Assert.Null(AppCastMaker.GetVersionFromName("foo"));
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
+            Assert.Null(AppCastMaker.GetVersionFromName("hello 1.txt")); // New test, 1 is not a valid version, should be atleast Major.Minor
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0            .txt")); // whitespace shouldn't matter
             Assert.Null(AppCastMaker.GetVersionFromName("hello 1 .0.txt")); // I changed this to null as I think its a more suitable output versus a version of 0
@@ -77,6 +78,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("foo1.0"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo0.1"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo 0.1"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo_0.1"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1foo"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1 My App"));
             Assert.Equal("0.0.3.1", AppCastMaker.GetVersionFromName("foo0.0.3.1"));
@@ -550,7 +553,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             // setup test dir
             var tempDir = GetCleanTempDir();
             // create dummy files
-            var dummyFilePath = Path.Combine(tempDir, "hello 1.txt");
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
             const int fileSizeBytes = 57;
             var tempData = RandomString(fileSizeBytes);
             File.WriteAllText(dummyFilePath, tempData);
@@ -582,8 +585,8 @@ namespace NetSparkle.Tests.AppCastGenerator
                 }
 
                 Assert.Single(items);
-                Assert.Equal("1", items[0].Version);
-                Assert.Equal("https://example.com/downloads/hello%201.txt", items[0].DownloadLink);
+                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
                 Assert.True(items[0].DownloadSignature.Length > 0);
                 Assert.True(items[0].IsWindowsUpdate);
                 Assert.Equal(fileSizeBytes, items[0].UpdateSize);

@@ -85,6 +85,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             // Replace multiple spaces with a single space
             fullFileNameWithPath = Regex.Replace(fullFileNameWithPath, @"\s+", " ");
 
+            // Replace _ with space
+            fullFileNameWithPath = fullFileNameWithPath.Replace("_", " ");
+
             // Regex for simple version numbers (X.X.X or X.X.X.X)
             string simpleVersionPattern = @"^\d+(\.\d+){1,3}$";
 
@@ -139,160 +142,165 @@ namespace NetSparkleUpdater.AppCastGenerator
                 return input;
             }
 
-            // Split the filename by space to find the version segment
-            var parts = fullFileNameWithPath.Split(' ');
+            var folderSplit = fullFileNameWithPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
 
-            // If there are multiple parts, we check the first and last parts only assuming version is in either
-            // If the strings in the start and end both produce valid versions, we return the version from the end
-            // If single string no spaces, we take the entire string and check it from left and right
-            string leftPart = null;
-            string rightPart = null;
-            if (parts.Length > 1)
+            // Loop through the last 4 folder names to find the version
+            for (int j = folderSplit.Length - 1; j >= Math.Max(0, folderSplit.Length - 4); j--)
             {
-                leftPart = parts[0];
-                rightPart = parts[^1];
-            }
-            else
-            {
-                leftPart = parts[0];
-                rightPart = parts[0];
-            }
+                var fileName = folderSplit[j];
 
-            // Checking left part with logic from left
-            string lastValidVersionLeft = null;
-            if (!string.IsNullOrEmpty(leftPart))
-            {
-                // Remove any text block from left
-                // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
-                leftPart = RemoveTextBlockFromLeft(leftPart);
+                // Split the filename by space to find the version segment
+                var parts = fileName.Split(' ');
 
-                // Make sure leftpart has a number
-                if (Regex.IsMatch(leftPart, @"\d"))
+                // If there are multiple parts, we check the first and last parts only assuming version is in either
+                // If the strings in the start and end both produce valid versions, we return the version from the end
+                // If single string no spaces, we take the entire string and check it from left and right
+                string leftPart = null;
+                string rightPart = null;
+                if (parts.Length > 1)
                 {
-                    // Check if its only numeric values and a simple version for quick check
-                    if (Regex.IsMatch(leftPart, @"^[\d.]+$") && IsValidVersion(leftPart))
+                    leftPart = parts[0];
+                    rightPart = parts[^1];
+                }
+                else
+                {
+                    leftPart = parts[0];
+                    rightPart = parts[0];
+                }
+
+                // Checking left part with logic from left
+                string lastValidVersionLeft = null;
+                if (!string.IsNullOrEmpty(leftPart))
+                {
+                    // Remove any text block from left
+                    // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
+                    leftPart = RemoveTextBlockFromLeft(leftPart);
+
+                    // Make sure leftpart has a number
+                    if (Regex.IsMatch(leftPart, @"\d"))
                     {
-                        lastValidVersionLeft = leftPart;
-                    }
-                    else
-                    {
-                        // Its more complex so we check if its semantic version before splitting
-                        if (IsValidVersion(leftPart))
+                        // Check if its only numeric values and a simple version for quick check
+                        if (Regex.IsMatch(leftPart, @"^[\d.]+$") && IsValidVersion(leftPart))
                         {
                             lastValidVersionLeft = leftPart;
                         }
                         else
                         {
-                            // Start splitting and going from left to right
-                            // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
-                            var segments = leftPart.Split('.');
-                            string tempSegment = "";
-                            bool lastVersionToCheck = false;
-                            for (int i = segments.Length - 1; i >= 0; i--)
+                            // Its more complex so we check if its semantic version before splitting
+                            if (IsValidVersion(leftPart))
                             {
-                                var segment = segments[i];
-                                if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
+                                lastValidVersionLeft = leftPart;
+                            }
+                            else
+                            {
+                                // Start splitting and going from left to right
+                                // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
+                                var segments = leftPart.Split('.');
+                                string tempSegment = "";
+                                bool lastVersionToCheck = false;
+                                for (int i = segments.Length - 1; i >= 0; i--)
                                 {
-                                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
-                                    if (match.Success)
+                                    var segment = segments[i];
+                                    if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
                                     {
-                                        segment = segment.Substring(match.Index + match.Length);
-                                        lastVersionToCheck = true;
+                                        var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
+                                        if (match.Success)
+                                        {
+                                            segment = segment.Substring(match.Index + match.Length);
+                                            lastVersionToCheck = true;
+                                        }
                                     }
-                                }
 
-                                tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
-                                tempSegment = tempSegment.Trim('.');
+                                    tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
+                                    tempSegment = tempSegment.Trim('.');
 
-                                if (IsValidVersion(tempSegment))
-                                {
-                                    lastValidVersionLeft = tempSegment;
-                                }
+                                    if (IsValidVersion(tempSegment))
+                                    {
+                                        lastValidVersionLeft = tempSegment;
+                                    }
 
-                                if (lastVersionToCheck)
-                                {
-                                    break;
+                                    if (lastVersionToCheck)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // Checking right part with logic from right
-            string lastValidVersionRight = null;
-            if (!string.IsNullOrEmpty(rightPart))
-            {
-                // Remove any text block from right
-                // For example foo0.1 becomes 0.1
-                rightPart = RemoveTextBlockFromRight(rightPart);
-
-                // Make sure rightpart has a number
-                if (Regex.IsMatch(rightPart, @"\d"))
+                // Checking right part with logic from right
+                string lastValidVersionRight = null;
+                if (!string.IsNullOrEmpty(rightPart))
                 {
-                    // Check if its only numeric values and a simple version for quick check
-                    if (Regex.IsMatch(rightPart, @"^[\d.]+$") && IsValidVersion(rightPart))
+                    // Remove any text block from right
+                    // For example foo0.1 becomes 0.1
+                    rightPart = RemoveTextBlockFromRight(rightPart);
+
+                    // Make sure rightpart has a number
+                    if (Regex.IsMatch(rightPart, @"\d"))
                     {
-                        lastValidVersionRight = rightPart;
-                    }
-                    else
-                    {
-                        // Its more complex so we check if its semantic version before splitting
-                        if (IsValidVersion(rightPart))
+                        // Check if its only numeric values and a simple version for quick check
+                        if (Regex.IsMatch(rightPart, @"^[\d.]+$") && IsValidVersion(rightPart))
                         {
                             lastValidVersionRight = rightPart;
                         }
                         else
                         {
-                            // Start splitting and going from left to right
-                            // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
-                            var segments = rightPart.Split('.');
-                            string tempSegment = "";
-                            bool lastVersionToCheck = false;
-                            for (int i = segments.Length - 1; i >= 0; i--)
+                            // Its more complex so we check if its semantic version before splitting
+                            if (IsValidVersion(rightPart))
                             {
-                                var segment = segments[i];
-                                if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
+                                lastValidVersionRight = rightPart;
+                            }
+                            else
+                            {
+                                // Start splitting and going from left to right
+                                // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
+                                var segments = rightPart.Split('.');
+                                string tempSegment = "";
+                                bool lastVersionToCheck = false;
+                                for (int i = segments.Length - 1; i >= 0; i--)
                                 {
-                                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
-                                    if (match.Success)
+                                    var segment = segments[i];
+                                    if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
                                     {
-                                        segment = segment.Substring(match.Index + match.Length);
-                                        lastVersionToCheck = true;
+                                        var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
+                                        if (match.Success)
+                                        {
+                                            segment = segment.Substring(match.Index + match.Length);
+                                            lastVersionToCheck = true;
+                                        }
                                     }
-                                }
 
-                                tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
-                                tempSegment = tempSegment.Trim('.');
+                                    tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
+                                    tempSegment = tempSegment.Trim('.');
 
-                                if (IsValidVersion(tempSegment))
-                                {
-                                    lastValidVersionRight = tempSegment;
-                                }
+                                    if (IsValidVersion(tempSegment))
+                                    {
+                                        lastValidVersionRight = tempSegment;
+                                    }
 
-                                if (lastVersionToCheck)
-                                {
-                                    break;
+                                    if (lastVersionToCheck)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // Right part is preferred over left part
-            if (lastValidVersionRight != null)
-            {
-                return lastValidVersionRight;
+                // Right part is preferred over left part
+                if (lastValidVersionRight != null)
+                {
+                    return lastValidVersionRight;
+                }
+                else if (lastValidVersionLeft != null)
+                {
+                    return lastValidVersionLeft;
+                }
             }
-            else if (lastValidVersionLeft != null)
-            {
-                return lastValidVersionLeft;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static string GetVersionFromAssembly(string fullFileNameWithPath)
