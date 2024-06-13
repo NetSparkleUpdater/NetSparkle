@@ -1,11 +1,6 @@
-﻿using NetSparkleUpdater.AssemblyAccessors;
-using NetSparkleUpdater.Interfaces;
+﻿using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices.Marshalling;
-using System.Text;
 using System.Text.Json;
 
 namespace NetSparkleUpdater.Configurations
