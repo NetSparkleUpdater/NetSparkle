@@ -486,6 +486,7 @@ Contributions are ALWAYS welcome! If you see a new feature you'd like to add, pl
 
 An incomplete list of other projects related to software updating that you might want to look at if NetSparkleUpdater doesn't work for you:
 
+- [Velopack](https://github.com/velopack/velopack)
 - [Squirrel.Windows](https://github.com/Squirrel/Squirrel.Windows)
 - [WinSparkle](https://github.com/vslavik/winsparkle)
 - [NAppUpdate](https://github.com/synhershko/NAppUpdate)
