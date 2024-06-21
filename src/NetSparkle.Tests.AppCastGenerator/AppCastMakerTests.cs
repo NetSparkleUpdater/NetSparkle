@@ -97,6 +97,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("0.0.0", AppCastMaker.GetVersionFromName("My Favorite Tools (Linux-x64) 0.0.0.tar.gz"));
 
             // Semantic version tests
+            Assert.Equal("3.0.0-beta1", AppCastMaker.GetVersionFromName("MyApp 3.0.0-beta1.exe"));
             // Test cases are from https://github.com/semver/semver/issues/232
             // Valid semantic version tests
             Assert.Equal("0.0.4", AppCastMaker.GetVersionFromName("app 0.0.4.txt"));
