@@ -136,9 +136,9 @@ We strongly recommend that you make use of the [netsparkle-generate-appcast](#in
 
 ### Install AppCast Generator Tool
 
-0. This tool requires the .NET 5, 6, or 7 Desktop Runtime to be installed.
-1. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
-2. The tool is now available on your command line as the `netsparkle-generate-appcast` command. You can use `netsparkle-generate-appcast --help` to see a full list of options for this tool.
+1. This tool requires the .NET 6, 7, or 8 Desktop Runtime to be installed.
+2. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+3. The tool is now available on your command line as the `netsparkle-generate-appcast` command. You can use `netsparkle-generate-appcast --help` to see a full list of options for this tool.
 
 #### Sparkle Compatibility 
 
