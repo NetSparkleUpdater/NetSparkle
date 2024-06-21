@@ -52,7 +52,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// does not contain a product name)</returns>
         public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
 
-        public static string GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "")
+        public static string GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "", IEnumerable<string> extensions = null)
         {
             // File name is empty
             if (string.IsNullOrWhiteSpace(fullFileNameWithPath))
@@ -71,8 +71,22 @@ namespace NetSparkleUpdater.AppCastGenerator
                 fullFileNameWithPath = fullFileNameWithPath.Replace(binaryDirectory, "").Trim();
             }
 
-            // Handle complex extensions and remove them if they exist
-            string[] extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
+            // Handle a sampling of complex extensions and remove them if they exist
+            List<string> extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
+            // handle user-defined extensions
+            if (extensions != null)
+            {
+                foreach (var extension in extensions)
+                {
+                    var extPattern = extension;
+                    if (!extension.StartsWith('.'))
+                    {
+                        extPattern = "." + extension;
+                    }
+                    extPattern = extPattern.Replace(".", @"\.");
+                    extensionPatterns.Add(extPattern + "$");
+                }
+            }
             foreach (var pattern in extensionPatterns)
             {
                 if (Regex.IsMatch(fullFileNameWithPath, pattern))
@@ -310,11 +324,16 @@ namespace NetSparkleUpdater.AppCastGenerator
             return FileVersionInfo.GetVersionInfo(fullFileNameWithPath).ProductVersion?.Trim();
         }
 
-        public IEnumerable<string> GetSearchExtensionsFromString(string extensions)
+        public IEnumerable<string> GetExtensionsFromString(string extensions)
         {
             return extensions.Split(",").ToList()
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
+                .Distinct();
+        }
+
+        public IEnumerable<string> GetSearchExtensionsFromString(string extensions)
+        {
+            return GetExtensionsFromString(extensions)
                 .Select(extension => $"*.{extension.Trim()}");
         }
 
@@ -328,14 +347,14 @@ namespace NetSparkleUpdater.AppCastGenerator
             return extensionsStringForSearch.SelectMany(search => Directory.GetFiles(binaryDirectory, search, searchOption));
         }
 
-        public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory)
+        public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory, IEnumerable<string> extensions = null)
         {
             if (binaryDirectory == ".")
             {
                 binaryDirectory = Environment.CurrentDirectory;
             }
             string productVersion = useFileNameForVersion 
-                ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory)) 
+                ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory), extensions) 
                 : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
@@ -506,7 +525,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
-                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory);
+                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory, GetExtensionsFromString(_opts.Extensions));
 
                     if (!string.IsNullOrWhiteSpace(productVersion))
                     {
