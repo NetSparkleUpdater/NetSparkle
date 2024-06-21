@@ -548,12 +548,12 @@ namespace NetSparkle.Tests.AppCastGenerator
         }
 
         [Fact]
-        public void SingleDigitVersionDoesNotFail()
+        public void SingleMajorMinorDigitVersionDoesNotFail()
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
             // create dummy files
-            var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.txt");
             const int fileSizeBytes = 57;
             var tempData = RandomString(fileSizeBytes);
             File.WriteAllText(dummyFilePath, tempData);
@@ -585,7 +585,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 }
 
                 Assert.Single(items);
-                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("1", items[0].Version);
                 Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
                 Assert.True(items[0].DownloadSignature.Length > 0);
                 Assert.True(items[0].IsWindowsUpdate);

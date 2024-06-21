@@ -72,7 +72,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
 
             // Handle complex extensions and remove them if they exist
-            string[] extensionPatterns = { @"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted" };
+            string[] extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
             foreach (var pattern in extensionPatterns)
             {
                 if (Regex.IsMatch(fullFileNameWithPath, pattern))
@@ -176,25 +176,26 @@ namespace NetSparkleUpdater.AppCastGenerator
                     // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
                     leftPart = RemoveTextBlockFromLeft(leftPart);
 
-                    // Make sure leftpart has a number
+                    // Make sure left part has a number
                     if (Regex.IsMatch(leftPart, @"\d"))
                     {
-                        // Check if its only numeric values and a simple version for quick check
+                        // Check if it has only numeric values and a simple version for quick check
                         if (Regex.IsMatch(leftPart, @"^[\d.]+$") && IsValidVersion(leftPart))
                         {
                             lastValidVersionLeft = leftPart;
                         }
                         else
                         {
-                            // Its more complex so we check if its semantic version before splitting
+                            // It's more complex so we check if its semantic version before splitting
                             if (IsValidVersion(leftPart))
                             {
                                 lastValidVersionLeft = leftPart;
                             }
                             else
                             {
-                                // Start splitting and going from left to right
-                                // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
+                                // Start splitting and going from left to right.
+                                // Keep record of last applicable version and check one more segment after it.
+                                // If it fails, then the last one we found is what we need.
                                 var segments = leftPart.Split('.');
                                 string tempSegment = "";
                                 bool lastVersionToCheck = false;
@@ -255,7 +256,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                             else
                             {
                                 // Start splitting and going from left to right
-                                // Keep record of last applicable version and check one more segment after it, if it fails then the last one we found is what we need
+                                // Keep record of last applicable version and check one more segment 
+                                // after it, if it fails, then the last one we found is what we need
                                 var segments = rightPart.Split('.');
                                 string tempSegment = "";
                                 bool lastVersionToCheck = false;
@@ -337,7 +339,14 @@ namespace NetSparkleUpdater.AppCastGenerator
                 : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
             {
-                Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}, try --file-extract-version parameter to determine version from file name", Color.Red);
+                if (useFileNameForVersion)
+                {
+                    Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}; please make sure you have at least Major.Minor as a version number and not just one single digit", Color.Red);
+                }
+                else
+                {
+                    Console.WriteLine($"Unable to determine version of binary {binaryFileInfo.Name}; try --file-extract-version parameter to determine version from file name", Color.Red);
+                }
             }
             return productVersion;
         }
