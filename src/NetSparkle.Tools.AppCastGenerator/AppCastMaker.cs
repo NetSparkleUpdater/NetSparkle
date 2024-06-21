@@ -55,6 +55,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         // Function to check if a segment is a valid version
         private static bool ContainsValidVersionInfo(string segment)
         {
+            // regex from: https://github.com/semver/semver/issues/232
             // Regex for simple version numbers (X.X.X or X.X.X.X)
             string simpleVersionPattern = @"^\d+(\.\d+){1,3}$";
             // Regex for semantic versioning
