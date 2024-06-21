@@ -40,6 +40,7 @@
 * Added `AppCastReducers` helpers for common ways of filtering app cast items (@kenjiuno)
 * Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`. (fe546de8667b1a5d6e0c4a72a7c128dc954f4aba)
 * `WebFileDownloader.PrepareToDownloadFile` is now `virtual` (84df81122cfae9309de4f5b79489e46287bf3a62)
+* The app cast maker now expects at least `Major.Minor` for version numbers and no longer accepts single digits as version numbers (this fixes things like "My Super App Version 2.exe" having 2 being detected as the version number when the version number is in a prior folder name, and also ensures that the right number is being read)
 
 ## Updating from 0.X or 1.X to 2.X
 
