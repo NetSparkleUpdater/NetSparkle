@@ -1100,7 +1100,6 @@ namespace NetSparkle.Tests.AppCastGenerator
             var buildPath = Directory.CreateDirectory(Path.Combine(tempDir, innerFolder)).FullName;
             try
             {
-                
                 File.WriteAllText(csprojPath, csproj);
                 File.WriteAllText(programPath, program);
                 // compile it
@@ -1123,14 +1122,14 @@ namespace NetSparkle.Tests.AppCastGenerator
                 {
                     if (!string.IsNullOrWhiteSpace(e.Data))
                     {
-                        Console.WriteLine("OUTPUT: " + e.Data);
+                        Console.WriteLine("[Unit test build output] " + e.Data);
                     }
                 };
                 p.ErrorDataReceived += (o, e) => 
                 {
                     if (!string.IsNullOrWhiteSpace(e.Data))
                     {
-                        Console.WriteLine("ERROR: " + e.Data);
+                        Console.WriteLine("[Unit test build output] ERROR: " + e.Data);
                     }
                 };
                 p.Start();
@@ -1176,6 +1175,16 @@ namespace NetSparkle.Tests.AppCastGenerator
                         maker.SerializeItemsToFile(items, productName, appCastFileName);
                         maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
                     }
+                    Assert.Single(items);
+                    Assert.Equal("2.0.1-beta-1", items[0].Version);
+                    Assert.Equal("2.0.1", items[0].ShortVersion);
+                    Assert.Equal("http://baseURL/appname/changelogs/2.0.1-beta-1.md", items[0].ReleaseNotesLink);
+                    Assert.True(items[0].DownloadSignature.Length > 0);
+                    Assert.True(items[0].IsWindowsUpdate);
+                    Assert.Equal(new FileInfo(dllPath).Length, items[0].UpdateSize);
+                    
+                    // read back and make sure things are the same
+                    (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(appCastFileName, true);
                     Assert.Single(items);
                     Assert.Equal("2.0.1-beta-1", items[0].Version);
                     Assert.Equal("2.0.1", items[0].ShortVersion);
