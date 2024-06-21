@@ -13,7 +13,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 {
     public abstract class AppCastMaker
     {
-        private static readonly string[] _operatingSystems = new string[] { "windows", "mac", "linux" };
+        private static readonly string[] _operatingSystems = ["windows", "mac", "linux"];
         
         protected Options _opts;
         private SignatureManager _signatureManager;
@@ -53,6 +53,134 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// does not contain a product name)</returns>
         public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
 
+        // Function to check if a segment is a valid version
+        private static bool ContainsValidVersionInfo(string segment)
+        {
+            // Regex for simple version numbers (X.X.X or X.X.X.X)
+            string simpleVersionPattern = @"^\d+(\.\d+){1,3}$";
+            // Regex for semantic versioning
+            string semverPattern = @"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+                                + @"(-((0|[1-9]\d*)|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
+                                + @"(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?"
+                                + @"(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$";
+            return Regex.IsMatch(segment, simpleVersionPattern) || Regex.IsMatch(segment, semverPattern);
+        }
+
+        // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from left)
+        private static string RemoveTextBlockFromLeft(string input)
+        {
+            if (!Regex.IsMatch(input, @"\d"))
+            {
+                return "";
+            }
+
+            if (Regex.IsMatch(input, @"[+-]"))
+            {
+                var match = Regex.Match(input, @"(?<![+-])[a-zA-Z]+(?=\d)");
+                if (match.Success)
+                {
+                    return input.Substring(0, match.Index);
+                }
+                return input;
+            }
+            else
+            {
+                var match = Regex.Match(input, @"[a-zA-Z]");
+                if (match.Success)
+                {
+                    return input.Substring(0, match.Index);
+                }
+                return input;
+            }
+        }
+
+        // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from right)
+        private static string RemoveTextBlockFromRight(string input)
+        {
+            var match = Regex.Match(input, @"(?<![a-zA-Z+-])[a-zA-Z]+(?=\d)");
+            if (match.Success)
+            {
+                return input.Substring(match.Index + match.Length);
+            }
+            return input;
+        }
+
+        private static string SplitOnPeriodsAndFindVersion(string part)
+        {
+            // Start splitting and going from left to right.
+            // Keep record of last applicable version and check one more segment after it.
+            // If it fails, then the last one we found is what we need.
+            var segments = part.Split('.');
+            string tempSegment = "";
+            bool lastVersionToCheck = false;
+            string lastValidVersionLeft = null;
+            for (int i = segments.Length - 1; i >= 0; i--)
+            {
+                var segment = segments[i];
+                if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
+                {
+                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
+                    if (match.Success)
+                    {
+                        segment = segment.Substring(match.Index + match.Length);
+                        lastVersionToCheck = true;
+                    }
+                }
+
+                tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
+                tempSegment = tempSegment.Trim('.');
+
+                if (ContainsValidVersionInfo(tempSegment))
+                {
+                    lastValidVersionLeft = tempSegment;
+                }
+
+                if (lastVersionToCheck)
+                {
+                    break;
+                }
+            }
+            return lastValidVersionLeft;
+        }
+
+        private static string FindVersionInfoInString(string str, bool removeTextFromLeft)
+        {
+            string lastValidVersion = null;
+            if (!string.IsNullOrEmpty(str))
+            {
+                // Remove any text block from left
+                // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
+                str = removeTextFromLeft ? RemoveTextBlockFromLeft(str) : RemoveTextBlockFromRight(str);
+
+                // Make sure left part has a number
+                if (Regex.IsMatch(str, @"\d"))
+                {
+                    // Check if it has only numeric values and a simple version for quick check
+                    if (Regex.IsMatch(str, @"^[\d.]+$") && ContainsValidVersionInfo(str))
+                    {
+                        lastValidVersion = str;
+                    }
+                    else
+                    {
+                        // It's more complex so we check if its semantic version before splitting
+                        if (ContainsValidVersionInfo(str))
+                        {
+                            lastValidVersion = str;
+                        }
+                        else
+                        {
+                            var foundVersion = SplitOnPeriodsAndFindVersion(str);
+                            if (foundVersion != null)
+                            {
+                                lastValidVersion = foundVersion;
+                            }
+                        }
+                    }
+                }
+            }
+            return lastValidVersion;
+        }
+
         public static string GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "", IEnumerable<string> extensions = null)
         {
             // File name is empty
@@ -62,7 +190,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
 
             // Filename has no extension or ends in .
-            if (fullFileNameWithPath.EndsWith("."))
+            if (fullFileNameWithPath.EndsWith('.'))
             {
                 return null;
             }
@@ -73,7 +201,8 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
 
             // Handle a sampling of complex extensions and remove them if they exist
-            List<string> extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
+            List<string> extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", 
+            @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
             // handle user-defined extensions
             if (extensions != null)
             {
@@ -103,136 +232,6 @@ namespace NetSparkleUpdater.AppCastGenerator
             // Replace _ with space
             fullFileNameWithPath = fullFileNameWithPath.Replace("_", " ");
 
-            // Regex for simple version numbers (X.X.X or X.X.X.X)
-            string simpleVersionPattern = @"^\d+(\.\d+){1,3}$";
-
-            // Regex for semantic versioning
-            string semverPattern = @"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
-                                 + @"(-((0|[1-9]\d*)|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
-                                 + @"(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?"
-                                 + @"(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$";
-
-            // Function to check if a segment is a valid version
-            bool IsValidVersion(string segment)
-            {
-                return Regex.IsMatch(segment, simpleVersionPattern) || Regex.IsMatch(segment, semverPattern);
-            }
-
-            // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from left)
-            string RemoveTextBlockFromLeft(string input)
-            {
-                if (!Regex.IsMatch(input, @"\d"))
-                {
-                    return "";
-                }
-
-                if (Regex.IsMatch(input, @"[+-]"))
-                {
-                    var match = Regex.Match(input, @"(?<![+-])[a-zA-Z]+(?=\d)");
-                    if (match.Success)
-                    {
-                        return input.Substring(0, match.Index);
-                    }
-                    return input;
-                }
-                else
-                {
-                    var match = Regex.Match(input, @"[a-zA-Z]");
-                    if (match.Success)
-                    {
-                        return input.Substring(0, match.Index);
-                    }
-                    return input;
-                }
-            }
-
-            // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from right)
-            string RemoveTextBlockFromRight(string input)
-            {
-                var match = Regex.Match(input, @"(?<![a-zA-Z+-])[a-zA-Z]+(?=\d)");
-                if (match.Success)
-                {
-                    return input.Substring(match.Index + match.Length);
-                }
-                return input;
-            }
-
-            string splitOnPeriodsAndFindVersion(string part)
-            {
-                // Start splitting and going from left to right.
-                // Keep record of last applicable version and check one more segment after it.
-                // If it fails, then the last one we found is what we need.
-                var segments = part.Split('.');
-                string tempSegment = "";
-                bool lastVersionToCheck = false;
-                string lastValidVersionLeft = null;
-                for (int i = segments.Length - 1; i >= 0; i--)
-                {
-                    var segment = segments[i];
-                    if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
-                    {
-                        var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
-                        if (match.Success)
-                        {
-                            segment = segment.Substring(match.Index + match.Length);
-                            lastVersionToCheck = true;
-                        }
-                    }
-
-                    tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
-                    tempSegment = tempSegment.Trim('.');
-
-                    if (IsValidVersion(tempSegment))
-                    {
-                        lastValidVersionLeft = tempSegment;
-                    }
-
-                    if (lastVersionToCheck)
-                    {
-                        break;
-                    }
-                }
-                return lastValidVersionLeft;
-            }
-
-            string findVersionInfoInString(string str, bool removeTextFromLeft)
-            {
-                string lastValidVersion = null;
-                if (!string.IsNullOrEmpty(str))
-                {
-                    // Remove any text block from left
-                    // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
-                    str = removeTextFromLeft ? RemoveTextBlockFromLeft(str) : RemoveTextBlockFromRight(str);
-
-                    // Make sure left part has a number
-                    if (Regex.IsMatch(str, @"\d"))
-                    {
-                        // Check if it has only numeric values and a simple version for quick check
-                        if (Regex.IsMatch(str, @"^[\d.]+$") && IsValidVersion(str))
-                        {
-                            lastValidVersion = str;
-                        }
-                        else
-                        {
-                            // It's more complex so we check if its semantic version before splitting
-                            if (IsValidVersion(str))
-                            {
-                                lastValidVersion = str;
-                            }
-                            else
-                            {
-                                var foundVersion = splitOnPeriodsAndFindVersion(str);
-                                if (foundVersion != null)
-                                {
-                                    lastValidVersion = foundVersion;
-                                }
-                            }
-                        }
-                    }
-                }
-                return lastValidVersion;
-            }
-
             var folderSplit = fullFileNameWithPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
 
             // Loop through the last 4 folder names to find the version
@@ -246,21 +245,11 @@ namespace NetSparkleUpdater.AppCastGenerator
                 // If there are multiple parts, we check the first and last parts only assuming version is in either
                 // If the strings in the start and end both produce valid versions, we return the version from the end
                 // If single string no spaces, we take the entire string and check it from left and right
-                string leftPart = null;
-                string rightPart = null;
-                if (parts.Length > 1)
-                {
-                    leftPart = parts[0];
-                    rightPart = parts[^1];
-                }
-                else
-                {
-                    leftPart = parts[0];
-                    rightPart = parts[0];
-                }
-                
-                string lastValidVersionLeft = findVersionInfoInString(leftPart, true);
-                string lastValidVersionRight = findVersionInfoInString(rightPart, false);
+                string leftPart = parts[0];
+                string rightPart = parts.Length > 1 ? parts[^1] : parts[0];
+
+                string lastValidVersionLeft = FindVersionInfoInString(leftPart, removeTextFromLeft: true);
+                string lastValidVersionRight = FindVersionInfoInString(rightPart, removeTextFromLeft: false);
 
                 // Right part is preferred over left part
                 if (lastValidVersionRight != null)
