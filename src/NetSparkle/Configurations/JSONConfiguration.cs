@@ -1,10 +1,6 @@
-﻿using NetSparkleUpdater.AssemblyAccessors;
-using NetSparkleUpdater.Interfaces;
+﻿using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 
 namespace NetSparkleUpdater.Configurations
@@ -88,6 +84,21 @@ namespace NetSparkleUpdater.Configurations
             LoadValuesFromPath(GetSavePath());
         }
 
+        private string GetDirectory(Environment.SpecialFolder specialFolder)
+        {
+            try {
+                var applicationFolder = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
+                var saveFolder = Path.Combine(applicationFolder, AssemblyAccessor.AssemblyCompany, AssemblyAccessor.AssemblyProduct, "NetSparkleUpdater");
+                if (!Directory.Exists(saveFolder))
+                {
+                    Directory.CreateDirectory(saveFolder);
+                }
+                return saveFolder;
+            } catch {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Get the full file path to the location and file name on disk
         /// where the JSON configuration data should be saved.
@@ -111,10 +122,18 @@ namespace NetSparkleUpdater.Configurations
                         + (AssemblyAccessor?.GetType().ToString() ?? "[null]") + ")");
                 }
                 var applicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-                var saveFolder = Path.Combine(applicationFolder, AssemblyAccessor.AssemblyCompany, AssemblyAccessor.AssemblyProduct, "NetSparkleUpdater");
-                if (!Directory.Exists(saveFolder))
+                var saveFolder = GetDirectory(Environment.SpecialFolder.ApplicationData);
+                if (saveFolder == null)
                 {
-                    Directory.CreateDirectory(saveFolder);
+                    saveFolder = GetDirectory(Environment.SpecialFolder.Personal);
+                    if (saveFolder == null)
+                    {
+                        saveFolder = GetDirectory(Environment.SpecialFolder.LocalApplicationData);
+                    }
+                }
+                if (saveFolder == null)
+                {
+                    throw new NetSparkleException("Unable to create folder to store JSONConfiguration data");
                 }
                 var saveLocation = Path.Combine(saveFolder, "data.json");
                 return saveLocation;
