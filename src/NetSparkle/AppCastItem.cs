@@ -12,6 +12,9 @@ namespace NetSparkleUpdater
     [Serializable]
     public class AppCastItem : IComparable<AppCastItem>
     {
+        private SemVerLike _semVerLikeCache;
+        private string _version;
+
         /// <summary>
         /// The application name
         /// </summary>
@@ -27,13 +30,24 @@ namespace NetSparkleUpdater
         /// <summary>
         /// The available version
         /// </summary>
-        public string Version { get; set; }
+        public string Version 
+        { 
+            get => _version; 
+            set { _semVerLikeCache = null; _version = value;} 
+        }
         /// <summary>
         /// The available version as a SemVerLike object (handles things like 1.2-alpha1)
         /// </summary>
         public SemVerLike SemVerLikeVersion
         {
-            get => SemVerLike.Parse(Version);
+            get 
+            {
+                if (_semVerLikeCache == null)
+                {
+                    _semVerLikeCache = SemVerLike.Parse(Version);
+                }
+                return _semVerLikeCache;
+            }
         }
         /// <summary>
         /// Shortened version

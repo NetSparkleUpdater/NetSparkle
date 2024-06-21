@@ -10,6 +10,7 @@ using System.Text;
 using System.Runtime.CompilerServices;
 using Xunit;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -69,13 +70,16 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Null(AppCastMaker.GetVersionFromName(null));
             Assert.Null(AppCastMaker.GetVersionFromName("foo"));
             Assert.Null(AppCastMaker.GetVersionFromName("foo1."));
+            Assert.Null(AppCastMaker.GetVersionFromName("hello 1.txt")); // New test, 1 is not a valid version, should be atleast Major.Minor
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.txt"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0            .txt")); // whitespace shouldn't matter
-            Assert.Equal("0", AppCastMaker.GetVersionFromName("hello 1 .0.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("hello 1 .0.txt")); // I changed this to null as I think its a more suitable output versus a version of 0
             Assert.Equal("2.3", AppCastMaker.GetVersionFromName("hello a2.3.txt"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.zip"));
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("foo1.0"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo0.1"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo 0.1"));
+            Assert.Equal("0.1", AppCastMaker.GetVersionFromName("foo_0.1"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1foo"));
             Assert.Equal("0.1", AppCastMaker.GetVersionFromName("0.1 My App"));
             Assert.Equal("0.0.3.1", AppCastMaker.GetVersionFromName("foo0.0.3.1"));
@@ -91,6 +95,76 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("1.0", AppCastMaker.GetVersionFromName("hello 1.0.tar.gz"));
             Assert.Equal("4.3.2", AppCastMaker.GetVersionFromName("My Favorite App 4.3.2.tar.gz"));
             Assert.Equal("0.0.0", AppCastMaker.GetVersionFromName("My Favorite Tools (Linux-x64) 0.0.0.tar.gz"));
+
+            // Semantic version tests
+            Assert.Equal("3.0.0-beta1", AppCastMaker.GetVersionFromName("MyApp 3.0.0-beta1.exe"));
+            // Test cases are from https://github.com/semver/semver/issues/232
+            // Valid semantic version tests
+            Assert.Equal("0.0.4", AppCastMaker.GetVersionFromName("app 0.0.4.txt"));
+            Assert.Equal("10.20.30", AppCastMaker.GetVersionFromName("app 10.20.30.txt"));
+            Assert.Equal("1.1.2-prerelease+meta", AppCastMaker.GetVersionFromName("app 1.1.2-prerelease+meta.txt"));
+            Assert.Equal("1.1.2+meta", AppCastMaker.GetVersionFromName("app 1.1.2+meta.txt"));
+            Assert.Equal("1.1.2+meta-valid", AppCastMaker.GetVersionFromName("app 1.1.2+meta-valid.txt"));
+            Assert.Equal("1.0.0-alpha", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.txt"));
+            Assert.Equal("1.0.0-beta", AppCastMaker.GetVersionFromName("app 1.0.0-beta.txt"));
+            Assert.Equal("1.0.0-alpha.beta", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.beta.txt"));
+            Assert.Equal("1.0.0-alpha.beta.1", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.beta.1.txt"));
+            Assert.Equal("1.0.0-alpha.1", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.1.txt"));
+            Assert.Equal("1.0.0-alpha0.valid", AppCastMaker.GetVersionFromName("app 1.0.0-alpha0.valid.txt"));
+            Assert.Equal("1.0.0-alpha.0valid", AppCastMaker.GetVersionFromName("app 1.0.0-alpha.0valid.txt"));
+            Assert.Equal("1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay", AppCastMaker.GetVersionFromName("app 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay.txt"));
+            Assert.Equal("1.0.0-rc.1+build.1", AppCastMaker.GetVersionFromName("app 1.0.0-rc.1+build.1.txt"));
+            Assert.Equal("2.0.0-rc.1+build.123", AppCastMaker.GetVersionFromName("app 2.0.0-rc.1+build.123.txt"));
+            Assert.Equal("1.2.3-beta", AppCastMaker.GetVersionFromName("app 1.2.3-beta.txt"));
+            Assert.Equal("10.2.3-DEV-SNAPSHOT", AppCastMaker.GetVersionFromName("app 10.2.3-DEV-SNAPSHOT.txt"));
+            Assert.Equal("1.2.3-SNAPSHOT-123", AppCastMaker.GetVersionFromName("app 1.2.3-SNAPSHOT-123.txt"));
+            Assert.Equal("1.0.0", AppCastMaker.GetVersionFromName("app 1.0.0.txt"));
+            Assert.Equal("2.0.0", AppCastMaker.GetVersionFromName("app 2.0.0.txt"));
+            Assert.Equal("1.1.7", AppCastMaker.GetVersionFromName("app 1.1.7.txt"));
+            Assert.Equal("2.0.0+build.1848", AppCastMaker.GetVersionFromName("app 2.0.0+build.1848.txt"));
+            Assert.Equal("2.0.1-alpha.1227", AppCastMaker.GetVersionFromName("app 2.0.1-alpha.1227.txt"));
+            Assert.Equal("1.0.0-alpha+beta", AppCastMaker.GetVersionFromName("app 1.0.0-alpha+beta.txt"));
+            Assert.Equal("1.2.3----RC-SNAPSHOT.12.9.1--.12+788", AppCastMaker.GetVersionFromName("app 1.2.3----RC-SNAPSHOT.12.9.1--.12+788.txt"));
+            Assert.Equal("1.2.3----R-S.12.9.1--.12+meta", AppCastMaker.GetVersionFromName("app 1.2.3----R-S.12.9.1--.12+meta.txt"));
+            Assert.Equal("1.2.3----RC-SNAPSHOT.12.9.1--.12", AppCastMaker.GetVersionFromName("app 1.2.3----RC-SNAPSHOT.12.9.1--.12.txt"));
+            Assert.Equal("1.0.0+0.build.1-rc.10000aaa-kk-0.1", AppCastMaker.GetVersionFromName("app 1.0.0+0.build.1-rc.10000aaa-kk-0.1.txt"));
+            Assert.Equal("99999999999999999999999.999999999999999999.99999999999999999", AppCastMaker.GetVersionFromName("app 99999999999999999999999.999999999999999999.99999999999999999.txt"));
+            Assert.Equal("1.0.0-0A.is.legal", AppCastMaker.GetVersionFromName("app 1.0.0-0A.is.legal.txt"));
+
+            // Invalid semantic versions tests
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.0123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.1.2+.123.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app +invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid+invalid.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -invalid.01.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.beta.1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha.1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha+beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha_beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app alpha..txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha_beta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -alpha.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha..txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha..1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha...1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha....1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha.....1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha......1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.0.0-alpha.......1.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3.DEV.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2-SNAPSHOT.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 1.2-RC-SNAPSHOT.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app -1.0.3-gamma+b7718.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app +justmeta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 9.8.7+meta+meta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 9.8.7-whatever+meta+meta.txt"));
+            Assert.Null(AppCastMaker.GetVersionFromName("app 99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12.txt"));
         }
 
         [Fact]
@@ -475,12 +549,12 @@ namespace NetSparkle.Tests.AppCastGenerator
         }
 
         [Fact]
-        public void SingleDigitVersionDoesNotFail()
+        public void SingleMajorMinorDigitVersionDoesNotFail()
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
             // create dummy files
-            var dummyFilePath = Path.Combine(tempDir, "hello 1.txt");
+            var dummyFilePath = Path.Combine(tempDir, "hello 1.0.txt");
             const int fileSizeBytes = 57;
             var tempData = RandomString(fileSizeBytes);
             File.WriteAllText(dummyFilePath, tempData);
@@ -512,8 +586,8 @@ namespace NetSparkle.Tests.AppCastGenerator
                 }
 
                 Assert.Single(items);
-                Assert.Equal("1", items[0].Version);
-                Assert.Equal("https://example.com/downloads/hello%201.txt", items[0].DownloadLink);
+                Assert.Equal("1.0", items[0].Version);
+                Assert.Equal("https://example.com/downloads/hello%201.0.txt", items[0].DownloadLink);
                 Assert.True(items[0].DownloadSignature.Length > 0);
                 Assert.True(items[0].IsWindowsUpdate);
                 Assert.Equal(fileSizeBytes, items[0].UpdateSize);
@@ -918,6 +992,212 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 Assert.Single(items);
                 Assert.EndsWith("change_log_1.0.md", items[0].ReleaseNotesLink);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Fact]
+        public void CanGetSemVerLikeVersionsFromExistingAppCast()
+        {
+            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
+            // create fake app cast file
+            var appCastData = @"";
+            var fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            var (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Empty(items);
+            Assert.Null(productName);
+            // now create something with some actual data!
+            appCastData = @"
+<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
+    <channel>
+        <title>NetSparkle Test App</title>
+        <link>https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0 Beta 1</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0-beta1""
+                       sparkle:shortVersionString=""2.0""
+                       sparkle:os=""windows""
+                       length=""1337""
+                       type=""application/octet-stream""
+                       sparkle:signature=""foo"" />
+        </item>
+        <item>
+            <title>Version 2.0 Alpha 1</title>
+            <sparkle:releaseNotesLink>
+            https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md
+            </sparkle:releaseNotesLink>
+            <pubDate>Fri, 28 Oct 2016 10:30:00 +0000</pubDate>
+            <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe""
+                       sparkle:version=""2.0-alpha.1""
+                       sparkle:shortVersionString=""2.0""
+                       sparkle:os=""windows""
+                       length=""2337""
+                       type=""application/octet-stream""
+                       sparkle:signature=""bar"" />
+        </item>
+    </channel>
+</rss>
+".Trim();
+            fakeAppCastFilePath = Path.GetTempFileName();
+            File.WriteAllText(fakeAppCastFilePath, appCastData);
+            (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
+            Assert.Equal(2, items.Count);
+            Assert.Equal("Version 2.0 Beta 1", items[0].Title);
+            Assert.Equal("2.0-beta1", items[0].Version);
+            Assert.Equal("2.0", items[0].ShortVersion);
+            Assert.Equal("-beta1", items[0].SemVerLikeVersion.AllSuffixes);
+            Assert.Equal("2.0", items[0].SemVerLikeVersion.Version);
+            Assert.Equal(1337, items[0].UpdateSize);
+            Assert.Equal("foo", items[0].DownloadSignature);
+
+            Assert.Equal("Version 2.0 Alpha 1", items[1].Title);
+            Assert.Equal("2.0-alpha.1", items[1].Version);
+            Assert.Equal("2.0", items[1].ShortVersion);
+            Assert.Equal("-alpha.1", items[1].SemVerLikeVersion.AllSuffixes);
+            Assert.Equal("2.0", items[1].SemVerLikeVersion.Version);
+            Assert.Equal(2337, items[1].UpdateSize);
+            Assert.Equal("bar", items[1].DownloadSignature);
+            // make sure things stay in order when sorted (sort with latest first)
+            items.Sort((a, b) => b.SemVerLikeVersion.CompareTo(a.SemVerLikeVersion));
+            Assert.Equal("2.0-beta1", items[0].Version);
+            Assert.Equal("2.0-alpha.1", items[1].Version);
+        }
+
+        [Fact]
+        public void CanMakeAppCastWithAssemblyData()
+        {
+            var envVersion = Environment.Version;
+            var dotnetVersion = "net" + envVersion.Major + ".0";
+            var csproj = @"
+<Project Sdk=""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>" + dotnetVersion + @"</TargetFramework>
+    <RootNamespace>csharp_testing</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>2.0.1-beta-1</Version>
+    <AssemblyVersion>2.0.1</AssemblyVersion>
+  </PropertyGroup>
+</Project>".Trim();
+            var program = @"Console.WriteLine(""Hello, World!"");";
+            var tempDir = GetCleanTempDir();
+            var csprojPath = Path.Combine(tempDir, "proj.csproj");
+            var programPath = Path.Combine(tempDir, "Program.cs");
+            var innerFolder = RandomString(10);
+            var buildPath = Directory.CreateDirectory(Path.Combine(tempDir, innerFolder)).FullName;
+            try
+            {
+                File.WriteAllText(csprojPath, csproj);
+                File.WriteAllText(programPath, program);
+                // compile it
+                var p = new Process()
+                {
+                    EnableRaisingEvents = true,
+                    StartInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "dotnet",
+                        WorkingDirectory = tempDir,
+                        Arguments = $"build --framework " + dotnetVersion + " --output \"" + buildPath + "\""
+                    }
+                };
+                p.OutputDataReceived += (o, e) => 
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                    {
+                        Console.WriteLine("[Unit test build output] " + e.Data);
+                    }
+                };
+                p.ErrorDataReceived += (o, e) => 
+                {
+                    if (!string.IsNullOrWhiteSpace(e.Data))
+                    {
+                        Console.WriteLine("[Unit test build output] ERROR: " + e.Data);
+                    }
+                };
+                p.Start();
+                p.BeginErrorReadLine();
+                p.BeginOutputReadLine();     
+                p.WaitForExit();
+                // ok now that it has built, read the assembly
+                var dllPath = Path.Combine(buildPath, "proj.dll");
+                if (File.Exists(dllPath))
+                {
+                    var versionInfo = FileVersionInfo.GetVersionInfo(dllPath).ProductVersion?.Trim();
+                    Assert.Equal("2.0.1-beta-1", versionInfo);
+                    // ok, now use this for the app cast
+                    var dummyChangelogFilePath = Path.Combine(buildPath, "2.0.1-beta-1.md");
+                    const int fileSizeBytes = 123;
+                    var tempData = RandomString(fileSizeBytes);
+                    File.WriteAllText(dummyChangelogFilePath, tempData);
+                    var opts = new Options()
+                    {
+                        FileExtractVersion = false,
+                        SearchBinarySubDirectories = true,
+                        SourceBinaryDirectory = buildPath,
+                        ChangeLogPath = buildPath,
+                        Extensions = "dll",
+                        OutputDirectory = buildPath,
+                        OperatingSystem = "windows",
+                        ProductName = "ProductName",
+                        BaseUrl = "https://example.com/downloads",
+                        ChangeLogUrl = "http://baseURL/appname/changelogs/",
+                        ChangeLogFileNamePrefix = "change_log_",
+                        OverwriteOldItemsInAppcast = true,
+                        ReparseExistingAppCast = false,
+                        HumanReadableOutput = true
+                    };
+                    var signatureManager = _fixture.GetSignatureManager();
+                    Assert.True(signatureManager.KeysExist());
+
+                    var maker = new XMLAppCastMaker(signatureManager, opts);
+                    var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                    var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                    if (items != null)
+                    {
+                        maker.SerializeItemsToFile(items, productName, appCastFileName);
+                        maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                    }
+                    Assert.Single(items);
+                    Assert.Equal("2.0.1-beta-1", items[0].Version);
+                    Assert.Equal("2.0.1", items[0].ShortVersion);
+                    Assert.Equal("http://baseURL/appname/changelogs/2.0.1-beta-1.md", items[0].ReleaseNotesLink);
+                    Assert.True(items[0].DownloadSignature.Length > 0);
+                    Assert.True(items[0].IsWindowsUpdate);
+                    Assert.Equal(new FileInfo(dllPath).Length, items[0].UpdateSize);
+                    
+                    // read back and make sure things are the same
+                    (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(appCastFileName, true);
+                    Assert.Single(items);
+                    Assert.Equal("2.0.1-beta-1", items[0].Version);
+                    Assert.Equal("2.0.1", items[0].ShortVersion);
+                    Assert.Equal("http://baseURL/appname/changelogs/2.0.1-beta-1.md", items[0].ReleaseNotesLink);
+                    Assert.True(items[0].DownloadSignature.Length > 0);
+                    Assert.True(items[0].IsWindowsUpdate);
+                    Assert.Equal(new FileInfo(dllPath).Length, items[0].UpdateSize);
+                }
+                else
+                {
+                    Assert.True(false, "Failed to build assembly");
+                }
             }
             finally
             {
