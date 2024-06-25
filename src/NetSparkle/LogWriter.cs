@@ -33,7 +33,7 @@ namespace NetSparkleUpdater
         /// LogWriter constructor that takes a bool to determine
         /// the value for printDiagnosticToConsole
         /// </summary>
-        /// <param name="printDiagnosticToConsole">False to print to <seealso cref="Debug.WriteLine(string)"/>;
+        /// <param name="printDiagnosticToConsole">False to print to <seealso cref="Trace.WriteLine(string)"/>;
         /// true to print to <seealso cref="Console.WriteLine(string)"/></param>
         public LogWriter(bool printDiagnosticToConsole)
         {
@@ -44,7 +44,7 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// True if this class should print to <seealso cref="Console.WriteLine(string)"/>;
-        /// false if this object should print to <seealso cref="Debug.WriteLine(string)"/>.
+        /// false if this object should print to <seealso cref="Trace.WriteLine(string)"/>.
         /// Defaults to false.
         /// </summary>
         public bool PrintDiagnosticToConsole { get; set; }
