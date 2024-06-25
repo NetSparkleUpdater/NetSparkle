@@ -1,4 +1,5 @@
-﻿using NetSparkleUpdater.Interfaces;
+﻿using NetSparkleUpdater;
+using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -152,7 +153,7 @@ namespace NetSparkleUpdater.Configurations
                 try
                 {
                     string json = File.ReadAllText(saveLocation);
-                    var data = JsonSerializer.Deserialize<SavedConfigurationData>(json);
+                    var data = JsonSerializer.Deserialize<SavedConfigurationData>(json, SourceGenerationContext.Default.SavedConfigurationData);
                     CheckForUpdate = true;
                     LastCheckTime = data.LastCheckTime;
                     LastVersionSkipped = data.LastVersionSkipped;
@@ -211,7 +212,7 @@ namespace NetSparkleUpdater.Configurations
             };
             LastConfigUpdate = savedConfig.LastConfigUpdate;
 
-            string json = JsonSerializer.Serialize(savedConfig);
+            string json = JsonSerializer.Serialize(savedConfig, SourceGenerationContext.Default.SavedConfigurationData);
             try
             {
                 File.WriteAllText(savePath, json);
