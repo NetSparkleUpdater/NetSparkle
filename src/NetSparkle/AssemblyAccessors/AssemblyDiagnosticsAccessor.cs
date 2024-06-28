@@ -60,7 +60,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <inheritdoc/>
         public string AssemblyVersion
         {
-            get => _fileVersion;
+            get => _productVersion;
         }        
 
         /// <summary>
