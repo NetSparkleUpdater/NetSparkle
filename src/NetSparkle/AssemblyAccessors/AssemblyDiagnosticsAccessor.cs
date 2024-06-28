@@ -45,13 +45,16 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 _productName = info.ProductName;
                 _companyName = info.CompanyName;
                 _legalCopyright = info.LegalCopyright;
-                _fileDescription = info.FileDescription;
+                _fileDescription = info.Comments;
             }
         }
 
         #region Assembly Attribute Accessors
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Title of the assembly, e.g. "My Best Product". 
+        /// NOTE: Returns ProductName data, not Title data, due to limitations in Diagnostics accessor!
+        /// </summary>
         public string AssemblyTitle
         {
             get => _productName ?? "";
