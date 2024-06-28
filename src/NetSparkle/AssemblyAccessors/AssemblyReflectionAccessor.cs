@@ -16,7 +16,6 @@ namespace NetSparkleUpdater.AssemblyAccessors
     [Obsolete("Uses assembly-based reflection and is not trimmable; Use AsmResolverAccessor instead")]
     public class AssemblyReflectionAccessor : IAssemblyAccessor
     {
-        private Assembly _assembly;
         private List<Attribute> _assemblyAttributes = new List<Attribute>();
 
         /// <summary>
@@ -32,9 +31,10 @@ namespace NetSparkleUpdater.AssemblyAccessors
             Justification = "Class is deprecated and users have been warned this class is not trimmable")]
         public AssemblyReflectionAccessor(string assemblyName)
         {
+            Assembly assembly;
             if (assemblyName == null)
             {
-                _assembly = Assembly.GetEntryAssembly();
+                assembly = Assembly.GetEntryAssembly();
             }
             else
             {
@@ -44,23 +44,23 @@ namespace NetSparkleUpdater.AssemblyAccessors
                     throw new FileNotFoundException();
                 }
 #if NETFRAMEWORK
-                _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
+                assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
 #else
                 // try loading the assembly in ways compliant with .NET Core/.NET 5+
-                _assembly = Assembly.LoadFrom(absolutePath);
-                if (_assembly == null)
+                assembly = Assembly.LoadFrom(absolutePath);
+                if (assembly == null)
                 {
-                    _assembly = Assembly.LoadFile(absolutePath);
+                    assembly = Assembly.LoadFile(absolutePath);
                 }
 #endif
-                if (_assembly == null)
+                if (assembly == null)
                 {
                     throw new ArgumentNullException("Unable to load assembly " + absolutePath);                
                 }
             }
 
             // read the attributes            
-            foreach (CustomAttributeData data in _assembly.GetCustomAttributesData())
+            foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
             {
                 Attribute a = CreateAttribute(data);
                 if (a != null)

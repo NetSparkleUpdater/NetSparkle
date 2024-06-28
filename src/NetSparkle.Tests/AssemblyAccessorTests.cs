@@ -45,14 +45,14 @@ namespace NetSparkleUnitTests
 
         public void Dispose()
         {
-            try {
+            // try {
                 if (Directory.Exists(_tmpDir))
                 {
                     Directory.Delete(_tmpDir, true);
                 }
-            } catch {
-                Console.WriteLine("Unable to delete tmp dir");
-            }
+            // } catch {
+            //     Console.WriteLine("Unable to delete tmp dir");
+            // }
         }
 
         // TODO: refactor some of these common test methods (between app cast and sparkle testing)
