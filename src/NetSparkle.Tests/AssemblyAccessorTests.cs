@@ -199,7 +199,6 @@ namespace NetSparkleUnitTests
             Assert.Equal(AssemblyAccessorTestsFixture.Product, accessor.AssemblyTitle);
             Assert.Equal(AssemblyAccessorTestsFixture.Product, accessor.AssemblyProduct);
             Assert.Equal(AssemblyAccessorTestsFixture.AssemblyVersion, accessor.AssemblyVersion);
-            // Assert.Equal(AssemblyAccessorTestsFixture.FileVersion, accessor.FileVersion);
         }
 
         [Fact]
@@ -216,7 +215,6 @@ namespace NetSparkleUnitTests
             Assert.Equal(AssemblyAccessorTestsFixture.Title, accessor.AssemblyTitle);
             Assert.Equal(AssemblyAccessorTestsFixture.Product, accessor.AssemblyProduct);
             Assert.Equal(AssemblyAccessorTestsFixture.AssemblyVersion, accessor.AssemblyVersion);
-            // Assert.Equal(AssemblyAccessorTestsFixture.FileVersion, accessor.FileVersion);
         }
     }
 }
