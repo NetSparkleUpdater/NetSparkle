@@ -45,9 +45,13 @@ namespace NetSparkleUnitTests
 
         public void Dispose()
         {
-            if (Directory.Exists(_tmpDir))
-            {
-                Directory.Delete(_tmpDir, true);
+            try {
+                if (Directory.Exists(_tmpDir))
+                {
+                    Directory.Delete(_tmpDir, true);
+                }
+            } catch {
+                Console.WriteLine("Unable to delete tmp dir");
             }
         }
 
@@ -142,8 +146,9 @@ namespace NetSparkleUnitTests
                 p.WaitForExit();
                 _dllPath = Path.Combine(buildPath, "proj.dll");
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine("[ERROR] " + e.Message);
                 Dispose();
             }
         }
