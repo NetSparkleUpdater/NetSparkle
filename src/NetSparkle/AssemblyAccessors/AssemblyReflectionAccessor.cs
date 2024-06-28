@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NetSparkleUpdater.AssemblyAccessors
 {
@@ -12,6 +13,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
     /// An assembly accessor that uses reflection to learn information
     /// on an assembly with a given name.
     /// </summary>
+    [Obsolete("Uses assembly-based reflection and is not trimmable; Use AsmResolverAccessor instead")]
     public class AssemblyReflectionAccessor : IAssemblyAccessor
     {
         private Assembly _assembly;
@@ -26,6 +28,8 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
         /// <exception cref="ArgumentNullException">Thrown when the assembly can't be loaded</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
+        [SuppressMessage("Trim warnings for assembly loading", "IL2026",
+            Justification = "Class is deprecated and users have been warned this class is not trimmable")]
         public AssemblyReflectionAccessor(string assemblyName)
         {
             if (assemblyName == null)
