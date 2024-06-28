@@ -71,7 +71,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
             {
-                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + _assembly.FullName);                                    
+                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly.FullName);                                    
             }
         }
 
