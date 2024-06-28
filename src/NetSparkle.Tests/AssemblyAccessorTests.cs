@@ -45,10 +45,6 @@ namespace NetSparkleUnitTests
 
         public void Dispose()
         {
-            if (File.Exists(_dllPath))
-            {
-                File.Delete(_dllPath);
-            }
             if (Directory.Exists(_tmpDir))
             {
                 Directory.Delete(_tmpDir, true);
