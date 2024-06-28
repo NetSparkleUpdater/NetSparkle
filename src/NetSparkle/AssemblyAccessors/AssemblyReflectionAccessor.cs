@@ -140,7 +140,8 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return _assembly.GetName().Version.ToString();
+                var a = FindAttribute(typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+                return a?.InformationalVersion ?? "";
             }
         }
 
