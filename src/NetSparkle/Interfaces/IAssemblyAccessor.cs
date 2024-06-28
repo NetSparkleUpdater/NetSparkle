@@ -39,7 +39,7 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         string AssemblyProduct { get; }
         /// <summary>
-        /// Version of the item that's running. E.g. 3.1.2.1.
+        /// Version of the item that's running. E.g. 3.1.2.1 or 3.1.2.1-beta1.
         /// </summary>
         string AssemblyVersion { get; }
     }

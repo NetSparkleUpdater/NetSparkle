@@ -102,6 +102,7 @@
     <!--<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" /> TODO: 3.0 -->
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.0" />
 	  <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
