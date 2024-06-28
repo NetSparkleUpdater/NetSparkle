@@ -147,12 +147,12 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net462 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
-          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.dll
-          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.pdb
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.dll
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.pdb
           copy ${{ github.workspace }}/LICENSE.md ${{ github.workspace }}/nuget\winformsnetframework\LICENSE.md
           copy ${{ github.workspace }}/src\NetSparkle\ArtWork\software-update-available.png ${{ github.workspace }}/nuget\winformsnetframework\software-update-available.png
           
