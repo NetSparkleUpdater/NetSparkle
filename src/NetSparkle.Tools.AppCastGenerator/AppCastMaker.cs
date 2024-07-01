@@ -66,7 +66,8 @@ namespace NetSparkleUpdater.AppCastGenerator
             return Regex.IsMatch(segment, simpleVersionPattern) || Regex.IsMatch(segment, semverPattern);
         }
 
-        // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from left)
+        // This regex finds the first text block that is not preceded by a + or - 
+        // and is followed by a number (starting from left)
         private static string RemoveTextBlockFromLeft(string input)
         {
             if (!Regex.IsMatch(input, @"\d"))
@@ -94,7 +95,10 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
         }
 
-        // This regex finds the first text block that is not preceded by a + or - and is followed by a number (starting from right)
+        // This regex finds the first text block that is not preceded 
+        // by a + or - and is followed by a number (starting from right)
+        // TODO: this func and RemoveTextBlockFromLeft need renaming and
+        // clarifying; docs are not too great here and may be swapping left/right
         private static string RemoveTextBlockFromRight(string input)
         {
             var match = Regex.Match(input, @"(?<![a-zA-Z+-])[a-zA-Z]+(?=\d)");
@@ -117,9 +121,10 @@ namespace NetSparkleUpdater.AppCastGenerator
             for (int i = segments.Length - 1; i >= 0; i--)
             {
                 var segment = segments[i];
+                // if segment has text in it at the start and digits later, get rid of text and +/- symbol
                 if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
                 {
-                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z]");
+                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z][+-]?");
                     if (match.Success)
                     {
                         segment = segment.Substring(match.Index + match.Length);
@@ -148,11 +153,8 @@ namespace NetSparkleUpdater.AppCastGenerator
             string lastValidVersion = null;
             if (!string.IsNullOrEmpty(str))
             {
-                // Remove any text block from left
-                // For example 0.1foo becomes 0.1, 0.1-foo stays 0.1-foo, 0.1+foo stays 0.1+foo
                 str = removeTextFromLeft ? RemoveTextBlockFromLeft(str) : RemoveTextBlockFromRight(str);
-
-                // Make sure left part has a number
+                // Make sure part has a number
                 if (Regex.IsMatch(str, @"\d"))
                 {
                     // Check if it has only numeric values and a simple version for quick check

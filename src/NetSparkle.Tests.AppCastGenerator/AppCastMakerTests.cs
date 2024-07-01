@@ -131,6 +131,12 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("99999999999999999999999.999999999999999999.99999999999999999", AppCastMaker.GetVersionFromName("app 99999999999999999999999.999999999999999999.99999999999999999.txt"));
             Assert.Equal("1.0.0-0A.is.legal", AppCastMaker.GetVersionFromName("app 1.0.0-0A.is.legal.txt"));
 
+            // #588
+            Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("appsetup-2.10.1.exe"));
+            Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("appsetup_2.10.1.exe"));
+            Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("appsetup 2.10.1.exe"));
+            Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("appsetup2.10.1.exe"));
+
             // Invalid semantic versions tests
             Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.txt"));
             Assert.Null(AppCastMaker.GetVersionFromName("app 1.2.3-0123.0123.txt"));
