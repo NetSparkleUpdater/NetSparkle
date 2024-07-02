@@ -29,7 +29,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
     <IsTrimmable>True</IsTrimmable>
-    <TrimMode>partial</TrimMode>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -74,10 +74,11 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 	<!-- <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" /> -->
-	<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
+    <TrimmerRootAssembly Include="NetSparkle" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.md">
