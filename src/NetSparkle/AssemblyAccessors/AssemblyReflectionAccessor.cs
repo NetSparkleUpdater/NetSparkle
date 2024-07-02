@@ -29,6 +29,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
         [SuppressMessage("Trim warnings for assembly loading", "IL2026",
             Justification = "Class is deprecated and users have been warned this class is not trimmable")]
+#if !NETFRAMEWORK && !NETSTANDARD
+        [RequiresUnreferencedCode("AssemblyReflectionAccessor is incompatible with trimming.")]
+#endif
         public AssemblyReflectionAccessor(string assemblyName)
         {
             Assembly assembly;
