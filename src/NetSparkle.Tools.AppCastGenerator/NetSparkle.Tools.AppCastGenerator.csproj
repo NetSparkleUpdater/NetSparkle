@@ -28,8 +28,6 @@
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
-    <IsTrimmable>True</IsTrimmable>
-    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -44,7 +42,6 @@
     <DocumentationFile></DocumentationFile>
     <OutputPath></OutputPath>
     <OutputPath></OutputPath>
-    <NoWarn>1701;1702</NoWarn>
     <NoWarn>1701;1702</NoWarn>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
@@ -78,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
-    <TrimmerRootAssembly Include="NetSparkle" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LICENSE.md">
