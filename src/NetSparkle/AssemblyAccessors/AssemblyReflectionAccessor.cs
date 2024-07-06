@@ -50,7 +50,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
 #else
                 // try loading the assembly in ways compliant with .NET Core/.NET 5+
-                assembly = Assembly.LoadFrom(absolutePath);
+                // read it in a way that will allow the file to be unloaded
+                // see: https://stackoverflow.com/a/41697292
+                assembly = Assembly.Load(File.ReadAllBytes(absolutePath));
                 if (assembly == null)
                 {
                     assembly = Assembly.LoadFile(absolutePath);

@@ -46,13 +46,9 @@ namespace NetSparkleUnitTests
 
         public void Dispose()
         {
-            try {
-                if (Directory.Exists(_tmpDir))
-                {
-                    Directory.Delete(_tmpDir, true);
-                }
-            } catch {
-                Console.WriteLine("[ERROR] Unable to delete tmp dir");
+            if (Directory.Exists(_tmpDir))
+            {
+                Directory.Delete(_tmpDir, true);
             }
         }
 
@@ -186,6 +182,8 @@ namespace NetSparkleUnitTests
             _fixture = fixture;
         }
 
+        // can only run these tests on .NET non-framework as it depends on building a DLL
+#if NET6_0_OR_GREATER
         [Fact]
         public void TestAsmResolverAccessor()
         {
@@ -234,5 +232,6 @@ namespace NetSparkleUnitTests
             Assert.Equal(AssemblyAccessorTestsFixture.Product, accessor.AssemblyProduct);
             Assert.Equal(AssemblyAccessorTestsFixture.AssemblyVersion, accessor.AssemblyVersion);
         }
+#endif
     }
 }
