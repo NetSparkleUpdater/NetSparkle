@@ -132,9 +132,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <summary>
         /// Action that is invoked when the action button is clicked (e.g. for canceling or installing)
         /// </summary>
-        /// <param name="sender">Object that invoked this action</param>
-        /// <param name="e">Routed event that has information on the event</param>
-        public void ActionButton_Click(object sender, RoutedEventArgs e)
+        public void ActionButton_Click()
         {
             _didCallDownloadProcessCompletedHandler = true;
             DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(!(_dataContext?.IsDownloading ?? true)));
