@@ -114,6 +114,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                         // legacy: check for .dsa file
                         try
                         {
+                            _logWriter.PrintMessage("Attempting to check for legacy .dsa signature data...");
                             signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
                         }
                         catch (Exception e)

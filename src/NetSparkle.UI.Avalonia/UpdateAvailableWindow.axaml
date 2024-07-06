@@ -4,6 +4,7 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:cont="clr-namespace:NetSparkleUpdater.UI.Avalonia.Controls"
                  xmlns:html="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
+		         xmlns:viewModels="clr-namespace:NetSparkleUpdater.UI.Avalonia.ViewModels;assembly=NetSparkleUpdater.UI.Avalonia"
                  mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
                  x:Class="NetSparkleUpdater.UI.Avalonia.UpdateAvailableWindow"
                  Title="Software Update"
@@ -11,7 +12,8 @@
                  MinHeight="225"
                  Width="700"
                  Height="600"
-                 WindowStartupLocation="CenterScreen">
+                 WindowStartupLocation="CenterScreen"
+				 x:DataType="viewModels:UpdateAvailableWindowViewModel">
   <Grid ColumnDefinitions="Auto, *" Name="MainGrid"
         RowDefinitions="Auto, Auto, *, Auto">
     <Image Grid.Row="0"
@@ -24,21 +26,21 @@
            Height="48"
            Margin="10,10,0,0" />
     <TextBlock Name="TitleHeader"
-               Text="{Binding TitleHeaderText}"
+               Text="{CompiledBinding TitleHeaderText}"
                TextWrapping="Wrap"
                FontSize="16"
                Margin="10,10,10,0"
                Grid.Column="1"
                Grid.Row="0" />
     <TextBlock Name="InfoText"
-               Text="{Binding InfoText}"
+               Text="{CompiledBinding InfoText}"
                FontSize="14"
                TextWrapping="Wrap"
                Margin="10,5,5,0"
                Grid.Column="1"
                Grid.Row="1" />
     <!--<WebBrowser Name="ReleaseNotesBrowser"
-                IsVisible="{Binding AreReleaseNotesVisible}"
+                IsVisible="{CompiledBinding AreReleaseNotesVisible}"
                 AllowDrop="False"
                 Grid.Column="1"
                 Grid.Row="2"
@@ -54,14 +56,14 @@
                       AutoSizeHeightOnly="True" />
     </ScrollViewer>
     <Button Name="SkipButton"
-            IsEnabled="{Binding IsSkipEnabled}"
-            IsVisible="{Binding IsSkipVisible}"
+            IsEnabled="{CompiledBinding IsSkipEnabled}"
+            IsVisible="{CompiledBinding IsSkipVisible}"
             Content="Skip this version"
             Grid.Column="1"
             Grid.Row="3"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Command="{Binding Skip}"
+            Command="{CompiledBinding Skip}"
             Margin="10,10,0,10"
             Padding="5" />
     <StackPanel Orientation="Horizontal"
@@ -71,10 +73,10 @@
                 HorizontalAlignment="Right"
                 Margin="0,10,10,10">
         <Button Name="RemindMeLaterButton"
-                IsEnabled="{Binding IsRemindMeLaterEnabled}"
-                IsVisible="{Binding IsRemindMeLaterVisible}"
+                IsEnabled="{CompiledBinding IsRemindMeLaterEnabled}"
+                IsVisible="{CompiledBinding IsRemindMeLaterVisible}"
                 Content="Remind me later"
-                Command="{Binding RemindMeLater}"
+                Command="{CompiledBinding RemindMeLater}"
                 Margin="0,0,0,0"
                 Padding="5" />
         <Button Name="DownloadInstallButton"
@@ -82,7 +84,7 @@
                 Grid.Column="1"
                 Grid.Row="3"
                 HorizontalAlignment="Right"
-                Command="{Binding DownloadInstall}"
+                Command="{CompiledBinding DownloadInstall}"
                 Margin="0,0,0,0"
                 Padding="5" />
         </StackPanel>

@@ -43,7 +43,6 @@
     <OutputPath></OutputPath>
     <OutputPath></OutputPath>
     <NoWarn>1701;1702</NoWarn>
-    <NoWarn>1701;1702</NoWarn>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup>

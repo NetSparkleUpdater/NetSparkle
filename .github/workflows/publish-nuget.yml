@@ -19,8 +19,9 @@ jobs:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
             nuget-version: '5.x'
 
-      # - name: Add MSBuild to PATH
-      #   uses: microsoft/setup-msbuild@v1.1.3
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2.0.0
+        if: matrix.os == 'windows-latest'
       
       - name: Setup .NET 6.0, 7.0, 8.0 for tests
         uses: actions/setup-dotnet@v4.0.0
@@ -29,6 +30,10 @@ jobs:
             6.0.x
             7.0.x
             8.0.x
+
+      - name: Run NetSparkle.Tests in .NET 4.6.2
+        run: dotnet test -f net462 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+        if: matrix.os == 'windows-latest'
 
       - name: Run NetSparkle.Tests in .NET 6
         run: dotnet test -f net6.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
@@ -147,12 +152,12 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net452 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net462 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
-          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.dll
-          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net452\NetSparkle.pdb
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.dll
+          del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.pdb
           copy ${{ github.workspace }}/LICENSE.md ${{ github.workspace }}/nuget\winformsnetframework\LICENSE.md
           copy ${{ github.workspace }}/src\NetSparkle\ArtWork\software-update-available.png ${{ github.workspace }}/nuget\winformsnetframework\software-update-available.png
           

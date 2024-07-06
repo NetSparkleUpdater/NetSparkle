@@ -5,6 +5,8 @@
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
     <RootNamespace>NetSparkleUpdater.Samples.Avalonia</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Samples.Avalonia</AssemblyName>
+	<PublishTrimmed>true</PublishTrimmed>
+	<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\*" />

@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NetSparkleUpdater.AssemblyAccessors
 {
@@ -12,9 +13,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
     /// An assembly accessor that uses reflection to learn information
     /// on an assembly with a given name.
     /// </summary>
+    [Obsolete("Uses assembly-based reflection and is not trimmable; Use AsmResolverAccessor instead")]
     public class AssemblyReflectionAccessor : IAssemblyAccessor
     {
-        private Assembly _assembly;
         private List<Attribute> _assemblyAttributes = new List<Attribute>();
 
         /// <summary>
@@ -26,11 +27,17 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
         /// <exception cref="ArgumentNullException">Thrown when the assembly can't be loaded</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
+        [SuppressMessage("Trim warnings for assembly loading", "IL2026",
+            Justification = "Class is deprecated and users have been warned this class is not trimmable")]
+#if !NETFRAMEWORK && !NETSTANDARD
+        [RequiresUnreferencedCode("AssemblyReflectionAccessor is incompatible with trimming.")]
+#endif
         public AssemblyReflectionAccessor(string assemblyName)
         {
+            Assembly assembly;
             if (assemblyName == null)
             {
-                _assembly = Assembly.GetEntryAssembly();
+                assembly = Assembly.GetEntryAssembly();
             }
             else
             {
@@ -40,23 +47,25 @@ namespace NetSparkleUpdater.AssemblyAccessors
                     throw new FileNotFoundException();
                 }
 #if NETFRAMEWORK
-                _assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
+                assembly = Assembly.ReflectionOnlyLoadFrom(absolutePath); // this does not work on .NET Core 2.0+/.NET 5+ and has never worked
 #else
                 // try loading the assembly in ways compliant with .NET Core/.NET 5+
-                _assembly = Assembly.LoadFrom(absolutePath);
-                if (_assembly == null)
+                // read it in a way that will allow the file to be unloaded
+                // see: https://stackoverflow.com/a/41697292
+                assembly = Assembly.Load(File.ReadAllBytes(absolutePath));
+                if (assembly == null)
                 {
-                    _assembly = Assembly.LoadFile(absolutePath);
+                    assembly = Assembly.LoadFile(absolutePath);
                 }
 #endif
-                if (_assembly == null)
+                if (assembly == null)
                 {
                     throw new ArgumentNullException("Unable to load assembly " + absolutePath);                
                 }
             }
 
             // read the attributes            
-            foreach (CustomAttributeData data in _assembly.GetCustomAttributesData())
+            foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
             {
                 Attribute a = CreateAttribute(data);
                 if (a != null)
@@ -67,7 +76,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
             {
-                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + _assembly.FullName);                                    
+                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly.FullName);                                    
             }
         }
 
@@ -140,7 +149,8 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return _assembly.GetName().Version.ToString();
+                var a = FindAttribute(typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+                return a?.InformationalVersion ?? "";
             }
         }
 
