@@ -70,8 +70,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
-    <!-- <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" /> -->
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />

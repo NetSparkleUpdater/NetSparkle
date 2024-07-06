@@ -24,6 +24,7 @@ Built-in supported update download types:
 ## Getting Started
 
 - [Installing NetSparkle](#installing-netsparkle)
+- [Trimming Your Application](#trimming-your-application)
 - [How Updates Work](#how-updates-work)
 - [Basic Usage](#basic-usage)
 - [App Cast](#app-cast)
@@ -55,6 +56,16 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 Quick info for tool installations:
 * App cast generator -- `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`; available as `netsparkle-generate-appcast` on your command line after installation
 * DSA Helper -- `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`; available as `netsparkle-dsa` on your command line after installation
+
+## Trimming your application
+
+[Trimming](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options) is a great way to reduce the file size of your application when it is self-published and/or built as a self-contained application. In short, trimming removes unused code from your applications, including external libraries, so you can ship your application with a reduced file size. To trim your application on publish, add `<PublishTrimmed>true</PublishTrimmed>` to your `csproj` file. If you want to trim all assemblies (including those that may not have specified they are compatible with trimming), add `<TrimMode>full</TrimMode>` to your `csproj` file; to only trim those that have opted-in, use `<TrimMode>partial</TrimMode>`. To enable warnings for trimming, add `<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>`.
+
+There are other options to use, which you can learn more about on Microsoft's documentation [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options). For those applications that may not work with the built-in trimming options, please try [Zack.DotNetTrimmer](https://github.com/yangzhongke/Zack.DotNetTrimmer) or other solutions you may find.
+
+We recommend that you trim your application before publishing it and distributing it to your users. Some of NetSparkle's default dependencies are rather large, but the file size can be drastically reduced by the trim process. If you choose to trim your application, don't forget to test it after trimming and make sure you fix any warnings that come up! And, in particular, if you wish to reduce the size of NetSparkle's BouncyCastle dependency, you can feel free to trim the library on your own (e.g. via a quick sample project as [outlined here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming#show-all-warnings-with-test-app)) and then replace the DLL that NetSparkle ships with with the one you built — just remember to test afterwards!
+
+You can also read more about trimming libraries [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming).
 
 ## How updates work
 
