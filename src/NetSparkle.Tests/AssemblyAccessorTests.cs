@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -79,6 +80,18 @@ namespace NetSparkleUnitTests
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        private static string GetDotnetProcessName()
+        {
+            // On Windows from VS, at least on one user's system, need to hardcode dotnet location,
+            // otherwise SDK cannot be found
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Directory.Exists("C:\\Program Files\\dotnet")
+                && File.Exists("C:\\Program Files\\dotnet\\dotnet.exe"))
+            {
+                return "C:\\Program Files\\dotnet\\dotnet.exe";
+            }
+            return "dotnet";
+        }
+
         private void BuildDll()
         {
             var envVersion = Environment.Version;
@@ -121,7 +134,7 @@ namespace NetSparkleUnitTests
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "dotnet",
+                        FileName = GetDotnetProcessName(),
                         WorkingDirectory = _tmpDir,
                         Arguments = $"build --framework " + dotnetVersion + " --output \"" + buildPath + "\""
                     }

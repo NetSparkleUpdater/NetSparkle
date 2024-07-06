@@ -1082,6 +1082,18 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("2.0-alpha.1", items[1].Version);
         }
 
+        private static string GetDotnetProcessName()
+        {
+            // On Windows from VS, at least on one user's system, need to hardcode dotnet location,
+            // otherwise SDK cannot be found
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Directory.Exists("C:\\Program Files\\dotnet")
+                && File.Exists("C:\\Program Files\\dotnet\\dotnet.exe"))
+            {
+                return "C:\\Program Files\\dotnet\\dotnet.exe";
+            }
+            return "dotnet";
+        }
+
         [Fact]
         public void CanMakeAppCastWithAssemblyData()
         {
@@ -1120,7 +1132,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         WindowStyle = ProcessWindowStyle.Hidden,
-                        FileName = "dotnet",
+                        FileName = GetDotnetProcessName(),
                         WorkingDirectory = tempDir,
                         Arguments = $"build --framework " + dotnetVersion + " --output \"" + buildPath + "\""
                     }
