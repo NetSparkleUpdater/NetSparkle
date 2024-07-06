@@ -57,8 +57,8 @@
                Grid.Column="0"
                Margin="5,5,0,5"
                Grid.ColumnSpan="2"
-               Text="{Binding ErrorMessageText}"
-               IsVisible="{Binding IsErrorMessageVisible}"
+               Text="{CompiledBinding ErrorMessageText}"
+               IsVisible="{CompiledBinding IsErrorMessageVisible}"
                HorizontalAlignment="Left"
                FontWeight="Regular"
                FontSize="16" />
