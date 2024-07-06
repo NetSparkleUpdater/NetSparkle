@@ -35,7 +35,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             _sparkle.StartLoop(true, true);
         }
 
-        public async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
+        public async void ManualUpdateCheck_Click()
         {
             await _sparkle.CheckForUpdatesAtUserRequest();
         }
