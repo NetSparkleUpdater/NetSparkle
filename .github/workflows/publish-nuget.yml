@@ -21,6 +21,7 @@ jobs:
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2.0.0
+        if: matrix.os == 'windows-latest'
       
       - name: Setup .NET 6.0, 7.0, 8.0 for tests
         uses: actions/setup-dotnet@v4.0.0
