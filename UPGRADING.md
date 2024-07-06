@@ -22,6 +22,8 @@
 * `WebFileDownloader` now deletes files on cancellation of a download like `LocalFileDownloader` did already (1cd2284c41bbe85d41566915965ad2acdb1a61f5)
 * `WebFileDownloader` does not call `PrepareToDownloadFile()` in its constructor anymore. Now, it is called after the object is fully created. (420f961dfa9c9071332e2e0737b0f287d2cfa5dc)
 * NOTE: If you update to .NET 8+, the location of `JSONConfiguration` save data, by default, will CHANGE due to a change in .NET 8 for `Environment.SpecialFolder.ApplicationData`. See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix. This may cause user's "skipped version" or other data to be lost unless you migrate this data yourself. For most users who are using the defaults, this is likely only a minor (if any) inconvenience at all, but it is worth noting.
+* `AssemblyReflectionAccessor` has been deprecated. Please use `AsmResolverAccessor` instead. (#587)
+* `AssemblyDiagnosticAccessor.AssemblyVersion` now returns `FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion` rather than `FileVersionInfo.GetVersionInfo(assemblyName).FileVersion` so we can get semver versioning information
 
 **Changes/Fixes**
 
@@ -43,6 +45,10 @@
 * `WebFileDownloader.PrepareToDownloadFile` is now `virtual` (84df81122cfae9309de4f5b79489e46287bf3a62)
 * The app cast maker now expects at least `Major.Minor` for version numbers and no longer accepts single digits as version numbers (this fixes things like "My Super App Version 2.exe" having 2 being detected as the version number when the version number is in a prior folder name, and also ensures that the right number is being read)
 * If `JSONConfiguration` cannot save data, `SparkleUpdater` now uses the `DefaultConfiguration` class, which basically has no information set on it and will check for updates for the user. (a33266ac99b3eed83ff481ee7ef06cc5a0b1ab40)
+* Added `AsmResolverAccessor` class for assembly loading information without reflection (replaces `AssemblyReflectionAccessor`) (#587)
+* Fixed Avalonia message window close button not working properly (394841d47c8b6739ca0ebcec87303529b81da904)
+* Fixed `AssemblyReflectionEditor` not loading in a way that allowed for proper file closing of the DLL (fixes a unit testing issue)
+* Avalonia UI now uses `CompiledBinding`
 
 ## Updating from 0.X or 1.X to 2.X
 
