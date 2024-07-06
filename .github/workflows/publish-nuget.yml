@@ -19,8 +19,8 @@ jobs:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
             nuget-version: '5.x'
 
-      # - name: Add MSBuild to PATH
-      #   uses: microsoft/setup-msbuild@v1.1.3
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2.0.0
       
       - name: Setup .NET 6.0, 7.0, 8.0 for tests
         uses: actions/setup-dotnet@v4.0.0
@@ -29,6 +29,10 @@ jobs:
             6.0.x
             7.0.x
             8.0.x
+
+      - name: Run NetSparkle.Tests in .NET 4.6.2
+        run: dotnet test -f net462 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+        if: matrix.os == 'windows-latest'
 
       - name: Run NetSparkle.Tests in .NET 6
         run: dotnet test -f net6.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
