@@ -36,7 +36,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
             else
             {
-                path =  Assembly.GetEntryAssembly().Location;;
+                path =  Assembly.GetEntryAssembly().Location;
             }
             if (!File.Exists(path))
             {
