@@ -401,6 +401,8 @@ Having just the latest version of your software in the app cast has the added si
 
 ### How can I use NetSparkleUpdater with [AppCenter](https://appcenter.ms/)?
 
+#### Note: [AppCenter is scheduled for retirement on March 31, 2025.](https://learn.microsoft.com/en-us/appcenter/retirement)
+
 1. Make sure you've read over the documentation [here](https://docs.microsoft.com/en-us/appcenter/distribution/sparkleupdates)
 2. Decide if you want to generate signatures for your files. If so, make sure that works, and then use NetSparkleUpdater as normal.
 3. If you don't want to generate signatures because you trust your AppCenter builds, use `SecurityMode.Unsafe` or the following `IAppCastHandler` override:
