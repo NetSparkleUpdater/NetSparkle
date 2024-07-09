@@ -67,6 +67,8 @@ We recommend that you trim your application before publishing it and distributin
 
 You can also read more about trimming libraries [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming).
 
+Regarding AOT compilation: The new `AsmResolverAccessor` class (default `IAssemblyAccessor`) has an AOT single file warning where you may get unexpected behavior with its backup call to `Assembly.GetEntryAssembly().Location`, but to avoid that, just create your own `AsmResolverAccessor` instance and make sure to pass it the path of your assembly (or pass this as the `referenceAssembly` parameter in `SparkleUpdater`'s constructor), and/or create your own `IAssemblyAccessor` that does what you need.
+
 ## How updates work
 
 A typical software update path for a stereotypical piece of software might look like this:
