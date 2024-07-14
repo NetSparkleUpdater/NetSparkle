@@ -1,4 +1,6 @@
-﻿using NetSparkleUpdater.Interfaces;
+﻿#nullable enable
+
+using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;

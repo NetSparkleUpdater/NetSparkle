@@ -1,4 +1,6 @@
-﻿using NetSparkleUpdater.Events;
+﻿#nullable enable
+
+using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,7 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class LocalFileDownloader : IUpdateDownloader, IDisposable
     {
-        private ILogger _logger;
+        private ILogger? _logger;
         private CancellationTokenSource _cancellationTokenSource;
         private string _downloadFileLocation;
 
@@ -40,7 +42,7 @@ namespace NetSparkleUpdater.Downloaders
         /// Uses default credentials and default proxy.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
-        public LocalFileDownloader(ILogger logger)
+        public LocalFileDownloader(ILogger? logger)
         {
             _logger = logger;
             _cancellationTokenSource = new CancellationTokenSource();
@@ -50,7 +52,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from LocalFileDownloader
         /// </summary>
-        public ILogger LogWriter
+        public ILogger? LogWriter
         {
             set { _logger = value; }
             get { return _logger; }
@@ -66,9 +68,10 @@ namespace NetSparkleUpdater.Downloaders
         public bool UseLocalUriPath { get; set; } = false;
 
         /// <inheritdoc/>
-        public event DownloadProgressEvent DownloadProgressChanged;
+        public event DownloadProgressEvent? DownloadProgressChanged;
+        
         /// <inheritdoc/>
-        public event AsyncCompletedEventHandler DownloadFileCompleted;
+        public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
         /// <inheritdoc/>
         public void CancelDownload()
@@ -144,7 +147,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Error: {0}", e.Message);
+                LogWriter?.PrintMessage("Error: {0}", e.Message);
                 Cancel(destinationFile);
                 DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
                 IsDownloading = false;
