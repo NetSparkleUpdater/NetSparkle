@@ -63,11 +63,11 @@ Quick info for tool installations:
 
 There are other options to use, which you can learn more about on Microsoft's documentation [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options). For those applications that may not work with the built-in trimming options, please try [Zack.DotNetTrimmer](https://github.com/yangzhongke/Zack.DotNetTrimmer) or other solutions you may find.
 
-We recommend that you trim your application before publishing it and distributing it to your users. Some of NetSparkle's default dependencies are rather large, but the file size can be drastically reduced by the trim process. If you choose to trim your application, don't forget to test it after trimming and make sure you fix any warnings that come up! And, in particular, if you wish to reduce the size of NetSparkle's BouncyCastle dependency, you can feel free to trim the library on your own (e.g. via a quick sample project as [outlined here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming#show-all-warnings-with-test-app) or via the built-in `NetSparkle.Tests.Trimming` project) and then replace the DLL that NetSparkle ships with with the one you built — just remember to test afterwards!
+We recommend that you trim your application before publishing it and distributing it to your users. Some of NetSparkle's default dependencies are rather large, but the file size can be drastically reduced by the trim process. If you choose to trim your application, don't forget to test it after trimming and make sure you fix any warnings that come up!
 
 You can also read more about trimming libraries [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming).
 
-Regarding AOT compilation: The new `AsmResolverAccessor` class (default `IAssemblyAccessor`) has an AOT single file warning where you may get unexpected behavior with its backup call to `Assembly.GetEntryAssembly().Location`, but to avoid that, just create your own `AsmResolverAccessor` instance and make sure to pass it the path of your assembly (or pass this as the `referenceAssembly` parameter in `SparkleUpdater`'s constructor), and/or create your own `IAssemblyAccessor` that does what you need.
+Regarding AOT compilation: NetSparkleUpdater is compatible with that feature.
 
 ## How updates work
 
