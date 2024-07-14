@@ -4,6 +4,7 @@
     <TargetFrameworks>net8.0;net7.0;net6.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.Tools.AppCastGenerator\NetSparkle.Tools.AppCastGenerator.csproj" />
+	<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
   </ItemGroup>
 
 </Project>
