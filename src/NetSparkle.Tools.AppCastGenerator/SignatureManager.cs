@@ -1,12 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Security;
+using Chaos.NaCl;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
@@ -83,18 +81,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             // start key generation
             Console.WriteLine("Generating key pair...");
 
+            var seed = RandomNumberGenerator.GetBytes(32);
+            //Ed25519.KeyPairFromSeed(out byte[] publicKey, out byte[] privateKey, seed);
+            var publicKey = Ed25519.PublicKeyFromSeed(seed);
 
-            var Random = new SecureRandom();
-
-            Ed25519KeyPairGenerator kpg = new Ed25519KeyPairGenerator();
-            kpg.Init(new Ed25519KeyGenerationParameters(Random));
-
-            AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
-            Ed25519PrivateKeyParameters privateKey = (Ed25519PrivateKeyParameters)kp.Private;
-            Ed25519PublicKeyParameters publicKey = (Ed25519PublicKeyParameters)kp.Public;
-
-            var privKeyBase64 = Convert.ToBase64String(privateKey.GetEncoded());
-            var pubKeyBase64 = Convert.ToBase64String(publicKey.GetEncoded());
+            var pubKeyBase64 = Convert.ToBase64String(publicKey);
+            var privKeyBase64 = Convert.ToBase64String(seed);
 
             File.WriteAllText(_privateKeyFilePath, privKeyBase64);
             File.WriteAllText(_publicKeyFilePath, pubKeyBase64);
@@ -124,15 +116,15 @@ namespace NetSparkleUpdater.AppCastGenerator
             // code for reading stream in chunks modified from https://stackoverflow.com/a/7542077/3938401
             byte[] bHash = Convert.FromBase64String(signature);
             const int chunkSize = 1024 * 1024 * 25;
-            using Stream inputStream = File.OpenRead(file.FullName);
+            using FileStream inputStream = File.OpenRead(file.FullName);
             var validator = new Ed25519Signer();
-            validator.Init(false, new Ed25519PublicKeyParameters(GetPublicKey(), 0));
+            validator.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
             // read file in chunks
-            byte[] buffer = new byte[chunkSize]; // read in chunks of ChunkSize
+            byte[] buffer = new byte[chunkSize]; // read in chunks of 25 MB
             int bytesRead;
             while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
             {
-                validator.BlockUpdate(buffer, 0, bytesRead);
+                validator.AddToBuffer(buffer, 0, bytesRead);
             }
             return validator.VerifySignature(Convert.FromBase64String(signature));
         }
@@ -157,18 +149,25 @@ namespace NetSparkleUpdater.AppCastGenerator
             }
 
 
-            var data = File.ReadAllBytes(file.FullName);
-
-            return GetSignatureForData(data);
+            using FileStream inputStream = File.OpenRead(file.FullName);
+            var validator = new Ed25519Signer();
+            validator.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
+            // read file in chunks
+            const int chunkSize = 1024 * 1024 * 25;
+            byte[] buffer = new byte[chunkSize]; // read in chunks of 25 MB
+            int bytesRead;
+            while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                validator.AddToBuffer(buffer, 0, bytesRead);
+            }
+            return Convert.ToBase64String(validator.GenerateSignature());
         }
 
         public string GetSignatureForData(byte[] data)
         { 
             var signer = new Ed25519Signer();
-
-            signer.Init(true, new Ed25519PrivateKeyParameters(GetPrivateKey(), 0));
-            signer.BlockUpdate(data, 0, data.Length);
-
+            signer.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
+            signer.AddToBuffer(data, 0, data.Length);
             return Convert.ToBase64String(signer.GenerateSignature());
         }
 

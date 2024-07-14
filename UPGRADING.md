@@ -24,6 +24,7 @@
 * NOTE: If you update to .NET 8+, the location of `JSONConfiguration` save data, by default, will CHANGE due to a change in .NET 8 for `Environment.SpecialFolder.ApplicationData`. See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix. This may cause user's "skipped version" or other data to be lost unless you migrate this data yourself. For most users who are using the defaults, this is likely only a minor (if any) inconvenience at all, but it is worth noting.
 * `AssemblyReflectionAccessor` has been deprecated. Please use `AsmResolverAccessor` instead. (#587)
 * `AssemblyDiagnosticAccessor.AssemblyVersion` now returns `FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion` rather than `FileVersionInfo.GetVersionInfo(assemblyName).FileVersion` so we can get semver versioning information
+* For ed25519 use, changed from BouncyCastle to Chaos.NaCl (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects.
 
 **Changes/Fixes**
 

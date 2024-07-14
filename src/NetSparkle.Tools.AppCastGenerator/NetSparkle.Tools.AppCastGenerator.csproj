@@ -28,6 +28,8 @@
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -47,10 +49,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent />
-    <AssemblyVersion>2.6.1.0</AssemblyVersion>
-    <FileVersion>2.6.1.0</FileVersion>
+    <AssemblyVersion>2.7.0.0</AssemblyVersion>
+    <FileVersion>2.7.0.0</FileVersion>
     <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
-    <Version>2.6.1</Version>
+    <Version>2.7.0</Version>
     <Authors>Deadpikle</Authors>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
@@ -70,16 +72,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
+	<PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+	<None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
+	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	<None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
     <None Include="..\NetSparkle\ArtWork\software-update-available.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

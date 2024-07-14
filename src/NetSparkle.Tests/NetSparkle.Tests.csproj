@@ -12,6 +12,7 @@
     <AssemblyTitle>NetSparkleUnitTests</AssemblyTitle>
     <Product>NetSparkleUnitTests</Product>
     <Copyright>Copyright © 2024</Copyright>
+	<IsTestProject>true</IsTestProject>
     <OutputPath>..\..\bin\NetSparkle.Tests\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
