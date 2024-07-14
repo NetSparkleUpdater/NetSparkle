@@ -56,7 +56,7 @@ namespace NetSparkleUpdater
                 DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider();
                 cryptoProvider.FromXmlString(privateKey);
 
-                using (Stream inputStream = File.OpenRead(fileToSignPath))
+                using (FileStream inputStream = File.OpenRead(fileToSignPath))
                 {
                     byte[] hash = null;
                     hash = cryptoProvider.SignData(inputStream);

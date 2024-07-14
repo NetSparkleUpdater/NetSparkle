@@ -144,7 +144,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <inheritdoc/>
         public ValidationResult VerifySignatureOfFile(string signature, string binaryPath)
         {
-            using (Stream inputStream = File.OpenRead(binaryPath))
+            using (FileStream inputStream = File.OpenRead(binaryPath))
             {
                 return VerifySignature(signature, Utilities.ConvertStreamToByteArray(inputStream));
             }
