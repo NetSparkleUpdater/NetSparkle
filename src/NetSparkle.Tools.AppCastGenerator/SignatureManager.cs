@@ -121,13 +121,19 @@ namespace NetSparkleUpdater.AppCastGenerator
                 return false;
             }
 
-            
-            var data = File.ReadAllBytes(file.FullName);
-
+            // code for reading stream in chunks modified from https://stackoverflow.com/a/7542077/3938401
+            byte[] bHash = Convert.FromBase64String(signature);
+            const int chunkSize = 1024 * 1024 * 25;
+            using Stream inputStream = File.OpenRead(file.FullName);
             var validator = new Ed25519Signer();
             validator.Init(false, new Ed25519PublicKeyParameters(GetPublicKey(), 0));
-            validator.BlockUpdate(data, 0, data.Length);
-
+            // read file in chunks
+            byte[] buffer = new byte[chunkSize]; // read in chunks of ChunkSize
+            int bytesRead;
+            while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                validator.BlockUpdate(buffer, 0, bytesRead);
+            }
             return validator.VerifySignature(Convert.FromBase64String(signature));
         }
 
