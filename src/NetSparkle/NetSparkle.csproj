@@ -18,9 +18,11 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <RootNamespace>NetSparkleUpdater</RootNamespace>
+	<PackageReadmeFile>readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>partial</TrimMode>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -89,16 +91,10 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0" />
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="nuget\**" />
@@ -106,13 +102,8 @@
     <None Remove="nuget\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="ArtWork\software-update-available.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+	<None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
+	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	<None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

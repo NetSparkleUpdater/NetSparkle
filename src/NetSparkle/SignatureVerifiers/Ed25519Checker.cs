@@ -1,14 +1,10 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
-using Org.BouncyCastle.Crypto.Signers;
-using System.Text;
-using Org.BouncyCastle.Crypto.Parameters;
+using Chaos.NaCl;
 
 namespace NetSparkleUpdater.SignatureVerifiers
 {
@@ -66,9 +62,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 try
                 {
                     _signer = new Ed25519Signer();
-                    byte[] pubKeyBytes = Convert.FromBase64String(publicKey);
-                    var cipherParams = new Ed25519PublicKeyParameters(pubKeyBytes, 0);
-                    _signer.Init(false, cipherParams);
+                    _signer.Init(Convert.FromBase64String(publicKey), null);
                 }
                 catch
                 {
@@ -158,11 +152,9 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 return res;
             }
 
-            // convert signature
-            byte[] bHash = Convert.FromBase64String(signature);
-            _signer.BlockUpdate(dataToVerify, 0, dataToVerify.Length);
-            // verify
-            return _signer.VerifySignature(bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
+            byte[] signatureBytes = Convert.FromBase64String(signature);
+            _signer.AddToBuffer(dataToVerify, 0, dataToVerify.Length);
+            return _signer.VerifySignature(signatureBytes) ? ValidationResult.Valid : ValidationResult.Invalid;
         }
 
         /// <inheritdoc/>
@@ -176,18 +168,17 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     return res;
                 }
 
-                // convert signature
                 // code for reading stream in chunks modified from https://stackoverflow.com/a/7542077/3938401
                 byte[] bHash = Convert.FromBase64String(signature);
                 var chunkSize = ChunkSize > 0 ? ChunkSize : 1024 * 1024 * 25;
-                using (Stream inputStream = File.OpenRead(binaryPath))
+                using (FileStream inputStream = File.OpenRead(binaryPath))
                 {
                     // read file in chunks
                     byte[] buffer = new byte[chunkSize]; // read in chunks of ChunkSize
                     int bytesRead;
                     while ((bytesRead = inputStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        _signer.BlockUpdate(buffer, 0, bytesRead);
+                        _signer.AddToBuffer(buffer, 0, bytesRead);
                     }
                     return _signer.VerifySignature(bHash) ? ValidationResult.Valid : ValidationResult.Invalid;
                 }
