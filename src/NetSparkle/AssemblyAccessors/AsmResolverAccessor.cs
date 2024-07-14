@@ -36,7 +36,8 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
             else
             {
-                path =  Assembly.GetEntryAssembly().Location;
+                // https://github.com/dotnet/corert/issues/6947#issuecomment-460204830
+                path = Path.Combine(System.AppContext.BaseDirectory, Path.GetFileName(Environment.GetCommandLineArgs()[0]));
             }
             if (!File.Exists(path))
             {
