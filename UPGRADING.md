@@ -25,6 +25,11 @@
 * `AssemblyReflectionAccessor` has been deprecated. Please use `AsmResolverAccessor` instead. (#587)
 * `AssemblyDiagnosticAccessor.AssemblyVersion` now returns `FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion` rather than `FileVersionInfo.GetVersionInfo(assemblyName).FileVersion` so we can get semver versioning information
 * For ed25519 use, changed from BouncyCastle to Chaos.NaCl (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects.
+* `LogWriter` has undergone several changes:
+  * `public static string tag = "netsparkle:";` has changed to `public string Tag { get; set; } = "netsparkle:";`
+  * Instead of a simple `bool` to control printing to `Trace.WriteLine` or `Console.WriteLine`, there is now a new enum, `NetSparkleUpdater.Enums.LogWriterOutputMode`, which you can use to control whether `LogWriter` outputs to `Console`, `Trace`, `Debug`, or to `None` (don't output at all).
+  * Removed `PrintDiagnosticToConsole` property and replaced it with `OutputMode` of type `LogWriterOutputMode`.
+  * The default print mode for `LogWriter` is still `Trace` by default, as it was in prior versions.
 
 **Changes/Fixes**
 

@@ -1,66 +1,67 @@
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// A simple class to handle log information for NetSparkleUpdater.
+    /// A simple class to handle logging information.
     /// Make sure to do any setup for this class that you want
     /// to do before calling StartLoop on your <see cref="SparkleUpdater"/> object.
     /// </summary>
     public class LogWriter : ILogger
     {
         /// <summary>
-        /// Tag to show before any log statements
+        /// Tag to show before any log statements. Can be set to null.
         /// </summary>
-        public static string tag = "netsparkle:";
+        public string Tag { get; set; } = "netsparkle:";
 
         /// <summary>
-        /// Empty constructor -> sets PrintDiagnosticToConsole to false
+        /// Create a LogWriter that outputs to <seealso cref="Trace.WriteLine(string)"/> by default
         /// </summary>
         public LogWriter()
         {
-            PrintDiagnosticToConsole = false;
+            OutputMode = LogWriterOutputMode.Trace;
         }
 
         /// <summary>
-        /// LogWriter constructor that takes a bool to determine
-        /// the value for printDiagnosticToConsole
+        /// Create a LogWriter that outputs via the given LogWriterOutputMode mode
         /// </summary>
-        /// <param name="printDiagnosticToConsole">False to print to <seealso cref="Trace.WriteLine(string)"/>;
-        /// true to print to <seealso cref="Console.WriteLine(string)"/></param>
-        public LogWriter(bool printDiagnosticToConsole)
+        /// <param name="outputMode"><seealso cref="LogWriterOutputMode"/> for this LogWriter instance</param>;
+        public LogWriter(LogWriterOutputMode outputMode)
         {
-            PrintDiagnosticToConsole = printDiagnosticToConsole;
+            OutputMode = outputMode;
         }
 
         #region Properties
 
         /// <summary>
-        /// True if this class should print to <seealso cref="Console.WriteLine(string)"/>;
-        /// false if this object should print to <seealso cref="Trace.WriteLine(string)"/>.
-        /// Defaults to false.
+        /// <seealso cref="LogWriterOutputMode"/> for this LogWriter instance. Set to
+        /// <seealso cref="LogWriterOutputMode.None"/> to make this LogWriter output nothing.
         /// </summary>
-        public bool PrintDiagnosticToConsole { get; set; }
+        public LogWriterOutputMode OutputMode { get; set; }
 
         #endregion
         
         /// <inheritdoc/>
         public virtual void PrintMessage(string message, params object[] arguments)
         {
-            if (PrintDiagnosticToConsole)
+            switch (OutputMode)
             {
-                Console.WriteLine(tag + " " + message, arguments);
-            }
-            else
-            {
-                Trace.WriteLine(string.Format(tag + " " + message, arguments));
+                case LogWriterOutputMode.Console:
+                    Console.WriteLine(Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments);
+                    break;
+                case LogWriterOutputMode.Trace:
+                    Trace.WriteLine(string.Format(Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments));
+                    break;
+                case LogWriterOutputMode.Debug:
+                    Debug.WriteLine(Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments);
+                    break;
+                case LogWriterOutputMode.None:
+                    break;
+                default:
+                    break;
             }
         }
     }
