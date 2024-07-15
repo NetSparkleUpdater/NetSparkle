@@ -1,13 +1,9 @@
 using NetSparkleUpdater.AppCastGenerator;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
+using NetSparkleUpdater.Enums;
 using Org.BouncyCastle.Security;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Runtime.CompilerServices;
 using Xunit;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -771,7 +767,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        new NetSparkleUpdater.LogWriter(true));
+                        new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console));
                 var didSucceed = appCastHandler.DownloadAndParse();
                 Assert.True(didSucceed);
                 var updates = appCastHandler.GetAvailableUpdates();
@@ -938,7 +934,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        new NetSparkleUpdater.LogWriter(true));
+                        new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console));
                 var didSucceed = appCastHandler.DownloadAndParse();
                 Assert.True(didSucceed);
                 var updates = appCastHandler.GetAvailableUpdates();
