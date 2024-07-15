@@ -1,4 +1,5 @@
 ﻿using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -56,7 +57,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
 
                     var docDescendants = doc.Descendants("item");
-                    var logWriter = new LogWriter(true);
+                    var logWriter = new LogWriter(LogWriterOutputMode.Console);
                     foreach (var item in docDescendants)
                     {
                         var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);

@@ -452,7 +452,7 @@ Right now, we are compatible with version 11. If you need to make changes, you c
 
 Here are some things you can do to figure out how to get your app running:
 
-* Make sure you have enabled and debugged your application thoroughly. A great way to do this is to set `SparkleUpdater.LogWriter = new LogWriter(true)` and then watch your console output while debugging.
+* Make sure you have enabled and debugged your application thoroughly. A great way to do this is to set `SparkleUpdater.LogWriter = new LogWriter(LogWriterOutputMode.Console)` and then watch your console output while debugging.
 * Look at the NetSparkleUpdater samples by downloading this repo and running the samples. You can even try putting your app cast URL in there and using your public key to debug with the source code!
 * Ask for help in our [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle)
 * Post an issue and wait for someone to respond with assistance
