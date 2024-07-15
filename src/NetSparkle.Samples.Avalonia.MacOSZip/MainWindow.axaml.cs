@@ -26,7 +26,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
                 // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
                 ShowsUIOnMainThread = true,
-                LogWriter = new LogWriter(true),
+                LogWriter = new LogWriter(),
                 RelaunchAfterUpdate = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
 
