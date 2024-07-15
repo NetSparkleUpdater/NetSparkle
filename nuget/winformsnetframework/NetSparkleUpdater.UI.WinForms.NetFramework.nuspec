@@ -27,5 +27,6 @@
  <files>
     <file src="..\..\README.md" target="" />
     <file src="..\..\LICENSE.md" target="" />
+    <file src="..\..\src\NetSparkle\ArtWork\software-update-available.png" target="" />
   </files>
 </package>
