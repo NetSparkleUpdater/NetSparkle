@@ -7,6 +7,7 @@
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <license type="file">LICENSE.md</license>
+   <readme>README.md</readme>
    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
    <icon>software-update-available.png</icon>
    <projectUrl>https://github.com/NetSparkleUpdater/NetSparkle</projectUrl>
@@ -23,4 +24,8 @@
       </group>
     </dependencies>
  </metadata>
+ <files>
+    <file src="..\..\README.md" target="" />
+    <file src="..\..\LICENSE.md" target="" />
+  </files>
 </package>
