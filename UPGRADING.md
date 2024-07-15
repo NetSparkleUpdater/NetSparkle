@@ -30,6 +30,7 @@
   * Instead of a simple `bool` to control printing to `Trace.WriteLine` or `Console.WriteLine`, there is now a new enum, `NetSparkleUpdater.Enums.LogWriterOutputMode`, which you can use to control whether `LogWriter` outputs to `Console`, `Trace`, `Debug`, or to `None` (don't output at all).
   * Removed `PrintDiagnosticToConsole` property and replaced it with `OutputMode` of type `LogWriterOutputMode`.
   * The default print mode for `LogWriter` is still `Trace` by default, as it was in prior versions.
+  * By default, timestamps are now output along with the `Tag` and actual log item
 
 **Changes/Fixes**
 
