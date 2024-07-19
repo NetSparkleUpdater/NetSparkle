@@ -1,4 +1,6 @@
-﻿using NetSparkleUpdater.Events;
+﻿#nullable enable
+
+using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.ComponentModel;
@@ -19,10 +21,10 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class WebFileDownloader : IUpdateDownloader, IDisposable
     {
-        private HttpClient _httpClient;
-        private ILogger _logger;
-        private CancellationTokenSource _cts;
-        private string _downloadFileLocation;
+        private HttpClient? _httpClient;
+        private ILogger? _logger;
+        private CancellationTokenSource? _cts;
+        private string? _downloadFileLocation;
 
         /// <summary>
         /// Default constructor for the web client file downloader.
@@ -35,7 +37,7 @@ namespace NetSparkleUpdater.Downloaders
         /// Constructor for the web file downloader that takes an <seealso cref="ILogger"/> instance.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
-        public WebFileDownloader(ILogger logger)
+        public WebFileDownloader(ILogger? logger)
         {
             _logger = logger;
         }
@@ -43,7 +45,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from WebFileDownloader
         /// </summary>
-        public ILogger LogWriter
+        public ILogger? LogWriter
         {
             set { _logger = value; }
             get { return _logger; }
@@ -53,7 +55,7 @@ namespace NetSparkleUpdater.Downloaders
         /// Set this to handle redirects that manually, e.g. redirects that go from HTTPS to HTTP (which are not allowed
         /// by default)
         /// </summary>
-        public RedirectHandler RedirectHandler { get; set; }
+        public RedirectHandler? RedirectHandler { get; set; }
 
         /// <summary>
         /// Do preparation work necessary to download a file,
@@ -95,31 +97,25 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         /// <param name="handler">HttpClientHandler for messages</param>
         /// <returns>The client used for file downloads</returns>
-        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler? handler)
         {
-            if (handler != null)
-            {
-                return new HttpClient(handler);
-            }
-            else
-            {
-                return new HttpClient();
-            }
+            return handler != null ? new HttpClient(handler) : new HttpClient();
         }
 
         /// <inheritdoc/>
         public bool IsDownloading { get; private set; }
 
         /// <inheritdoc/>
-        public event DownloadProgressEvent DownloadProgressChanged;
+        public event DownloadProgressEvent? DownloadProgressChanged;
+        
         /// <inheritdoc/>
-        public event AsyncCompletedEventHandler DownloadFileCompleted;
+        public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            _cts.Cancel();
-            _cts.Dispose();
+            _cts?.Cancel();
+            _cts?.Dispose();
             _httpClient?.Dispose();
         }
 
@@ -127,7 +123,6 @@ namespace NetSparkleUpdater.Downloaders
         public async void StartFileDownload(Uri uri, string downloadFilePath)
         {
             _logger?.PrintMessage("IUpdateDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
-
             await StartFileDownloadAsync(uri, downloadFilePath);
         }
 
@@ -135,6 +130,14 @@ namespace NetSparkleUpdater.Downloaders
         {
             try
             {
+                if (_httpClient == null)
+                {
+                    _httpClient = CreateHttpClient();
+                }
+                if (_cts == null)
+                {
+                    _cts = new CancellationTokenSource();
+                }
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
                 using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cts.Token))
                 {
@@ -159,13 +162,14 @@ namespace NetSparkleUpdater.Downloaders
                     long totalRead = 0;
                     long readCount = 0;
                     _downloadFileLocation = downloadFilePath;
-                    using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, 8192, true))
+                    const int bufferSize = 32*1024; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
+                    using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, bufferSize, true))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
                         totalLength = response.Content.Headers.ContentLength ?? 0;
                         totalRead = 0;
                         readCount = 0;
-                        byte[] buffer = new byte[32*1024]; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
+                        byte[] buffer = new byte[bufferSize]; 
                         UpdateDownloadProgress(0, totalLength);
                         IsDownloading = true;
 
@@ -204,8 +208,11 @@ namespace NetSparkleUpdater.Downloaders
 
         private void UpdateDownloadProgress(long totalRead, long totalLength)
         {
+            if (totalLength == 0)
+            {
+                totalLength = 1; // just in case
+            }
             int percentage = Convert.ToInt32(Math.Round((double)totalRead / totalLength * 100, 0));
-
             DownloadProgressChanged?.Invoke(this, new ItemDownloadProgressEventArgs(percentage, null, totalRead, totalLength));
         }
 
@@ -215,8 +222,8 @@ namespace NetSparkleUpdater.Downloaders
             _logger?.PrintMessage("IUpdateDownloader: Canceling download");
             try
             {
-                _cts.Cancel();
-                _httpClient.CancelPendingRequests();
+                _cts?.Cancel();
+                _httpClient?.CancelPendingRequests();
             } catch {}
             if (File.Exists(_downloadFileLocation))
             {
@@ -228,12 +235,16 @@ namespace NetSparkleUpdater.Downloaders
             _cts = new CancellationTokenSource();
         }
 
-        private async Task<string> RetrieveDestinationFileNameAsyncForUri(Uri uri)
+        private async Task<string?> RetrieveDestinationFileNameAsyncForUri(Uri uri)
         {
             var httpClient = CreateHttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(30);
             try
             {
+                if (_cts == null)
+                {
+                    _cts = new CancellationTokenSource();
+                }
                 using (var response =
                     await httpClient.SendAsync(new HttpRequestMessage
                     {
@@ -244,7 +255,7 @@ namespace NetSparkleUpdater.Downloaders
                     if (response.IsSuccessStatusCode)
                     {
                         //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
-                        string destFilename = response.RequestMessage?.RequestUri?.LocalPath;
+                        string destFilename = response.RequestMessage?.RequestUri?.LocalPath ?? "";
 
                         return Path.GetFileName(destFilename);
                     } else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
@@ -258,14 +269,15 @@ namespace NetSparkleUpdater.Downloaders
                     return null;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                _logger?.PrintMessage("Error retrieving destination file name: {0}", e.Message);
             }
             return null;
         }
 
         /// <inheritdoc/>
-        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
             return await RetrieveDestinationFileNameAsyncForUri(new Uri(item.DownloadLink));
         }

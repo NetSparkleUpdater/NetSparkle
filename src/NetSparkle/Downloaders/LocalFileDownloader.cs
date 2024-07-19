@@ -167,8 +167,10 @@ namespace NetSparkleUpdater.Downloaders
 
         private void UpdateDownloadProgress(long totalRead, long totalLength)
         {
+            if (totalLength == 0) {
+                totalLength = 1; // ...just in case.
+            }
             int percentage = Convert.ToInt32(Math.Round((double)totalRead / totalLength * 100, 0));
-
             DownloadProgressChanged?.Invoke(this, new ItemDownloadProgressEventArgs(percentage, null, totalRead, totalLength));
         }
     }
