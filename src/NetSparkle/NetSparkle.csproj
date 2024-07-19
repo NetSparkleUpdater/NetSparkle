@@ -16,9 +16,9 @@
     <PackageIcon>software-update-available.png</PackageIcon>
     <PackageIconUrl />
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <RootNamespace>NetSparkleUpdater</RootNamespace>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>partial</TrimMode>
