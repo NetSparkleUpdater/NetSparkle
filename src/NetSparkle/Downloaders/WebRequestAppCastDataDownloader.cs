@@ -189,68 +189,6 @@ namespace NetSparkleUpdater.Downloaders
             return Encoding.UTF8;
         }
 
-        /// <summary>
-        /// Download the app cast from the given URL.
-        /// Performs a GET request by default. If <see cref="ExtraJsonData"/> is set,
-        /// uses a POST request and sends the JSON data along with the
-        /// request.
-        /// </summary>
-        /// <param name="url">the URL to download the app cast from</param>
-        /// <returns>the response from the web server if creating the request
-        /// succeeded; null otherwise. The response is not guaranteed to have
-        /// succeeded!</returns>
-#if NETCORE
-        [Obsolete("GetWebContentResponse is deprecated, please use DownloadAndGetAppCastData instead. This method should never have been public. :)")]
-#endif
-        public WebResponse GetWebContentResponse(string url)
-        {
-            WebRequest request = WebRequest.Create(url);
-            if (request != null)
-            {
-                if (request is FileWebRequest)
-                {
-                    var fileRequest = request as FileWebRequest;
-                    if (fileRequest != null)
-                    {
-                        return request.GetResponse();
-                    }
-                }
-
-                if (request is HttpWebRequest)
-                {
-                    HttpWebRequest httpRequest = request as HttpWebRequest;
-                    httpRequest.UseDefaultCredentials = true;
-                    httpRequest.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-                    if (TrustEverySSLConnection)
-                    {
-                        httpRequest.ServerCertificateValidationCallback += AlwaysTrustRemoteCert;
-                    }
-
-                    // http://stackoverflow.com/a/10027534/3938401
-                    if (!string.IsNullOrWhiteSpace(ExtraJsonData))
-                    {
-                        httpRequest.ContentType = "application/json";
-                        httpRequest.Method = "POST";
-
-                        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
-                        {
-                            streamWriter.Write(ExtraJsonData);
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                        }
-                    }
-
-                    // request the cast and build the stream
-                    if (TrustEverySSLConnection)
-                    {
-                        httpRequest.ServerCertificateValidationCallback -= AlwaysTrustRemoteCert;
-                    }
-                    return httpRequest.GetResponse();
-                }
-            }
-            return null;
-        }
-
         private bool AlwaysTrustRemoteCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             return true;
