@@ -120,16 +120,29 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri uri, string downloadFilePath)
+        public async void StartFileDownload(Uri? uri, string downloadFilePath)
         {
-            _logger?.PrintMessage("IUpdateDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
-            await StartFileDownloadAsync(uri, downloadFilePath);
+            if (uri == null)
+            {
+                _logger?.PrintMessage("StartFileDownloadAsync had a null Uri; not going to download anything");
+                return;
+            }
+            else 
+            {
+                _logger?.PrintMessage("IUpdateDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
+                await StartFileDownloadAsync(uri, downloadFilePath);
+            }
         }
 
-        private async Task StartFileDownloadAsync(Uri uri, string downloadFilePath)
+        private async Task StartFileDownloadAsync(Uri? uri, string downloadFilePath)
         {
             try
             {
+                if (uri == null)
+                {
+                    _logger?.PrintMessage("StartFileDownloadAsync had a null Uri; not going to download anything");
+                    return;
+                }
                 if (_httpClient == null)
                 {
                     _httpClient = CreateHttpClient();
@@ -146,7 +159,7 @@ namespace NetSparkleUpdater.Downloaders
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
                         {
                             var redirectURI = response.Headers.Location;
-                            if (RedirectHandler.Invoke(uri.ToString(), redirectURI.ToString(), response))
+                            if (RedirectHandler.Invoke(uri.ToString(), redirectURI?.ToString() ?? "", response))
                             {
                                 await StartFileDownloadAsync(redirectURI, downloadFilePath);
                             }
@@ -235,8 +248,13 @@ namespace NetSparkleUpdater.Downloaders
             _cts = new CancellationTokenSource();
         }
 
-        private async Task<string?> RetrieveDestinationFileNameAsyncForUri(Uri uri)
+        private async Task<string?> RetrieveDestinationFileNameAsyncForUri(Uri? uri)
         {
+            if (uri == null)
+            {
+                _logger?.PrintMessage("StartFileDownloadAsync had a null Uri; not going to download anything");
+                return "";
+            }
             var httpClient = CreateHttpClient();
             httpClient.Timeout = TimeSpan.FromSeconds(30);
             try
@@ -256,12 +274,11 @@ namespace NetSparkleUpdater.Downloaders
                     {
                         //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
                         string destFilename = response.RequestMessage?.RequestUri?.LocalPath ?? "";
-
                         return Path.GetFileName(destFilename);
                     } else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
                     {
                         var redirectURI = response.Headers.Location;
-                        if (RedirectHandler.Invoke(uri.ToString(), redirectURI.ToString(), response))
+                        if (RedirectHandler.Invoke(uri.ToString(), redirectURI?.ToString() ?? "", response))
                         {
                             return await RetrieveDestinationFileNameAsyncForUri(redirectURI);
                         }

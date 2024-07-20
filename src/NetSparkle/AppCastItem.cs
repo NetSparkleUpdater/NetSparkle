@@ -1,3 +1,5 @@
+#nullable enable
+
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 using System;
@@ -193,7 +195,7 @@ namespace NetSparkleUpdater
         /// <param name="item">The item XML node</param>
         /// <param name="logWriter">logwriter instance</param>
         /// <returns>AppCastItem from Xml Node</returns>
-        public static AppCastItem Parse(string installedVersion, string applicationName, string castUrl, XElement item, ILogger logWriter)
+        public static AppCastItem Parse(string? installedVersion, string? applicationName, string? castUrl, XElement item, ILogger? logWriter)
         {
 
             var newAppCastItem = new AppCastItem()

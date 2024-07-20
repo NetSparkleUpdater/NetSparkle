@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#nullable enable
+
+using System;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.AppCastHandlers
 {
@@ -38,8 +36,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         /// <param name="other">Another version</param>
         /// <returns>-1, 0 or 1</returns>
-        public int CompareTo(SemVerLike other)
+        public int CompareTo(SemVerLike? other)
         {
+            if (other == null)
+            {
+                return 1;
+            }
             int diff;
             if ((diff = TextHelper.ExpandDigits(Version).CompareTo(TextHelper.ExpandDigits(other.Version))) == 0)
             {
@@ -53,9 +55,9 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is SemVerLike && CompareTo(obj as SemVerLike) == 0;
+            return obj is SemVerLike smv && CompareTo(smv) == 0;
         }
 
         /// <inheritdoc/>
@@ -69,7 +71,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         /// <param name="version"></param>
         /// <param name="allSuffixes"></param>
-        public SemVerLike(string version, string allSuffixes)
+        public SemVerLike(string? version, string? allSuffixes)
         {
             Version = version ?? "";
             AllSuffixes = allSuffixes ?? "";
@@ -102,11 +104,12 @@ namespace NetSparkleUpdater.AppCastHandlers
             /// `1.2.3`   → `0000000001.0000000002.0000000003`
             /// `100.0.0` → `0000000100.0000000000.0000000000`
             /// </summary>
-            /// <param name="full"></param>
-            /// <returns></returns>
-            internal static string ExpandDigits(string full)
+            /// <param name="str">String to expand</param>
+            /// <param name="totalWidth">Total amount of digits (chars) for resulting string</param>
+            /// <returns>Expanded digit string</returns>
+            internal static string ExpandDigits(string str, int totalWidth = 10)
             {
-                return _detectDigits.Replace(full, match => match.Value.PadLeft(10, '0'));
+                return _detectDigits.Replace(str, match => match.Value.PadLeft(totalWidth, '0'));
             }
         }
     }

@@ -1,3 +1,5 @@
+#nullable enable
+
 using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
@@ -14,13 +16,13 @@ namespace NetSparkleUpdater.AppCastHandlers
     /// </summary>
     public class XMLAppCast : IAppCastHandler
     {
-        private Configuration _config;
-        private string _castUrl;
+        private Configuration? _config;
+        private string? _castUrl;
 
-        private ISignatureVerifier _signatureVerifier;
-        private ILogger _logWriter;
+        private ISignatureVerifier? _signatureVerifier;
+        private ILogger? _logWriter;
 
-        private IAppCastDataDownloader _dataDownloader;
+        private IAppCastDataDownloader? _dataDownloader;
 
         /// <summary>
         /// Sparkle XML namespace
@@ -30,12 +32,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// App cast title (usually the name of the application)
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// App cast language (e.g. "en")
         /// </summary>
-        public string Language { get; set; }
+        public string? Language { get; set; }
 
         /// <summary>
         /// Extension (WITHOUT the "." at the start) for the signature
@@ -48,7 +50,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// items for custom channels (e.g. beta or alpha) or run your own
         /// logic on getting rid of older versions.
         /// </summary>
-        public IAppCastFilter AppCastFilter { get; set; }
+        public IAppCastFilter? AppCastFilter { get; set; }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> that were parsed in the app cast
@@ -75,14 +77,34 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// (user skipped versions, etc.)</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier signatureVerifier, ILogger logWriter = null)
+        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier signatureVerifier, ILogger? logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
             _castUrl = castUrl;
 
             _signatureVerifier = signatureVerifier;
-            _logWriter = logWriter ?? new LogWriter();
+            _logWriter = logWriter;
+        }
+
+        private void CheckSetupCalled()
+        {
+            if (_dataDownloader == null)
+            {
+                _logWriter?.PrintMessage("Warning: XMLAppCast has no IAppCastDataDownloader; did you forget to call SetupAppCastHandler()?");
+            }
+            if (_config == null)
+            {
+                _logWriter?.PrintMessage("Warning: XMLAppCast has no Configuration; did you forget to call SetupAppCastHandler()?");
+            }
+            if (string.IsNullOrWhiteSpace(_castUrl))
+            {
+                _logWriter?.PrintMessage("Warning: XMLAppCast has no app cast URL; did you forget to call SetupAppCastHandler()?");
+            }
+            if (_signatureVerifier == null)
+            {
+                _logWriter?.PrintMessage("Warning: XMLAppCast has no ISignatureVerifier; did you forget to call SetupAppCastHandler()?");
+            }
         }
 
         /// <summary>
@@ -90,69 +112,78 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         public virtual bool DownloadAndParse()
         {
+            CheckSetupCalled();
             try
             {
-                _logWriter.PrintMessage("Downloading app cast data...");
-                var appcast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-                var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
+                _logWriter?.PrintMessage("Downloading app cast data...");
+                var appcast = _dataDownloader?.DownloadAndGetAppCastData(_castUrl);
+                var signatureNeeded = Utilities.IsSignatureNeeded(
+                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
+                    _signatureVerifier?.HasValidKeyInformation() ?? false, 
+                    false);
                 bool isValidAppcast = true;
                 if (signatureNeeded)
                 {
-                    _logWriter.PrintMessage("Downloading app cast signature data...");
+                    _logWriter?.PrintMessage("Downloading app cast signature data...");
                     var signature = "";
-                    var extension = SignatureFileExtension?.TrimStart('.') ?? "signature";
+                    var extension = SignatureFileExtension?.Trim().TrimStart('.') ?? "signature";
                     try
                     {
-                        signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + "." + extension);
+                        signature = _dataDownloader?.DownloadAndGetAppCastData(_castUrl + "." + extension);
                     }
                     catch (Exception e)
                     {
-                        _logWriter.PrintMessage("Error reading app cast {0}.{2}: {1} ", _castUrl, e.Message, extension);
+                        _logWriter?.PrintMessage("Error reading app cast {0}.{2}: {1} ", _castUrl, e.Message, extension);
                     }
                     if (string.IsNullOrWhiteSpace(signature))
                     {
                         // legacy: check for .dsa file
                         try
                         {
-                            _logWriter.PrintMessage("Attempting to check for legacy .dsa signature data...");
-                            signature = _dataDownloader.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                            _logWriter?.PrintMessage("Attempting to check for legacy .dsa signature data...");
+                            signature = _dataDownloader?.DownloadAndGetAppCastData(_castUrl + ".dsa");
                         }
                         catch (Exception e)
                         {
-                            _logWriter.PrintMessage("Error reading app cast {0}.dsa: {1} ", _castUrl, e.Message);
+                            _logWriter?.PrintMessage("Error reading app cast {0}.dsa: {1} ", _castUrl, e.Message);
                         }
                     }
                     isValidAppcast = VerifyAppCast(appcast, signature);
                 }
                 if (isValidAppcast)
                 {
-                    _logWriter.PrintMessage("Appcast is valid! Parsing...");
+                    _logWriter?.PrintMessage("Appcast is valid! Parsing...");
                     ParseAppCast(appcast);
                     return true;
                 }
             }
             catch (Exception e)
             {
-                _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
+                _logWriter?.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
             }
-            _logWriter.PrintMessage("Appcast is not valid");
+            _logWriter?.PrintMessage("Appcast is not valid");
             return false;
         }
 
-        private bool VerifyAppCast(string appCast, string signature)
+        private bool VerifyAppCast(string? appCast, string? signature)
         {
             if (string.IsNullOrWhiteSpace(appCast))
             {
-                _logWriter.PrintMessage("Cannot read response from URL {0}", _castUrl);
+                _logWriter?.PrintMessage("Cannot read response from URL {0}", _castUrl);
                 return false;
             }
 
             // checking signature
-            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
-            var appcastBytes = _dataDownloader.GetAppCastEncoding().GetBytes(appCast);
-            if (signatureNeeded && _signatureVerifier.VerifySignature(signature, appcastBytes) == ValidationResult.Invalid)
+            var signatureNeeded = Utilities.IsSignatureNeeded(
+                _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
+                _signatureVerifier?.HasValidKeyInformation() ?? false,
+                false);
+            var appcastBytes = _dataDownloader?.GetAppCastEncoding().GetBytes(appCast);
+            if (signatureNeeded && 
+                (_signatureVerifier?.VerifySignature(signature, appcastBytes) ?? ValidationResult.Invalid) 
+                    == ValidationResult.Invalid)
             {
-                _logWriter.PrintMessage("Signature check of appcast failed");
+                _logWriter?.PrintMessage("Signature check of appcast failed");
                 return false;
             }
             return true;
@@ -162,33 +193,35 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Parse the app cast XML string into a list of <see cref="AppCastItem"/> objects.
         /// When complete, the Items list should contain the parsed information
         /// as <see cref="AppCastItem"/> objects.
-        /// NOTE TO SELF: In a new version of NetSparkle with breaking changes, for more flexibility, 
-        /// this should probably return the list of parsed items rather than setting a member value.
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
-        protected virtual void ParseAppCast(string appCast)
+        protected virtual void ParseAppCast(string? appCast)
         {
-            const string itemNode = "item";
             Items.Clear();
-
-            XDocument doc = XDocument.Parse(appCast);
-            var rss = doc?.Element("rss");
-            var channel = rss?.Element("channel");
-
-            Title = channel?.Element("title")?.Value ?? string.Empty;
-            Language = channel?.Element("language")?.Value ?? "en";
-
-            var items = doc.Descendants(itemNode);
-            foreach (var item in items)
+            if (!string.IsNullOrWhiteSpace(appCast))
             {
-                var currentItem = AppCastItem.Parse(_config.InstalledVersion, _config.ApplicationName, _castUrl, item, _logWriter);
-                _logWriter.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
-                    currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
-                Items.Add(currentItem);
-            }
+                XDocument doc = XDocument.Parse(appCast);
+                var rss = doc?.Element("rss");
+                var channel = rss?.Element("channel");
 
-            // sort versions in reverse order
-            Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+                Title = channel?.Element("title")?.Value ?? string.Empty;
+                Language = channel?.Element("language")?.Value ?? "en";
+
+                var items = doc?.Descendants("item");
+                if (items != null)
+                {
+                    foreach (var item in items)
+                    {
+                        var currentItem = AppCastItem.Parse(_config?.InstalledVersion, _config?.ApplicationName, _castUrl, item, _logWriter);
+                        _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
+                            currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystemString);
+                        Items.Add(currentItem);
+                    }
+                }
+
+                // sort versions in reverse order
+                Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+            }
         }
 
 
@@ -205,7 +238,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             // don't allow non-windows updates
             if (!item.IsWindowsUpdate)
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
                     item.ShortVersion, item.Title);
                 return FilterItemResult.NotThisPlatform;
             }
@@ -214,19 +247,19 @@ namespace NetSparkleUpdater.AppCastHandlers
             // operating system
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version,
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version,
                     item.ShortVersion, item.Title);
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
                     item.ShortVersion, item.Title);
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
                     item.ShortVersion, item.Title);
                 return FilterItemResult.NotThisPlatform;
             }
@@ -274,7 +307,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 // filter smaller versions
                 if (SemVerLike.Parse(item.Version).CompareTo(installed) <= 0)
                 {
-                    _logWriter.PrintMessage(
+                    _logWriter?.PrintMessage(
                         "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
                         item.Version,
                         item.ShortVersion, item.Title, installed);
@@ -285,7 +318,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             // filter versions without signature if we need signatures. But accept version without downloads.
             if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
             {
-                _logWriter.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
                     "the item has no signature yet has a download link of {3}", item.Version,
                     item.ShortVersion, item.Title, item.DownloadLink);
                 return FilterItemResult.SignatureIsMissing;
@@ -301,7 +334,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns>A list of <seealso cref="AppCastItem"/> updates that could be installed</returns>
         public virtual List<AppCastItem> GetAvailableUpdates()
         {
-            SemVerLike installed = SemVerLike.Parse(_config.InstalledVersion);
+            CheckSetupCalled();
+            var installed = SemVerLike.Parse(_config?.InstalledVersion ?? "");
             List<AppCastItem> appCastItems = Items;
             bool shouldFilterOutSmallerVersions = true;
 
@@ -316,15 +350,18 @@ namespace NetSparkleUpdater.AppCastHandlers
                 shouldFilterOutSmallerVersions = false;
             }
 
-            var signatureNeeded = Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode, _signatureVerifier.HasValidKeyInformation(), false);
+            var signatureNeeded = Utilities.IsSignatureNeeded(
+                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
+                    _signatureVerifier?.HasValidKeyInformation() ?? false, 
+                    false);
 
-            _logWriter.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
+            _logWriter?.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
             return appCastItems.Where((item) =>
             {
                 if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
                     // accept all valid items
-                    _logWriter.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
+                    _logWriter?.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
                         item.ShortVersion, item.DownloadLink);
                     return true;
                 }
@@ -341,7 +378,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="description">Text that describes the app cast (e.g. what it provides)</param>
         /// <param name="language">Language of the app cast file</param>
         /// <returns>An <seealso cref="XDocument"/> xml document that describes the list of passed in update items</returns>
-        public static XDocument GenerateAppCastXml(List<AppCastItem> items, string title, string link = "", string description = "", string language = "en")
+        public static XDocument GenerateAppCastXml(List<AppCastItem> items, string? title, string link = "", string description = "", string language = "en")
         {
             var channel = new XElement("channel");
             channel.Add(new XElement("title", title));

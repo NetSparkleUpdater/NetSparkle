@@ -23,6 +23,7 @@
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>partial</TrimMode>
     <IsAotCompatible>true</IsAotCompatible>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
