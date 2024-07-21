@@ -1,7 +1,8 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
@@ -16,7 +17,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
     /// </summary>
     public class AsmResolverAccessor : IAssemblyAccessor
     {
-        private IList<CustomAttribute> _assemblyAttributes = null;
+        private IList<CustomAttribute>? _assemblyAttributes;
 
         /// <summary>
         /// Load the assembly with a given assembly name's attributes. All pertinent attributes
@@ -27,7 +28,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <exception cref="BadImageFormatException">Thrown when the assembly cannot be read</exception>
         /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
-        public AsmResolverAccessor(string assemblyName)
+        public AsmResolverAccessor(string? assemblyName)
         {
             var path = "";
             if (assemblyName != null)
@@ -52,13 +53,15 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        private string FindAttributeData(IList<CustomAttribute> attributes, System.Type type)
+        private string? FindAttributeData(IList<CustomAttribute> attributes, System.Type type)
         {
             var attr = attributes.FirstOrDefault(c => c.Constructor?.DeclaringType?.FullName == type.ToString());
-            if (attr != null) {
-
-                var utf8Value = (Utf8String)attr.Signature.FixedArguments[0].Element;
-                return (string)utf8Value;
+            if (attr != null) 
+            {
+                if (attr.Signature?.FixedArguments.Count > 0)
+                {
+                    return attr.Signature?.FixedArguments[0].Element as Utf8String;
+                }
             }
             return null;
         }
@@ -69,7 +72,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyTitleAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyTitleAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -78,7 +83,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyInformationalVersionAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyInformationalVersionAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -90,7 +97,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyFileVersionAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyFileVersionAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -99,7 +108,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyDescriptionAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyDescriptionAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -108,7 +119,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyProductAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyProductAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -117,7 +130,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyCopyrightAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyCopyrightAttribute)) ?? "" 
+                    : "";
             }
         }
 
@@ -126,7 +141,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                return FindAttributeData(_assemblyAttributes, typeof(AssemblyCompanyAttribute)) ?? "";
+                return _assemblyAttributes != null 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyCompanyAttribute)) ?? "" 
+                    : "";
             }
         }
     }
