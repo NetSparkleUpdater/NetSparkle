@@ -31,6 +31,7 @@
   * Removed `PrintDiagnosticToConsole` property and replaced it with `OutputMode` of type `LogWriterOutputMode`.
   * The default print mode for `LogWriter` is still `Trace` by default, as it was in prior versions.
   * By default, timestamps are now output along with the `Tag` and actual log item
+* `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`
 
 **Changes/Fixes**
 
@@ -56,6 +57,7 @@
 * Fixed Avalonia message window close button not working properly (394841d47c8b6739ca0ebcec87303529b81da904)
 * Fixed `AssemblyReflectionEditor` not loading in a way that allowed for proper file closing of the DLL (fixes a unit testing issue)
 * Avalonia UI now uses `CompiledBinding`
+* Fixed `JSONConfiguration` not using correct default last config/check update time
 
 ## Updating from 0.X or 1.X to 2.X
 
