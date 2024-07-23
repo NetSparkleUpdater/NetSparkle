@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+
 using System.Collections.Generic;
 using NetSparkleUpdater.AppCastHandlers;
 

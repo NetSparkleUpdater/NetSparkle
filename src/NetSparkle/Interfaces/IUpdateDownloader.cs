@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
+using System;
 using System.ComponentModel;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
@@ -22,19 +21,19 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Event to call when some progress has been made on the download
         /// </summary>
-        event DownloadProgressEvent DownloadProgressChanged;
+        event DownloadProgressEvent? DownloadProgressChanged;
 
         /// <summary>
         /// Event to call when the download of the update file has been completed
         /// </summary>
-        event AsyncCompletedEventHandler DownloadFileCompleted;
+        event AsyncCompletedEventHandler? DownloadFileCompleted;
 
         /// <summary>
         /// Start the download of the file. The file download should be asynchronous!
         /// </summary>
         /// <param name="uri">URL for the download</param>
         /// <param name="downloadFilePath">Where to download the file</param>
-        void StartFileDownload(Uri uri, string downloadFilePath);
+        void StartFileDownload(Uri? uri, string downloadFilePath);
 
         /// <summary>
         /// Cancel the download.
@@ -57,6 +56,6 @@ namespace NetSparkleUpdater.Interfaces
         /// <param name="item">The AppCastItem that will be downloaded</param>
         /// <returns>The file name of the file to download from the server 
         /// (including file extension). Null if not found/had error/not applicable.</returns>
-        Task<string> RetrieveDestinationFileNameAsync(AppCastItem item);
+        Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item);
     }
 }

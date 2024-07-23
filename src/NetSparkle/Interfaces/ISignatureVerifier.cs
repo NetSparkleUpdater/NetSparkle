@@ -1,7 +1,6 @@
-﻿using NetSparkleUpdater.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿#nullable enable
+
+using NetSparkleUpdater.Enums;
 
 namespace NetSparkleUpdater.Interfaces
 {

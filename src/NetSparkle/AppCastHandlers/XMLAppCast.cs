@@ -77,7 +77,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// (user skipped versions, etc.)</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier signatureVerifier, ILogger? logWriter = null)
+        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
@@ -113,6 +113,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         public virtual bool DownloadAndParse()
         {
             CheckSetupCalled();
+            if (string.IsNullOrWhiteSpace(_castUrl))
+            {
+                _logWriter?.PrintMessage("Warning: DownloadAndParse called with no app cast URL set; did you forget to call SetupAppCastHandler()?");
+                return false;
+            }
             try
             {
                 _logWriter?.PrintMessage("Downloading app cast data...");
@@ -169,7 +174,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             if (string.IsNullOrWhiteSpace(appCast))
             {
-                _logWriter?.PrintMessage("Cannot read response from URL {0}", _castUrl);
+                _logWriter?.PrintMessage("Cannot read response from URL {0}", _castUrl ?? "");
                 return false;
             }
 
@@ -180,7 +185,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 false);
             var appcastBytes = _dataDownloader?.GetAppCastEncoding().GetBytes(appCast);
             if (signatureNeeded && 
-                (_signatureVerifier?.VerifySignature(signature, appcastBytes) ?? ValidationResult.Invalid) 
+                (_signatureVerifier?.VerifySignature(signature ?? "", appcastBytes ?? Array.Empty<byte>()) ?? ValidationResult.Invalid) 
                     == ValidationResult.Invalid)
             {
                 _logWriter?.PrintMessage("Signature check of appcast failed");

@@ -1,5 +1,5 @@
-using System.Net;
-using System;
+#nullable enable
+
 using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater.Interfaces
@@ -14,7 +14,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Event to fire when the download UI is complete; tells you 
         /// if the install process should happen or not
         /// </summary>
-        event DownloadInstallEventHandler DownloadProcessCompleted;
+        event DownloadInstallEventHandler? DownloadProcessCompleted;
 
         /// <summary>
         /// Enable or disable the download and install button (such as when your "Can I gracefully close the window?" function is async and you don't

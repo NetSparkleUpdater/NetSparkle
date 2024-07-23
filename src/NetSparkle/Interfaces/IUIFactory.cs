@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -59,7 +61,7 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="appcastUrl">The URL to the app cast file</param>
-        void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string appcastUrl);
+        void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl);
 
         /// <summary>
         /// See if this UIFactory can show toast messages
@@ -74,7 +76,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="updates">Appcast updates</param>
         /// <param name="clickHandler">handler for click</param>
-        void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates,  Action<List<AppCastItem>> clickHandler);
+        void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler);
 
         /// <summary>
         /// Show message on download error
@@ -82,7 +84,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance controlling this UI</param>
         /// <param name="message">Error message from exception</param>
         /// <param name="appcastUrl">the URL for the appcast file</param>
-        void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string appcastUrl);
+        void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl);
 
         /// <summary>
         /// Shut down the UI so we can run an update.
@@ -124,7 +126,7 @@ namespace NetSparkleUpdater.Interfaces
         /// {2} = the actual release notes;
         /// {3} = the background color for the release notes header.
         /// </summary>
-        string ReleaseNotesHTMLTemplate { get; set; }
+        string? ReleaseNotesHTMLTemplate { get; set; }
 
         /// <summary>
         /// Any additional header information to stick in the HTML head element
@@ -132,6 +134,6 @@ namespace NetSparkleUpdater.Interfaces
         /// Must be HTML formatted to work properly.
         /// Can be null or "".
         /// </summary>
-        string AdditionalReleaseNotesHeaderHTML { get; set; }
+        string? AdditionalReleaseNotesHeaderHTML { get; set; }
     }
 }
