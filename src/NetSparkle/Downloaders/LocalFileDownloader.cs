@@ -80,7 +80,7 @@ namespace NetSparkleUpdater.Downloaders
             DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
             _cancellationTokenSource = new CancellationTokenSource();
             IsDownloading = false;
-            if (_downloadFileLocation != "" && File.Exists(_downloadFileLocation))
+            if (!string.IsNullOrWhiteSpace(_downloadFileLocation) && File.Exists(_downloadFileLocation))
             {
                 try {
                     File.Delete(_downloadFileLocation);
@@ -167,7 +167,8 @@ namespace NetSparkleUpdater.Downloaders
 
         private void UpdateDownloadProgress(long totalRead, long totalLength)
         {
-            if (totalLength == 0) {
+            if (totalLength == 0)
+            {
                 totalLength = 1; // ...just in case.
             }
             int percentage = Convert.ToInt32(Math.Round((double)totalRead / totalLength * 100, 0));
