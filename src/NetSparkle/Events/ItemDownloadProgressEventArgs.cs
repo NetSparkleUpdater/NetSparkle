@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using NetSparkleUpdater.Interfaces;
 using System.ComponentModel;
 
 namespace NetSparkleUpdater.Events
@@ -15,11 +16,12 @@ namespace NetSparkleUpdater.Events
         /// the total percentage (0-100, inclusive) and the custom user state.
         /// </summary>
         /// <param name="progressPercentage">the total download progress as an int (between 0-100)</param>
-        /// <param name="userState">the custom user state sent along with the download progress</param>
-        public ItemDownloadProgressEventArgs(int progressPercentage, object? userState) : base(progressPercentage, userState)
+        /// <param name="userState">the custom user state sent along with the download progress; 
+        /// in NetSparkleUpdater's case, usually the <seealso cref="IUpdateDownloader"/> performing 
+        /// the download operation</param>
+        public ItemDownloadProgressEventArgs(int progressPercentage, object? userState)
+            : this(progressPercentage, userState, 0, 0)
         {
-            BytesReceived = 0;
-            TotalBytesToReceive = 0;
         }
 
         /// <summary>
@@ -29,7 +31,9 @@ namespace NetSparkleUpdater.Events
         /// be downloaded.
         /// </summary>
         /// <param name="progressPercentage">the total download progress as an int (between 0-100)</param>
-        /// <param name="userState">the custom user state sent along with the download progress</param>
+        /// <param name="userState">the custom user state sent along with the download progress; 
+        /// in NetSparkleUpdater's case, usually the <seealso cref="IUpdateDownloader"/> performing 
+        /// the download operation</param>
         /// <param name="bytesReceived">the number of bytes received by the downloader</param>
         /// <param name="totalBytesToReceive">the total number of bytes that need to be downloadeds</param>
         public ItemDownloadProgressEventArgs(int progressPercentage, object? userState, long bytesReceived, long totalBytesToReceive) : base(progressPercentage, userState)

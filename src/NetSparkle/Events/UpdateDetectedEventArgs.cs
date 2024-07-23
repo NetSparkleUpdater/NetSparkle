@@ -1,3 +1,5 @@
+#nullable enable
+
 using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.Enums;
 using System;
@@ -29,5 +31,20 @@ namespace NetSparkleUpdater.Events
         /// All app cast items that were sent in the appcast
         /// </summary>
         public List<AppCastItem> AppCastItems { get; set; }
+
+        /// <summary>
+        /// Basic constructor for UpdateDetectedEventArgs
+        /// </summary>
+        /// <param name="action">Next update action for this update (e.g. show UI, perform unattended)</param>
+        /// <param name="config"><seealso cref="Configuration"/> for the current application</param>
+        /// <param name="item"><seealso cref="AppCastItem"/> that represents an update for the user</param>
+        /// <param name="items">All <seealso cref="AppCastItem"/> objects available.</param>
+        public UpdateDetectedEventArgs(NextUpdateAction action, Configuration config, AppCastItem item, List<AppCastItem> items)
+        {
+            NextAction = action;
+            ApplicationConfig = config;
+            LatestVersion = item;
+            AppCastItems = items;
+        }
     }
 }
