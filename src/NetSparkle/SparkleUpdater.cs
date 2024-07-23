@@ -1834,13 +1834,12 @@ namespace NetSparkleUpdater
                 // there's an update available!
                 LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
-                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
-                {
-                    NextAction = NextUpdateAction.ShowStandardUserInterface,
-                    ApplicationConfig = config,
-                    LatestVersion = updates[0],
-                    AppCastItems = updates
-                };
+                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs(
+                    NextUpdateAction.ShowStandardUserInterface,
+                    config,
+                    updates[0],
+                    updates
+                );
 
                 // UpdateDetected allows for catching and overriding the update handling,
                 // so if the user has implemented it, tell them there is an update and stop
@@ -2063,13 +2062,12 @@ namespace NetSparkleUpdater
                                 LogWriter.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version);
 
                                 // send notification if needed
-                                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs
-                                {
-                                    NextAction = NextUpdateAction.ShowStandardUserInterface,
-                                    ApplicationConfig = config,
-                                    LatestVersion = updates[0],
-                                    AppCastItems = updates
-                                };
+                                UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs(
+                                    NextUpdateAction.ShowStandardUserInterface,
+                                    config,
+                                    updates[0],
+                                    updates
+                                );
                                 UpdateDetected?.Invoke(this, ev);
                                 if (_cancelToken.IsCancellationRequested)
                                 {
