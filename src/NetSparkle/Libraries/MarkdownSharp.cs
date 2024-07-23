@@ -202,7 +202,7 @@ namespace MarkdownSharp
             {
                 AutoHyperlink = options.AutoHyperlink;
                 AutoNewLines = options.AutoNewlines;
-                if (!string.IsNullOrEmpty(options.EmptyElementSuffix))
+                if (!string.IsNullOrWhiteSpace(options.EmptyElementSuffix))
                     EmptyElementSuffix = options.EmptyElementSuffix;
                 LinkEmails = options.LinkEmails;
                 StrictBoldItalic = options.StrictBoldItalic;
@@ -333,7 +333,7 @@ namespace MarkdownSharp
         /// </remarks>
         public string Transform(string text)
         {
-            if (string.IsNullOrEmpty(text)) return "";
+            if (string.IsNullOrWhiteSpace(text)) return "";
 
             Setup();
 
@@ -914,7 +914,7 @@ namespace MarkdownSharp
 
             result = string.Format("<a href=\"{0}\"", url);
 
-            if (!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrWhiteSpace(title))
             {
                 title = AttributeEncode(title);
                 title = EscapeBoldItalic(title);

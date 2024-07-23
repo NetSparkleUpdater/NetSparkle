@@ -42,16 +42,16 @@ namespace NetSparkleUpdater
         /// <returns>DSA signature as base64 string</returns>
         public static string GetDSASignature(string fileToSignPath, string privateKeyFilePath)
         {
-            if (string.IsNullOrEmpty(fileToSignPath) || !File.Exists(fileToSignPath))
+            if (string.IsNullOrWhiteSpace(fileToSignPath) || !File.Exists(fileToSignPath))
             {
                 return null;
             }
-            if (string.IsNullOrEmpty(privateKeyFilePath) || !File.Exists(privateKeyFilePath))
+            if (string.IsNullOrWhiteSpace(privateKeyFilePath) || !File.Exists(privateKeyFilePath))
             {
                 return null;
             }
             var privateKey = File.ReadAllText(privateKeyFilePath);
-            if (!string.IsNullOrEmpty(privateKey))
+            if (!string.IsNullOrWhiteSpace(privateKey))
             {
                 DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider();
                 cryptoProvider.FromXmlString(privateKey);

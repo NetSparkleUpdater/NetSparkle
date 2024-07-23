@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Linq;
 using System.IO;
@@ -13,16 +15,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
     /// </summary>
     public class Ed25519Checker : ISignatureVerifier
     {
-        private Ed25519Signer _signer;
-
-        /// <summary>
-        /// Determines if a public key exists
-        /// </summary>
-        /// <returns><c>bool</c></returns>
-        public bool HasValidKeyInformation()
-        {
-            return _signer != null;
-        }
+        private Ed25519Signer? _signer;
 
         /// <summary>
         /// Create a Ed25519Checker object from the given parameters
@@ -33,16 +26,16 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <param name="publicKeyFile">the public key file</param>
         /// <param name="readFileBeingVerifiedInChunks">if true, reads the file this checker is verifying in chunks rather than all at once</param>
         /// <param name="chunkSize">if reading the file in chunks, size of chunks to read with. Defaults to 25 MB.</param>
-        public Ed25519Checker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_Ed25519.pub", 
-            bool readFileBeingVerifiedInChunks = false, int chunkSize = (1024*1024*25))
+        public Ed25519Checker(SecurityMode mode, string? publicKey = null, string? publicKeyFile = "NetSparkle_Ed25519.pub", 
+            bool readFileBeingVerifiedInChunks = false, int chunkSize = 1024*1024*25)
         {
             SecurityMode = mode;
             ReadFileBeingVerifiedInChunks = readFileBeingVerifiedInChunks;
             ChunkSize = chunkSize > 0 ? chunkSize : 1024 * 1024 * 25;
 
-            if (string.IsNullOrEmpty(publicKey))
+            if (publicKeyFile != null && string.IsNullOrWhiteSpace(publicKey))
             {
-                Stream data = TryGetResourceStream(publicKeyFile);
+                Stream? data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {
                     data = TryGetFileResource(publicKeyFile);
@@ -57,7 +50,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 }
             }
 
-            if (!string.IsNullOrEmpty(publicKey))
+            if (!string.IsNullOrWhiteSpace(publicKey))
             {
                 try
                 {
@@ -69,6 +62,15 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     _signer = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines if a public key exists
+        /// </summary>
+        /// <returns><c>bool</c></returns>
+        public bool HasValidKeyInformation()
+        {
+            return _signer != null;
         }
 
         /// <summary>
@@ -84,7 +86,6 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// </summary>
         public bool ReadFileBeingVerifiedInChunks { get; set; }
 
-        
         /// <summary>
         /// If reading file being verified in chunks, the size of the chunk.
         /// Defaults to 25 MB.
@@ -97,7 +98,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             {
                 case SecurityMode.UseIfPossible:
                     // if we have a DSA key, we only accept non-null signatures
-                    if (HasValidKeyInformation() && string.IsNullOrEmpty(signature))
+                    if (HasValidKeyInformation() && string.IsNullOrWhiteSpace(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
@@ -112,7 +113,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
 
                 case SecurityMode.Strict:
                     // only accept if we have both a public key and a non-null signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!HasValidKeyInformation() || string.IsNullOrWhiteSpace(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
@@ -123,7 +124,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     // always accept anything
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything due to a lack of public key/signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!HasValidKeyInformation() || string.IsNullOrWhiteSpace(signature))
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -133,7 +134,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 case SecurityMode.OnlyVerifySoftwareDownloads:
                     // If we don't have a signature, make sure to note this as "Unchecked" since we
                     // didn't end up checking anything due to a lack of public key/signature
-                    if (!HasValidKeyInformation() || string.IsNullOrEmpty(signature))
+                    if (!HasValidKeyInformation() || string.IsNullOrWhiteSpace(signature))
                     {
                         result = ValidationResult.Unchecked;
                         return false;
@@ -151,6 +152,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
             {
                 return res;
             }
+            if (_signer == null)
+            {
+                return res;
+            }
 
             byte[] signatureBytes = Convert.FromBase64String(signature);
             _signer.AddToBuffer(dataToVerify, 0, dataToVerify.Length);
@@ -164,6 +169,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
             {
                 ValidationResult res = ValidationResult.Invalid;
                 if (!CheckSecurityMode(signature, ref res))
+                {
+                    return res;
+                }
+                if (_signer == null)
                 {
                     return res;
                 }
@@ -212,9 +221,9 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// </summary>
         /// <param name="publicKey">the file name of the public key</param>
         /// <returns>the data stream of the file resource if the file exists; null otherwise</returns>
-        private static Stream TryGetFileResource(string publicKey)
+        private static Stream? TryGetFileResource(string publicKey)
         {
-            Stream data = null;
+            Stream? data = null;
             if (File.Exists(publicKey))
             {
                 data = File.OpenRead(publicKey);
@@ -225,11 +234,11 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <summary>
         /// Get a resource stream based on the public key
         /// </summary>
-        /// <param name="publicKey">the public key resource name</param>
+        /// <param name="publicKeyResourceName">the public key resource name</param>
         /// <returns>a stream that contains the public key if found; null otherwise</returns>
-        private static Stream TryGetResourceStream(string publicKey)
+        private static Stream? TryGetResourceStream(string publicKeyResourceName)
         {
-            Stream data = null;
+            Stream? data = null;
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 string[] resources;
@@ -241,8 +250,8 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 {
                     continue;
                 }
-                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
-                if (!string.IsNullOrEmpty(resourceName))
+                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKeyResourceName, StringComparison.OrdinalIgnoreCase) > -1);
+                if (!string.IsNullOrWhiteSpace(resourceName))
                 {
                     data = asm.GetManifestResourceStream(resourceName);
                     if (data != null)

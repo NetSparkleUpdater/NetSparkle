@@ -861,7 +861,7 @@ namespace NetSparkleUpdater
                     }
                 }
 
-                if (string.IsNullOrEmpty(filename))
+                if (string.IsNullOrWhiteSpace(filename))
                 {
                     // attempt to get download file name based on download link
                     try
@@ -874,9 +874,9 @@ namespace NetSparkleUpdater
                     }
                 }
 
-                if (!string.IsNullOrEmpty(filename))
+                if (!string.IsNullOrWhiteSpace(filename))
                 {
-                    string tmpPath = string.IsNullOrEmpty(TmpDownloadFilePath) ? Path.GetTempPath() : TmpDownloadFilePath;
+                    string tmpPath = string.IsNullOrWhiteSpace(TmpDownloadFilePath) ? Path.GetTempPath() : TmpDownloadFilePath;
 
                     // Creates all directories and subdirectories in the specific path unless they already exist.
                     Directory.CreateDirectory(tmpPath);
@@ -1468,7 +1468,7 @@ namespace NetSparkleUpdater
             try
             {
                 installerCmd = GetInstallerCommand(downloadFilePath);
-                if (!string.IsNullOrEmpty(CustomInstallerArguments))
+                if (!string.IsNullOrWhiteSpace(CustomInstallerArguments))
                 {
                     installerCmd += " " + CustomInstallerArguments;
                 }

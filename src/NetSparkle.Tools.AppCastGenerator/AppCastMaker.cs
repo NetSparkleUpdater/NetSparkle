@@ -132,7 +132,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                 }
 
-                tempSegment = string.IsNullOrEmpty(tempSegment) ? segment : segment + "." + tempSegment;
+                tempSegment = string.IsNullOrWhiteSpace(tempSegment) ? segment : segment + "." + tempSegment;
                 tempSegment = tempSegment.Trim('.');
 
                 if (ContainsValidVersionInfo(tempSegment))
@@ -151,7 +151,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         private static string FindVersionInfoInString(string str, bool removeTextFromLeft)
         {
             string lastValidVersion = null;
-            if (!string.IsNullOrEmpty(str))
+            if (!string.IsNullOrWhiteSpace(str))
             {
                 str = removeTextFromLeft ? RemoveTextBlockFromLeft(str) : RemoveTextBlockFromRight(str);
                 // Make sure part has a number

@@ -433,7 +433,7 @@ public bool DownloadAndParse()
         _logWriter.PrintMessage("Downloading app cast data...");
 
         var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-        if (!string.IsNullOrEmpty(appCast))
+        if (!string.IsNullOrWhiteSpace(appCast))
         {
             ParseAppCast(appCast);
             return true;

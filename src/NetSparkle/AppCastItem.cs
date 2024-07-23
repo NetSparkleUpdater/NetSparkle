@@ -233,7 +233,7 @@ namespace NetSparkleUpdater
             newAppCastItem.Version = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
             newAppCastItem.ShortVersion = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
             newAppCastItem.DownloadLink = enclosureElement?.Attribute(_urlAttribute)?.Value ?? string.Empty;
-            if (!string.IsNullOrEmpty(newAppCastItem.DownloadLink) && !newAppCastItem.DownloadLink.Contains("/"))
+            if (!string.IsNullOrWhiteSpace(newAppCastItem.DownloadLink) && !newAppCastItem.DownloadLink.Contains("/"))
             {
                 // Download link contains only the filename -> complete with _castUrl
                 newAppCastItem.DownloadLink = castUrl.Substring(0, castUrl.LastIndexOf('/') + 1) + newAppCastItem.DownloadLink;
@@ -309,17 +309,17 @@ namespace NetSparkleUpdater
 
             item.Add(new XElement(_titleNode) { Value = Title });
 
-            if (!string.IsNullOrEmpty(ReleaseNotesLink))
+            if (!string.IsNullOrWhiteSpace(ReleaseNotesLink))
             {
                 var releaseNotes = new XElement(XMLAppCast.SparkleNamespace + _releaseNotesLinkNode) { Value = ReleaseNotesLink };
-                if (!string.IsNullOrEmpty(ReleaseNotesSignature))
+                if (!string.IsNullOrWhiteSpace(ReleaseNotesSignature))
                 {
                     releaseNotes.Add(new XAttribute(XMLAppCast.SparkleNamespace + _signatureAttribute, ReleaseNotesSignature));
                 }
                 item.Add(releaseNotes);
             }
 
-            if (!string.IsNullOrEmpty(Description))
+            if (!string.IsNullOrWhiteSpace(Description))
             {
                 item.Add(new XElement(_descriptionNode) { Value = Description });
             }
@@ -329,13 +329,13 @@ namespace NetSparkleUpdater
                 item.Add(new XElement(_pubDateNode) { Value = PublicationDate.ToString("ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture) });
             }
 
-            if (!string.IsNullOrEmpty(DownloadLink))
+            if (!string.IsNullOrWhiteSpace(DownloadLink))
             {
                 var enclosure = new XElement(_enclosureNode);
                 enclosure.Add(new XAttribute(_urlAttribute, DownloadLink));
                 enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
 
-                if (!string.IsNullOrEmpty(ShortVersion))
+                if (!string.IsNullOrWhiteSpace(ShortVersion))
                 {
                     enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _shortVersionAttribute, ShortVersion));
                 }
@@ -353,7 +353,7 @@ namespace NetSparkleUpdater
                     item.Add(new XElement(XMLAppCast.SparkleNamespace + _criticalAttribute));
                 }
 
-                if (!string.IsNullOrEmpty(DownloadSignature))
+                if (!string.IsNullOrWhiteSpace(DownloadSignature))
                 {
                     enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _signatureAttribute, DownloadSignature));
                 }

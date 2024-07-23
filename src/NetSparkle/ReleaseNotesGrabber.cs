@@ -168,7 +168,7 @@ namespace NetSparkleUpdater
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
-            if (!string.IsNullOrEmpty(item.Description))
+            if (!string.IsNullOrWhiteSpace(item.Description))
             {
                 // check for markdown
                 var containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
@@ -193,7 +193,7 @@ namespace NetSparkleUpdater
             }
 
             // not embedded so try to release notes from the link
-            if (string.IsNullOrEmpty(item.ReleaseNotesLink))
+            if (string.IsNullOrWhiteSpace(item.ReleaseNotesLink))
             {
                 return null;
             }
@@ -202,13 +202,13 @@ namespace NetSparkleUpdater
             sparkle.LogWriter.PrintMessage("Downloading release notes for {0} at {1}", item.Version, item.ReleaseNotesLink);
             string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle);
             sparkle.LogWriter.PrintMessage("Done downloading release notes for {0}", item.Version);
-            if (string.IsNullOrEmpty(notes))
+            if (string.IsNullOrWhiteSpace(notes))
             {
                 return null;
             }
 
             // check dsa of release notes
-            if (!string.IsNullOrEmpty(item.ReleaseNotesSignature))
+            if (!string.IsNullOrWhiteSpace(item.ReleaseNotesSignature))
             {
                 if (ChecksReleaseNotesSignature &&
                     _sparkle.SignatureVerifier != null &&

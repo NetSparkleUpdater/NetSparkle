@@ -75,7 +75,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             try
             {
                 installerCmd = GetInstallerCommand(downloadFilePath);
-                if (!string.IsNullOrEmpty(CustomInstallerArguments))
+                if (!string.IsNullOrWhiteSpace(CustomInstallerArguments))
                 {
                     installerCmd += " " + CustomInstallerArguments;
                 }

@@ -1,5 +1,6 @@
+#nullable enable
+
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Reflection;
@@ -16,13 +17,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
     /// </summary>
     public class DSAChecker : ISignatureVerifier
     {
-        private DSACryptoServiceProvider _cryptoProvider;
-
-        /// <inheritdoc/>
-        public bool HasValidKeyInformation()
-        {
-            return _cryptoProvider != null;
-        }
+        private DSACryptoServiceProvider? _cryptoProvider;
 
         /// <summary>
         /// Create a DSAChecker object from the given parameters
@@ -31,15 +26,15 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// an app cast and its items.</param>
         /// <param name="publicKey">the DSA public key as a string (will be used instead of the file if available, non-null, and not blank)</param>
         /// <param name="publicKeyFile">the public key file name (including extension)</param>
-        public DSAChecker(SecurityMode mode, string publicKey = null, string publicKeyFile = "NetSparkle_DSA.pub")
+        public DSAChecker(SecurityMode mode, string? publicKey = null, string? publicKeyFile = "NetSparkle_DSA.pub")
         {
             SecurityMode = mode;
 
-            string key = publicKey;
+            string? key = publicKey;
 
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrWhiteSpace(key) && publicKeyFile != null)
             {
-                Stream data = TryGetResourceStream(publicKeyFile);
+                Stream? data = TryGetResourceStream(publicKeyFile);
                 if (data == null)
                 {
                     data = TryGetFileResource(publicKeyFile);
@@ -54,7 +49,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 }
             }
 
-            if (!string.IsNullOrEmpty(key))
+            if (!string.IsNullOrWhiteSpace(key))
             {
                 try
                 {
@@ -66,6 +61,12 @@ namespace NetSparkleUpdater.SignatureVerifiers
                     _cryptoProvider = null;
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public bool HasValidKeyInformation()
+        {
+            return _cryptoProvider != null;
         }
 
         /// <inheritdoc/>
@@ -133,6 +134,10 @@ namespace NetSparkleUpdater.SignatureVerifiers
             {
                 return res;
             }
+            if (_cryptoProvider == null)
+            {
+                return res;
+            }
 
             // convert signature
             byte[] bHash = Convert.FromBase64String(signature);
@@ -170,9 +175,9 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// </summary>
         /// <param name="publicKey">the file name of the public key</param>
         /// <returns>the data stream of the file resource if the file exists; null otherwise</returns>
-        private static Stream TryGetFileResource(string publicKey)
+        private static Stream? TryGetFileResource(string publicKey)
         {
-            Stream data = null;
+            Stream? data = null;
             if (File.Exists(publicKey))
             {
                 data = File.OpenRead(publicKey);
@@ -183,11 +188,11 @@ namespace NetSparkleUpdater.SignatureVerifiers
         /// <summary>
         /// Get a resource stream based on the public key
         /// </summary>
-        /// <param name="publicKey">the public key resource name</param>
+        /// <param name="publicKeyResourceName">the public key resource name</param>
         /// <returns>a stream that contains the public key if found; null otherwise</returns>
-        private static Stream TryGetResourceStream(string publicKey)
+        private static Stream? TryGetResourceStream(string publicKeyResourceName)
         {
-            Stream data = null;
+            Stream? data = null;
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 string[] resources;
@@ -199,8 +204,8 @@ namespace NetSparkleUpdater.SignatureVerifiers
                 {
                     continue;
                 }
-                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKey, StringComparison.OrdinalIgnoreCase) > -1);
-                if (!string.IsNullOrEmpty(resourceName))
+                var resourceName = resources.FirstOrDefault(s => s.IndexOf(publicKeyResourceName, StringComparison.OrdinalIgnoreCase) > -1);
+                if (!string.IsNullOrWhiteSpace(resourceName))
                 {
                     data = asm.GetManifestResourceStream(resourceName);
                     if (data != null)

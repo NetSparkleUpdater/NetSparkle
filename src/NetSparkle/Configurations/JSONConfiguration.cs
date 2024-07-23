@@ -111,7 +111,7 @@ namespace NetSparkleUpdater.Configurations
         /// information available</exception>
         public virtual string GetSavePath()
         {
-            if (!string.IsNullOrEmpty(_savePath))
+            if (!string.IsNullOrWhiteSpace(_savePath))
             {
                 return _savePath;
             }

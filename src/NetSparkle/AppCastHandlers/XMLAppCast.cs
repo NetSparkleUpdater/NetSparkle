@@ -321,7 +321,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
 
             // filter versions without signature if we need signatures. But accept version without downloads.
-            if (signatureNeeded && string.IsNullOrEmpty(item.DownloadSignature) && !string.IsNullOrEmpty(item.DownloadLink))
+            if (signatureNeeded && string.IsNullOrWhiteSpace(item.DownloadSignature) && !string.IsNullOrWhiteSpace(item.DownloadLink))
             {
                 _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
                     "the item has no signature yet has a download link of {3}", item.Version,
