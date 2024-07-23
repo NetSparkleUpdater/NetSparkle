@@ -96,16 +96,20 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
             return await Task.Run(() => Path.GetFileName(item.DownloadLink));
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri uri, string downloadFilePath)
+        public async void StartFileDownload(Uri? uri, string downloadFilePath)
         {
-            var path = UseLocalUriPath ? uri.LocalPath : uri.AbsolutePath;
-            await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
+            var path = UseLocalUriPath ? uri?.LocalPath : uri?.AbsolutePath;
+            if (path != null)
+            {
+                _logger?.PrintMessage("LocalFileDownloader: null uri sent to StartFileDownload; no file downloaded");
+                await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
+            }
         }
 
         // https://stackoverflow.com/a/36925751/3938401 and
