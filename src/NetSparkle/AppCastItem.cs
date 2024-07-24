@@ -398,7 +398,7 @@ namespace NetSparkleUpdater
                 return 1;
             }
             if ((string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version)) ||
-                (Version != null && !Version.Contains('.')) || (other.Version != null && !other.Version.Contains('.')))
+                (Version != null && !Version.Contains(".")) || (other.Version != null && !other.Version.Contains(".")))
             {
                 return 0;
             }
