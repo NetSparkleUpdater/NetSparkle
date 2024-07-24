@@ -9,33 +9,44 @@ using System.Xml.Linq;
 namespace NetSparkleUpdater
 {
     /// <summary>
-    /// Item from a Sparkle AppCast file
+    /// Item from a Sparkle app cast file with information
+    /// about the download, release notes, etc.
     /// </summary>
     [Serializable]
     public class AppCastItem : IComparable<AppCastItem>
     {
-        private SemVerLike _semVerLikeCache;
-        private string _version;
+        private SemVerLike? _semVerLikeCache;
+        private string? _version;
+
+        /// <summary>
+        /// Default constructor for an app cast item
+        /// </summary>
+        public AppCastItem()
+        {
+            MIMEType = _defaultType;
+        }
 
         /// <summary>
         /// The application name
         /// </summary>
-        public string AppName { get; set; }
+        public string? AppName { get; set; }
         /// <summary>
         /// The installed version
         /// </summary>
-        public string AppVersionInstalled { get; set; }
+        public string? AppVersionInstalled { get; set; }
         /// <summary>
         /// The item title
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
         /// <summary>
-        /// The available version
+        /// The available version -- this technically can be null if file parsing fails, 
+        /// but since NetSparkleUpdater runs off of version information, doing this is
+        /// not a great way to use this library.
         /// </summary>
-        public string Version 
+        public string? Version 
         { 
             get => _version; 
-            set { _semVerLikeCache = null; _version = value;} 
+            set { _semVerLikeCache = null; _version = value; } 
         }
         /// <summary>
         /// The available version as a SemVerLike object (handles things like 1.2-alpha1)
@@ -54,27 +65,27 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Shortened version
         /// </summary>
-        public string ShortVersion { get; set; }
+        public string? ShortVersion { get; set; }
         /// <summary>
         /// The release notes link
         /// </summary>
-        public string ReleaseNotesLink { get; set; }
+        public string? ReleaseNotesLink { get; set; }
         /// <summary>
         /// The signature of the Release Notes file
         /// </summary>
-        public string ReleaseNotesSignature { get; set; }
+        public string? ReleaseNotesSignature { get; set; }
         /// <summary>
         /// The embedded description
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
         /// <summary>
         /// The download link
         /// </summary>
-        public string DownloadLink { get; set; }
+        public string? DownloadLink { get; set; }
         /// <summary>
         /// The signature of the download file
         /// </summary>
-        public string DownloadSignature { get; set; }
+        public string? DownloadSignature { get; set; }
         /// <summary>
         /// Date item was published
         /// </summary>
@@ -91,7 +102,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Operating system that this update applies to
         /// </summary>
-        public string OperatingSystemString { get; set; }
+        public string? OperatingSystemString { get; set; }
 
         /// <summary>
         /// True if this update is a windows update; false otherwise.
@@ -197,7 +208,6 @@ namespace NetSparkleUpdater
         /// <returns>AppCastItem from Xml Node</returns>
         public static AppCastItem Parse(string? installedVersion, string? applicationName, string? castUrl, XElement item, ILogger? logWriter)
         {
-
             var newAppCastItem = new AppCastItem()
             {
                 AppVersionInstalled = installedVersion,
@@ -236,7 +246,14 @@ namespace NetSparkleUpdater
             if (!string.IsNullOrWhiteSpace(newAppCastItem.DownloadLink) && !newAppCastItem.DownloadLink.Contains("/"))
             {
                 // Download link contains only the filename -> complete with _castUrl
-                newAppCastItem.DownloadLink = castUrl.Substring(0, castUrl.LastIndexOf('/') + 1) + newAppCastItem.DownloadLink;
+                if (castUrl == null)
+                {
+                    newAppCastItem.DownloadLink = newAppCastItem.DownloadLink;
+                }
+                else
+                {
+                    newAppCastItem.DownloadLink = castUrl.Substring(0, castUrl.LastIndexOf('/') + 1) + newAppCastItem.DownloadLink;
+                }
             }
 
             newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
@@ -307,7 +324,7 @@ namespace NetSparkleUpdater
         {
             var item = new XElement(_itemNode);
 
-            item.Add(new XElement(_titleNode) { Value = Title });
+            item.Add(new XElement(_titleNode) { Value = Title ?? "" });
 
             if (!string.IsNullOrWhiteSpace(ReleaseNotesLink))
             {
@@ -333,7 +350,10 @@ namespace NetSparkleUpdater
             {
                 var enclosure = new XElement(_enclosureNode);
                 enclosure.Add(new XAttribute(_urlAttribute, DownloadLink));
-                enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
+                if (Version != null)
+                {
+                    enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
+                }
 
                 if (!string.IsNullOrWhiteSpace(ShortVersion))
                 {
@@ -371,9 +391,14 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="other">the other instance</param>
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
-        public int CompareTo(AppCastItem other)
+        public int CompareTo(AppCastItem? other)
         {
-            if (!Version.Contains(".") || !other.Version.Contains("."))
+            if (other == null)
+            {
+                return 1;
+            }
+            if ((string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version)) ||
+                (Version != null && !Version.Contains('.')) || (other.Version != null && !other.Version.Contains('.')))
             {
                 return 0;
             }
@@ -383,13 +408,18 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// See if this this <see cref="AppCastItem"/> version equals the version of another <see cref="AppCastItem"/>.
+        /// See if this this <see cref="AppCastItem"/> version equals the 
+        /// version of another <see cref="AppCastItem"/>.
         /// Also checks to make sure the application names match.
         /// </summary>
         /// <param name="obj">the instance to compare to</param>
         /// <returns></returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
+            if (obj == null)
+            {
+                return false;
+            }
             if (!(obj is AppCastItem item))
             {
                 return false;
@@ -398,7 +428,7 @@ namespace NetSparkleUpdater
             {
                 return true;
             }
-            return AppName.Equals(item.AppName) && CompareTo(item) == 0;
+            return AppName != null && AppName.Equals(item.AppName) && CompareTo(item) == 0;
         }
 
         /// <summary>
@@ -407,7 +437,7 @@ namespace NetSparkleUpdater
         /// <returns>the integer haschode of this app cast item</returns>
         public override int GetHashCode()
         {
-            return Version.GetHashCode() * 17 + AppName.GetHashCode();
+            return (Version?.GetHashCode() ?? 0) * 17 + (AppName?.GetHashCode() ?? 0);
         }
 
         /// <summary>
@@ -416,7 +446,7 @@ namespace NetSparkleUpdater
         /// <param name="left">first <see cref="AppCastItem"/> to compare</param>
         /// <param name="right">second <see cref="AppCastItem"/> to compare</param>
         /// <returns>True if items are the same; false otherwise</returns>
-        public static bool operator ==(AppCastItem left, AppCastItem right)
+        public static bool operator ==(AppCastItem? left, AppCastItem? right)
         {
             if (left is null)
             {

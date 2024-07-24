@@ -69,8 +69,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// Create new instance of SemVerLike
         /// </summary>
-        /// <param name="version"></param>
-        /// <param name="allSuffixes"></param>
+        /// <param name="version">Version of software (if null, constructor sets to empty string)</param>
+        /// <param name="allSuffixes">Suffixes of version, e.g. "-beta-1" (if null, constructor sets to empty string)</param>
         public SemVerLike(string? version, string? allSuffixes)
         {
             Version = version ?? "";
@@ -82,10 +82,10 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         /// <param name="version">Version representation</param>
         /// <returns>A valid SemVerLike instance anyway</returns>
-        public static SemVerLike Parse(string version)
+        public static SemVerLike Parse(string? version)
         {
-            int mark = version.IndexOfAny(new char[] { '-', '+', });
-            if (mark == -1)
+            int mark = version?.IndexOfAny(new char[] { '-', '+', }) ?? -1;
+            if (string.IsNullOrWhiteSpace(version) || mark == -1)
             {
                 return new SemVerLike(version, "");
             }

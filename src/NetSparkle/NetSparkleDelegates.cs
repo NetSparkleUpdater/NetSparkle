@@ -1,11 +1,10 @@
-﻿using NetSparkleUpdater.Enums;
+﻿#nullable enable
+
+using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Events;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -98,9 +97,9 @@ namespace NetSparkleUpdater
     /// A delegate for a download error that occurred for some reason
     /// </summary>
     /// <param name="item">The item that is being downloaded</param>
-    /// <param name="path">The path to the place where the file was being downloaded</param>
+    /// <param name="path">The path to the place where the file was being downloaded (null if not available for some reason)</param>
     /// <param name="exception">The <seealso cref="Exception"/> that occurred to cause the error</param>
-    public delegate void DownloadErrorEvent(AppCastItem item, string path, Exception exception);
+    public delegate void DownloadErrorEvent(AppCastItem item, string? path, Exception exception);
 
     /// <summary>
     /// A delegate for a handling redirects from one URL to another URL manually
@@ -126,5 +125,5 @@ namespace NetSparkleUpdater
     /// <param name="failureReason"><seealso cref="InstallUpdateFailureReason"/> reason for failure</param>
     /// <param name="installPath">Path for installer (can be null)</param>
     /// <returns></returns>
-    public delegate bool InstallUpdateFailure(InstallUpdateFailureReason failureReason, string installPath);
+    public delegate bool InstallUpdateFailure(InstallUpdateFailureReason failureReason, string? installPath);
 }
