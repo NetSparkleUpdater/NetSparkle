@@ -60,6 +60,7 @@
 * Avalonia UI now uses `CompiledBinding`
 * Fixed `JSONConfiguration` not using correct default last config/check update time
 * Added `nullability` compatibility to core and UI libraries (#595)
+  * Base language version is now 8.0, but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 
 ## Updating from 0.X or 1.X to 2.X
 

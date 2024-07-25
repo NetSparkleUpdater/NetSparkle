@@ -200,7 +200,7 @@ namespace MarkdownSharp
             {
                 AutoHyperlink = options.AutoHyperlink;
                 AutoNewLines = options.AutoNewlines;
-                if (!string.IsNullOrWhiteSpace(options.EmptyElementSuffix))
+                if (options.EmptyElementSuffix != null && !string.IsNullOrWhiteSpace(options.EmptyElementSuffix))
                     EmptyElementSuffix = options.EmptyElementSuffix;
                 LinkEmails = options.LinkEmails;
                 StrictBoldItalic = options.StrictBoldItalic;
@@ -1031,7 +1031,7 @@ namespace MarkdownSharp
             altText = EscapeImageAltText(AttributeEncode(altText));
             url = AttributeSafeUrl(url);
             var result = string.Format("<img src=\"{0}\" alt=\"{1}\"", url, altText);
-            if (!string.IsNullOrWhiteSpace(title))
+            if (title != null && !string.IsNullOrWhiteSpace(title))
             {
                 title = AttributeEncode(EscapeBoldItalic(title));
                 result += string.Format(" title=\"{0}\"", title);

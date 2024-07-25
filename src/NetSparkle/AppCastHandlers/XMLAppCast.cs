@@ -111,7 +111,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public virtual bool DownloadAndParse()
         {
             CheckSetupCalled();
-            if (string.IsNullOrWhiteSpace(_castUrl))
+            if (_castUrl == null || string.IsNullOrWhiteSpace(_castUrl))
             {
                 _logWriter?.PrintMessage("Warning: DownloadAndParse called with no app cast URL set; did you forget to call SetupAppCastHandler()?");
                 return false;
@@ -320,7 +320,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
                     "the item has no signature yet has a download link of {3}", item.Version ?? "[Unknown version]",
-                    item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink);
+                    item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.SignatureIsMissing;
             }
 

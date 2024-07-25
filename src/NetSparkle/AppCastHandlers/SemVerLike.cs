@@ -89,7 +89,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
             else
             {
-                return new SemVerLike(version.Substring(0, mark), version.Substring(mark));
+                return new SemVerLike(version?.Substring(0, mark), version?.Substring(mark));
             }
         }
 

@@ -97,7 +97,7 @@ namespace NetSparkleUpdater
         public ReleaseNotesGrabber(string? releaseNotesTemplate, string? htmlHeadAddition, SparkleUpdater sparkle)
         {
             DateFormat = "D";
-            if (string.IsNullOrWhiteSpace(htmlHeadAddition))
+            if (htmlHeadAddition == null || string.IsNullOrWhiteSpace(htmlHeadAddition))
             {
                 htmlHeadAddition = @"
                 <style>
@@ -109,7 +109,7 @@ namespace NetSparkleUpdater
                     ul { margin-top: 2px; margin-bottom: 2px; }
                 </style>";
             }
-            if (string.IsNullOrWhiteSpace(releaseNotesTemplate))
+            if (releaseNotesTemplate == null || string.IsNullOrWhiteSpace(releaseNotesTemplate))
             {
                 releaseNotesTemplate =
                     "<div style=\"border: #ccc 1px solid;\">" +
@@ -202,7 +202,7 @@ namespace NetSparkleUpdater
                     {
                         item.Description = "*" + criticalUpdate + "*" + "\n\n" + item.Description;
                     }
-                    var temp = md.Transform(item.Description);
+                    var temp = md.Transform(item.Description ?? "");
                     return temp;
                 }
             }
@@ -214,8 +214,10 @@ namespace NetSparkleUpdater
             }
 
             // download release notes
-            _logger?.PrintMessage("Downloading release notes for {0} at {1}", item.Version ?? "[Unknown version]", item.ReleaseNotesLink);
-            string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle);
+            _logger?.PrintMessage("Downloading release notes for {0} at {1}", item.Version ?? "[Unknown version]", item.ReleaseNotesLink ?? "[Unknown release notes link]");
+            string notes = item.ReleaseNotesLink != null 
+                ? await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle)
+                : "";
             _logger?.PrintMessage("Done downloading release notes for {0}", item.Version ?? "[Unknown version]");
             if (string.IsNullOrWhiteSpace(notes))
             {
@@ -230,7 +232,7 @@ namespace NetSparkleUpdater
                     _sparkle.SignatureVerifier != null &&
                     Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, 
                         _sparkle.SignatureVerifier.HasValidKeyInformation(), false) &&
-                    _sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature, notes) == ValidationResult.Invalid)
+                    _sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature ?? "", notes) == ValidationResult.Invalid)
                 {
                     return null;
                 }
