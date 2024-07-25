@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using NetSparkleUpdater.Enums;
+﻿using NetSparkleUpdater.Enums;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;

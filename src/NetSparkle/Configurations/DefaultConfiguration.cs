@@ -1,5 +1,3 @@
-#nullable enable
-
 using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUpdater.Configurations

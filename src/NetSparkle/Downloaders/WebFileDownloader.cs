@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using NetSparkleUpdater.Events;
+﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.ComponentModel;

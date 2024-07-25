@@ -1,5 +1,3 @@
-#nullable enable
-
 using NetSparkleUpdater.Configurations;
 using System.Text.Json.Serialization;
 

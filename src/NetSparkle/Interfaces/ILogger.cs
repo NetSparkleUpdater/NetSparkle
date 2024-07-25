@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace NetSparkleUpdater.Interfaces
+﻿namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for objects that can handle log information output

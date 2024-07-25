@@ -1,5 +1,3 @@
-#nullable enable
-
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
 using System;

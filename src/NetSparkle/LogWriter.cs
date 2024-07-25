@@ -1,5 +1,3 @@
-#nullable enable
-
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using System;
