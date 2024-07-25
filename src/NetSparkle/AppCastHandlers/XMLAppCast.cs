@@ -217,7 +217,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     {
                         var currentItem = AppCastItem.Parse(_config?.InstalledVersion, _config?.ApplicationName, _castUrl, item, _logWriter);
                         _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
-                            currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystemString);
+                            currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystemString ?? "[Unknown operating system]");
                         Items.Add(currentItem);
                     }
                 }
@@ -250,20 +250,17 @@ namespace NetSparkleUpdater.AppCastHandlers
             // operating system
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version,
-                    item.ShortVersion, item.Title);
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version,
-                    item.ShortVersion, item.Title);
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS update and we're on macOS", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version,
-                    item.ShortVersion, item.Title);
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux update and we're on Linux", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
 #endif
@@ -312,8 +309,8 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     _logWriter?.PrintMessage(
                         "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
-                        item.Version,
-                        item.ShortVersion, item.Title, installed);
+                        item.Version ?? "[Unknown version]",
+                        item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", installed);
                     return FilterItemResult.VersionIsOlderThanCurrent;
                 }
             }
@@ -322,8 +319,8 @@ namespace NetSparkleUpdater.AppCastHandlers
             if (signatureNeeded && string.IsNullOrWhiteSpace(item.DownloadSignature) && !string.IsNullOrWhiteSpace(item.DownloadLink))
             {
                 _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
-                    "the item has no signature yet has a download link of {3}", item.Version,
-                    item.ShortVersion, item.Title, item.DownloadLink);
+                    "the item has no signature yet has a download link of {3}", item.Version ?? "[Unknown version]",
+                    item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink);
                 return FilterItemResult.SignatureIsMissing;
             }
 
@@ -364,8 +361,8 @@ namespace NetSparkleUpdater.AppCastHandlers
                 if (FilterAppCastItem(installed, shouldFilterOutSmallerVersions, signatureNeeded, item) == FilterItemResult.Valid)
                 {
                     // accept all valid items
-                    _logWriter?.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version,
-                        item.ShortVersion, item.DownloadLink);
+                    _logWriter?.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                    // TODO: should we reject items with no Version or DownloadLink here?
                     return true;
                 }
                 return false;

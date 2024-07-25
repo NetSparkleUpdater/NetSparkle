@@ -63,19 +63,22 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 }
             }
 
-            // read the attributes            
-            foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
+            // read the attributes          
+            if (assembly != null)
             {
-                var attribute = CreateAttribute(data);
-                if (attribute != null)
+                foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
                 {
-                    _assemblyAttributes.Add(attribute);
+                    var attribute = CreateAttribute(data);
+                    if (attribute != null)
+                    {
+                        _assemblyAttributes.Add(attribute);
+                    }
                 }
-            }
+            }  
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
             {
-                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly.FullName);                                    
+                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly?.FullName ?? "[Unable to get assembly name]");
             }
         }
 

@@ -294,6 +294,10 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
+            if (item.DownloadLink == null)
+            {
+                return null;
+            }
             return await RetrieveDestinationFileNameAsyncForUri(new Uri(item.DownloadLink));
         }
     }

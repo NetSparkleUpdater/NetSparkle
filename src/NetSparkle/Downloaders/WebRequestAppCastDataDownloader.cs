@@ -128,6 +128,11 @@ namespace NetSparkleUpdater.Downloaders
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
                         {
                             var redirectURI = response.Headers.Location;
+                            if (redirectURI == null)
+                            {
+                                _logger?.PrintMessage("Response had a redirect status code but no location header; this is an error state as we do not know where to redirect this request to");
+                                return "";
+                            }
                             if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
                             {
                                 return await DownloadAndGetAppCastDataAsync(redirectURI.ToString()).ConfigureAwait(false);

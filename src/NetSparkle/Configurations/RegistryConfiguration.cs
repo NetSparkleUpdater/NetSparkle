@@ -140,7 +140,7 @@ namespace NetSparkleUpdater.Configurations
                 return false;
             }
 #endif
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
             {
                 SaveDidRunOnceAsTrue(regPath);

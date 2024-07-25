@@ -119,11 +119,7 @@ namespace NetSparkleUpdater
             SignatureVerifier = signatureVerifier;
             LogWriter = new LogWriter();
             // Syncronization Context
-            _syncContext = SynchronizationContext.Current;
-            if (_syncContext == null)
-            {
-                _syncContext = new SynchronizationContext();
-            }
+            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
             // init UI
             UIFactory?.Init(this);
             _appReferenceAssembly = null;
@@ -320,7 +316,11 @@ namespace NetSparkleUpdater
 #if NETCORE
                 try
                 {
-                    return Path.GetFileName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                    var mainModule = Process.GetCurrentProcess().MainModule;
+                    if (mainModule != null)
+                    {
+                        return Path.GetFileName(mainModule.FileName);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -718,7 +718,7 @@ namespace NetSparkleUpdater
             }
             catch (Exception e)
             {
-                LogWriter?.PrintMessage("Couldn't read/parse the app cast: {0}; {1}", e.Message, e.StackTrace);
+                LogWriter?.PrintMessage("Couldn't read/parse the app cast: {0}; {1}", e.Message, e.StackTrace ?? "[No stack trace available]");
                 updates = null;
             }
 
@@ -940,7 +940,7 @@ namespace NetSparkleUpdater
                 }
                 catch (Exception exc)
                 {
-                    LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                    LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace ?? "[No stack trace available]");
                     result = ValidationResult.Invalid;
                 }
                 if (result == ValidationResult.Valid)
@@ -1153,7 +1153,7 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="sender">the object that initiated this event call</param>
         /// <param name="e">information on if the download was successful.</param>
-        private void OnDownloadFinished(object sender, AsyncCompletedEventArgs e)
+        private void OnDownloadFinished(object? sender, AsyncCompletedEventArgs e)
         {
             bool shouldShowUIItems = !IsDownloadingSilently();
 
@@ -1259,7 +1259,7 @@ namespace NetSparkleUpdater
                     }
                     catch (Exception exc)
                     {
-                        LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                        LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace ?? "[No stack trace available]");
                         validationRes = ValidationResult.Invalid;
                         CallFuncConsideringUIThreads(() =>
                         {
@@ -1338,7 +1338,7 @@ namespace NetSparkleUpdater
                     }
                     catch (Exception exc)
                     {
-                        LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace);
+                        LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace ?? "[No stack trace available]");
                         result = ValidationResult.Invalid;
                         DownloadedFileThrewWhileCheckingSignature?.Invoke(item, path);
                     }
@@ -1846,7 +1846,7 @@ namespace NetSparkleUpdater
             return updateData; // in this case, we've already shown UI talking about the new version
         }
 
-        private void CheckingForUpdatesWindow_Closing(object sender, EventArgs e)
+        private void CheckingForUpdatesWindow_Closing(object? sender, EventArgs e)
         {
             if (CheckingForUpdatesWindow != null)
             {
@@ -2243,7 +2243,11 @@ namespace NetSparkleUpdater
                     UpdatesHaveBeenDownloaded(e.UserState as List<AppCastItem>);
                     break;
                 case 0:
-                    LogWriter?.PrintMessage(e.UserState.ToString());
+                    var state = e.UserState?.ToString();
+                    if (state != null)
+                    {
+                        LogWriter?.PrintMessage(state);
+                    }
                     break;
             }
         }
