@@ -62,7 +62,9 @@ namespace NetSparkleUpdater
     public delegate Task CloseApplicationAsync();
 
     /// <summary>
-    /// A delegate for download events (start, canceled).
+    /// A delegate for download events (start, canceled). Make sure to check that the path is valid
+    /// in case this is called when the path is unknown/unset for some reason (e.g. failed before 
+    /// download began).
     /// </summary>
     public delegate void DownloadEvent(AppCastItem item, string path);
 

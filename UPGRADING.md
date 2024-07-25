@@ -32,6 +32,7 @@
   * The default print mode for `LogWriter` is still `Trace` by default, as it was in prior versions.
   * By default, timestamps are now output along with the `Tag` and actual log item
 * `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`. Please migrate saved configuration data yourself if you need to do so for your users (probably not necessary).
+* `ShowUpdateNeededUI` no longer shows an update window if the number of update items is 0. (Arguably a bug fix, but technically a breaking change.)
 
 **Changes/Fixes**
 

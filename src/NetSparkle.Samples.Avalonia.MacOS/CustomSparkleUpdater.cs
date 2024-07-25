@@ -89,7 +89,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             // generate the batch file                
             LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
 
-            string processID = Process.GetCurrentProcess().Id.ToString();
+            string processID = Environment.ProcessId.ToString();
             string relaunchAfterUpdate = "";
             if (RelaunchAfterUpdate)
             {
