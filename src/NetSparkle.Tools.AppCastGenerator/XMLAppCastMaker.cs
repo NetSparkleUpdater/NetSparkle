@@ -38,7 +38,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
             Console.WriteLine("Parsing existing app cast at {0}...", appCastFileName);
             var items = new List<AppCastItem>();
-            string productName = null;
+            string? productName = null;
             try
             {
                 if (!File.Exists(appCastFileName))
@@ -62,7 +62,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     {
                         var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
                         Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                            currentItem?.Version, currentItem?.ShortVersion, currentItem.OperatingSystemString);
+                            currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystemString);
                         var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
                         if (itemFound == null)
                         {
@@ -85,16 +85,30 @@ namespace NetSparkleUpdater.AppCastGenerator
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading previous app cast: {e.Message}. Not using it for any items...", Color.Red);
-                return (new List<AppCastItem>(), null);
+                return (new List<AppCastItem>(), "");
             }
-            items.Sort((a, b) => b.Version.CompareTo(a.Version));
-            return (items, productName);
+            items.Sort((a, b) => {
+                if (a.Version == null && b.Version == null)
+                {
+                    return 0;
+                }
+                if (a.Version != null && b.Version == null)
+                {
+                    return -1;
+                }
+                if (a.Version == null && b.Version != null)
+                {
+                    return 1;
+                }
+                return b.Version?.CompareTo(a.Version) ?? 0;
+            });
+            return (items, productName ?? "");
         }
 
         /// <inheritdoc/>
         public override void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
         {
-            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink, _opts.AppCastDescription);
+            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink ?? "", _opts.AppCastDescription ?? "");
             Console.WriteLine("Writing app cast to {0}", path);
             using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings 
                 {

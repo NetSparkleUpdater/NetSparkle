@@ -1,20 +1,11 @@
-﻿using NetSparkleUpdater;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Xml;
-using NetSparkleUpdater.AppCastHandlers;
-using System.Text;
 using CommandLine;
-using System.Text.RegularExpressions;
 using System.Linq;
 using Console = Colorful.Console;
 using System.Drawing;
 using NetSparkleUpdater.AppCastGenerator;
-using System.Web;
-using System.ComponentModel;
-using System.Xml.Linq;
 
 namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
@@ -23,9 +14,9 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
         static void Main(string[] args)
         {
             // By default, if no args given, print help
-            if (args.Count() == 0)
+            if (args.Length == 0)
             {
-                args = new string[] { "--help" };
+                args = ["--help"];
             }
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(Run)
@@ -54,10 +45,20 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                     Console.WriteLine("Error: You must first generate keys before trying to export them!", Color.Red);
                     return;
                 }
+                var privateKey = signatureManager.GetPrivateKey();
+                var publicKey = signatureManager.GetPublicKey();
+                if (privateKey == null)
+                {
+                    Console.WriteLine("Error: Could not load private key!", Color.Red);
+                }
+                if (publicKey == null)
+                {
+                    Console.WriteLine("Error: Could not load public key!", Color.Red);
+                }
                 Console.WriteLine("Private Key:");
-                Console.WriteLine(Convert.ToBase64String(signatureManager.GetPrivateKey()));
+                Console.WriteLine(Convert.ToBase64String(privateKey ?? []));
                 Console.WriteLine("Public Key:");
-                Console.WriteLine(Convert.ToBase64String(signatureManager.GetPublicKey()));
+                Console.WriteLine(Convert.ToBase64String(publicKey ?? []));
                 return;
             }
 
@@ -95,7 +96,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.BinaryToVerify != null)
             {
-                var result = signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature);
+                var result = signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature ?? "");
 
                 if (result)
                 {
@@ -111,18 +112,23 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             // actually create the app cast
             var generator = new XMLAppCastMaker(signatureManager, opts);
-            var appCastFileName = generator.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+            var appCastFileName = generator.GetPathToAppCastOutput(opts.OutputDirectory ?? ".", opts.SourceBinaryDirectory ?? ".");
             var outputDirName = Path.GetDirectoryName(appCastFileName);
+            if (outputDirName == null || string.IsNullOrWhiteSpace(outputDirName))
+            {
+                Console.WriteLine("Output directory name is null/whitespace", Color.Red);
+                return;
+            }
             if (!Directory.Exists(outputDirName))
             {
                 Console.WriteLine("Creating {0}", outputDirName);
                 Directory.CreateDirectory(outputDirName);
             }
-            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory ?? ".", opts.ReparseExistingAppCast, appCastFileName);
             if (items != null)
             {
-                generator.SerializeItemsToFile(items, productName, appCastFileName);
-                generator.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension);
+                generator.SerializeItemsToFile(items, productName ?? "", appCastFileName);
+                generator.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "");
             }
         }
 

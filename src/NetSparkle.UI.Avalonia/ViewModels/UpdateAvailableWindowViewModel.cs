@@ -2,10 +2,8 @@
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.UI.Avalonia.Helpers;
 using NetSparkleUpdater.UI.Avalonia.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Input;
 

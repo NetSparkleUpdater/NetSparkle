@@ -1,13 +1,5 @@
-﻿using NetSparkleUpdater.Enums;
-using NetSparkleUpdater.UI.WPF.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows.Input;
+﻿using NetSparkleUpdater.UI.WPF.Interfaces;
 using NetSparkleUpdater.UI.WPF.Helpers;
-using NetSparkleUpdater.AppCastHandlers;
 
 namespace NetSparkleUpdater.UI.WPF.ViewModels
 {

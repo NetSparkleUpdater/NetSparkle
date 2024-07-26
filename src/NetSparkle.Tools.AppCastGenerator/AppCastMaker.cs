@@ -109,7 +109,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return input;
         }
 
-        private static string SplitOnPeriodsAndFindVersion(string part)
+        private static string? SplitOnPeriodsAndFindVersion(string part)
         {
             // Start splitting and going from left to right.
             // Keep record of last applicable version and check one more segment after it.
@@ -117,7 +117,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             var segments = part.Split('.');
             string tempSegment = "";
             bool lastVersionToCheck = false;
-            string lastValidVersionLeft = null;
+            string? lastValidVersionLeft = null;
             for (int i = segments.Length - 1; i >= 0; i--)
             {
                 var segment = segments[i];
@@ -148,9 +148,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             return lastValidVersionLeft;
         }
 
-        private static string FindVersionInfoInString(string str, bool removeTextFromLeft)
+        private static string? FindVersionInfoInString(string str, bool removeTextFromLeft)
         {
-            string lastValidVersion = null;
+            string? lastValidVersion = null;
             if (!string.IsNullOrWhiteSpace(str))
             {
                 str = removeTextFromLeft ? RemoveTextBlockFromLeft(str) : RemoveTextBlockFromRight(str);
@@ -183,7 +183,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return lastValidVersion;
         }
 
-        public static string GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "", IEnumerable<string> extensions = null)
+        public static string? GetVersionFromName(string fullFileNameWithPath, string binaryDirectory = "", IEnumerable<string>? extensions = null)
         {
             // File name is empty
             if (string.IsNullOrWhiteSpace(fullFileNameWithPath))
@@ -250,8 +250,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                 string leftPart = parts[0];
                 string rightPart = parts.Length > 1 ? parts[^1] : parts[0];
 
-                string lastValidVersionLeft = FindVersionInfoInString(leftPart, removeTextFromLeft: true);
-                string lastValidVersionRight = FindVersionInfoInString(rightPart, removeTextFromLeft: false);
+                string? lastValidVersionLeft = FindVersionInfoInString(leftPart, removeTextFromLeft: true);
+                string? lastValidVersionRight = FindVersionInfoInString(rightPart, removeTextFromLeft: false);
 
                 // Right part is preferred over left part
                 if (lastValidVersionRight != null)
@@ -266,7 +266,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return null;
         }
 
-        public static string GetVersionFromAssembly(string fullFileNameWithPath)
+        public static string? GetVersionFromAssembly(string fullFileNameWithPath)
         {
             return FileVersionInfo.GetVersionInfo(fullFileNameWithPath).ProductVersion?.Trim();
         }
@@ -294,13 +294,13 @@ namespace NetSparkleUpdater.AppCastGenerator
             return extensionsStringForSearch.SelectMany(search => Directory.GetFiles(binaryDirectory, search, searchOption));
         }
 
-        public string GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory, IEnumerable<string> extensions = null)
+        public string? GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory, IEnumerable<string>? extensions = null)
         {
             if (binaryDirectory == ".")
             {
                 binaryDirectory = Environment.CurrentDirectory;
             }
-            string productVersion = useFileNameForVersion 
+            string? productVersion = useFileNameForVersion 
                 ? GetVersionFromName(binaryFileInfo.FullName, Path.GetFullPath(binaryDirectory), extensions) 
                 : GetVersionFromAssembly(binaryFileInfo.FullName);
             if (productVersion == null)
@@ -317,7 +317,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string productName, SemVerLike productVersion, bool useChangelogs, string changelogFileNamePrefix)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string? productName, SemVerLike productVersion, bool useChangelogs, string? changelogFileNamePrefix)
         {
             var fullProductVersionString = productVersion.ToString();
             var itemTitle = string.IsNullOrWhiteSpace(productName) 
@@ -339,30 +339,36 @@ namespace NetSparkleUpdater.AppCastGenerator
             var remoteUpdateFile = $"{urlToUse}{urlEncodedFileName}";
 
             // changelog stuff
-            var changelogFileName = fullProductVersionString + ".md";
-            var changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
-            var hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
-            if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
+            var hasChangelogForFile = false;
+            var changelogPath = ".";
+            var changelogFileName = "";
+            if (_opts.ChangeLogPath != null && !string.IsNullOrWhiteSpace(_opts.ChangeLogPath))
             {
-                changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + " " + changelogFileName);
-                hasChangelogForFile = File.Exists(changelogPath);
-                if (!hasChangelogForFile)
+                changelogFileName = fullProductVersionString + ".md";
+                changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
+                hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
+                if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
                 {
-                    // make one more effort if user doesn't want the space in there
-                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + " " + changelogFileName);
                     hasChangelogForFile = File.Exists(changelogPath);
+                    if (!hasChangelogForFile)
+                    {
+                        // make one more effort if user doesn't want the space in there
+                        changelogPath = Path.Combine(_opts.ChangeLogPath, changelogFileNamePrefix.Trim() + changelogFileName);
+                        hasChangelogForFile = File.Exists(changelogPath);
+                    }
                 }
-            }
-            // make an additional effort to find the changelog file if they didn't use the file name prefix and used their app's name instead.
-            if (useChangelogs && !hasChangelogForFile)
-            {
-                changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + " " + changelogFileName);
-                hasChangelogForFile = File.Exists(changelogPath);
-                if (!hasChangelogForFile)
+                // make an additional effort to find the changelog file if they didn't use the file name prefix and used their app's name instead.
+                if (useChangelogs && !hasChangelogForFile)
                 {
-                    // make one more last, last ditch effort if user doesn't want the space in there
-                    changelogPath = Path.Combine(_opts.ChangeLogPath, productName.Trim() + changelogFileName);
+                    changelogPath = Path.Combine(_opts.ChangeLogPath, productName?.Trim() + " " + changelogFileName);
                     hasChangelogForFile = File.Exists(changelogPath);
+                    if (!hasChangelogForFile)
+                    {
+                        // make one more last, last ditch effort if user doesn't want the space in there
+                        changelogPath = Path.Combine(_opts.ChangeLogPath, productName?.Trim() + changelogFileName);
+                        hasChangelogForFile = File.Exists(changelogPath);
+                    }
                 }
             }
             var changelogSignature = "";
@@ -398,7 +404,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 if (!string.IsNullOrWhiteSpace(_opts.ChangeLogUrl))
                 {
                     item.ReleaseNotesSignature = changelogSignature;
-                    item.ReleaseNotesLink = (Path.Combine(_opts.ChangeLogUrl, changelogFileName)).Trim();
+                    item.ReleaseNotesLink = Path.Combine(_opts.ChangeLogUrl, changelogFileName).Trim();
                 }
                 else
                 {
@@ -430,7 +436,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="sourceBinaryDirectory"></param>
         /// <returns>items, product name</returns>
-        public (List<AppCastItem>, string) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName)
+        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName)
         {
             var items = new List<AppCastItem>();
             var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? "");
@@ -441,7 +447,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                 return (null, null);
             }
 
-            if (!_operatingSystems.Any(_opts.OperatingSystem.Contains))
+            if (_opts.OperatingSystem != null && !string.IsNullOrWhiteSpace(_opts.OperatingSystem) && 
+                !_operatingSystems.Any(_opts.OperatingSystem.Contains))
             {
                 Console.WriteLine($"Invalid operating system: {_opts.OperatingSystem}", Color.Red);
                 Console.WriteLine($"Valid options are: {0}", string.Join(", ", _operatingSystems));
@@ -472,7 +479,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
-                    string productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory, GetExtensionsFromString(_opts.Extensions));
+                    string? productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory ?? ".", GetExtensionsFromString(_opts.Extensions ?? ""));
 
                     if (!string.IsNullOrWhiteSpace(productVersion))
                     {
@@ -504,7 +511,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName, semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
                         if (item != null)
                         {
                             items.Add(item);
@@ -551,7 +558,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <param name="appCastFileName"></param>
         /// <param name="signatureFileExtension"></param>
         /// <returns>true if signature file written; false otherwise</returns>
-        public bool CreateSignatureFile(string appCastFileName, string signatureFileExtension)
+        public bool CreateSignatureFile(string appCastFileName, string? signatureFileExtension)
         {
             if (_signatureManager.KeysExist())
             {
@@ -560,7 +567,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 var signatureFileName = appCastFileName + "." + extension;
                 var signature = _signatureManager.GetSignatureForFile(appcastFile);
 
-                var result = _signatureManager.VerifySignature(appcastFile, signature);
+                var result = _signatureManager.VerifySignature(appcastFile, signature ?? "");
                 if (result)
                 {
                     File.WriteAllText(signatureFileName, signature);
