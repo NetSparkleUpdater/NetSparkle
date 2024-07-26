@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -22,11 +21,10 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// </summary>
     public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
     {
-        private UpdateAvailableWindowViewModel _dataContext;
-        private RowDefinition _releaseNotesRow;
-        private ScrollViewer _htmlLabelContainer;
-
-        private HtmlLabel _htmlLabel;
+        private UpdateAvailableWindowViewModel? _dataContext;
+        private RowDefinition? _releaseNotesRow;
+        private ScrollViewer? _htmlLabelContainer;
+        private HtmlLabel? _htmlLabel;
         private bool _wasResponseSent = false;
 
         /// <summary>
@@ -48,7 +46,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <param name="viewModel">View model with info on the updates that are available
         /// to the user</param>
         /// <param name="iconBitmap">Bitmap to use for the app's logo/graphic</param>
-        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, Bitmap iconBitmap) : base(true)
+        public UpdateAvailableWindow(UpdateAvailableWindowViewModel viewModel, Bitmap? iconBitmap) : base(true)
         {
             this.InitializeComponent();
             InitViews();
@@ -69,7 +67,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         private void InitViews()
         {
             var grid = this.FindControl<Grid>("MainGrid");
-            _releaseNotesRow = grid.RowDefinitions[2];
+            _releaseNotesRow = grid?.RowDefinitions[2];
             _htmlLabel = this.FindControl<HtmlLabel>("ChangeNotesHTMLLabel");
             _htmlLabelContainer = this.FindControl<ScrollViewer>("ChangeNotesScrollViewer");
             //_htmlLabel.SetValue(HtmlLabel.AutoSizeHeightOnlyProperty, true); // throws on 0.10.0 for some reason?
@@ -88,7 +86,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             }
         }
 
-        private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void UpdateAvailableWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             UserRespondedToUpdateCheck(UpdateAvailableResult.None); // just in case
             Closing -= UpdateAvailableWindow_Closing;
@@ -103,14 +101,17 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// </summary>
         public AppCastItem CurrentItem
         {
-            get { return _dataContext?.Updates?.FirstOrDefault(); }
+            // I don't really like the creating of a new app cast item, but we'll revisit
+            // some of this when we refactor the UI stuff, so it's OK for now. Not really used
+            // anywhere in our lib, anyway.
+            get { return _dataContext?.Updates?.FirstOrDefault() ?? new AppCastItem(); }
         }
 
         /// <summary>
         /// An event that informs its listeners how the user responded to the
         /// software update request
         /// </summary>
-        public event UserRespondedToUpdate UserResponded;
+        public event UserRespondedToUpdate? UserResponded;
 
         void IUpdateAvailable.BringToFront()
         {
@@ -130,8 +131,14 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 _dataContext.AreReleaseNotesVisible = false;
             }
-            _releaseNotesRow.Height = new GridLength(0);
-            _htmlLabelContainer.IsVisible = false;
+            if (_releaseNotesRow != null)
+            {
+                _releaseNotesRow.Height = new GridLength(0);
+            }
+            if (_htmlLabelContainer != null)
+            {
+                _htmlLabelContainer.IsVisible = false;
+            }
             Height = 225;
         }
 
@@ -175,10 +182,13 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// <param name="htmlNotes">The HTML notes to show to the end user</param>
         public void ShowReleaseNotes(string htmlNotes)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            if (_htmlLabel != null)
             {
-                _htmlLabel.Text = htmlNotes;
-            });
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _htmlLabel.Text = htmlNotes;
+                });
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
     /// </summary>
     public class DownloadProgressWindowViewModel : ChangeNotifier
     {
-        private AppCastItem _itemToDownload;
+        private AppCastItem? _itemToDownload;
 
         private bool _isDownloading;
         private bool _didDownloadAnything;
@@ -38,9 +38,11 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             IsDownloading = true;
             DidDownloadAnything = false;
-            ErrorMessageText = "";
+            _errorMessageText = "";
             IsErrorMessageVisible = false;
             _downloadingTitle = "";
+            _userReadableDownloadProgress = "";
+            _actionButtonTitle = "Install";
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = false;
         }
@@ -50,7 +52,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// Setting this property changes the <see cref="DownloadingTitle"/>
         /// property
         /// </summary>
-        public AppCastItem ItemToDownload
+        public AppCastItem? ItemToDownload
         {
             get => _itemToDownload;
             set 
@@ -58,7 +60,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 _itemToDownload = value;
                 NotifyPropertyChanged();
 
-                if (value != null)
+                if (_itemToDownload != null)
                 {
                     DownloadingTitle = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
                 }

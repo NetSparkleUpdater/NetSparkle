@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetSparkleUpdater.UI.Avalonia.Helpers;
-using NetSparkleUpdater.UI.Avalonia.Interfaces;
+﻿using NetSparkleUpdater.UI.Avalonia.Helpers;
 
 namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
@@ -18,7 +14,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// </summary>
         public MessageNotificationWindowViewModel()
         {
-            Message = "";
+            _message = "";
         }
 
         /// <summary>
@@ -27,7 +23,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <param name="message">the message to show the user</param>
         public MessageNotificationWindowViewModel(string message)
         {
-            Message = message;
+            _message = message;
         }
 
         /// <summary>

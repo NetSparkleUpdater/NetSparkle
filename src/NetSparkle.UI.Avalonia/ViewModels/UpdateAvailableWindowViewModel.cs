@@ -16,14 +16,13 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
     /// </summary>
     public class UpdateAvailableWindowViewModel : ChangeNotifier
     {
-        private SparkleUpdater _sparkle;
         private List<AppCastItem> _updates;
 
-        private CancellationToken _cancellationToken;
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken? _cancellationToken;
+        private CancellationTokenSource? _cancellationTokenSource;
 
-        private string _titleHeaderText;
-        private string _infoText;
+        private string? _titleHeaderText;
+        private string? _infoText;
 
         private bool _isRemindMeLaterEnabled;
         private bool _isSkipEnabled;
@@ -84,18 +83,18 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <summary>
         /// Interface object for the object that will be displaying the release notes
         /// </summary>
-        public IReleaseNotesDisplayer ReleaseNotesDisplayer { get; set; }
+        public IReleaseNotesDisplayer? ReleaseNotesDisplayer { get; set; }
 
         /// <summary>
         /// Interface object for the object that can handle user responses to the update that
         /// is being shown to the user
         /// </summary>
-        public IUserRespondedToUpdateCheck UserRespondedHandler { get; set; }
+        public IUserRespondedToUpdateCheck? UserRespondedHandler { get; set; }
 
         /// <summary>
         /// Object responsible for downloading and formatting markdown release notes for display in HTML
         /// </summary>
-        public ReleaseNotesGrabber ReleaseNotesGrabber { get; set; }
+        public ReleaseNotesGrabber? ReleaseNotesGrabber { get; set; }
 
         /// <summary>
         /// Header text to show to the user. Usually something along the lines of
@@ -103,7 +102,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// </summary>
         public string TitleHeaderText
         {
-            get => _titleHeaderText;
+            get => _titleHeaderText ?? "";
             set { _titleHeaderText = value; NotifyPropertyChanged(); }
         }
 
@@ -113,7 +112,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// </summary>
         public string InfoText
         {
-            get => _infoText;
+            get => _infoText ?? "";
             set { _infoText = value; NotifyPropertyChanged(); }
         }
 
@@ -235,7 +234,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
             string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
         {
-            _sparkle = sparkle;
             _updates = items;
             if (ReleaseNotesGrabber == null)
             {
@@ -254,7 +252,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 };
             }
 
-            AppCastItem item = items.FirstOrDefault();
+            AppCastItem? item = items.FirstOrDefault();
 
             // TODO: string translations
             TitleHeaderText = string.Format("A new version of {0} is available.", item?.AppName ?? "the application");
@@ -294,8 +292,13 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 
         private async void LoadReleaseNotes(List<AppCastItem> items)
         {
-            AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
-            string releaseNotes = await ReleaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
+            AppCastItem? latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
+            string releaseNotes = ReleaseNotesGrabber != null 
+                ? await ReleaseNotesGrabber.DownloadAllReleaseNotes(
+                    items, 
+                    latestVersion ?? new AppCastItem(), 
+                    _cancellationToken ?? new CancellationTokenSource().Token) 
+                : "";
             ReleaseNotesDisplayer?.ShowReleaseNotes(releaseNotes);
         }
 
