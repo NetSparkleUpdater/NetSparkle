@@ -34,7 +34,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         }
 
         /// <inheritdoc/>
-        public override (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast)
+        public override (List<AppCastItem>, string?) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast)
         {
             Console.WriteLine("Parsing existing app cast at {0}...", appCastFileName);
             var items = new List<AppCastItem>();
@@ -85,7 +85,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading previous app cast: {e.Message}. Not using it for any items...", Color.Red);
-                return (new List<AppCastItem>(), "");
+                return (new List<AppCastItem>(), null);
             }
             items.Sort((a, b) => {
                 if (a.Version == null && b.Version == null)
@@ -102,7 +102,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 }
                 return b.Version?.CompareTo(a.Version) ?? 0;
             });
-            return (items, productName ?? "");
+            return (items, productName);
         }
 
         /// <inheritdoc/>

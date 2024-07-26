@@ -50,7 +50,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// overwrite the already found item with the newly found one</param>
         /// <returns>Tuple of items and the product name (product name can be null if file does not exist or file 
         /// does not contain a product name)</returns>
-        public abstract (List<AppCastItem>, string) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
+        public abstract (List<AppCastItem>, string?) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
 
         // Function to check if a segment is a valid version
         private static bool ContainsValidVersionInfo(string segment)
