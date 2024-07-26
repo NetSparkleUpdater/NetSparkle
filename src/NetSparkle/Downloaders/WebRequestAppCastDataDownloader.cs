@@ -1,5 +1,3 @@
-#nullable enable 
-
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;
