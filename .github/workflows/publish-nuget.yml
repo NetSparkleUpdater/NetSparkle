@@ -170,7 +170,7 @@ jobs:
           INCLUDE_SYMBOLS: true
 
       - name: Build NetSparkle.UI.WinForms.NetFramework in Release
-        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net462 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+        run: msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /t:Restore /p:OutputPath=../../nuget/winformsnetframework/lib/net462 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
 
       - name: Setup NetSparkleUpdater.UI.WinForms.NetFramework folder
         run: |
