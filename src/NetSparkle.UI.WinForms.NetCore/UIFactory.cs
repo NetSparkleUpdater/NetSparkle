@@ -18,7 +18,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Icon used on various windows shown by NetSparkleUpdater
         /// </summary>
-        protected Icon _applicationIcon = null;
+        protected Icon? _applicationIcon = null;
 
         /// <inheritdoc/>
         public UIFactory()
@@ -29,7 +29,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public UIFactory(Icon applicationIcon) : this()
+        public UIFactory(Icon? applicationIcon) : this()
         {
             _applicationIcon = applicationIcon;
         }
@@ -44,10 +44,10 @@ namespace NetSparkleUpdater.UI.WinForms
         public bool HideRemindMeLaterButton { get; set; }
 
         /// <inheritdoc/>
-        public string ReleaseNotesHTMLTemplate { get; set; }
+        public string? ReleaseNotesHTMLTemplate { get; set; }
 
         /// <inheritdoc/>
-        public string AdditionalReleaseNotesHeaderHTML { get; set; }
+        public string? AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <summary>
         /// The DateTime.ToString() format used when formatting dates to show in the release notes
@@ -66,7 +66,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Use this if you want to easily override the ReleaseNotesGrabber with your own subclass.
         /// </para>
         /// </summary>
-        public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
+        public ReleaseNotesGrabber? ReleaseNotesGrabberOverride { get; set; } = null;
 
         /// <summary>
         /// A delegate for handling forms that are created by a <see cref="UIFactory"/>
@@ -79,13 +79,13 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Set this property to manually do any other setup on a <see cref="Form"/> after it has been created by the <see cref="UIFactory"/>.
         /// Can be used to tweak styles or perform other operations on the <see cref="Form"/>, etc.
         /// </summary>
-        public FormHandler ProcessFormAfterInit { get; set; }
+        public FormHandler? ProcessFormAfterInit { get; set; }
 
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded,
-                ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
+                ReleaseNotesHTMLTemplate ?? "", AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat ?? "D");
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
@@ -154,7 +154,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
@@ -166,7 +166,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
+        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler)
         {
             Thread thread = new Thread(() =>
             {
@@ -184,7 +184,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string appcastUrl)
+        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }

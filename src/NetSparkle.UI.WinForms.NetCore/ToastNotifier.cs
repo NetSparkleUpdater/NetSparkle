@@ -21,7 +21,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// constructor
         /// </summary>
-        public ToastNotifier(Icon applicationIcon = null)
+        public ToastNotifier(Icon? applicationIcon = null)
         {
             InitializeComponent();
             // We want our window to be the top most
@@ -49,15 +49,15 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Action to perform when the user clicks on the toast window
         /// </summary>
-        public Action<List<AppCastItem>> ClickAction { get; set; }
+        public Action<List<AppCastItem>>? ClickAction { get; set; }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> updates that the user is being
         /// notified about in the toast message
         /// </summary>
-        public List<AppCastItem> Updates { get; set; }
+        public List<AppCastItem>? Updates { get; set; }
 
-        private void PauseTimerTick(object sender, EventArgs e)
+        private void PauseTimerTick(object? sender, EventArgs e)
         {
             _pauseTimer.Stop();
             _goDownTimer.Start();
@@ -69,20 +69,20 @@ namespace NetSparkleUpdater.UI.WinForms
         protected override void OnLoad(EventArgs e)
         {
             // Move window out of screen
-            startPosX = Screen.PrimaryScreen.WorkingArea.Width - Width;
-            startPosY = Screen.PrimaryScreen.WorkingArea.Height;
+            startPosX = Screen.PrimaryScreen?.WorkingArea.Width - Width ?? 0;
+            startPosY = Screen.PrimaryScreen?.WorkingArea.Height ?? 0;
             SetDesktopLocation(startPosX, startPosY);
             base.OnLoad(e);
             // Begin animation
             _goUpTimer.Start();
         }
 
-        void GoUpTimerTick(object sender, EventArgs e)
+        void GoUpTimerTick(object? sender, EventArgs e)
         {
             //Lift window by 5 pixels
             startPosY -= 5;
             //If window is fully visible stop the timer
-            if (startPosY < Screen.PrimaryScreen.WorkingArea.Height - Height)
+            if (startPosY < Screen.PrimaryScreen?.WorkingArea.Height - Height)
             {
                 _goUpTimer.Stop();
                 _pauseTimer.Start();
@@ -93,12 +93,12 @@ namespace NetSparkleUpdater.UI.WinForms
             }
         }
 
-        private void GoDownTimerTick(object sender, EventArgs e)
+        private void GoDownTimerTick(object? sender, EventArgs e)
         {
             //Lower window by 5 pixels
             startPosY += 5;
             //If window is fully visible stop the timer
-            if (startPosY > Screen.PrimaryScreen.WorkingArea.Height)
+            if (startPosY > Screen.PrimaryScreen?.WorkingArea.Height)
             {
                 _goDownTimer.Stop();
                 Close();
@@ -109,10 +109,10 @@ namespace NetSparkleUpdater.UI.WinForms
             }
         }
 
-        private void ToastNotifier_Click(object sender, EventArgs e)
+        private void ToastNotifier_Click(object? sender, EventArgs? e)
         {
             DialogResult = DialogResult.Yes;
-            ClickAction?.Invoke(Updates);
+            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
             Close();
         }
 
@@ -130,7 +130,7 @@ namespace NetSparkleUpdater.UI.WinForms
             Show();
         }
 
-        private void callToAction_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void callToAction_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
             this.ToastNotifier_Click(null, null);
         }

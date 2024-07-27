@@ -29,7 +29,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="title">Window title</param>
         /// <param name="message">Message</param>
         /// <param name="applicationIcon">Your application Icon</param>
-        public MessageNotificationWindow(string title, string message, Icon applicationIcon = null)
+        public MessageNotificationWindow(string title, string message, Icon? applicationIcon = null)
         {
             InitializeComponent();
             Text = title;

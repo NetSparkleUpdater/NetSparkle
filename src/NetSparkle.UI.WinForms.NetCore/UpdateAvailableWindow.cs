@@ -18,7 +18,7 @@ namespace NetSparkleUpdater.UI.WinForms
     {
         private readonly SparkleUpdater _sparkle;
         private readonly List<AppCastItem> _updates;
-        private System.Windows.Forms.Timer _ensureDialogShownTimer;
+        private System.Windows.Forms.Timer? _ensureDialogShownTimer;
         private string _releaseNotesHTMLTemplate;
         private string _additionalReleaseNotesHeaderHTML;
         private string _releaseNotesDateFormat;
@@ -26,8 +26,8 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Template for HTML code drawing release notes separator. {0} used for version number, {1} for publication date
         /// </summary>
-        private CancellationToken _cancellationToken;
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken? _cancellationToken;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         private bool _didSendResponse = false;
 
@@ -36,12 +36,12 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Event fired when the user has responded to the 
         /// skip, later, install question.
         /// </summary>
-        public event UserRespondedToUpdate UserResponded;
+        public event UserRespondedToUpdate? UserResponded;
 
         /// <summary>
         /// Object responsible for downloading and formatting markdown release notes for display in HTML
         /// </summary>
-        public ReleaseNotesGrabber ReleaseNotesGrabber { get; set; }
+        public ReleaseNotesGrabber? ReleaseNotesGrabber { get; set; }
 
         /// <summary>
         /// Form constructor for showing release notes.
@@ -53,7 +53,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="releaseNotesHTMLTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="additionalReleaseNotesHeaderHTML">Additional text they will inserted into HTML Head. For Stylesheets.</param>
         /// <param name="releaseNotesDateFormat">Date format for release notes</param>
-        public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
+        public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon? applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
             string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
         {
             _sparkle = sparkle;
@@ -72,10 +72,10 @@ namespace NetSparkleUpdater.UI.WinForms
             }
             catch (Exception ex)
             {
-                _sparkle.LogWriter.PrintMessage("Error in browser init: {0}", ex.Message);
+                _sparkle.LogWriter?.PrintMessage("Error in browser init: {0}", ex.Message);
             }
 
-            AppCastItem item = items.FirstOrDefault();
+            AppCastItem? item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.AppName : "the application");
@@ -143,19 +143,24 @@ namespace NetSparkleUpdater.UI.WinForms
 
         private async void LoadReleaseNotes(List<AppCastItem> items)
         {
-            AppCastItem latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
-            string releaseNotes = await ReleaseNotesGrabber.DownloadAllReleaseNotes(items, latestVersion, _cancellationToken);
+            AppCastItem? latestVersion = items.OrderByDescending(p => p.Version).FirstOrDefault();
+            string releaseNotes = ReleaseNotesGrabber != null
+                ? await ReleaseNotesGrabber.DownloadAllReleaseNotes(
+                    items,
+                    latestVersion ?? new AppCastItem(),
+                    _cancellationToken ?? new CancellationTokenSource().Token)
+                : "";
             ReleaseNotesBrowser.Invoke((MethodInvoker)delegate
             {
                 // see https://stackoverflow.com/a/15209861/3938401
                 ReleaseNotesBrowser.Navigate("about:blank");
-                ReleaseNotesBrowser.Document.OpenNew(true);
-                ReleaseNotesBrowser.Document.Write(releaseNotes);
+                ReleaseNotesBrowser.Document?.OpenNew(true);
+                ReleaseNotesBrowser.Document?.Write(releaseNotes);
                 ReleaseNotesBrowser.DocumentText = releaseNotes;
             });
         }
 
-        private void UpdateAvailableWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void UpdateAvailableWindow_FormClosing(object? sender, FormClosingEventArgs e)
         {
             if (!_didSendResponse)
             {
@@ -177,7 +182,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public AppCastItem CurrentItem
         {
-            get { return _updates.Count > 0 ? _updates[0] : null; }
+            get { return _updates.Count > 0 ? _updates[0] : new AppCastItem(); }
         }
 
         /// <summary>
@@ -247,7 +252,7 @@ namespace NetSparkleUpdater.UI.WinForms
 
             // remove the no more needed controls            
             label3.Parent.Controls.Remove(label3);
-            ReleaseNotesBrowser.Parent.Controls.Remove(ReleaseNotesBrowser);
+            ReleaseNotesBrowser.Parent?.Controls.Remove(ReleaseNotesBrowser);
 
             // resize the window
             /*this.MinimumSize = newSize;
@@ -318,14 +323,17 @@ namespace NetSparkleUpdater.UI.WinForms
             _ensureDialogShownTimer.Start();
         }
 
-        private void EnsureDialogeShown_tick(object sender, EventArgs e)
+        private void EnsureDialogeShown_tick(object? sender, EventArgs e)
         {
             // http://stackoverflow.com/a/4831839/3938401 for activating/bringing to front code
             Activate();
             TopMost = true;  // important
             TopMost = false; // important
             Focus();         // important
-            _ensureDialogShownTimer.Enabled = false;
+            if (_ensureDialogShownTimer != null)
+            {
+                _ensureDialogShownTimer.Enabled = false;
+            }
             _ensureDialogShownTimer = null;
         }
 
