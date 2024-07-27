@@ -36,11 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.HandleEventsYourself", "src\NetSparkle.Samples.HandleEventsYourself\NetSparkle.Samples.HandleEventsYourself.csproj", "{DD69D6C4-B732-458E-BE2D-6B5059342315}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Xamarin", "src\NetSparkle.Xamarin\NetSparkle.Xamarin.csproj", "{0E23D858-2A2D-4D60-AC01-B420D079D9C8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tests.AppCastGenerator", "src\NetSparkle.Tests.AppCastGenerator\NetSparkle.Tests.AppCastGenerator.csproj", "{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{79C02DF2-6AE7-42AB-8274-56C87A280408}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia.MacOS", "src\NetSparkle.Samples.Avalonia.MacOS\NetSparkle.Samples.Avalonia.MacOS.csproj", "{FD76C04C-3E89-4422-A818-4BD80E7AEAA7}"
 EndProject
@@ -361,26 +357,6 @@ Global
 		{DD69D6C4-B732-458E-BE2D-6B5059342315}.Release|x64.Build.0 = Release|Any CPU
 		{DD69D6C4-B732-458E-BE2D-6B5059342315}.Release|x86.ActiveCfg = Release|Any CPU
 		{DD69D6C4-B732-458E-BE2D-6B5059342315}.Release|x86.Build.0 = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|ARM.Build.0 = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|x64.Build.0 = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Debug|x86.Build.0 = Debug|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|ARM.ActiveCfg = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|ARM.Build.0 = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|x64.ActiveCfg = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|x64.Build.0 = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|x86.ActiveCfg = Release|Any CPU
-		{0E23D858-2A2D-4D60-AC01-B420D079D9C8}.Release|x86.Build.0 = Release|Any CPU
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E4DB54B-E9E8-48FF-AD10-6F3609A63B82}.Debug|ARM.ActiveCfg = Debug|Any CPU
