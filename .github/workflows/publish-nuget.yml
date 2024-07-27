@@ -177,6 +177,7 @@ jobs:
           del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.dll
           del ${{ github.workspace }}/nuget\winformsnetframework\lib\net462\NetSparkle.pdb
           copy ${{ github.workspace }}/LICENSE.md ${{ github.workspace }}/nuget\winformsnetframework\LICENSE.md
+          copy ${{ github.workspace }}/README.md ${{ github.workspace }}/nuget\winformsnetframework\README.md
           copy ${{ github.workspace }}/src\NetSparkle\ArtWork\software-update-available.png ${{ github.workspace }}/nuget\winformsnetframework\software-update-available.png
           
       - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework
