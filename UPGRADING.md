@@ -8,6 +8,7 @@
 * The built-in Avalonia UI now runs on version 11 of Avalonia (6a9a6426324e357daf0f9991d7a981b19a009b93, a0a7314317e9fc712270f75f31c6442a2d454da3, 46de3e9c9525cac4026a7959e44764752cdf36ee, `avalonia-preview` branch)
 * Bumped minimum version of .NET Framework from 4.5.2 to 4.6.2 (57fa9ad2597ec6615894464b8f2ccef881dda52b) as 4.5.2 is EOL per https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
 * Removed `Newtonsoft.Json` dependency for .NET Framework build and use `System.Text.Json` (57fa9ad2597ec6615894464b8f2ccef881dda52b)
+* `System.Text.Json` is only explicitly included for `netstandard2.0` and `net462` as otherwise the framework already includes it (#601)
 * .NET Framework `ReleaseNotesGrabber` uses an `HttpClient` instead of a `WebClient` for downloading (31523e95b50f00fab3fb3e043dea7d32227d5862)
 * `WebClientFileDownloader` renamed to `WebFileDownloader` to better reflect functionality (e85235f512f4344c9a675e56e9a4d50434c33959)
 * Changed `net6` to `net6.0` to be consistent with newer versions
@@ -33,6 +34,7 @@
   * By default, timestamps are now output along with the `Tag` and actual log item
 * `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`. Please migrate saved configuration data yourself if you need to do so for your users (probably not necessary).
 * `ShowUpdateNeededUI` no longer shows an update window if the number of update items is 0. (Arguably a bug fix, but technically a breaking change.)
+
 
 **Changes/Fixes**
 

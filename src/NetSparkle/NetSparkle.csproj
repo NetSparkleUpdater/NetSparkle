@@ -95,9 +95,11 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net462'">
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.1" />
   </ItemGroup>
   <ItemGroup>
