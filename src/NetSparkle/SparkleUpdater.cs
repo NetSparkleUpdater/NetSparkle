@@ -319,7 +319,11 @@ namespace NetSparkleUpdater
                     var mainModule = Process.GetCurrentProcess().MainModule;
                     if (mainModule != null)
                     {
-                        return Path.GetFileName(mainModule.FileName);
+                        var path = Path.GetFileName(mainModule.FileName);
+                        if (path != null && !string.IsNullOrWhiteSpace(path))
+                        {
+                            return path;
+                        }
                     }
                 }
                 catch (Exception e)
