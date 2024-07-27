@@ -241,8 +241,8 @@ namespace NetSparkleUpdater.AppCastHandlers
             // don't allow non-windows updates
             if (!item.IsWindowsUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version, 
-                    item.ShortVersion, item.Title);
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version ?? "[Unknown version]", 
+                    item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
 #else
