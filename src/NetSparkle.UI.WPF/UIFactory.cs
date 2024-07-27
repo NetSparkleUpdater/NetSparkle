@@ -18,7 +18,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// <summary>
         /// Icon used on various windows shown by NetSparkleUpdater
         /// </summary>
-        protected ImageSource _applicationIcon = null;
+        protected ImageSource? _applicationIcon = null;
 
         /// <summary>
         /// Create a new UIFactory for WPF applications
@@ -31,7 +31,8 @@ namespace NetSparkleUpdater.UI.WPF
             ReleaseNotesHTMLTemplate = "";
             AdditionalReleaseNotesHeaderHTML = "";
             UseStaticUpdateWindowBackgroundColor = true;
-            UpdateWindowGridBackgroundBrush = (System.Windows.Media.Brush)new BrushConverter().ConvertFrom("#EEEEEE");
+            UpdateWindowGridBackgroundBrush = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#EEEEEE")
+                ?? new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 0, 0)));
             UpdateWindowGridBackgroundBrush.Freeze();
         }
 
@@ -56,10 +57,10 @@ namespace NetSparkleUpdater.UI.WPF
         public bool HideRemindMeLaterButton { get; set; }
 
         /// <inheritdoc/>
-        public string ReleaseNotesHTMLTemplate { get; set; }
+        public string? ReleaseNotesHTMLTemplate { get; set; }
 
         /// <inheritdoc/>
-        public string AdditionalReleaseNotesHeaderHTML { get; set; }
+        public string? AdditionalReleaseNotesHeaderHTML { get; set; }
 
         /// <summary>
         /// The DateTime.ToString() format used when formatting dates to show in the release notes
@@ -78,7 +79,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// Use this if you want to easily override the ReleaseNotesGrabber with your own subclass.
         /// </para>
         /// </summary>
-        public ReleaseNotesGrabber ReleaseNotesGrabberOverride { get; set; } = null;
+        public ReleaseNotesGrabber? ReleaseNotesGrabberOverride { get; set; } = null;
 
         /// <summary>
         /// Whether or not a hardcoded window background color is set on the updates window.
@@ -102,7 +103,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// Set this property to manually do any other setup on a <see cref="Window"/> after it has been created by the <see cref="UIFactory"/>.
         /// Can be used to tweak view models, change styles on the <see cref="Window"/>, etc.
         /// </summary>
-        public WindowHandler ProcessWindowAfterInit { get; set; }
+        public WindowHandler? ProcessWindowAfterInit { get; set; }
 
         /// <inheritdoc/>
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
@@ -132,7 +133,8 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate, AdditionalReleaseNotesHeaderHTML, ReleaseNotesDateTimeFormat);
+            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "", 
+                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat);
             ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
@@ -186,7 +188,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
@@ -198,7 +200,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>> clickHandler)
+        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler)
         {
             Thread thread = new Thread(() =>
             {
@@ -224,7 +226,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string appcastUrl)
+        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }

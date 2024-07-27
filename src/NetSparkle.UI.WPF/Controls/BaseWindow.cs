@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows;
 
 namespace NetSparkleUpdater.UI.WPF.Controls
@@ -44,7 +41,7 @@ namespace NetSparkleUpdater.UI.WPF.Controls
             }
         }
 
-        private void BaseWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void BaseWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             Closing -= BaseWindow_Closing;
             if (!_isOnMainThread && !_hasInitiatedShutdown)

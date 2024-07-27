@@ -21,7 +21,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// </summary>
         /// <param name="icon">The <see cref="Icon"/> that should be converted to an <see cref="ImageSource"/></param>
         /// <returns>An <see cref="ImageSource"/> representation of the given icon if <paramref name="icon"/> is non-null</returns>
-        public static ImageSource ToImageSource(Icon icon)
+        public static ImageSource? ToImageSource(Icon? icon)
         {
             if (icon == null)
             {

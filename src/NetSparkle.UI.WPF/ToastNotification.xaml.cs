@@ -69,15 +69,15 @@ namespace NetSparkleUpdater.UI.WPF
         /// <summary>
         /// The action to take when the user clicks on the toast notification window
         /// </summary>
-        public Action<List<AppCastItem>> ClickAction { get; set; }
+        public Action<List<AppCastItem>>? ClickAction { get; set; }
 
         /// <summary>
         /// The list of updates that triggered this toast notification being shown to 
         /// the user
         /// </summary>
-        public List<AppCastItem> Updates { get; set; }
+        public List<AppCastItem>? Updates { get; set; }
         
-        private void PauseTimerTick(object sender, EventArgs e)
+        private void PauseTimerTick(object? sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
@@ -87,7 +87,7 @@ namespace NetSparkleUpdater.UI.WPF
             });
         }
 
-        void GoUpTimerTick(object sender, EventArgs e)
+        void GoUpTimerTick(object? sender, EventArgs e)
         {
             Dispatcher.InvokeAsync(() =>
             {
@@ -109,7 +109,7 @@ namespace NetSparkleUpdater.UI.WPF
             });
         }
 
-        private void GoDownTimerTick(object sender, EventArgs e)
+        private void GoDownTimerTick(object? sender, EventArgs e)
         {
             Dispatcher.InvokeAsync(() =>
             {
@@ -130,9 +130,9 @@ namespace NetSparkleUpdater.UI.WPF
             });
         }
 
-        private void ToastNotifier_Click(object sender, EventArgs e)
+        private void ToastNotifier_Click(object? sender, EventArgs e)
         {
-            ClickAction?.Invoke(Updates);
+            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
             CloseToastMessage();
         }
 
@@ -173,7 +173,7 @@ namespace NetSparkleUpdater.UI.WPF
 
         private void NotificationLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            ClickAction?.Invoke(Updates);
+            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
             CloseToastMessage();
         }
     }

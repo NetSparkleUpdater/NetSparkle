@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace NetSparkleUpdater.UI.WPF.Interfaces
 {
     /// <summary>

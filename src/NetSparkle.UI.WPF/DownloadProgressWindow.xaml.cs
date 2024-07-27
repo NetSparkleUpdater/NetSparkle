@@ -2,22 +2,8 @@
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.UI.WPF.Controls;
 using NetSparkleUpdater.UI.WPF.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NetSparkleUpdater.UI.WPF
 {
@@ -31,7 +17,7 @@ namespace NetSparkleUpdater.UI.WPF
     {
         private bool _didCallDownloadProcessCompletedHandler = false;
 
-        private DownloadProgressWindowViewModel _dataContext;
+        private DownloadProgressWindowViewModel? _dataContext;
 
         /// <summary>
         /// Base constructor for DownloadProgressWindow. Initializes the window
@@ -56,7 +42,7 @@ namespace NetSparkleUpdater.UI.WPF
             DataContext = _dataContext = viewModel;
         }
 
-        private void DownloadProgressWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void DownloadProgressWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!_didCallDownloadProcessCompletedHandler)
             {
@@ -75,7 +61,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// Event to fire when the download UI is complete; tells you 
         /// if the install process should happen or not
         /// </summary>
-        public event DownloadInstallEventHandler DownloadProcessCompleted;
+        public event DownloadInstallEventHandler? DownloadProcessCompleted;
 
         bool IDownloadProgress.DisplayErrorMessage(string errorMessage)
         {

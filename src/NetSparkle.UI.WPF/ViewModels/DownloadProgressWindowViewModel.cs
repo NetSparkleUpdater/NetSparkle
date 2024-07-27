@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetSparkleUpdater.UI.WPF.Helpers;
+﻿using NetSparkleUpdater.UI.WPF.Helpers;
 
 namespace NetSparkleUpdater.UI.WPF.ViewModels
 {
@@ -14,7 +11,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
     /// </summary>
     public class DownloadProgressWindowViewModel : ChangeNotifier
     {
-        private AppCastItem _itemToDownload;
+        private AppCastItem? _itemToDownload;
 
         private bool _isDownloading;
         private bool _didDownloadAnything;
@@ -37,9 +34,11 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         {
             IsDownloading = true;
             DidDownloadAnything = false;
-            ErrorMessageText = "";
+            _errorMessageText = "";
             IsErrorMessageVisible = false;
             _downloadingTitle = "";
+            _userReadableDownloadProgress = "";
+            _actionButtonTitle = "Install";
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = false;
         }
@@ -49,7 +48,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         /// Setting this property changes the <see cref="DownloadingTitle"/>
         /// property
         /// </summary>
-        public AppCastItem ItemToDownload
+        public AppCastItem? ItemToDownload
         {
             get => _itemToDownload;
             set 
@@ -57,7 +56,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
                 _itemToDownload = value;
                 NotifyPropertyChanged();
 
-                if (value != null)
+                if (_itemToDownload != null)
                 {
                     DownloadingTitle = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
                 }
