@@ -251,7 +251,7 @@ namespace NetSparkleUpdater.UI.WinForms
             Size newSize = new Size(Size.Width, Size.Height - label3.Height - ReleaseNotesBrowser.Height);
 
             // remove the no more needed controls            
-            label3.Parent.Controls.Remove(label3);
+            label3.Parent?.Controls.Remove(label3);
             ReleaseNotesBrowser.Parent?.Controls.Remove(ReleaseNotesBrowser);
 
             // resize the window

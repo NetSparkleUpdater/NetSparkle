@@ -42,7 +42,7 @@ namespace NetSparkleUpdater.UI.WinForms
             FormBorderStyle = FormBorderStyle.FixedDialog;
         }
 
-        private void OK_Click(object sender, EventArgs e)
+        private void OK_Click(object? sender, EventArgs e)
         {
             Close();
         }
