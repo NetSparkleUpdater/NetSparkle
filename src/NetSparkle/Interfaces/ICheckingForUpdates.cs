@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -15,7 +11,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Event to fire when the checking for updates UI is closing
         /// </summary>
-        event EventHandler UpdatesUIClosing;
+        event EventHandler? UpdatesUIClosing;
 
         /// <summary>
         /// Show the checking for updates UI

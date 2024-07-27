@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.UI.WPF.Helpers
 {
@@ -19,7 +14,7 @@ namespace NetSparkleUpdater.UI.WPF.Helpers
         /// <summary>
         /// Event to listen to property changes on some object
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Notify the listener that a property of the given name has changed

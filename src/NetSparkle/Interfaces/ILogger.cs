@@ -1,9 +1,4 @@
-﻿using NetSparkleUpdater.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NetSparkleUpdater.Interfaces
+﻿namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>
     /// Interface for objects that can handle log information output
@@ -16,6 +11,6 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <param name="message">Message to print</param>
         /// <param name="arguments">Arguments to print (e.g. if using {0} format arguments)</param>
-        void PrintMessage(string message, params object[] arguments);
+        void PrintMessage(string message, params object[]? arguments);
     }
 }

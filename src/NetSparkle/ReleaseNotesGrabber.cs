@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.IO;
 using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Interfaces;
 using System.Net;
 using System.Net.Http;
 
@@ -23,7 +23,12 @@ namespace NetSparkleUpdater
         /// used for logging via <see cref="LogWriter"/>, but also can be used
         /// to grab other information about updates, etc.
         /// </summary>
-        protected SparkleUpdater _sparkle;
+        protected SparkleUpdater? _sparkle;
+
+        /// <summary>
+        /// <seealso cref="ILogger"/> for logging any pertinent data to the console
+        /// </summary>
+        protected ILogger? _logger;
 
         /// <summary>
         /// List of supported extensions for markdown files (.md, .mkdn, .mkd, .markdown)
@@ -75,15 +80,24 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
+        /// ILogger to log data from LocalFileDownloader
+        /// </summary>
+        public ILogger? LogWriter
+        {
+            set { _logger = value; }
+            get { return _logger; }
+        }
+
+        /// <summary>
         /// Base constructor for ReleaseNotesGrabber
         /// </summary>
         /// <param name="releaseNotesTemplate">Template to use for separating each item in the HTML</param>
         /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
-        /// <param name="sparkle">Sparkle updater being used</param>
-        public ReleaseNotesGrabber(string releaseNotesTemplate, string htmlHeadAddition, SparkleUpdater sparkle)
+        /// <param name="sparkle">Sparkle updater being used (TODO: This parameter will be removed)</param>
+        public ReleaseNotesGrabber(string? releaseNotesTemplate, string? htmlHeadAddition, SparkleUpdater sparkle)
         {
             DateFormat = "D";
-            if (string.IsNullOrWhiteSpace(htmlHeadAddition))
+            if (htmlHeadAddition == null || string.IsNullOrWhiteSpace(htmlHeadAddition))
             {
                 htmlHeadAddition = @"
                 <style>
@@ -95,7 +109,7 @@ namespace NetSparkleUpdater
                     ul { margin-top: 2px; margin-bottom: 2px; }
                 </style>";
             }
-            if (string.IsNullOrWhiteSpace(releaseNotesTemplate))
+            if (releaseNotesTemplate == null || string.IsNullOrWhiteSpace(releaseNotesTemplate))
             {
                 releaseNotesTemplate =
                     "<div style=\"border: #ccc 1px solid;\">" +
@@ -130,27 +144,28 @@ namespace NetSparkleUpdater
         /// <returns>The release notes formatted as HTML and ready to display to the user</returns>
         public virtual async Task<string> DownloadAllReleaseNotes(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
-            _sparkle.LogWriter.PrintMessage("Preparing to initialize release notes...");
-            StringBuilder sb = new StringBuilder(InitialHTML);
+            _logger?.PrintMessage("Preparing to initialize release notes...");
+            var sb = new StringBuilder(InitialHTML);
             var hasAddedFirstItem = false;
             //items.Add(items.First()); // DEBUG -- use to test with multiple release note items in samples
             foreach (AppCastItem castItem in items)
             {
-                _sparkle.LogWriter.PrintMessage("Initializing release notes for {0}", castItem.Version);
+                _logger?.PrintMessage("Initializing release notes for {0}", castItem.Version ?? "[Unknown version]");
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
                                         castItem.Version,
-                                        castItem.PublicationDate != DateTime.MinValue && castItem.PublicationDate != DateTime.MaxValue
+                                        castItem.PublicationDate != DateTime.MinValue && 
+                                        castItem.PublicationDate != DateTime.MaxValue
                                             ? castItem.PublicationDate.ToString(DateFormat) 
                                             : "", // was dd MMM yyyy
                                         releaseNotes,
-                                        latestVersion.Version.Equals(castItem.Version) ? "#ABFF82" : "#AFD7FF"));
+                                        (latestVersion.Version?.Equals(castItem.Version) ?? false) ? "#ABFF82" : "#AFD7FF"));
                 hasAddedFirstItem = true; // after first item added, need to add line breaks between release note items
             }
             sb.Append("</body></html>");
 
-            _sparkle.LogWriter.PrintMessage("Done initializing release notes!");
+            _logger?.PrintMessage("Done initializing release notes!");
             return sb.ToString();
         }
 
@@ -160,15 +175,15 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="item"><see cref="AppCastItem"/>item to download the release notes for</param>
         /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
-        /// about the release notes grabbing process (or its failures)</param>
+        /// about the release notes grabbing process (or its failures) -- TODO: Remove this param entirely</param>
         /// <param name="cancellationToken">token that can be used to cancel a release notes 
         /// grabbing operation</param>
         /// <returns>The release notes, formatted as HTML, for a given release of the software</returns>
-        protected virtual async Task<string> GetReleaseNotes(AppCastItem item, SparkleUpdater sparkle, CancellationToken cancellationToken)
+        protected virtual async Task<string?> GetReleaseNotes(AppCastItem item, SparkleUpdater? sparkle, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
-            if (!string.IsNullOrEmpty(item.Description))
+            if (!string.IsNullOrWhiteSpace(item.Description))
             {
                 // check for markdown
                 var containsHtmlRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
@@ -187,33 +202,37 @@ namespace NetSparkleUpdater
                     {
                         item.Description = "*" + criticalUpdate + "*" + "\n\n" + item.Description;
                     }
-                    var temp = md.Transform(item.Description);
+                    var temp = md.Transform(item.Description ?? "");
                     return temp;
                 }
             }
 
-            // not embedded so try to release notes from the link
-            if (string.IsNullOrEmpty(item.ReleaseNotesLink))
+            // don't have embedded release notes, so try to get release notes from the release notes link if available
+            if (string.IsNullOrWhiteSpace(item.ReleaseNotesLink))
             {
                 return null;
             }
 
             // download release notes
-            sparkle.LogWriter.PrintMessage("Downloading release notes for {0} at {1}", item.Version, item.ReleaseNotesLink);
-            string notes = await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle);
-            sparkle.LogWriter.PrintMessage("Done downloading release notes for {0}", item.Version);
-            if (string.IsNullOrEmpty(notes))
+            _logger?.PrintMessage("Downloading release notes for {0} at {1}", item.Version ?? "[Unknown version]", item.ReleaseNotesLink ?? "[Unknown release notes link]");
+            string notes = item.ReleaseNotesLink != null 
+                ? await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle)
+                : "";
+            _logger?.PrintMessage("Done downloading release notes for {0}", item.Version ?? "[Unknown version]");
+            if (string.IsNullOrWhiteSpace(notes))
             {
                 return null;
             }
 
             // check dsa of release notes
-            if (!string.IsNullOrEmpty(item.ReleaseNotesSignature))
+            if (!string.IsNullOrWhiteSpace(item.ReleaseNotesSignature))
             {
                 if (ChecksReleaseNotesSignature &&
+                    _sparkle != null &&
                     _sparkle.SignatureVerifier != null &&
-                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, _sparkle.SignatureVerifier.HasValidKeyInformation(), false) &&
-                    sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature, notes) == ValidationResult.Invalid)
+                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, 
+                        _sparkle.SignatureVerifier.HasValidKeyInformation(), false) &&
+                    _sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature ?? "", notes) == ValidationResult.Invalid)
                 {
                     return null;
                 }
@@ -234,7 +253,7 @@ namespace NetSparkleUpdater
                 }
                 catch (Exception ex)
                 {
-                    sparkle.LogWriter.PrintMessage("Error parsing Markdown syntax: {0}", ex.Message);
+                    _logger?.PrintMessage("Error parsing Markdown syntax: {0}", ex.Message);
                 }
             }
             return notes;
@@ -248,10 +267,10 @@ namespace NetSparkleUpdater
         /// <param name="link">string URL to the release notes to download</param>
         /// <param name="cancellationToken">token that can be used to cancel a download operation</param>
         /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
-        /// about the download process (or its failures)</param>
+        /// about the download process (or its failures) TODO: remove this param as no longer needed; breaking change</param>
         /// <returns>The release notes data (file data) at the given link as a string. Typically this data
         /// is formatted as markdown.</returns>
-        protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater sparkle)
+        protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater? sparkle)
         {
             try
             {
@@ -263,7 +282,7 @@ namespace NetSparkleUpdater
             }
             catch (WebException ex)
             {
-                sparkle.LogWriter.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
+                _logger?.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";
             }
         }
@@ -282,16 +301,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="handler">HttpClientHandler for messages</param>
         /// <returns>The client used for file downloads</returns>
-        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler? handler)
         {
-            if (handler != null)
-            {
-                return new HttpClient(handler);
-            }
-            else
-            {
-                return new HttpClient();
-            }
+            return handler == null ? new HttpClient() : new HttpClient(handler);
         }
     }
 }

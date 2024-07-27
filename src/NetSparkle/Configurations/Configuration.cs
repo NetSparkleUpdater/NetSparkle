@@ -22,7 +22,7 @@ namespace NetSparkleUpdater.Configurations
         /// <summary>
         /// The previous version of the software that the user ran, e.g. "1.5.2"
         /// </summary>
-        public string PreviousVersionOfSoftwareRan { get; protected set; }
+        public string? PreviousVersionOfSoftwareRan { get; protected set; }
         /// <summary>
         /// The currently-installed version, e.g. "1.4.3"
         /// </summary>
@@ -43,7 +43,7 @@ namespace NetSparkleUpdater.Configurations
         /// The version number of the update that was skipped last.
         /// If the user skipped an update, then the version to ignore is stored here (e.g. "1.4.3")
         /// </summary>
-        public string LastVersionSkipped { get; protected set; }
+        public string? LastVersionSkipped { get; protected set; }
         /// <summary>
         /// Whether or not the application has run at least one time
         /// </summary>
@@ -54,14 +54,19 @@ namespace NetSparkleUpdater.Configurations
         public DateTime LastConfigUpdate { get; protected set; }
         /// <summary>
         /// Object that accesses version, title, etc. info for the currently running application
-        /// (or some other application)
+        /// (or some other application). NOTE: For the <seealso cref="JSONConfiguration"/> and 
+        /// <seealso cref="RegistryConfiguration"/>, AssemblyCompany and AssemblyProduct must
+        /// return valid, non-whitespace results if you do not set the save/registry path yourself!
         /// </summary>
-        public IAssemblyAccessor AssemblyAccessor { get; protected set; }
+        public IAssemblyAccessor AssemblyAccessor { get; set; }
         
         /// <summary>
         /// Constructor for Configuration -- should load all pertinent values by the end of the constructor!
         /// If any exception is thrown during construction of this object (e.g. from the assembly accessors),
-        /// then <see cref="CheckForUpdate"/> is set to false.
+        /// then <see cref="CheckForUpdate"/> is set to false. NOTE: For the 
+        /// <seealso cref="JSONConfiguration"/> and <seealso cref="RegistryConfiguration"/>, 
+        /// AssemblyCompany and AssemblyProduct must return valid, non-whitespace results if you do not set 
+        /// the save/registry path yourself!
         /// </summary>
         /// <param name="assemblyAccessor">Object that accesses version, title, etc. info for the application
         /// you would like to check for updates for</param>
@@ -69,19 +74,9 @@ namespace NetSparkleUpdater.Configurations
         {
             // set default values
             InitWithDefaultValues();
-
-            try
-            {
-                // set some value from the binary
-                AssemblyAccessor = assemblyAccessor;
-                ApplicationName = assemblyAccessor.AssemblyProduct;
-                InstalledVersion = assemblyAccessor.AssemblyVersion;
-            }
-            catch
-            {
-                CheckForUpdate = false;
-            }
-
+            AssemblyAccessor = assemblyAccessor;
+            ApplicationName = assemblyAccessor.AssemblyProduct;
+            InstalledVersion = assemblyAccessor.AssemblyVersion;
         }
 
         /// <summary>

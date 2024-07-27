@@ -45,7 +45,7 @@ namespace NetSparkleUpdater
         #endregion
         
         /// <inheritdoc/>
-        public virtual void PrintMessage(string message, params object[] arguments)
+        public virtual void PrintMessage(string message, params object[]? arguments)
         {
             var timestamp = string.Format("[{0:s}]", DateTime.Now);
             switch (OutputMode)
@@ -54,10 +54,10 @@ namespace NetSparkleUpdater
                     Console.WriteLine(timestamp + " " + Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments);
                     break;
                 case LogWriterOutputMode.Trace:
-                    Trace.WriteLine(string.Format(timestamp + " " + Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments));
+                    Trace.WriteLine(string.Format(timestamp + " " + Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments ?? Array.Empty<object>()));
                     break;
                 case LogWriterOutputMode.Debug:
-                    Debug.WriteLine(timestamp + " " + Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments);
+                    Debug.WriteLine(timestamp + " " + Tag + (string.IsNullOrWhiteSpace(Tag) ? "" : " ") + message, arguments ?? Array.Empty<object>());
                     break;
                 case LogWriterOutputMode.None:
                     break;

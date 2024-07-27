@@ -26,7 +26,7 @@ namespace NetSparkleUpdater.UI.WinForms
             FormClosing += CheckingForUpdatesWindow_FormClosing;
         }
 
-        private void CheckingForUpdatesWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void CheckingForUpdatesWindow_FormClosing(object? sender, FormClosingEventArgs e)
         {
             UpdatesUIClosing?.Invoke(sender, new EventArgs());
             FormClosing -= CheckingForUpdatesWindow_FormClosing;
@@ -36,7 +36,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Initializes window and sets the icon to <paramref name="applicationIcon"/>
         /// </summary>
         /// <param name="applicationIcon">The icon to use</param>
-        public CheckingForUpdatesWindow(Icon applicationIcon = null)
+        public CheckingForUpdatesWindow(Icon? applicationIcon = null)
         {
             InitializeComponent();
             if (applicationIcon != null)
@@ -50,7 +50,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Event that is called when the UI for the checking for updates window is closing
         /// </summary>
-        public event EventHandler UpdatesUIClosing;
+        public event EventHandler? UpdatesUIClosing;
 
         void ICheckingForUpdates.Close()
         {

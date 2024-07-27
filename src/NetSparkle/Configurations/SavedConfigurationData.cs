@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NetSparkleUpdater.Configurations
 {
@@ -24,13 +22,13 @@ namespace NetSparkleUpdater.Configurations
         /// <summary>
         /// The previous version of the software that the user ran
         /// </summary>
-        public string PreviousVersionOfSoftwareRan { get; set; }
+        public string? PreviousVersionOfSoftwareRan { get; set; }
         /// <summary>
         /// The last version (as a string) that the user chose
         /// to skip.
         /// Can be blank.
         /// </summary>
-        public string LastVersionSkipped { get; set; }
+        public string? LastVersionSkipped { get; set; }
         /// <summary>
         /// Whether or not the software has run at least one time.
         /// </summary>
@@ -39,5 +37,13 @@ namespace NetSparkleUpdater.Configurations
         /// Last <see cref="DateTime"/> that the configuration data was updated.
         /// </summary>
         public DateTime LastConfigUpdate { get; set; }
+
+        /// <summary>
+        /// Simple data holder constructor for <seealso cref="Configuration"/> data that is loaded/saved
+        /// from various places for info on the app, what version the user has skipped, etc.
+        /// </summary>
+        public SavedConfigurationData()
+        {
+        }
     }
 }

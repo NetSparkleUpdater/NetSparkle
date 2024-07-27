@@ -28,6 +28,7 @@
     <OutputPath>..\bin\$(Configuration)\NetSparkle.Tools.AppCastGenerator\</OutputPath>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
+    <Nullable>enable</Nullable>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>

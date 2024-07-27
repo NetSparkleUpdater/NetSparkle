@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -18,7 +15,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Otherwise, <see cref="SparkleUpdater"></see> will act as though the appcast 
         /// failed to download.
         /// </summary>
-        /// <param name="url">string URL for the place where the app cast can be downloaded</param>
+        /// <param name="url">non-null string URL for the place where the app cast can be downloaded</param>
         /// <returns>The app cast data encoded as a string</returns>
         string DownloadAndGetAppCastData(string url);
 

@@ -1,7 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using NetSparkleUpdater.Interfaces;
 using System;
@@ -16,7 +14,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     public partial class CheckingForUpdatesWindow : Window, ICheckingForUpdates
     {
         /// <inheritdoc/>
-        public event EventHandler UpdatesUIClosing;
+        public event EventHandler? UpdatesUIClosing;
 
         /// <summary>
         /// Create the window that tells the user that SparkleUpdater is checking
@@ -33,7 +31,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// for updates with a given bitmap to use as an icon/graphic
         /// </summary>
         /// <param name="iconBitmap">The bitmap to use for the application logo/graphic</param>
-        public CheckingForUpdatesWindow(Bitmap iconBitmap)
+        public CheckingForUpdatesWindow(Bitmap? iconBitmap)
         {
             this.InitializeComponent();
 #if DEBUG
@@ -47,7 +45,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             }
         }
 
-        private void CheckingForUpdatesWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void CheckingForUpdatesWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             Closing -= CheckingForUpdatesWindow_Closing;
             UpdatesUIClosing?.Invoke(sender, new EventArgs());

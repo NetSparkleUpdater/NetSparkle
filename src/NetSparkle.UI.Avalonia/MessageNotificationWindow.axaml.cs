@@ -30,7 +30,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         /// </summary>
         /// <param name="viewModel">view model that has info on the message to show to the user</param>
         /// <param name="iconBitmap">Bitmap to use for the app's icon/graphic. Not currently used.</param>
-        public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel, Bitmap iconBitmap)
+        public MessageNotificationWindow(MessageNotificationWindowViewModel viewModel, Bitmap? iconBitmap)
         {
             this.InitializeComponent();
             DataContext = viewModel;

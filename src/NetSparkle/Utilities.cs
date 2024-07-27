@@ -1,8 +1,6 @@
 ﻿using NetSparkleUpdater.Enums;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
@@ -40,26 +38,25 @@ namespace NetSparkleUpdater
         /// <param name="fileToSignPath">Path to the file you want to sign</param>
         /// <param name="privateKeyFilePath">Path to the private key file</param>
         /// <returns>DSA signature as base64 string</returns>
-        public static string GetDSASignature(string fileToSignPath, string privateKeyFilePath)
+        public static string? GetDSASignature(string fileToSignPath, string privateKeyFilePath)
         {
-            if (string.IsNullOrEmpty(fileToSignPath) || !File.Exists(fileToSignPath))
+            if (string.IsNullOrWhiteSpace(fileToSignPath) || !File.Exists(fileToSignPath))
             {
                 return null;
             }
-            if (string.IsNullOrEmpty(privateKeyFilePath) || !File.Exists(privateKeyFilePath))
+            if (string.IsNullOrWhiteSpace(privateKeyFilePath) || !File.Exists(privateKeyFilePath))
             {
                 return null;
             }
             var privateKey = File.ReadAllText(privateKeyFilePath);
-            if (!string.IsNullOrEmpty(privateKey))
+            if (!string.IsNullOrWhiteSpace(privateKey))
             {
                 DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider();
                 cryptoProvider.FromXmlString(privateKey);
 
                 using (FileStream inputStream = File.OpenRead(fileToSignPath))
                 {
-                    byte[] hash = null;
-                    hash = cryptoProvider.SignData(inputStream);
+                    byte[] hash = cryptoProvider.SignData(inputStream);
                     var dsaSignature = Convert.ToBase64String(hash);
                     return dsaSignature;
                 }
@@ -69,7 +66,8 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it to an absolute URL based on the appcast URL.
+        /// Creates a <see cref="Uri"/> from a URL string. If the URL is relative, converts it 
+        /// to an absolute URL based on the appcast URL.
         /// </summary>
         /// <param name="url">relative or absolute URL</param>
         /// <param name="appcastURL">URL to appcast</param>

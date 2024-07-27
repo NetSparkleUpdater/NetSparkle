@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NetSparkleUpdater.UI.Avalonia.Helpers
 {
@@ -22,8 +23,8 @@ namespace NetSparkleUpdater.UI.Avalonia.Helpers
     {
         #region Fields
 
-        readonly Action<T> _execute;
-        readonly Predicate<T> _canExecute;
+        readonly Action<T?> _execute;
+        readonly Predicate<T?>? _canExecute;
 
         #endregion
 
@@ -36,7 +37,7 @@ namespace NetSparkleUpdater.UI.Avalonia.Helpers
         /// </summary>
         /// <param name="execute"><see cref="Action"/> to call when this <see cref="RelayCommand"/>
         /// is executed</param>
-        public RelayCommand(Action<T> execute)
+        public RelayCommand(Action<T?> execute)
         : this(execute, null)
         {
         }
@@ -50,7 +51,7 @@ namespace NetSparkleUpdater.UI.Avalonia.Helpers
         /// is executed</param>
         /// <param name="canExecute"><see cref="Predicate{T}"/> function that determines whether or not the given <see cref="Action"/>
         /// should be executed or not</param>
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+        public RelayCommand(Action<T?> execute, Predicate<T?>? canExecute)
         {
             if (execute == null)
                 throw new ArgumentNullException("Execute parameter cannot be null");
@@ -69,27 +70,25 @@ namespace NetSparkleUpdater.UI.Avalonia.Helpers
         /// command's function <see cref="Predicate{T}"/></param>
         /// <returns>True if the command should run, false if the command should not be run</returns>
         [DebuggerStepThrough]
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return _canExecute == null ? true : _canExecute((T)parameter);
+            return _canExecute == null ? true : _canExecute((T?)parameter);
         }
-
-        //public event EventHandler CanExecuteChanged
-        //{
-        //    add { CommandManager.RequerySuggested += value; }
-        //    remove { CommandManager.RequerySuggested -= value; }
-        //}
 
         /// <summary>
         /// Event that is called when the command may have had its ability to be executed changed
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add {}//{ CommandManager.RequerySuggested += value; }
+            remove {}//{ CommandManager.RequerySuggested -= value; }
+        }
 
         /// <summary>
         /// Execute this command
         /// </summary>
         /// <param name="parameter">the nullable object parameter to send to the execution <see cref="Action"/></param>
-        public void Execute(object parameter) => _execute((T)parameter);
+        public void Execute(object? parameter) => _execute((T?)parameter);
 
         #endregion
     }
@@ -118,7 +117,7 @@ namespace NetSparkleUpdater.UI.Avalonia.Helpers
         /// is executed</param>
         /// <param name="canExecute">Function that determines whether or not the given <see cref="Action"/>
         /// should be executed or not</param>
-        public RelayCommand(Action execute, Func<bool> canExecute)
+        public RelayCommand(Action execute, Func<bool>? canExecute)
             : base(param => execute?.Invoke(),
                    param => (canExecute?.Invoke()) ?? true) { }
     }

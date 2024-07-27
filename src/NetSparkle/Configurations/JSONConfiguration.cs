@@ -1,5 +1,4 @@
-﻿using NetSparkleUpdater;
-using NetSparkleUpdater.Interfaces;
+﻿using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -37,7 +36,7 @@ namespace NetSparkleUpdater.Configurations
         /// If not null or empty string, must represent a valid path on disk (directories must already be created).
         /// This class will take care of creating/overwriting the file at that path if necessary.</param>
         /// <exception cref="NetSparkleException">Thrown when the configuration data cannot be read or saved</exception>
-        public JSONConfiguration(IAssemblyAccessor assemblyAccessor, string savePath)
+        public JSONConfiguration(IAssemblyAccessor assemblyAccessor, string? savePath)
             : base(assemblyAccessor)
         {
             _savePath = savePath != null && !string.IsNullOrWhiteSpace(savePath) ? savePath : GetSavePath();
@@ -85,7 +84,7 @@ namespace NetSparkleUpdater.Configurations
             LoadValuesFromPath(GetSavePath());
         }
 
-        private string GetDirectory(Environment.SpecialFolder specialFolder)
+        private string? GetDirectory(Environment.SpecialFolder specialFolder)
         {
             try {
                 var applicationFolder = Environment.GetFolderPath(specialFolder, Environment.SpecialFolderOption.DoNotVerify);
@@ -110,19 +109,18 @@ namespace NetSparkleUpdater.Configurations
         /// information available</exception>
         public virtual string GetSavePath()
         {
-            if (!string.IsNullOrEmpty(_savePath))
+            if (!string.IsNullOrWhiteSpace(_savePath))
             {
                 return _savePath;
             }
             else
             {
-
-                if (string.IsNullOrEmpty(AssemblyAccessor?.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor?.AssemblyProduct))
+                if (string.IsNullOrWhiteSpace(AssemblyAccessor?.AssemblyCompany) || 
+                    string.IsNullOrWhiteSpace(AssemblyAccessor?.AssemblyProduct))
                 {
                     throw new NetSparkleException("Error: NetSparkleUpdater is missing the company or product name tag in the assembly accessor ("
                         + (AssemblyAccessor?.GetType().ToString() ?? "[null]") + ")");
                 }
-                var applicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
                 var saveFolder = GetDirectory(Environment.SpecialFolder.ApplicationData);
                 if (saveFolder == null)
                 {
@@ -159,11 +157,11 @@ namespace NetSparkleUpdater.Configurations
                     var data = JsonSerializer.Deserialize<SavedConfigurationData>(json, SourceGenerationContext.Default.SavedConfigurationData);
 #endif
                     CheckForUpdate = true;
-                    LastCheckTime = data.LastCheckTime;
-                    LastVersionSkipped = data.LastVersionSkipped;
-                    DidRunOnce = data.DidRunOnce;
+                    LastCheckTime = data?.LastCheckTime ?? new DateTime(0);
+                    LastVersionSkipped = data?.LastVersionSkipped ?? string.Empty;
+                    DidRunOnce = data?.DidRunOnce ?? false;
                     IsFirstRun = !DidRunOnce;
-                    LastConfigUpdate = data.LastConfigUpdate;
+                    LastConfigUpdate = data?.LastConfigUpdate ?? new DateTime(0);
                     PreviousVersionOfSoftwareRan = data?.PreviousVersionOfSoftwareRan ?? "";
                     if (IsFirstRun)
                     {

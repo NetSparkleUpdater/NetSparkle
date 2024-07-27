@@ -1,4 +1,3 @@
-using System;
 namespace NetSparkleUpdater.Interfaces
 {
     /// <summary>

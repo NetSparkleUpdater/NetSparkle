@@ -1,10 +1,9 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 using Chaos.NaCl;
+using Console = Colorful.Console;
+using System.Drawing;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
@@ -24,6 +23,9 @@ namespace NetSparkleUpdater.AppCastGenerator
             SetStorageDirectory(GetDefaultStorageDirectory());
             _privateKeyOverride = "";
             _publicKeyOverride = "";
+            _storagePath = "";
+            _privateKeyFilePath = "";
+            _publicKeyFilePath = "";
         }
 
         public static string GetDefaultStorageDirectory()
@@ -129,12 +131,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             return validator.VerifySignature(Convert.FromBase64String(signature));
         }
 
-        public string GetSignatureForFile(string filePath)
+        public string? GetSignatureForFile(string filePath)
         {
             return GetSignatureForFile(new FileInfo(filePath));
         }
 
-        public string GetSignatureForFile(FileInfo file)
+        public string? GetSignatureForFile(FileInfo file)
         {
             if (!KeysExist())
             {
@@ -171,7 +173,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return Convert.ToBase64String(signer.GenerateSignature());
         }
 
-        public byte[] GetPrivateKey()
+        public byte[]? GetPrivateKey()
         {
             if (!string.IsNullOrWhiteSpace(_privateKeyOverride))
             {
@@ -180,7 +182,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return ResolveKeyLocation(PrivateKeyEnvironmentVariable, _privateKeyFilePath);
         }
 
-        public byte[] GetPublicKey()
+        public byte[]? GetPublicKey()
         {
             if (!string.IsNullOrWhiteSpace(_publicKeyOverride))
             {
@@ -189,7 +191,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return ResolveKeyLocation(PublicKeyEnvironmentVariable, _publicKeyFilePath);
         }
 
-        private byte[] ResolveKeyLocation(string environmentVariableName, string fileLocation)
+        private byte[]? ResolveKeyLocation(string environmentVariableName, string fileLocation)
         {
             var key = Environment.GetEnvironmentVariable(environmentVariableName);
 
@@ -200,6 +202,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             if (!File.Exists(fileLocation))
             {
+                Console.WriteLine("File does not exist: {0}", fileLocation, Color.Red);
                 return null;
             }
 

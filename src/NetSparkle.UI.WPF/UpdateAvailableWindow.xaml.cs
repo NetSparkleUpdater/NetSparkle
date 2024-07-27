@@ -4,22 +4,9 @@ using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.UI.WPF.Controls;
 using NetSparkleUpdater.UI.WPF.Interfaces;
 using NetSparkleUpdater.UI.WPF.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace NetSparkleUpdater.UI.WPF
 {
@@ -30,7 +17,7 @@ namespace NetSparkleUpdater.UI.WPF
     /// </summary>
     public partial class UpdateAvailableWindow : BaseWindow, IUpdateAvailable, IReleaseNotesDisplayer, IUserRespondedToUpdateCheck
     {
-        private UpdateAvailableWindowViewModel _dataContext;
+        private UpdateAvailableWindowViewModel? _dataContext;
         private bool _hasFinishedNavigatingToAboutBlank = false;
         private string _notes = "";
         private bool _wasResponseSent = false;
@@ -62,7 +49,7 @@ namespace NetSparkleUpdater.UI.WPF
             Closing += UpdateAvailableWindow_Closing;
         }
 
-        private void UpdateAvailableWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void UpdateAvailableWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             UserRespondedToUpdateCheck(UpdateAvailableResult.None); // just in case response not sent
             ReleaseNotesBrowser.Navigated -= ReleaseNotesBrowser_Navigated;
@@ -78,14 +65,14 @@ namespace NetSparkleUpdater.UI.WPF
         /// </summary>
         public AppCastItem CurrentItem
         {
-            get { return _dataContext?.Updates?.FirstOrDefault(); }
+            get { return _dataContext?.Updates?.FirstOrDefault() ?? new AppCastItem(); }
         }
 
         /// <summary>
         /// An event that informs its listeners how the user responded to the
         /// software update request
         /// </summary>
-        public event UserRespondedToUpdate UserResponded;
+        public event UserRespondedToUpdate? UserResponded;
 
         void IUpdateAvailable.BringToFront()
         {
@@ -185,7 +172,7 @@ namespace NetSparkleUpdater.UI.WPF
             });
         }
 
-        private void ReleaseNotesBrowser_Loaded(object sender, RoutedEventArgs e)
+        private void ReleaseNotesBrowser_Loaded(object? sender, RoutedEventArgs e)
         {
             // see https://stackoverflow.com/a/15209861/3938401
             ReleaseNotesBrowser.Loaded -= ReleaseNotesBrowser_Loaded;
@@ -195,7 +182,7 @@ namespace NetSparkleUpdater.UI.WPF
             });
         }
 
-        private void ReleaseNotesBrowser_Navigated(object sender, NavigationEventArgs e)
+        private void ReleaseNotesBrowser_Navigated(object? sender, NavigationEventArgs e)
         {
             if (!_hasFinishedNavigatingToAboutBlank)
             {

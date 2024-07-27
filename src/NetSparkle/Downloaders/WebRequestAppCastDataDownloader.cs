@@ -1,6 +1,5 @@
 using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -18,13 +17,13 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class WebRequestAppCastDataDownloader : IAppCastDataDownloader
     {
-        private ILogger _logger;
+        private ILogger? _logger;
         private string _appcastUrl = "";
 
         /// <summary>
         /// Default constructor for the app cast data downloader.
         /// </summary>
-        public WebRequestAppCastDataDownloader() : this(new LogWriter())
+        public WebRequestAppCastDataDownloader() : this(null)
         {
         }
 
@@ -32,17 +31,15 @@ namespace NetSparkleUpdater.Downloaders
         /// Default constructor for the app cast data downloader.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
-        public WebRequestAppCastDataDownloader(ILogger logger)
+        public WebRequestAppCastDataDownloader(ILogger? logger)
         {
-            if (logger == null)
-                throw new ArgumentNullException("logger");
             _logger = logger;
         }
 
         /// <summary>
         /// ILogger to log data from WebRequestAppCastDataDownloader
         /// </summary>
-        public ILogger LogWriter
+        public ILogger? LogWriter
         {
             set { _logger = value; }
             get { return _logger; }
@@ -56,13 +53,13 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// If not "", sends extra JSON via POST to server with the web request for update information and for the app cast signature.
         /// </summary>
-        public string ExtraJsonData { get; set; } = "";
+        public string? ExtraJsonData { get; set; }
 
         /// <summary>
         /// Set this to handle redirects that manually, e.g. redirects that go from HTTPS to HTTP (which are not allowed
         /// by default)
         /// </summary>
-        public RedirectHandler RedirectHandler { get; set; }
+        public RedirectHandler? RedirectHandler { get; set; }
 
         /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
@@ -129,6 +126,11 @@ namespace NetSparkleUpdater.Downloaders
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
                         {
                             var redirectURI = response.Headers.Location;
+                            if (redirectURI == null)
+                            {
+                                _logger?.PrintMessage("Response had a redirect status code but no location header; this is an error state as we do not know where to redirect this request to");
+                                return "";
+                            }
                             if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
                             {
                                 return await DownloadAndGetAppCastDataAsync(redirectURI.ToString()).ConfigureAwait(false);
@@ -152,7 +154,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Error: {0}", e.Message);
+                LogWriter?.PrintMessage("Error: {0}", e.Message);
             }
             return "";
         }
@@ -171,16 +173,9 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         /// <param name="handler">HttpClientHandler for messages</param>
         /// <returns>The client used for file downloads</returns>
-        protected virtual HttpClient CreateHttpClient(HttpClientHandler handler)
+        protected virtual HttpClient CreateHttpClient(HttpClientHandler? handler)
         {
-            if (handler != null)
-            {
-                return new HttpClient(handler);
-            }
-            else
-            {
-                return new HttpClient();
-            }
+            return handler != null ? new HttpClient(handler) : new HttpClient();
         }
 
         /// <inheritdoc/>
@@ -189,7 +184,7 @@ namespace NetSparkleUpdater.Downloaders
             return Encoding.UTF8;
         }
 
-        private bool AlwaysTrustRemoteCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        private bool AlwaysTrustRemoteCert(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
         {
             return true;
         }
@@ -202,7 +197,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <param name="chain">the chain</param>
         /// <param name="sslPolicyErrors">any SSL policy errors that have occurred</param>
         /// <returns><c>true</c> if the cert is valid; false otherwise</returns>
-        private bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        private bool ValidateRemoteCertificate(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
         {
             if (TrustEverySSLConnection)
             {

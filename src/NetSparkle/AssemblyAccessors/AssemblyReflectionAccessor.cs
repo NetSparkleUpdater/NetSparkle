@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
@@ -32,9 +31,9 @@ namespace NetSparkleUpdater.AssemblyAccessors
 #if !NETFRAMEWORK && !NETSTANDARD
         [RequiresUnreferencedCode("AssemblyReflectionAccessor is incompatible with trimming.")]
 #endif
-        public AssemblyReflectionAccessor(string assemblyName)
+        public AssemblyReflectionAccessor(string? assemblyName)
         {
-            Assembly assembly;
+            Assembly? assembly;
             if (assemblyName == null)
             {
                 assembly = Assembly.GetEntryAssembly();
@@ -64,19 +63,22 @@ namespace NetSparkleUpdater.AssemblyAccessors
                 }
             }
 
-            // read the attributes            
-            foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
+            // read the attributes          
+            if (assembly != null)
             {
-                Attribute a = CreateAttribute(data);
-                if (a != null)
+                foreach (CustomAttributeData data in assembly.GetCustomAttributesData())
                 {
-                    _assemblyAttributes.Add(a);
+                    var attribute = CreateAttribute(data);
+                    if (attribute != null)
+                    {
+                        _assemblyAttributes.Add(attribute);
+                    }
                 }
-            }
+            }  
 
             if (_assemblyAttributes == null || _assemblyAttributes.Count == 0)
             {
-                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly.FullName);                                    
+                throw new ArgumentOutOfRangeException("Unable to load assembly attributes from " + assembly?.FullName ?? "[Unable to get assembly name]");
             }
         }
 
@@ -84,7 +86,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// This methods creates an attribute instance from the attribute data 
         /// information
         /// </summary>
-        private Attribute CreateAttribute(CustomAttributeData data)
+        private Attribute? CreateAttribute(CustomAttributeData data)
         {
             try
             {
@@ -104,10 +106,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
                     else
                     {
                         var fieldInfo = namedArgument.MemberInfo as FieldInfo;
-                        if (fieldInfo != null)
-                        {
-                            fieldInfo.SetValue(attribute, namedArgument.TypedValue.Value);
-                        }
+                        fieldInfo?.SetValue(attribute, namedArgument.TypedValue.Value);
                     }
                 }
 
@@ -119,7 +118,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             }
         }
 
-        private Attribute FindAttribute(Type AttributeType)
+        private Attribute? FindAttribute(Type AttributeType)
         {            
             foreach (Attribute attr in _assemblyAttributes)
             {
@@ -139,7 +138,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                AssemblyTitleAttribute a = FindAttribute(typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
+                var a = FindAttribute(typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
                 return a?.Title ?? "";                
             }
         }
@@ -159,7 +158,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                AssemblyDescriptionAttribute a = FindAttribute(typeof(AssemblyDescriptionAttribute)) as AssemblyDescriptionAttribute;
+                var a = FindAttribute(typeof(AssemblyDescriptionAttribute)) as AssemblyDescriptionAttribute;
                 return a?.Description ?? "";                                
             }
         }
@@ -169,7 +168,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                AssemblyProductAttribute a = FindAttribute(typeof(AssemblyProductAttribute)) as AssemblyProductAttribute;
+                var a = FindAttribute(typeof(AssemblyProductAttribute)) as AssemblyProductAttribute;
                 return a?.Product ?? "";                                
             }
         }
@@ -179,7 +178,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                AssemblyCopyrightAttribute a = FindAttribute(typeof(AssemblyCopyrightAttribute)) as AssemblyCopyrightAttribute;
+                var a = FindAttribute(typeof(AssemblyCopyrightAttribute)) as AssemblyCopyrightAttribute;
                 return a?.Copyright ?? "";                                                
             }
         }
@@ -189,7 +188,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         {
             get
             {
-                AssemblyCompanyAttribute a = FindAttribute(typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
+                var a = FindAttribute(typeof(AssemblyCompanyAttribute)) as AssemblyCompanyAttribute;
                 return a?.Company ?? "";                  
             }
         }

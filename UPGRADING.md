@@ -31,6 +31,8 @@
   * Removed `PrintDiagnosticToConsole` property and replaced it with `OutputMode` of type `LogWriterOutputMode`.
   * The default print mode for `LogWriter` is still `Trace` by default, as it was in prior versions.
   * By default, timestamps are now output along with the `Tag` and actual log item
+* `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`. Please migrate saved configuration data yourself if you need to do so for your users (probably not necessary).
+* `ShowUpdateNeededUI` no longer shows an update window if the number of update items is 0. (Arguably a bug fix, but technically a breaking change.)
 
 **Changes/Fixes**
 
@@ -51,11 +53,15 @@
 * Added `SparkleUpdater.InstallUpdateFailed` to see why `InstallUpdate` or its related installer methods fail. Also adds `Enums.InstallUpdateFailureReason`. (fe546de8667b1a5d6e0c4a72a7c128dc954f4aba)
 * `WebFileDownloader.PrepareToDownloadFile` is now `virtual` (84df81122cfae9309de4f5b79489e46287bf3a62)
 * The app cast maker now expects at least `Major.Minor` for version numbers and no longer accepts single digits as version numbers (this fixes things like "My Super App Version 2.exe" having 2 being detected as the version number when the version number is in a prior folder name, and also ensures that the right number is being read)
-* If `JSONConfiguration` cannot save data, `SparkleUpdater` now uses the `DefaultConfiguration` class, which basically has no information set on it and will check for updates for the user. (a33266ac99b3eed83ff481ee7ef06cc5a0b1ab40)
+* If `JSONConfiguration` cannot save data, `SparkleUpdater` now uses the `DefaultConfiguration` class, which basically has no information set on it and will always check for updates for the user. (a33266ac99b3eed83ff481ee7ef06cc5a0b1ab40)
 * Added `AsmResolverAccessor` class for assembly loading information without reflection (replaces `AssemblyReflectionAccessor`) (#587)
 * Fixed Avalonia message window close button not working properly (394841d47c8b6739ca0ebcec87303529b81da904)
 * Fixed `AssemblyReflectionEditor` not loading in a way that allowed for proper file closing of the DLL (fixes a unit testing issue)
 * Avalonia UI now uses `CompiledBinding`
+* Fixed `JSONConfiguration` not using correct default last config/check update time
+* Added `nullability` compatibility to core and UI libraries (#595)
+  * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
+* Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
 
 ## Updating from 0.X or 1.X to 2.X
 

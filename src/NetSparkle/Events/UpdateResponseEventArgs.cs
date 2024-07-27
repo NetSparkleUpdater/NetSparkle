@@ -1,9 +1,5 @@
 ﻿using NetSparkleUpdater.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Events
 {
@@ -18,7 +14,7 @@ namespace NetSparkleUpdater.Events
         public UpdateAvailableResult Result { get; set; }
 
         /// <summary>
-        /// The AppCastItem that the user is responding to an update notice for
+        /// The <seealso cref="AppCastItem"/> that the user is responding to an update notice for
         /// </summary>
         public AppCastItem UpdateItem { get; set; }
 

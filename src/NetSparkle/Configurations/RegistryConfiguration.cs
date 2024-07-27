@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using Microsoft.Win32;
-using NetSparkleUpdater.AssemblyAccessors;
 using NetSparkleUpdater.Interfaces;
 #if (NETSTANDARD || NET6 || NET7 || NET8)
 using System.Runtime.InteropServices;
@@ -21,7 +20,7 @@ namespace NetSparkleUpdater.Configurations
     public class RegistryConfiguration : Configuration
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-        private string _registryPath;
+        private string? _registryPath;
 
         /// <summary>
         /// Constructor for a configuration that saves and loads information from the Windows registry.
@@ -41,7 +40,7 @@ namespace NetSparkleUpdater.Configurations
         /// you would like to check for updates for</param>
         /// <param name="registryPath">Location in the registry where configuration data should be stored and
         /// loaded from</param>
-        public RegistryConfiguration(IAssemblyAccessor assemblyAccessor, string registryPath)
+        public RegistryConfiguration(IAssemblyAccessor assemblyAccessor, string? registryPath)
             : base(assemblyAccessor)
         {
             _registryPath = registryPath;
@@ -97,28 +96,23 @@ namespace NetSparkleUpdater.Configurations
         /// information available</exception>
         public virtual string BuildRegistryPath()
         {
-            if (!string.IsNullOrEmpty(_registryPath))
+            if (_registryPath != null && !string.IsNullOrWhiteSpace(_registryPath))
             {
-                return _registryPath;
+                return _registryPath; // added the extra != null check to fix a nullability warning even though not needed
             }
             else
             {
-                if (string.IsNullOrEmpty(AssemblyAccessor.AssemblyCompany) || string.IsNullOrEmpty(AssemblyAccessor.AssemblyProduct))
+                if (string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyCompany) || 
+                    string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyProduct))
                 {
                     throw new NetSparkleException("Error: NetSparkleUpdater is missing the company or productname tag in the assembly accessor ("
                         + AssemblyAccessor.GetType() + ")");
                 }
 
                 _registryPath = "Software\\";
-                if (!string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyCompany))
-                {
-                    _registryPath += AssemblyAccessor.AssemblyCompany + "\\";
-                }
-                if (!string.IsNullOrWhiteSpace(AssemblyAccessor.AssemblyProduct))
-                {
-                    _registryPath += AssemblyAccessor.AssemblyProduct + "\\";
-                }
-                _registryPath += "AutoUpdate";
+                _registryPath += AssemblyAccessor.AssemblyCompany + "\\";
+                _registryPath += AssemblyAccessor.AssemblyProduct + "\\";
+                _registryPath += "NetSparkleUpdater";
                 return _registryPath;
             }
         }
@@ -146,7 +140,7 @@ namespace NetSparkleUpdater.Configurations
                 return false;
             }
 #endif
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(regPath);
+            RegistryKey? key = Registry.CurrentUser.OpenSubKey(regPath);
             if (key == null)
             {
                 SaveDidRunOnceAsTrue(regPath);
@@ -155,18 +149,18 @@ namespace NetSparkleUpdater.Configurations
             else
             {
                 // read out                
-                string strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as string;
-                string strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
-                string strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
-                string strDidRunOnc = key.GetValue("DidRunOnce", "False") as string;
-                string strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
-                string strPreviousVersion = key.GetValue("PreviousVersionRun", "") as string;
+                string? strCheckForUpdate = key.GetValue("CheckForUpdate", "True") as string;
+                string? strLastCheckTime = key.GetValue("LastCheckTime", ConvertDateToString(new DateTime(0))) as string;
+                string? strSkipThisVersion = key.GetValue("SkipThisVersion", "") as string;
+                string? strDidRunOnce = key.GetValue("DidRunOnce", "False") as string;
+                string? strProfileTime = key.GetValue("LastProfileUpdate", ConvertDateToString(new DateTime(0))) as string;
+                string? strPreviousVersion = key.GetValue("PreviousVersionRun", "") as string;
 
                 // convert the right datatypes
                 CheckForUpdate = Convert.ToBoolean(strCheckForUpdate);
                 try
                 {
-                    LastCheckTime = ConvertStringToDate(strLastCheckTime);
+                    LastCheckTime = strLastCheckTime != null ? ConvertStringToDate(strLastCheckTime) : new DateTime(0);
                 }
                 catch (FormatException)
                 {
@@ -174,7 +168,7 @@ namespace NetSparkleUpdater.Configurations
                 }
 
                 LastVersionSkipped = strSkipThisVersion;
-                DidRunOnce = Convert.ToBoolean(strDidRunOnc);
+                DidRunOnce = Convert.ToBoolean(strDidRunOnce);
                 IsFirstRun = !DidRunOnce;
                 PreviousVersionOfSoftwareRan = strPreviousVersion;
                 if (IsFirstRun)
@@ -187,7 +181,7 @@ namespace NetSparkleUpdater.Configurations
                 }
                 try
                 {
-                    LastConfigUpdate = ConvertStringToDate(strProfileTime);
+                    LastConfigUpdate = strProfileTime != null ? ConvertStringToDate(strProfileTime) : new DateTime(0);
                 }
                 catch (FormatException)
                 {
@@ -224,21 +218,13 @@ namespace NetSparkleUpdater.Configurations
                 return false;
             }
 
-            // convert to regsz
-            string strCheckForUpdate = true.ToString(); // always check for updates next time!
-            string strLastCheckTime = ConvertDateToString(LastCheckTime);
-            string strSkipThisVersion = LastVersionSkipped;
-            string strDidRunOnc = DidRunOnce.ToString();
-            string strProfileTime = ConvertDateToString(LastConfigUpdate);
-            string strPreviousVersion = InstalledVersion;
-
             // set the values
-            key.SetValue("CheckForUpdate", strCheckForUpdate, RegistryValueKind.String);
-            key.SetValue("LastCheckTime", strLastCheckTime, RegistryValueKind.String);
-            key.SetValue("SkipThisVersion", strSkipThisVersion, RegistryValueKind.String);
-            key.SetValue("DidRunOnce", strDidRunOnc, RegistryValueKind.String);
-            key.SetValue("LastProfileUpdate", strProfileTime, RegistryValueKind.String);
-            key.SetValue("PreviousVersionRun", strPreviousVersion, RegistryValueKind.String);
+            key.SetValue("CheckForUpdate", true.ToString() /* always check for updates next time! */, RegistryValueKind.String);
+            key.SetValue("LastCheckTime", ConvertDateToString(LastCheckTime), RegistryValueKind.String);
+            key.SetValue("SkipThisVersion", LastVersionSkipped ?? "", RegistryValueKind.String);
+            key.SetValue("DidRunOnce", DidRunOnce.ToString(), RegistryValueKind.String);
+            key.SetValue("LastProfileUpdate", ConvertDateToString(LastConfigUpdate), RegistryValueKind.String);
+            key.SetValue("PreviousVersionRun", InstalledVersion, RegistryValueKind.String);
 
             return true;
         }

@@ -21,7 +21,7 @@ namespace NetSparkleUpdater.Downloaders
     /// </summary>
     public class LocalFileDownloader : IUpdateDownloader, IDisposable
     {
-        private ILogger _logger;
+        private ILogger? _logger;
         private CancellationTokenSource _cancellationTokenSource;
         private string _downloadFileLocation;
 
@@ -40,7 +40,7 @@ namespace NetSparkleUpdater.Downloaders
         /// Uses default credentials and default proxy.
         /// </summary>
         /// <param name="logger">ILogger to write logs to</param>
-        public LocalFileDownloader(ILogger logger)
+        public LocalFileDownloader(ILogger? logger)
         {
             _logger = logger;
             _cancellationTokenSource = new CancellationTokenSource();
@@ -50,7 +50,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from LocalFileDownloader
         /// </summary>
-        public ILogger LogWriter
+        public ILogger? LogWriter
         {
             set { _logger = value; }
             get { return _logger; }
@@ -66,9 +66,10 @@ namespace NetSparkleUpdater.Downloaders
         public bool UseLocalUriPath { get; set; } = false;
 
         /// <inheritdoc/>
-        public event DownloadProgressEvent DownloadProgressChanged;
+        public event DownloadProgressEvent? DownloadProgressChanged;
+        
         /// <inheritdoc/>
-        public event AsyncCompletedEventHandler DownloadFileCompleted;
+        public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
         /// <inheritdoc/>
         public void CancelDownload()
@@ -77,7 +78,7 @@ namespace NetSparkleUpdater.Downloaders
             DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
             _cancellationTokenSource = new CancellationTokenSource();
             IsDownloading = false;
-            if (_downloadFileLocation != "" && File.Exists(_downloadFileLocation))
+            if (!string.IsNullOrWhiteSpace(_downloadFileLocation) && File.Exists(_downloadFileLocation))
             {
                 try {
                     File.Delete(_downloadFileLocation);
@@ -93,16 +94,20 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async Task<string> RetrieveDestinationFileNameAsync(AppCastItem item)
+        public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
         {
             return await Task.Run(() => Path.GetFileName(item.DownloadLink));
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri uri, string downloadFilePath)
+        public async void StartFileDownload(Uri? uri, string downloadFilePath)
         {
-            var path = UseLocalUriPath ? uri.LocalPath : uri.AbsolutePath;
-            await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
+            var path = UseLocalUriPath ? uri?.LocalPath : uri?.AbsolutePath;
+            if (path != null)
+            {
+                _logger?.PrintMessage("LocalFileDownloader: null uri sent to StartFileDownload; no file downloaded");
+                await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
+            }
         }
 
         // https://stackoverflow.com/a/36925751/3938401 and
@@ -144,7 +149,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter.PrintMessage("Error: {0}", e.Message);
+                LogWriter?.PrintMessage("Error: {0}", e.Message);
                 Cancel(destinationFile);
                 DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
                 IsDownloading = false;
@@ -164,9 +169,12 @@ namespace NetSparkleUpdater.Downloaders
 
         private void UpdateDownloadProgress(long totalRead, long totalLength)
         {
+            if (totalLength == 0)
+            {
+                totalLength = 1; // ...just in case.
+            }
             int percentage = Convert.ToInt32(Math.Round((double)totalRead / totalLength * 100, 0));
-
-            DownloadProgressChanged?.Invoke(this, new ItemDownloadProgressEventArgs(percentage, null, totalRead, totalLength));
+            DownloadProgressChanged?.Invoke(this, new ItemDownloadProgressEventArgs(percentage, this, totalRead, totalLength));
         }
     }
 }

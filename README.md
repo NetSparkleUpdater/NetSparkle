@@ -100,6 +100,24 @@ We are open to contributions that might make the overall install/update process 
 
 **Please look at the sample projects in this repository for basic, runnable usage samples!!** There are samples on using each of the built-in UIs as well as a "do it yourself in your own UI" sample!
 
+### Project file
+
+In your project file, make sure you set up a few things so that the library can read in the pertinent details later.
+
+```xml
+<PropertyGroup>
+    <Version>1.0.2-beta1</Version> <!-- accepts semver -->
+    <AssemblyVersion>1.0.2</AssemblyVersion> <!-- only accepts Major.Minor.Patch.Revision -->
+    <AssemblyTitle>My Best App</AssemblyTitle>
+    <Description>My app is cool (not required)</Description>
+    <Company>My Company Name (required unless you set the IAssemblyAccessor save path yourself)</Company>
+    <Product>My Product (required unless you set the IAssemblyAccessor save path yourself; set to product name e.g. MyBestApp)</Product>
+    <Copyright>2024 MyCompanyName</Copyright>
+</PropertyGroup>
+```
+
+### Code
+
 ```csharp
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
@@ -145,7 +163,7 @@ The file that launches your downloaded update executable only waits for 90 secon
 
 The app cast is just an XML file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
 
-We strongly recommend that you make use of the [netsparkle-generate-appcast](#install-appcast-generator-tool) tool to (re)create the file because it correctly takes care of all signing requirements for you.
+We strongly recommend that you make use of the [netsparkle-generate-appcast](#install-appcast-generator-tool) tool to create (and later, re-create/update) the file because it can help take care of all signing requirements for you.
 
 ### Install AppCast Generator Tool
 
@@ -415,7 +433,7 @@ public bool DownloadAndParse()
         _logWriter.PrintMessage("Downloading app cast data...");
 
         var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
-        if (!string.IsNullOrEmpty(appCast))
+        if (!string.IsNullOrWhiteSpace(appCast))
         {
             ParseAppCast(appCast);
             return true;

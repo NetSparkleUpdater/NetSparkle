@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
 
@@ -15,12 +10,12 @@ namespace NetSparkleUpdater.AssemblyAccessors
     /// </summary>
     public class AssemblyDiagnosticsAccessor : IAssemblyAccessor
     {
-        private string _fileVersion;
-        private string _productVersion;
-        private string _productName;
-        private string _companyName;
-        private string _legalCopyright;
-        private string _fileDescription;
+        private string? _fileVersion;
+        private string? _productVersion;
+        private string? _productName;
+        private string? _companyName;
+        private string? _legalCopyright;
+        private string? _fileDescription;
 
         /// <summary>
         /// Create a new diagnostics accessor and parse the assembly's information
@@ -28,28 +23,39 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <seealso cref="Path.GetFullPath(string)"/> is used to get the full file
         /// path of the given assembly.
         /// </summary>
-        /// <param name="assemblyName">the assembly name</param>
-        /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
-        public AssemblyDiagnosticsAccessor(string assemblyName)
+        /// <param name="assemblyPath">the path to the assembly to read/access</param>
+        /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist or null is sent to the constructor</exception>
+        public AssemblyDiagnosticsAccessor(string? assemblyPath)
         {
-            if (assemblyName != null)
+            if (assemblyPath != null)
             {
-                string absolutePath = Path.GetFullPath(assemblyName);
+                string absolutePath = Path.GetFullPath(assemblyPath);
                 if (!File.Exists(absolutePath))
                 {
                     throw new FileNotFoundException();
                 }
-                var info = FileVersionInfo.GetVersionInfo(assemblyName);
-                _fileVersion = info.FileVersion;
-                _productVersion = info.ProductVersion;
-                _productName = info.ProductName;
-                _companyName = info.CompanyName;
-                _legalCopyright = info.LegalCopyright;
-                _fileDescription = info.Comments;
+                FileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+                _fileVersion = FileVersionInfo.FileVersion;
+                _productVersion = FileVersionInfo.ProductVersion;
+                _productName = FileVersionInfo.ProductName;
+                _companyName = FileVersionInfo.CompanyName;
+                _legalCopyright = FileVersionInfo.LegalCopyright;
+                _fileDescription = FileVersionInfo.Comments;
+            }
+            else
+            {
+                throw new FileNotFoundException();
             }
         }
 
         #region Assembly Attribute Accessors
+
+        /// <summary>
+        /// <seealso cref="FileVersionInfo"/> for this assembly accessor in case there's something
+        /// you want to look at outside of the other shortcut properties that are the same
+        /// as other <seealso cref="IAssemblyAccessor"/> objects
+        /// </summary>
+        public FileVersionInfo FileVersionInfo { get; protected set; }
 
         /// <summary>
         /// Title of the assembly, e.g. "My Best Product". 
@@ -57,39 +63,39 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// </summary>
         public string AssemblyTitle
         {
-            get => _productName ?? "";
+            get => AssemblyProduct;
         }
 
         /// <inheritdoc/>
         public string AssemblyVersion
         {
-            get => _productVersion;
-        }        
+             get => _productVersion ?? "";
+        }
 
         /// <summary>
         /// Gets the description
         /// </summary>
         public string AssemblyDescription
         {
-            get => _fileDescription;
+             get => _fileDescription ?? "";
         }
 
         /// <inheritdoc/>
         public string AssemblyProduct
         {
-            get => _productName;
+             get => _productName ?? "";
         }
 
         /// <inheritdoc/>
         public string AssemblyCopyright
         {
-            get => _legalCopyright;
+             get => _legalCopyright ?? "";
         }
 
         /// <inheritdoc/>
         public string AssemblyCompany
         {
-            get => _companyName;
+             get => _companyName ?? "";
         }
 
         #endregion

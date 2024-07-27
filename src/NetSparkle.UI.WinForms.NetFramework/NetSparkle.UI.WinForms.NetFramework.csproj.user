@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="CheckingForUpdatesWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="DownloadProgressWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="MessageNotificationWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ToastNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UpdateAvailableWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

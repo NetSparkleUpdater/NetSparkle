@@ -28,6 +28,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast, dsa</PackageTags>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
+	<Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>

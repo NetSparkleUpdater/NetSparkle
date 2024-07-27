@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetSparkleUpdater.UI.WPF.Helpers;
+﻿using NetSparkleUpdater.UI.WPF.Helpers;
 
 namespace NetSparkleUpdater.UI.WPF.ViewModels
 {
@@ -17,7 +14,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         /// </summary>
         public MessageNotificationWindowViewModel()
         {
-            Message = "";
+            _message = "";
         }
 
         /// <summary>
@@ -26,7 +23,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         /// <param name="message">the message to show the user</param>
         public MessageNotificationWindowViewModel(string message)
         {
-            Message = message;
+            _message = message;
         }
 
         /// <summary>

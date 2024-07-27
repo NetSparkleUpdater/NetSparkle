@@ -21,7 +21,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// constructor
         /// </summary>
-        public ToastNotifier(Icon applicationIcon = null)
+        public ToastNotifier(Icon? applicationIcon = null)
         {
             InitializeComponent();
             // We want our window to be the top most
@@ -49,13 +49,13 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Action to perform when the user clicks on the toast window
         /// </summary>
-        public Action<List<AppCastItem>> ClickAction { get; set; }
+        public Action<List<AppCastItem>>? ClickAction { get; set; }
 
         /// <summary>
         /// List of <seealso cref="AppCastItem"/> updates that the user is being
         /// notified about in the toast message
         /// </summary>
-        public List<AppCastItem> Updates { get; set; }
+        public List<AppCastItem>? Updates { get; set; }
 
         private void PauseTimerTick(object sender, EventArgs e)
         {
@@ -77,7 +77,7 @@ namespace NetSparkleUpdater
             _goUpTimer.Start();
         }
 
-        void GoUpTimerTick(object sender, EventArgs e)
+        void GoUpTimerTick(object? sender, EventArgs e)
         {
             //Lift window by 5 pixels
             startPosY -= 5;
@@ -93,7 +93,7 @@ namespace NetSparkleUpdater
             }
         }
 
-        private void GoDownTimerTick(object sender, EventArgs e)
+        private void GoDownTimerTick(object? sender, EventArgs e)
         {
             //Lower window by 5 pixels
             startPosY += 5;
@@ -109,10 +109,10 @@ namespace NetSparkleUpdater
             }
         }
 
-        private void ToastNotifier_Click(object sender, EventArgs e)
+        private void ToastNotifier_Click(object? sender, EventArgs? e)
         {
             DialogResult = DialogResult.Yes;
-            ClickAction?.Invoke(Updates);
+            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
             Close();
         }
 
@@ -130,7 +130,7 @@ namespace NetSparkleUpdater
             Show();
         }
 
-        private void callToAction_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void callToAction_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
             this.ToastNotifier_Click(null, null);
         }

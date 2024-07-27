@@ -1,9 +1,5 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
-using NetSparkleUpdater.Configurations;
-using System;
+﻿using NetSparkleUpdater.Configurations;
 using System.Collections.Generic;
-using System.Text;
-using NetSparkleUpdater.Enums;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -29,7 +25,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
         void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config,
-            ISignatureVerifier signatureVerifier, ILogger logWriter = null);
+            ISignatureVerifier? signatureVerifier, ILogger? logWriter = null);
 
         /// <summary>
         /// Download the app cast file via the <see cref="IAppCastDataDownloader"/> 

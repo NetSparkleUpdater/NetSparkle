@@ -16,7 +16,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Event to fire when the download UI is complete; tells you 
         /// if the install process should happen or not
         /// </summary>
-        public event DownloadInstallEventHandler DownloadProcessCompleted;
+        public event DownloadInstallEventHandler? DownloadProcessCompleted;
 
         private bool _shouldLaunchInstallFileOnClose = false;
         private bool _didCallDownloadProcessCompletedHandler = false;
@@ -37,11 +37,14 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         /// <param name="item">The appcast item to use</param>
         /// <param name="applicationIcon">Your application Icon</param>
-        public DownloadProgressWindow(AppCastItem item, Icon applicationIcon)
+        public DownloadProgressWindow(AppCastItem item, Icon? applicationIcon)
         {
             InitializeComponent();
 
-            imgAppIcon.Image = applicationIcon.ToBitmap();
+            if (applicationIcon != null)
+            {
+                imgAppIcon.Image = new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
+            }
             Icon = applicationIcon;
 
             // init ui
@@ -56,7 +59,7 @@ namespace NetSparkleUpdater.UI.WinForms
             FormClosing += DownloadProgressWindow_FormClosing;
         }
 
-        private void DownloadProgressWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void DownloadProgressWindow_FormClosing(object? sender, FormClosingEventArgs e)
         {
             FormClosing -= DownloadProgressWindow_FormClosing;
             if (!_didCallDownloadProcessCompletedHandler)

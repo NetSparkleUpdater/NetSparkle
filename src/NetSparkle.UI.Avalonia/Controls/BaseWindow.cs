@@ -55,7 +55,7 @@ namespace NetSparkleUpdater.UI.Avalonia.Controls
             _hasInitiatedShutdown = false;
         }
 
-        private void BaseWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void BaseWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             Closing -= BaseWindow_Closing;
             if (!_isOnMainThread && !_hasInitiatedShutdown)

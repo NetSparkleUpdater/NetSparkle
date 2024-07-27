@@ -111,7 +111,7 @@ namespace MarkdownSharp
         /// <summary>
         /// use ">" for HTML output, or " />" for XHTML output
         /// </summary>
-        public string EmptyElementSuffix { get; set; }
+        public string? EmptyElementSuffix { get; set; }
 
         /// <summary>
         /// when false, email addresses will never be auto-linked  
@@ -194,15 +194,18 @@ namespace MarkdownSharp
         /// <summary>
         /// Create a new Markdown instance and set the options from the MarkdownOptions object.
         /// </summary>
-        public Markdown(MarkdownOptions options)
+        public Markdown(MarkdownOptions? options)
         {
-            AutoHyperlink = options.AutoHyperlink;
-            AutoNewLines = options.AutoNewlines;
-            if (!string.IsNullOrEmpty(options.EmptyElementSuffix))
-                EmptyElementSuffix = options.EmptyElementSuffix;
-            LinkEmails = options.LinkEmails;
-            StrictBoldItalic = options.StrictBoldItalic;
-            AsteriskIntraWordEmphasis = options.AsteriskIntraWordEmphasis;
+            if (options != null)
+            {
+                AutoHyperlink = options.AutoHyperlink;
+                AutoNewLines = options.AutoNewlines;
+                if (options.EmptyElementSuffix != null && !string.IsNullOrWhiteSpace(options.EmptyElementSuffix))
+                    EmptyElementSuffix = options.EmptyElementSuffix;
+                LinkEmails = options.LinkEmails;
+                StrictBoldItalic = options.StrictBoldItalic;
+                AsteriskIntraWordEmphasis = options.AsteriskIntraWordEmphasis;
+            }
         }
 
         /// <summary>
@@ -328,7 +331,7 @@ namespace MarkdownSharp
         /// </remarks>
         public string Transform(string text)
         {
-            if (string.IsNullOrEmpty(text)) return "";
+            if (string.IsNullOrWhiteSpace(text)) return "";
 
             Setup();
 
@@ -457,7 +460,7 @@ namespace MarkdownSharp
             Setup();
         }
 
-        private static string _nestedBracketsPattern;
+        private static string? _nestedBracketsPattern;
 
         /// <summary>
         /// Reusable pattern to match balanced [brackets]. See Friedl's 
@@ -484,7 +487,7 @@ namespace MarkdownSharp
             return _nestedBracketsPattern;
         }
 
-        private static string _nestedParensPattern;
+        private static string? _nestedParensPattern;
 
         /// <summary>
         /// Reusable pattern to match balanced (parens). See Friedl's 
@@ -837,7 +840,7 @@ namespace MarkdownSharp
             if (linkID?.Length == 0)
                 linkID = linkText.ToLowerInvariant();
 
-            if (_urls.ContainsKey(linkID))
+            if (linkID != null && !string.IsNullOrWhiteSpace(linkID) && _urls.ContainsKey(linkID))
             {
                 string url = _urls[linkID];
 
@@ -909,7 +912,7 @@ namespace MarkdownSharp
 
             result = string.Format("<a href=\"{0}\"", url);
 
-            if (!string.IsNullOrEmpty(title))
+            if (!string.IsNullOrWhiteSpace(title))
             {
                 title = AttributeEncode(title);
                 title = EscapeBoldItalic(title);
@@ -994,10 +997,10 @@ namespace MarkdownSharp
             if (linkID?.Length == 0)
                 linkID = altText.ToLowerInvariant();
 
-            if (_urls.ContainsKey(linkID))
+            if (linkID != null && !string.IsNullOrWhiteSpace(linkID) && _urls.ContainsKey(linkID))
             {
                 string url = _urls[linkID];
-                string title = null;
+                string? title = null;
 
                 if (_titles.ContainsKey(linkID))
                     title = _titles[linkID];
@@ -1023,12 +1026,12 @@ namespace MarkdownSharp
             return ImageTag(url, alt, title);
         }
 
-        private string ImageTag(string url, string altText, string title)
+        private string ImageTag(string url, string altText, string? title)
         {
             altText = EscapeImageAltText(AttributeEncode(altText));
             url = AttributeSafeUrl(url);
             var result = string.Format("<img src=\"{0}\" alt=\"{1}\"", url, altText);
-            if (!string.IsNullOrEmpty(title))
+            if (title != null && !string.IsNullOrWhiteSpace(title))
             {
                 title = AttributeEncode(EscapeBoldItalic(title));
                 result += string.Format(" title=\"{0}\"", title);

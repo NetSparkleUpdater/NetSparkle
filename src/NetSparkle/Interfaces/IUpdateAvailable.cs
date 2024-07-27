@@ -1,5 +1,4 @@
 using NetSparkleUpdater.Enums;
-using System;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -13,7 +12,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Event fired when the user has responded to the 
         /// skip, later, install question.
         /// </summary>
-        event UserRespondedToUpdate UserResponded;
+        event UserRespondedToUpdate? UserResponded;
 
         /// <summary>
         /// Show the UI that displays release notes, etc.
