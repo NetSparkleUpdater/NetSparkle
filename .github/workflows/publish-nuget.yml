@@ -53,15 +53,10 @@ jobs:
       - name: Run NetSparkle.Tests.AppCastGenerator in .NET 8
         run: dotnet test -f net8.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
-  publish:
-    name: Build and publish all packages to NuGet
+  build:
+    name: Build all packages as smoke test
     runs-on: windows-latest
     needs: test
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview' || github.ref == 'refs/heads/versions/2.x'
-    # Need to set ACTIONS_ALLOW_UNSECURE_COMMANDS for microsoft/setup-msbuild@v1.0.0 to work as it uses the now-deprecated addPath method
-    #env:
-    #  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-    # microsoft/setup-msbuild@v1.1.3 fixes that deprecation issue.
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: nuget/setup-nuget@v2
@@ -102,6 +97,29 @@ jobs:
 
       - name: Build NetSparkle.Tools.DSAHelper in Release
         run: dotnet build ${{ github.workspace }}/src/NetSparkle.Tools.DSAHelper/NetSparkle.Tools.DSAHelper.csproj --configuration Release
+
+  publish:
+    name: Build and publish all packages to NuGet
+    runs-on: windows-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview' || github.ref == 'refs/heads/versions/2.x'
+    steps:
+      - uses: actions/checkout@v4.1.7
+      - uses: nuget/setup-nuget@v2
+        with:
+            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-version: '5.x'
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2.0.0
+      
+      - name: Setup .NET 6.0, 7.0, 8.0
+        uses: actions/setup-dotnet@v4.0.1
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
         
       - name: Publish NetsparkleUpdater.NetSparkle on version change
         uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
