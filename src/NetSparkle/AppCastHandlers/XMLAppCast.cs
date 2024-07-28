@@ -156,7 +156,8 @@ namespace NetSparkleUpdater.AppCastHandlers
                 if (isValidAppcast)
                 {
                     _logWriter?.PrintMessage("Appcast is valid! Parsing...");
-                    ParseAppCast(appcast);
+                    Items.Clear();
+                    Items.AddRange(ParseAppCast(appcast));
                     return true;
                 }
             }
@@ -198,9 +199,10 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// as <see cref="AppCastItem"/> objects.
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
-        protected virtual void ParseAppCast(string? appCast)
+        protected virtual List<AppCastItem> ParseAppCast(string? appCast)
         {
-            Items.Clear();
+            var items = new List<AppCastItem>();
+            items.Clear();
             if (!string.IsNullOrWhiteSpace(appCast))
             {
                 XDocument doc = XDocument.Parse(appCast);
@@ -210,21 +212,22 @@ namespace NetSparkleUpdater.AppCastHandlers
                 Title = channel?.Element("title")?.Value ?? string.Empty;
                 Language = channel?.Element("language")?.Value ?? "en";
 
-                var items = doc?.Descendants("item");
-                if (items != null)
+                var docItems = doc?.Descendants("item");
+                if (docItems != null)
                 {
-                    foreach (var item in items)
+                    foreach (var item in docItems)
                     {
                         var currentItem = AppCastItem.Parse(_config?.InstalledVersion, _config?.ApplicationName, _castUrl, item, _logWriter);
                         _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
                             currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystemString ?? "[Unknown operating system]");
-                        Items.Add(currentItem);
+                        items.Add(currentItem);
                     }
                 }
 
                 // sort versions in reverse order
-                Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+                items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
             }
+            return items;
         }
 
 

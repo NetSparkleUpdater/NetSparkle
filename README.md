@@ -426,7 +426,7 @@ Having just the latest version of your software in the app cast has the added si
 3. If you don't want to generate signatures because you trust your AppCenter builds, use `SecurityMode.Unsafe` or the following `IAppCastHandler` override:
 
 ```csharp
-public bool DownloadAndParse()
+public override bool DownloadAndParse()
 {
     try
     {
@@ -435,7 +435,8 @@ public bool DownloadAndParse()
         var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
         if (!string.IsNullOrWhiteSpace(appCast))
         {
-            ParseAppCast(appCast);
+            Items.Clear();
+            Items.AddRange(ParseAppCast(appcast));
             return true;
         }
     }
