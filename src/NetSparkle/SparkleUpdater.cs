@@ -70,6 +70,7 @@ namespace NetSparkleUpdater
         private string? _restartExecutablePath;
 
         private IAppCastHandler? _appCastHandler;
+        private IAppCastGenerator? _appCastGenerator;
 
         /// <summary>
         /// The progress window is shown on a separate thread.
@@ -462,11 +463,24 @@ namespace NetSparkleUpdater
             {
                 if (_appCastHandler == null)
                 {
-                    _appCastHandler = new XMLAppCast();
+                    _appCastHandler = new AppCastHandler();
                 }
                 return _appCastHandler;
             }
             set => _appCastHandler = value;
+        }
+
+        public IAppCastGenerator AppCastGenerator
+        {
+            get
+            {
+                if (_appCastGenerator == null)
+                {
+                    _appCastGenerator = new XMLAppCastGenerator(LogWriter);
+                }
+                return _appCastGenerator;
+            }
+            set => _appCastGenerator = value;
         }
 
         /// <summary>
@@ -702,11 +716,7 @@ namespace NetSparkleUpdater
             {
                 AppCastDataDownloader = new WebRequestAppCastDataDownloader(LogWriter);
             }
-            if (AppCastHandler == null)
-            {
-                AppCastHandler = new XMLAppCast();
-            }
-            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
+            AppCastHandler.SetupAppCastHandler(AppCastGenerator, AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
             // check if any updates are available
             try
             {

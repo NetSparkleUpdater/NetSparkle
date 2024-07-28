@@ -753,13 +753,15 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // for debugging print out app cast
                 // Console.WriteLine(File.ReadAllText(appCastFileName));
                 // test NetSparkle reading file
-                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
+                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.AppCastHandler();
                 var publicKey = signatureManager.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
+                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 appCastHandler.SetupAppCastHandler(
+                        new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter),
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
-                        new EmptyTestDataConfguration(
+                        new EmptyTestDataConfiguration(
                             new FakeTestDataAssemblyAccessor() 
                             {
                                 AssemblyVersion = "1.0"
@@ -767,7 +769,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console));
+                        logWriter);
                 var didSucceed = appCastHandler.DownloadAndParse();
                 Assert.True(didSucceed);
                 var updates = appCastHandler.GetAvailableUpdates();
@@ -919,14 +921,17 @@ namespace NetSparkle.Tests.AppCastGenerator
                     maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
                 }
                 // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
+                Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
                 // test NetSparkle reading file
-                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.XMLAppCast();
+                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.AppCastHandler();
                 var publicKey = signatureManager.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
+                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 appCastHandler.SetupAppCastHandler(
+                        new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter),
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
-                        new EmptyTestDataConfguration(
+                        new EmptyTestDataConfiguration(
                             new FakeTestDataAssemblyAccessor() 
                             {
                                 AssemblyVersion = "1.0"
@@ -934,7 +939,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console));
+                        logWriter);
                 var didSucceed = appCastHandler.DownloadAndParse();
                 Assert.True(didSucceed);
                 var updates = appCastHandler.GetAvailableUpdates();

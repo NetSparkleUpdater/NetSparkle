@@ -3,9 +3,9 @@ using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
-    public class EmptyTestDataConfguration : Configuration
+    public class EmptyTestDataConfiguration : Configuration
     {
-        public EmptyTestDataConfguration(IAssemblyAccessor accessor) : base(accessor) 
+        public EmptyTestDataConfiguration(IAssemblyAccessor accessor) : base(accessor) 
         {
         }
 

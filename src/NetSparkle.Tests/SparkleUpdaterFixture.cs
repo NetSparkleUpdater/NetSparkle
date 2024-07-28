@@ -17,8 +17,9 @@ namespace NetSparkleUnitTests
         public SparkleUpdater CreateUpdater(string xmlData, string installedVersion, IAppCastFilter filter = null)
         {
             SparkleUpdater updater = new SparkleUpdater("test-url", new AlwaysSucceedSignatureChecker());
+            (updater.LogWriter as LogWriter).OutputMode = NetSparkleUpdater.Enums.LogWriterOutputMode.Console;
             updater.AppCastDataDownloader = new StringCastDataDownloader(xmlData);
-            updater.Configuration = new EmptyTestDataConfguration(new FakeTestDataAssemblyAccessor()
+            updater.Configuration = new EmptyTestDataConfiguration(new FakeTestDataAssemblyAccessor()
             {
                 AssemblyCompany = "NetSparkle Test App",
                 AssemblyCopyright = "@ (C) Thinking",
@@ -26,7 +27,7 @@ namespace NetSparkleUnitTests
                 AssemblyVersion = installedVersion
             });
 
-            XMLAppCast cast = updater.AppCastHandler as XMLAppCast;
+            var cast = updater.AppCastHandler as AppCastHandler;
             if (cast != null)
             {
                 if (filter != null)

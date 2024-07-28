@@ -2,9 +2,11 @@
 using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,6 +18,11 @@ namespace NetSparkleUpdater.AppCastGenerator
 {
     public class XMLAppCastMaker : AppCastMaker
     {
+        /// <summary>
+        /// Sparkle XML namespace
+        /// </summary>
+        public static readonly XNamespace SparkleNamespace = "http://www.andymatuschak.org/xml-namespaces/sparkle";
+        
         public XMLAppCastMaker(SignatureManager signatureManager, Options options) : base(signatureManager, options)
         {
             HumanReadableOutput = options.HumanReadableOutput;
@@ -58,9 +65,10 @@ namespace NetSparkleUpdater.AppCastGenerator
 
                     var docDescendants = doc.Descendants("item");
                     var logWriter = new LogWriter(LogWriterOutputMode.Console);
+                    var xmlGenerator = new XMLAppCastGenerator(logWriter);
                     foreach (var item in docDescendants)
                     {
-                        var currentItem = AppCastItem.Parse("", "", "/", item, logWriter);
+                        var currentItem = xmlGenerator.ReadAppCastItem(item);
                         Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
                             currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystemString);
                         var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
@@ -108,17 +116,20 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <inheritdoc/>
         public override void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
         {
-            var appcastXmlDocument = XMLAppCast.GenerateAppCastXml(items, applicationTitle, _opts.AppCastLink ?? "", _opts.AppCastDescription ?? "");
-            Console.WriteLine("Writing app cast to {0}", path);
-            using (var xmlWriter = XmlWriter.Create(path, new XmlWriterSettings 
-                {
-                    NewLineChars = Environment.NewLine, 
-                    Encoding = new UTF8Encoding(false), 
-                    Indent = HumanReadableOutput
-                }))
+            var xmlGenerator = new XMLAppCastGenerator()
             {
-                appcastXmlDocument.Save(xmlWriter);
-            }
+                HumanReadableOutput = HumanReadableOutput
+            };
+            Console.WriteLine("Writing app cast to {0}", path);
+            var appCast = new AppCast() 
+            { 
+                Items = items,
+                Title = applicationTitle,
+                Link = _opts.AppCastLink,
+                Description = _opts.AppCastDescription,
+                Language = "en"
+            };
+            xmlGenerator.SerializeAppCastToFile(appCast, path);
         }
     }
 }

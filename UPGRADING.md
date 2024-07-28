@@ -34,7 +34,14 @@
   * By default, timestamps are now output along with the `Tag` and actual log item
 * `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`. Please migrate saved configuration data yourself if you need to do so for your users (probably not necessary).
 * `ShowUpdateNeededUI` no longer shows an update window if the number of update items is 0. (Arguably a bug fix, but technically a breaking change.)
-
+* Major refactoring for app cast handling/parsing to clean up logic / make new formats easier
+  * New `AppCast` model class that holds info on the actual app cast and its items
+  * `AppCastItem` no longer contains information on serializing or parsing to/from XML
+  * App cast parsing/serializing is now handled by an `IAppCastGenerator` implementation
+    * `SparkleUpdater` now has an `AppCastGenerator` member
+    * `XMLAppCast` renamed to `AppCastHandler` and takes an `IAppCastGenerator` in its `SetupAppCastHandler` method. `AppCastHandler` now manages its major tasks through other objects. Filtering still lives in the `AppCastHandler` object however.
+    * `AppCastHandler` now uses the `IAppCastGenerator` to parse the app cast
+    * `AppCastItem` serialization no expects the full download link to already be known (serialization will not consider the overall app cast URL)
 
 **Changes/Fixes**
 

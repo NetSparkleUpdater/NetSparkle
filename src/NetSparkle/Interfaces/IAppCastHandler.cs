@@ -24,7 +24,7 @@ namespace NetSparkleUpdater.Interfaces
         /// (user skipped versions, etc.)</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config,
+        void SetupAppCastHandler(IAppCastGenerator generator, IAppCastDataDownloader dataDownloader, string castUrl, Configuration config,
             ISignatureVerifier? signatureVerifier, ILogger? logWriter = null);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace NetSparkleUpdater.Interfaces
         bool DownloadAndParse();
 
         /// <summary>
-        /// Retrieve the available updates from the app cast.
+        /// Retrieve the available updates from the app cast AFTER filtering the data.
         /// This should be called after <see cref="DownloadAndParse"/> has
         /// successfully completed.
         /// </summary>
