@@ -20,12 +20,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public SignatureManager()
         {
-            SetStorageDirectory(GetDefaultStorageDirectory());
             _privateKeyOverride = "";
             _publicKeyOverride = "";
             _storagePath = "";
             _privateKeyFilePath = "";
             _publicKeyFilePath = "";
+            SetStorageDirectory(GetDefaultStorageDirectory());
         }
 
         public static string GetDefaultStorageDirectory()
