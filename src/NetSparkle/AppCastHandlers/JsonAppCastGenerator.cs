@@ -2,6 +2,7 @@ using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NetSparkleUpdater.AppCastHandlers
 {
@@ -40,7 +41,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public string SerializeAppCast(AppCast appCast)
         {
-            var options = new JsonSerializerOptions { WriteIndented = HumanReadableOutput };
+            var options = new JsonSerializerOptions 
+            { 
+                WriteIndented = HumanReadableOutput,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
 #if NETFRAMEWORK || NETSTANDARD
             return JsonSerializer.Serialize(appCast, options);
 #else
