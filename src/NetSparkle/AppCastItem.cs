@@ -3,6 +3,8 @@ using NetSparkleUpdater.Interfaces;
 using System;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NetSparkleUpdater
 {
@@ -37,12 +39,14 @@ namespace NetSparkleUpdater
         /// <summary>
         /// The item title
         /// </summary>
+        [JsonPropertyName("title")]
         public string? Title { get; set; }
         /// <summary>
         /// The available version -- this technically can be null if file parsing fails, 
         /// but since NetSparkleUpdater runs off of version information, doing this is
         /// not a great way to use this library.
         /// </summary>
+        [JsonPropertyName("version")]
         public string? Version 
         { 
             get => _version; 
@@ -51,6 +55,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// The available version as a SemVerLike object (handles things like 1.2-alpha1)
         /// </summary>
+        [JsonIgnore]
         public SemVerLike SemVerLikeVersion
         {
             get 
@@ -65,42 +70,52 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Shortened version
         /// </summary>
+        [JsonPropertyName("short_version")]
         public string? ShortVersion { get; set; }
         /// <summary>
         /// The release notes link
         /// </summary>
+        [JsonPropertyName("release_notes_link")]
         public string? ReleaseNotesLink { get; set; }
         /// <summary>
         /// The signature of the Release Notes file
         /// </summary>
+        [JsonPropertyName("release_notes_signature")]
         public string? ReleaseNotesSignature { get; set; }
         /// <summary>
         /// The embedded description
         /// </summary>
+        [JsonPropertyName("description")]
         public string? Description { get; set; }
         /// <summary>
         /// The download link
         /// </summary>
+        [JsonPropertyName("url")]
         public string? DownloadLink { get; set; }
         /// <summary>
         /// The signature of the download file
         /// </summary>
+        [JsonPropertyName("signature")]
         public string? DownloadSignature { get; set; }
         /// <summary>
         /// Date item was published
         /// </summary>
+        [JsonPropertyName("publication_date")]
         public DateTime PublicationDate { get; set; }
         /// <summary>
         /// Whether the update was marked critical or not via sparkle:critical
         /// </summary>
+        [JsonPropertyName("is_critical")]
         public bool IsCriticalUpdate { get; set; }
         /// <summary>
         /// Length of update set via sparkle:length (usually the # of bytes of the update)
         /// </summary>
+        [JsonPropertyName("size")]
         public long UpdateSize { get; set; }
         /// <summary>
         /// Operating system that this update applies to
         /// </summary>
+        [JsonPropertyName("os")]
         public string? OperatingSystem { get; set; }
 
         /// <summary>
@@ -109,6 +124,7 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Windows update.
         /// </summary>
+        [JsonIgnore]
         public bool IsWindowsUpdate
         {
             get
@@ -132,6 +148,7 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Windows update.
         /// </summary>
+        [JsonIgnore]
         public bool IsMacOSUpdate
         {
             get
@@ -154,6 +171,7 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Linux update.
         /// </summary>
+        [JsonIgnore]
         public bool IsLinuxUpdate
         {
             get
@@ -173,6 +191,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// MIME type for file as specified in the closure tag. Defaults to "application/octet-stream".
         /// </summary>
+        [JsonPropertyName("type")]
         public string MIMEType { get; set; }
 
         #region IComparable<AppCastItem> Members
