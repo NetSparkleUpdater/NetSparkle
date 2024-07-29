@@ -56,7 +56,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     {
                         var currentItem = ReadAppCastItem(item);
                         _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
-                            currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystemString ?? "[Unknown operating system]");
+                            currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystem ?? "[Unknown operating system]");
                         appCast.Items.Add(currentItem);
                     }
                 }
@@ -206,7 +206,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             var osAttribute = enclosureElement?.Attribute(SparkleNamespace + _operatingSystemAttribute);
             if (!string.IsNullOrWhiteSpace(osAttribute?.Value))
             {
-                newAppCastItem.OperatingSystemString = osAttribute?.Value;
+                newAppCastItem.OperatingSystem = osAttribute?.Value;
             }
             var mimeTypeAttribute = enclosureElement?.Attribute(SparkleNamespace + _typeAttribute);
             if (mimeTypeAttribute?.Value != null && !string.IsNullOrWhiteSpace(mimeTypeAttribute?.Value))
@@ -286,7 +286,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 }
 
                 enclosure.Add(new XAttribute(_lengthAttribute, appCastItem.UpdateSize));
-                enclosure.Add(new XAttribute(SparkleNamespace + _operatingSystemAttribute, appCastItem.OperatingSystemString ?? AppCastItem.DefaultOperatingSystem));
+                enclosure.Add(new XAttribute(SparkleNamespace + _operatingSystemAttribute, appCastItem.OperatingSystem ?? AppCastItem.DefaultOperatingSystem));
                 enclosure.Add(new XAttribute(_typeAttribute, appCastItem.MIMEType ?? AppCastItem.DefaultMIMEType));
                 enclosure.Add(new XAttribute(SparkleNamespace + _criticalAttribute, appCastItem.IsCriticalUpdate));
 

@@ -1,7 +1,9 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -97,6 +99,9 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         [Option("critical-versions", SetName = "local", Required = false, HelpText = "Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., \"1.0.2,1.2.3.1\"", Default = "")]
         public string? CriticalVersions { get; set; }
+
+        [Option("output-type", SetName = "local", Required = false, HelpText = "Output type for app cast file (xml or json); defaults to 'xml'", Default = "xml")]
+        public string? OutputType { get; set; }
 
         #region Key Generation
 

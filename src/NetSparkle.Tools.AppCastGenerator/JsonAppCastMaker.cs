@@ -16,14 +16,9 @@ using Console = Colorful.Console;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
-    public class XMLAppCastMaker : AppCastMaker
+    public class JsonAppCastMaker : AppCastMaker
     {
-        /// <summary>
-        /// Sparkle XML namespace
-        /// </summary>
-        public static readonly XNamespace SparkleNamespace = "http://www.andymatuschak.org/xml-namespaces/sparkle";
-        
-        public XMLAppCastMaker(SignatureManager signatureManager, Options options) : base(signatureManager, options)
+        public JsonAppCastMaker(SignatureManager signatureManager, Options options) : base(signatureManager, options)
         {
             HumanReadableOutput = options.HumanReadableOutput;
         }
@@ -37,7 +32,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <inheritdoc/>
         public override string GetAppCastExtension()
         {
-            return "xml";
+            return "json";
         }
 
         /// <inheritdoc/>
@@ -54,21 +49,13 @@ namespace NetSparkleUpdater.AppCastGenerator
                 }
                 else
                 {
-                    XDocument doc = XDocument.Parse(File.ReadAllText(appCastFileName));
-                    // for any .xml file, there is a product name - we can pull this out automatically when there is just one channel.
-                    List<XElement> allTitles = doc.Root?.Element("channel")?.Elements("title")?.ToList() ?? new List<XElement>();
-                    if (allTitles.Count == 1 && !string.IsNullOrWhiteSpace(allTitles[0].Value))
-                    {
-                        productName = allTitles[0].Value;
-                        Console.WriteLine("Using title in app cast: {0}...", productName, Color.LightBlue);
-                    }
-
-                    var docDescendants = doc.Descendants("item");
                     var logWriter = new LogWriter(LogWriterOutputMode.Console);
-                    var xmlGenerator = new XMLAppCastGenerator(logWriter);
-                    foreach (var item in docDescendants)
+                    var generator = new JsonAppCastGenerator(logWriter);
+                    var appCast = generator.ReadAppCastFromFile(appCastFileName);
+                    productName = appCast.Title;
+
+                    foreach (var currentItem in appCast.Items)
                     {
-                        var currentItem = xmlGenerator.ReadAppCastItem(item);
                         Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
                             currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystem);
                         var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
@@ -116,11 +103,11 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <inheritdoc/>
         public override void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path)
         {
-            var xmlGenerator = new XMLAppCastGenerator()
+            var jsonGenerator = new JsonAppCastGenerator()
             {
                 HumanReadableOutput = HumanReadableOutput
             };
-            Console.WriteLine("Writing xml app cast to {0}", path);
+            Console.WriteLine("Writing json app cast to {0}", path);
             var appCast = new AppCast() 
             { 
                 Items = items,
@@ -129,7 +116,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Description = _opts.AppCastDescription,
                 Language = "en"
             };
-            xmlGenerator.SerializeAppCastToFile(appCast, path);
+            jsonGenerator.SerializeAppCastToFile(appCast, path);
         }
     }
 }

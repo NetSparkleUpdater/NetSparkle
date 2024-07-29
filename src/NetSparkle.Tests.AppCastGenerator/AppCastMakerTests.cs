@@ -377,7 +377,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md", items[0].ReleaseNotesLink);
             Assert.Equal(28, items[0].PublicationDate.Day);
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe", items[0].DownloadLink);
-            Assert.Equal("windows", items[0].OperatingSystemString);
+            Assert.Equal("windows", items[0].OperatingSystem);
             Assert.Equal("2.0", items[0].Version);
             Assert.Equal(12288, items[0].UpdateSize);
             Assert.Equal("foo", items[0].DownloadSignature);
@@ -387,7 +387,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(27, items[1].PublicationDate.Day);
             Assert.Equal(30, items[1].PublicationDate.Minute);
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe", items[1].DownloadLink);
-            Assert.Equal("linux", items[1].OperatingSystemString);
+            Assert.Equal("linux", items[1].OperatingSystem);
             Assert.Equal("1.3", items[1].Version);
             Assert.Equal(11555, items[1].UpdateSize);
             Assert.Equal("bar", items[1].DownloadSignature);
@@ -452,7 +452,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md", items[0].ReleaseNotesLink);
             Assert.Equal(28, items[0].PublicationDate.Day);
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe", items[0].DownloadLink);
-            Assert.Equal("windows", items[0].OperatingSystemString);
+            Assert.Equal("windows", items[0].OperatingSystem);
             Assert.Equal("2.0", items[0].Version);
             Assert.Equal(12288, items[0].UpdateSize);
             Assert.Equal("foo", items[0].DownloadSignature);
@@ -462,7 +462,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(27, items[1].PublicationDate.Day);
             Assert.Equal(44, items[1].PublicationDate.Minute);
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe", items[1].DownloadLink);
-            Assert.Equal("macOS", items[1].OperatingSystemString);
+            Assert.Equal("macOS", items[1].OperatingSystem);
             Assert.Equal("1.3", items[1].Version);
             Assert.Equal(22222, items[1].UpdateSize);
             Assert.Equal("moo", items[1].DownloadSignature);

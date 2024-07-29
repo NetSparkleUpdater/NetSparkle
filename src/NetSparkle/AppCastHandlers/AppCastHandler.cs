@@ -86,9 +86,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
         }
 
-        /// <summary>
-        /// Download castUrl resource and parse it
-        /// </summary>
+        /// <inheritdoc/>
         public virtual bool DownloadAndParse()
         {
             CheckSetupCalled();
@@ -172,6 +170,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
             return true;
         }
+        
         public List<AppCastItem> GetAvailableUpdates()
         {
             _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", AppCast?.Items.Count ?? 0, AppCast?.Items.Count > 0 ? AppCast?.Items[0].Version : "" ?? "");

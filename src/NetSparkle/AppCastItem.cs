@@ -31,7 +31,7 @@ namespace NetSparkleUpdater
         public AppCastItem()
         {
             MIMEType = DefaultMIMEType;
-            OperatingSystemString = DefaultOperatingSystem;
+            OperatingSystem = DefaultOperatingSystem;
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Operating system that this update applies to
         /// </summary>
-        public string? OperatingSystemString { get; set; }
+        public string? OperatingSystem { get; set; }
 
         /// <summary>
         /// True if this update is a windows update; false otherwise.
@@ -113,9 +113,9 @@ namespace NetSparkleUpdater
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "win" || lowercasedOS == "windows")
                     {
                         return true;
@@ -136,9 +136,9 @@ namespace NetSparkleUpdater
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "mac" || lowercasedOS == "macos" || lowercasedOS == "osx")
                     {
                         return true;
@@ -158,9 +158,9 @@ namespace NetSparkleUpdater
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "linux")
                     {
                         return true;

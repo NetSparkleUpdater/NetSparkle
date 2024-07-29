@@ -41,7 +41,8 @@
     * `SparkleUpdater` now has an `AppCastGenerator` member
     * `XMLAppCast` renamed to `AppCastHandler` and takes an `IAppCastGenerator` in its `SetupAppCastHandler` method. `AppCastHandler` now manages its major tasks through other objects. Filtering still lives in the `AppCastHandler` object however.
     * `AppCastHandler` now uses the `IAppCastGenerator` to parse the app cast
-    * `AppCastItem` serialization no expects the full download link to already be known (serialization will not consider the overall app cast URL)
+    * `AppCastItem` serialization now expects the full download link to already be known (serialization will not consider the overall app cast URL)
+* Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
 
 **Changes/Fixes**
 
@@ -71,6 +72,7 @@
 * Added `nullability` compatibility to core and UI libraries (#595)
   * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 * Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
+* Added `JsonAppCastGenerator` to read/write app casts from/to JSON (use with app cast generator option `--output-type`)
 
 ## Updating from 0.X or 1.X to 2.X
 

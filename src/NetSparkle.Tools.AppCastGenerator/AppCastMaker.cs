@@ -395,7 +395,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
                 DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
-                OperatingSystemString = _opts.OperatingSystem?.Trim(),
+                OperatingSystem = _opts.OperatingSystem?.Trim(),
                 MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name)
             };
 
