@@ -13,6 +13,12 @@ namespace NetSparkle.Tests.AppCastGenerator
     [Collection(SignatureManagerFixture.CollectionName)]
     public class AppCastMakerTests 
     {
+        public enum AppCastMakerType
+        {
+            Xml = 0,
+            Json = 1
+        }
+
         SignatureManagerFixture _fixture;
 
         public AppCastMakerTests(SignatureManagerFixture fixture)
@@ -196,8 +202,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Null(AppCastMaker.GetVersionFromName(Path.Combine("output", "1.0", "file.ext"), Path.Combine("output", "1.0", "file.ext")));
         }
 
-        [Fact]
-        public void CanGetVersionFromFullPathOnDisk()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanGetVersionFromFullPathOnDisk(AppCastMakerType appCastMakerType)
         {
             // test a full file path by using the tmp dir
             var tempDir = GetCleanTempDir();
@@ -227,7 +235,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 Assert.Equal("100.0.302", items[0].Version);
@@ -318,6 +328,12 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("xml", maker.GetAppCastExtension());
         }
 
+        [Fact]
+        public void JsonAppCastHasProperExtension()
+        {
+            var maker = new JsonAppCastMaker(_fixture.GetSignatureManager(), new Options());
+            Assert.Equal("json", maker.GetAppCastExtension());
+        }
        
         [Fact]
         public void CanGetItemsAndProductNameFromExistingAppCast()
@@ -477,8 +493,10 @@ namespace NetSparkle.Tests.AppCastGenerator
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        [Fact]
-        public void CanCreateSimpleAppCast()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanCreateSimpleAppCast(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -505,7 +523,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 if (items != null)
@@ -550,8 +570,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void SingleMajorMinorDigitVersionDoesNotFail()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void SingleMajorMinorDigitVersionDoesNotFail(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -578,7 +600,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 if (items != null)
@@ -601,8 +625,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void NoVersionCausesEmptyAppCast()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void NoVersionCausesEmptyAppCast(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -629,7 +655,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // shouldn't have any items
@@ -645,8 +673,10 @@ namespace NetSparkle.Tests.AppCastGenerator
         // https://github.com/NetSparkleUpdater/NetSparkle/discussions/426
         // attempts to reproduce bug but they are not using the --file-extract-version param
         // so we went ahead and kept the test case but couldn't repro bug
-        [Fact]
-        public void CheckReleaseNotesLink()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CheckReleaseNotesLink(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -685,7 +715,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // shouldn't have any items
@@ -694,7 +726,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                     maker.SerializeItemsToFile(items, productName, appCastFileName);
                     maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
                 }
-                Console.Write(File.ReadAllText(Path.Combine(innerAppcastOutputPath, "appcast.xml")));
+                Console.Write(File.ReadAllText(Path.Combine(innerAppcastOutputPath, "appcast." + maker.GetAppCastExtension())));
                 Assert.Single(items);
                 Assert.Equal("1.0", items[0].Version);
                 Assert.Equal("http://baseURL/appname/changelogs/1.0.md", items[0].ReleaseNotesLink);
@@ -709,8 +741,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void NetSparkleCanParseHumanReadableAppCast()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void NetSparkleCanParseHumanReadableAppCast(AppCastMakerType appCastMakerType)
         {
             var tempDir = GetCleanTempDir();
             // create dummy file
@@ -737,7 +771,9 @@ namespace NetSparkle.Tests.AppCastGenerator
             {
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // should have one item
@@ -758,7 +794,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 appCastHandler.SetupAppCastHandler(
-                        new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter),
+                       appCastMakerType == AppCastMakerType.Xml 
+                            ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                            : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter),
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
                         new EmptyTestDataConfiguration(
@@ -828,8 +866,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void CannotSetVersionViaCLIWithTwoItemsHavingNoVersion()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CannotSetVersionViaCLIWithTwoItemsHavingNoVersion(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -860,7 +900,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 // items should be null since this is a failure case
@@ -873,8 +915,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void CanSetCriticalVersion()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanSetCriticalVersion(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -905,7 +949,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 Assert.Equal(2, items.Count());
@@ -921,14 +967,16 @@ namespace NetSparkle.Tests.AppCastGenerator
                     maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
                 }
                 // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
-                Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
+                Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension())));
                 // test NetSparkle reading file
                 var appCastHandler = new NetSparkleUpdater.AppCastHandlers.AppCastHandler();
                 var publicKey = signatureManager.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 appCastHandler.SetupAppCastHandler(
-                        new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter),
+                       appCastMakerType == AppCastMakerType.Xml 
+                            ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                            : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter),
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
                         new EmptyTestDataConfiguration(
@@ -957,8 +1005,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void ChangelogNameInAppcastMatchesFilesystem()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void ChangelogNameInAppcastMatchesFilesystem(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -994,7 +1044,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var signatureManager = _fixture.GetSignatureManager();
                 Assert.True(signatureManager.KeysExist());
 
-                var maker = new XMLAppCastMaker(signatureManager, opts);
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                 var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                 Assert.Single(items);
@@ -1095,8 +1147,10 @@ namespace NetSparkle.Tests.AppCastGenerator
             return "dotnet";
         }
 
-        [Fact]
-        public void CanMakeAppCastWithAssemblyData()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanMakeAppCastWithAssemblyData(AppCastMakerType appCastMakerType)
         {
             var envVersion = Environment.Version;
             var dotnetVersion = "net" + envVersion.Major + ".0";
@@ -1187,7 +1241,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                     var signatureManager = _fixture.GetSignatureManager();
                     Assert.True(signatureManager.KeysExist());
 
-                    var maker = new XMLAppCastMaker(signatureManager, opts);
+                    AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                        ? new XMLAppCastMaker(signatureManager, opts)
+                        : new JsonAppCastMaker(signatureManager, opts);
                     var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
                     var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
                     if (items != null)
