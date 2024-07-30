@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -67,9 +69,27 @@ namespace NetSparkleUpdater.AppCastHandlers
             return appCast;
         }
 
+        /// <inheritdoc/>
+        public async Task<AppCast> ReadAppCastAsync(string appCastString)
+        {
+            return await new Task<AppCast>(() => ReadAppCast(appCastString));
+        }
+
+        /// <inheritdoc/>
         public AppCast ReadAppCastFromFile(string filePath)
         {
             return ReadAppCast(File.ReadAllText(filePath));
+        }
+
+        /// <inheritdoc/>
+        public async Task<AppCast> ReadAppCastFromFileAsync(string filePath)
+        {
+#if NETFRAMEWORK || NETSTANDARD
+            var data = await Utilities.ReadAllTextAsync(filePath);
+#else
+            var data = await File.ReadAllTextAsync(filePath);
+#endif
+            return await new Task<AppCast>(() => ReadAppCast(data));
         }
 
         // https://stackoverflow.com/a/955698/3938401
@@ -81,21 +101,51 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
         }
 
-        /// <inheritdoc/>
-        public string SerializeAppCast(AppCast appCast)
+        /// <summary>
+        /// Get default settings for writing XMl
+        /// </summary>
+        /// <returns>Default XML writing settings</returns>
+        protected XmlWriterSettings GetXmlWriterSettings()
         {
-            var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
-            var writerSettings = new XmlWriterSettings()
+            return new XmlWriterSettings()
             {
                 NewLineChars = Environment.NewLine, 
                 Encoding = new UTF8Encoding(false), 
                 Indent = HumanReadableOutput
             };
+        }
+
+        /// <inheritdoc/>
+        public string SerializeAppCast(AppCast appCast)
+        {
+            var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
+            var settings = GetXmlWriterSettings();
             using (TextWriter writer = new Utf8StringWriter())
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(writer))
+                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
                 {
                     doc.Save(writer);
+                }
+                return writer.ToString();
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> SerializeAppCastAsync(AppCast appCast)
+        {
+            var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
+            var settings = GetXmlWriterSettings();
+            using (TextWriter writer = new Utf8StringWriter())
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
+                {
+#if NETFRAMEWORK || NETSTANDARD
+                    await new Task(() => doc.Save(writer));
+#else
+                    var cancelTokenSource = new CancellationTokenSource();
+                    var cancelToken = cancelTokenSource.Token;
+                    await doc.SaveAsync(xmlWriter, cancelToken);
+#endif
                 }
                 return writer.ToString();
             }
@@ -105,6 +155,17 @@ namespace NetSparkleUpdater.AppCastHandlers
         public void SerializeAppCastToFile(AppCast appCast, string outputPath)
         {
             File.WriteAllText(outputPath, SerializeAppCast(appCast));
+        }
+
+        /// <inheritdoc/>
+        public async Task SerializeAppCastToFileAsync(AppCast appCast, string outputPath)
+        {
+            string xml = await SerializeAppCastAsync(appCast);
+#if NETFRAMEWORK || NETSTANDARD
+            await Utilities.WriteTextAsync(outputPath, xml);
+#else
+            await File.WriteAllTextAsync(outputPath, xml);
+#endif
         }
 
         private const string _itemNode = "item";

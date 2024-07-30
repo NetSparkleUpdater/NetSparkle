@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -10,6 +11,7 @@ namespace NetSparkleUpdater.Interfaces
     public interface IAppCastDataDownloader
     {
         /// <summary>
+        /// Download a string of data at the given URL.
         /// Used for both downloading app cast and the app cast's .signature file.
         /// Note that you must handle your own exceptions if they occur. 
         /// Otherwise, <see cref="SparkleUpdater"></see> will act as though the appcast 
@@ -18,6 +20,17 @@ namespace NetSparkleUpdater.Interfaces
         /// <param name="url">non-null string URL for the place where the app cast can be downloaded</param>
         /// <returns>The app cast data encoded as a string</returns>
         string DownloadAndGetAppCastData(string url);
+
+        /// <summary>
+        /// Async download a string of data at the given URL.
+        /// Used for both downloading app cast and the app cast's .signature file.
+        /// Note that you must handle your own exceptions if they occur. 
+        /// Otherwise, <see cref="SparkleUpdater"></see> will act as though the appcast 
+        /// failed to download.
+        /// </summary>
+        /// <param name="url">non-null string URL for the place where the app cast can be downloaded</param>
+        /// <returns>The app cast data encoded as a string</returns>
+        Task<string> DownloadAndGetAppCastDataAsync(string url);
 
         /// <summary>
         /// Get the string encoding (e.g. UTF8 or ASCII) of the 

@@ -1,6 +1,7 @@
 using NetSparkleUpdater;
 using NetSparkleUpdater.Configurations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -16,13 +17,17 @@ namespace NetSparkleUpdater.Interfaces
     {
         /// <summary>
         /// Parse the app cast string into a list of <see cref="AppCastItem"/> objects.
-        /// When complete, the Items list should contain the parsed information
+        /// When complete, the <seealso cref="AppCast.Items"/> list should contain the parsed information
         /// as <see cref="AppCastItem"/> objects.
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
         AppCast ReadAppCast(string appCastString);
+        Task<AppCast> ReadAppCastAsync(string appCastString);
         AppCast ReadAppCastFromFile(string filePath);
+        Task<AppCast> ReadAppCastFromFileAsync(string filePath);
         string SerializeAppCast(AppCast appCast);
+        Task<string> SerializeAppCastAsync(AppCast appCast);
         void SerializeAppCastToFile(AppCast appCast, string outputPath);
+        Task SerializeAppCastToFileAsync(AppCast appCast, string outputPath);
     }
 }
