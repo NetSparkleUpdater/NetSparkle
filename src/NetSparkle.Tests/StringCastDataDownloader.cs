@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using System.Threading.Tasks;
 using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUnitTests
@@ -6,6 +8,7 @@ namespace NetSparkleUnitTests
     public class StringCastDataDownloader : IAppCastDataDownloader
     {
         private string _data = null;
+
         public StringCastDataDownloader(string data)
         {
             _data = data;
@@ -16,9 +19,14 @@ namespace NetSparkleUnitTests
             return _data;
         }
 
+        public Task<string> DownloadAndGetAppCastDataAsync(string url)
+        {
+            return Task.FromResult(_data);
+        }
+
         public Encoding GetAppCastEncoding()
         {
-                return Encoding.UTF8;
+            return Encoding.UTF8;
         }        
     }
 }
