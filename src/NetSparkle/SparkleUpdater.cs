@@ -720,15 +720,15 @@ namespace NetSparkleUpdater
             // check if any updates are available
             try
             {
-                await Task.Factory.StartNew(() =>
+                LogWriter?.PrintMessage("About to start downloading the app cast...");
+                var appCastStr = await AppCastHandler.DownloadAppCast();
+                if (appCastStr != null && !string.IsNullOrWhiteSpace(appCastStr))
                 {
-                    LogWriter?.PrintMessage("About to start downloading the app cast...");
-                    if (AppCastHandler.DownloadAndParse())
-                    {
-                        LogWriter?.PrintMessage("App cast successfully downloaded and parsed. Getting available updates...");
-                        updates = AppCastHandler.GetAvailableUpdates();
-                    }
-                });
+                    LogWriter?.PrintMessage("App cast successfully downloaded. Parsing...");
+                    var appCast = await AppCastHandler.DeserializeAppCastAsync(appCastStr);
+                    LogWriter?.PrintMessage("App cast parsed; getting available updates...");
+                    updates = AppCastHandler.GetAvailableUpdates(appCast);
+                }
             }
             catch (Exception e)
             {

@@ -1,5 +1,6 @@
 ﻿using NetSparkleUpdater.Configurations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -36,7 +37,9 @@ namespace NetSparkleUpdater.Interfaces
         /// will act as though the appcast failed to download.
         /// </summary>
         /// <returns>true if downloading and parsing succeeded; false otherwise</returns>
-        bool DownloadAndParse();
+        Task<string?> DownloadAppCast(); // TODO: update docs
+
+        Task<AppCast> DeserializeAppCastAsync(string appCastStr);
 
         /// <summary>
         /// Retrieve the available updates from the app cast AFTER filtering the data.
@@ -45,5 +48,6 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <returns>a list of <see cref="AppCastItem"/> updates. Can be empty if no updates are available.</returns>
         List<AppCastItem> GetAvailableUpdates();
+        List<AppCastItem> GetAvailableUpdates(AppCast appCast); // TODO: docs, rename, etc.
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace NetSparkleUpdater.AppCastHandlers
@@ -87,18 +88,23 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public virtual bool DownloadAndParse()
+        public virtual async Task<string?> DownloadAppCast()
         {
             CheckSetupCalled();
             if (_castUrl == null || string.IsNullOrWhiteSpace(_castUrl))
             {
                 _logWriter?.PrintMessage("Warning: DownloadAndParse called with no app cast URL set; did you forget to call SetupAppCastHandler()?");
-                return false;
+                return null;
+            }
+            if (_dataDownloader == null)
+            {
+                _logWriter?.PrintMessage("Warning: DownloadAndParse called with no data downloader set; did you forget to call SetupAppCastHandler()?");
+                return null;
             }
             try
             {
                 _logWriter?.PrintMessage("Downloading app cast data...");
-                var appcast = _dataDownloader?.DownloadAndGetAppCastData(_castUrl) ?? "";
+                var appcast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl) ?? "";
                 var signatureNeeded = Utilities.IsSignatureNeeded(
                     _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
                     _signatureVerifier?.HasValidKeyInformation() ?? false, 
@@ -111,7 +117,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     var extension = SignatureFileExtension?.Trim().TrimStart('.') ?? "signature";
                     try
                     {
-                        signature = _dataDownloader?.DownloadAndGetAppCastData(_castUrl + "." + extension);
+                        signature = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl + "." + extension);
                     }
                     catch (Exception e)
                     {
@@ -123,7 +129,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                         try
                         {
                             _logWriter?.PrintMessage("Attempting to check for legacy .dsa signature data...");
-                            signature = _dataDownloader?.DownloadAndGetAppCastData(_castUrl + ".dsa");
+                            signature = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl + ".dsa");
                         }
                         catch (Exception e)
                         {
@@ -134,17 +140,29 @@ namespace NetSparkleUpdater.AppCastHandlers
                 }
                 if (isValidAppcast)
                 {
-                    _logWriter?.PrintMessage("Appcast is valid! Parsing...");
-                    AppCast = _appCastGenerator?.ReadAppCast(appcast) ?? new AppCast();
-                    return true;
+                    _logWriter?.PrintMessage("Appcast is valid!");
+                    return appcast;
+                }
+                else
+                {
+                    _logWriter?.PrintMessage("Appcast is not valid!");
                 }
             }
             catch (Exception e)
             {
-                _logWriter?.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
+                _logWriter?.PrintMessage("Error downloading app cast {0}: {1} ", _castUrl, e.Message);
             }
             _logWriter?.PrintMessage("Appcast is not valid");
-            return false;
+            return null;
+        }
+
+        public async Task<AppCast> DeserializeAppCastAsync(string appCastStr)
+        {
+            if (_appCastGenerator != null)
+            {
+                return await _appCastGenerator.ReadAppCastAsync(appCastStr);
+            }
+            return new AppCast();
         }
 
         protected bool VerifyAppCast(string? appCast, string? signature)
@@ -165,7 +183,8 @@ namespace NetSparkleUpdater.AppCastHandlers
                 (_signatureVerifier?.VerifySignature(signature ?? "", appcastBytes ?? Array.Empty<byte>()) ?? ValidationResult.Invalid) 
                     == ValidationResult.Invalid)
             {
-                _logWriter?.PrintMessage("Signature check of appcast failed");
+                _logWriter?.PrintMessage("Signature check of appcast failed (Security mode is {0})", 
+                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible);
                 return false;
             }
             return true;
@@ -175,6 +194,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", AppCast?.Items.Count ?? 0, AppCast?.Items.Count > 0 ? AppCast?.Items[0].Version : "" ?? "");
             return FilterUpdates(AppCast?.Items ?? new List<AppCastItem>());
+        }
+        
+        public List<AppCastItem> GetAvailableUpdates(AppCast appCast)
+        {
+            _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", appCast.Items.Count, appCast.Items.Count > 0 ? appCast.Items[0].Version ?? "" : "");
+            return FilterUpdates(appCast.Items ?? new List<AppCastItem>());
         }
 
         /// <summary>
