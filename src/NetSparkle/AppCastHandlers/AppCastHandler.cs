@@ -176,12 +176,6 @@ namespace NetSparkleUpdater.AppCastHandlers
             return true;
         }
         
-        public List<AppCastItem> GetFilteredUpdates()
-        {
-            _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", AppCast?.Items.Count ?? 0, AppCast?.Items.Count > 0 ? AppCast?.Items[0].Version ?? "" : "" ?? "");
-            return FilterUpdates(AppCast?.Items ?? new List<AppCastItem>());
-        }
-        
         public List<AppCastItem> GetFilteredUpdates(AppCast appCast)
         {
             _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", appCast.Items.Count, appCast.Items.Count > 0 ? appCast.Items[0].Version ?? "" : "");
