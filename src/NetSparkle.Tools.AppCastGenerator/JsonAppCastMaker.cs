@@ -51,7 +51,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 {
                     var logWriter = new LogWriter(LogWriterOutputMode.Console);
                     var generator = new JsonAppCastGenerator(logWriter);
-                    var appCast = generator.ReadAppCastFromFile(appCastFileName);
+                    var appCast = generator.DeserializeAppCastFromFile(appCastFileName);
                     productName = appCast.Title;
 
                     foreach (var currentItem in appCast.Items)

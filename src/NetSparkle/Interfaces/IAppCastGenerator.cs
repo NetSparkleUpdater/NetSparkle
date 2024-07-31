@@ -21,10 +21,10 @@ namespace NetSparkleUpdater.Interfaces
         /// as <see cref="AppCastItem"/> objects.
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
-        AppCast ReadAppCast(string appCastString);
-        Task<AppCast> ReadAppCastAsync(string appCastString);
-        AppCast ReadAppCastFromFile(string filePath);
-        Task<AppCast> ReadAppCastFromFileAsync(string filePath);
+        AppCast DeserializeAppCast(string appCastString);
+        Task<AppCast> DeserializeAppCastAsync(string appCastString);
+        AppCast DeserializeAppCastFromFile(string filePath);
+        Task<AppCast> DeserializeAppCastFromFileAsync(string filePath);
         string SerializeAppCast(AppCast appCast);
         Task<string> SerializeAppCastAsync(AppCast appCast);
         void SerializeAppCastToFile(AppCast appCast, string outputPath);

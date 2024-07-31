@@ -37,7 +37,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public bool HumanReadableOutput { get; set; }
 
         /// <inheritdoc/>
-        public AppCast ReadAppCast(string appCastString)
+        public AppCast DeserializeAppCast(string appCastString)
         {
             var appCast = new AppCast();
             if (!string.IsNullOrWhiteSpace(appCastString))
@@ -70,26 +70,26 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public async Task<AppCast> ReadAppCastAsync(string appCastString)
+        public async Task<AppCast> DeserializeAppCastAsync(string appCastString)
         {
-            return await new Task<AppCast>(() => ReadAppCast(appCastString));
+            return await new Task<AppCast>(() => DeserializeAppCast(appCastString));
         }
 
         /// <inheritdoc/>
-        public AppCast ReadAppCastFromFile(string filePath)
+        public AppCast DeserializeAppCastFromFile(string filePath)
         {
-            return ReadAppCast(File.ReadAllText(filePath));
+            return DeserializeAppCast(File.ReadAllText(filePath));
         }
 
         /// <inheritdoc/>
-        public async Task<AppCast> ReadAppCastFromFileAsync(string filePath)
+        public async Task<AppCast> DeserializeAppCastFromFileAsync(string filePath)
         {
 #if NETFRAMEWORK || NETSTANDARD
             var data = await Utilities.ReadAllTextAsync(filePath);
 #else
             var data = await File.ReadAllTextAsync(filePath);
 #endif
-            return await new Task<AppCast>(() => ReadAppCast(data));
+            return await new Task<AppCast>(() => DeserializeAppCast(data));
         }
 
         // https://stackoverflow.com/a/955698/3938401

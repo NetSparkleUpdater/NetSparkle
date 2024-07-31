@@ -31,7 +31,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public bool HumanReadableOutput { get; set; }
 
         /// <inheritdoc/>
-        public AppCast ReadAppCast(string appCastString)
+        public AppCast DeserializeAppCast(string appCastString)
         {
 #if NETFRAMEWORK || NETSTANDARD
             return JsonSerializer.Deserialize<AppCast>(appCastString) ?? new AppCast();
@@ -41,7 +41,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public async Task<AppCast> ReadAppCastAsync(string appCastString)
+        public async Task<AppCast> DeserializeAppCastAsync(string appCastString)
         {
             using (var stream = Utilities.GenerateStreamFromString(appCastString, Encoding.UTF8))
             {
@@ -54,14 +54,14 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public AppCast ReadAppCastFromFile(string filePath)
+        public AppCast DeserializeAppCastFromFile(string filePath)
         {
             string json = File.ReadAllText(filePath);
-            return ReadAppCast(json);
+            return DeserializeAppCast(json);
         }
 
         /// <inheritdoc/>
-        public async Task<AppCast> ReadAppCastFromFileAsync(string filePath)
+        public async Task<AppCast> DeserializeAppCastFromFileAsync(string filePath)
         {
             using (FileStream fileStream = File.OpenRead(filePath))
             {
