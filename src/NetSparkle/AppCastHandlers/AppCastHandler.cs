@@ -13,14 +13,13 @@ namespace NetSparkleUpdater.AppCastHandlers
     /// <summary>
     /// An XML-based app cast document downloader and handler
     /// </summary>
-    public class AppCastHandler : IAppCastHandler
+    public class AppCastHandler
     {
         private Configuration? _config;
         private string? _castUrl;
         private ISignatureVerifier? _signatureVerifier;
         private ILogger? _logWriter;
         private IAppCastDataDownloader? _dataDownloader;
-        private IAppCastGenerator? _appCastGenerator;
 
         /// <summary>
         /// Extension (WITHOUT the "." at the start) for the signature
@@ -56,12 +55,11 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// (user skipped versions, etc.)</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        public void SetupAppCastHandler(IAppCastGenerator generator, IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
+        public void SetupAppCastHandler(IAppCastDataDownloader dataDownloader, string castUrl, Configuration config, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _config = config;
             _castUrl = castUrl;
-            _appCastGenerator = generator;
 
             _signatureVerifier = signatureVerifier;
             _logWriter = logWriter;
@@ -87,6 +85,14 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
         }
 
+        protected virtual bool IsSignatureNeeded()
+        {
+            return Utilities.IsSignatureNeeded(
+                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
+                    _signatureVerifier?.HasValidKeyInformation() ?? false, 
+                    false);
+        }
+
         /// <inheritdoc/>
         public virtual async Task<string?> DownloadAppCast()
         {
@@ -105,12 +111,8 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 _logWriter?.PrintMessage("Downloading app cast data...");
                 var appcast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl) ?? "";
-                var signatureNeeded = Utilities.IsSignatureNeeded(
-                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
-                    _signatureVerifier?.HasValidKeyInformation() ?? false, 
-                    false);
                 bool isValidAppcast = true;
-                if (signatureNeeded)
+                if (IsSignatureNeeded())
                 {
                     _logWriter?.PrintMessage("Downloading app cast signature data...");
                     var signature = "";
@@ -143,10 +145,6 @@ namespace NetSparkleUpdater.AppCastHandlers
                     _logWriter?.PrintMessage("Appcast is valid!");
                     return appcast;
                 }
-                else
-                {
-                    _logWriter?.PrintMessage("Appcast is not valid!");
-                }
             }
             catch (Exception e)
             {
@@ -154,15 +152,6 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
             _logWriter?.PrintMessage("Appcast is not valid");
             return null;
-        }
-
-        public async Task<AppCast> DeserializeAppCastAsync(string appCastStr)
-        {
-            if (_appCastGenerator != null)
-            {
-                return await _appCastGenerator.ReadAppCastAsync(appCastStr);
-            }
-            return new AppCast();
         }
 
         protected bool VerifyAppCast(string? appCast, string? signature)
@@ -174,13 +163,10 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
 
             // checking signature
-            var signatureNeeded = Utilities.IsSignatureNeeded(
-                _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
-                _signatureVerifier?.HasValidKeyInformation() ?? false,
-                false);
             var appcastBytes = _dataDownloader?.GetAppCastEncoding().GetBytes(appCast);
-            if (signatureNeeded && 
-                (_signatureVerifier?.VerifySignature(signature ?? "", appcastBytes ?? Array.Empty<byte>()) ?? ValidationResult.Invalid) 
+            if (IsSignatureNeeded() && 
+                (_signatureVerifier?.VerifySignature(
+                    signature ?? "", appcastBytes ?? Array.Empty<byte>()) ?? ValidationResult.Invalid) 
                     == ValidationResult.Invalid)
             {
                 _logWriter?.PrintMessage("Signature check of appcast failed (Security mode is {0})", 
@@ -190,13 +176,13 @@ namespace NetSparkleUpdater.AppCastHandlers
             return true;
         }
         
-        public List<AppCastItem> GetAvailableUpdates()
+        public List<AppCastItem> GetFilteredUpdates()
         {
-            _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", AppCast?.Items.Count ?? 0, AppCast?.Items.Count > 0 ? AppCast?.Items[0].Version : "" ?? "");
+            _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", AppCast?.Items.Count ?? 0, AppCast?.Items.Count > 0 ? AppCast?.Items[0].Version ?? "" : "" ?? "");
             return FilterUpdates(AppCast?.Items ?? new List<AppCastItem>());
         }
         
-        public List<AppCastItem> GetAvailableUpdates(AppCast appCast)
+        public List<AppCastItem> GetFilteredUpdates(AppCast appCast)
         {
             _logWriter?.PrintMessage("Getting available updates - there are {0} update(s) | latest = {1}", appCast.Items.Count, appCast.Items.Count > 0 ? appCast.Items[0].Version ?? "" : "");
             return FilterUpdates(appCast.Items ?? new List<AppCastItem>());
@@ -252,7 +238,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="signatureNeeded">whether or not a signature is required</param>
         /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
         /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation.</returns>
-        public FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        protected FilterItemResult FilterAppCastItem(Version installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
         {
             return FilterAppCastItem(SemVerLike.Parse(installed.ToString()), discardVersionsSmallerThanInstalled, signatureNeeded, item);
         }
@@ -268,7 +254,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="signatureNeeded">whether or not a signature is required</param>
         /// <param name="item">the AppCastItem under consideration, every AppCastItem found in the appcast.xml file is presented to this function once</param>
         /// <returns>FilterItemResult.Valid if the AppCastItem should be considered as a valid target for installation.</returns>
-        public FilterItemResult FilterAppCastItem(SemVerLike installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
+        protected FilterItemResult FilterAppCastItem(SemVerLike installed, bool discardVersionsSmallerThanInstalled, bool signatureNeeded, AppCastItem item)
         {
             var osFilterResult = FilterAppCastItemByOS(item);
             if (osFilterResult != FilterItemResult.Valid)
@@ -292,7 +278,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             // filter versions without signature if we need signatures. But accept version without downloads.
             if (signatureNeeded && string.IsNullOrWhiteSpace(item.DownloadSignature) && !string.IsNullOrWhiteSpace(item.DownloadLink))
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a DSA/other signature and " +
+                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a Ed25519/other signature and " +
                     "the item has no signature yet has a download link of {3}", item.Version ?? "[Unknown version]",
                     item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.SignatureIsMissing;
@@ -306,7 +292,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Currently installed version is NOT included in the output.
         /// </summary>
         /// <returns>A list of <seealso cref="AppCastItem"/> updates that could be installed</returns>
-        public virtual List<AppCastItem> FilterUpdates(List<AppCastItem> items)
+        protected virtual List<AppCastItem> FilterUpdates(List<AppCastItem> items)
         {
             CheckSetupCalled();
             var installed = SemVerLike.Parse(_config?.InstalledVersion ?? "");
@@ -317,18 +303,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                 _logWriter?.PrintMessage("Running custom AppCastFilter to filter out items...");
                 items = AppCastFilter.GetFilteredAppCastItems(installed, items)?.ToList() ?? new List<AppCastItem>();
 
-                // AppCastReducer user has responsibility to filter out both older and not needed versions,
-                // so the XMLAppCast object no longer needs to handle filtering out old versions.
+                // AppCastFilter user has responsibility to filter out both older and not needed versions,
+                // so the AppCastHandler object no longer needs to handle filtering out old versions.
                 // Also this allows to easily switch between pre-release and retail versions, on demand.
-                // The XMLAppCast will still filter out items that don't match the current OS.
+                // The AppCastHandler will still filter out items that don't match the current OS.
                 shouldFilterOutSmallerVersions = false;
             }
 
-            var signatureNeeded = Utilities.IsSignatureNeeded(
-                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible, 
-                    _signatureVerifier?.HasValidKeyInformation() ?? false, 
-                    false);
-
+            var signatureNeeded = IsSignatureNeeded();
             _logWriter?.PrintMessage("Looking for available updates; our installed version is {0}; do we need a signature? {1}; are we filtering out smaller versions than our current version? {2}", installed, signatureNeeded, shouldFilterOutSmallerVersions);
             return items.Where((item) =>
             {

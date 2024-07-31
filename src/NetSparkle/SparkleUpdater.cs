@@ -69,7 +69,7 @@ namespace NetSparkleUpdater
         private string? _restartExecutableName;
         private string? _restartExecutablePath;
 
-        private IAppCastHandler? _appCastHandler;
+        private AppCastHandler? _appCastHandler;
         private IAppCastGenerator? _appCastGenerator;
 
         /// <summary>
@@ -457,7 +457,7 @@ namespace NetSparkleUpdater
         /// The object responsible for parsing app cast information and checking to
         /// see if any updates are available in a given app cast
         /// </summary>
-        public IAppCastHandler AppCastHandler
+        public AppCastHandler AppCastHandler
         {
             get
             {
@@ -716,7 +716,7 @@ namespace NetSparkleUpdater
             {
                 AppCastDataDownloader = new WebRequestAppCastDataDownloader(LogWriter);
             }
-            AppCastHandler.SetupAppCastHandler(AppCastGenerator, AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
+            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
             // check if any updates are available
             try
             {
@@ -725,9 +725,9 @@ namespace NetSparkleUpdater
                 if (appCastStr != null && !string.IsNullOrWhiteSpace(appCastStr))
                 {
                     LogWriter?.PrintMessage("App cast successfully downloaded. Parsing...");
-                    var appCast = await AppCastHandler.DeserializeAppCastAsync(appCastStr);
+                    var appCast = await AppCastGenerator.DeserializeAppCastAsync(appCastStr);
                     LogWriter?.PrintMessage("App cast parsed; getting available updates...");
-                    updates = AppCastHandler.GetAvailableUpdates(appCast);
+                    updates = AppCastHandler.GetFilteredUpdates(appCast);
                 }
             }
             catch (Exception e)

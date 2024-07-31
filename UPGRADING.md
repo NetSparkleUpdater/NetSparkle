@@ -42,6 +42,7 @@
     * `XMLAppCast` renamed to `AppCastHandler` and takes an `IAppCastGenerator` in its `SetupAppCastHandler` method. `AppCastHandler` now manages its major tasks through other objects. Filtering still lives in the `AppCastHandler` object however.
     * `AppCastHandler` now uses the `IAppCastGenerator` to parse the app cast
     * `AppCastItem` serialization now expects the full download link to already be known (serialization will not consider the overall app cast URL)
+  * `IAppCastHandler` is no longer available/used. (Further notes TBD as this API is subject to change.)
 * Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
 
 **Changes/Fixes**
