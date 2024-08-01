@@ -18,7 +18,8 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Parse the app cast string into a list of <see cref="AppCastItem"/> objects.
         /// When complete, the <seealso cref="AppCast.Items"/> list should contain the parsed information
-        /// as <see cref="AppCastItem"/> objects.
+        /// as <see cref="AppCastItem"/> objects that are sorted in reverse order like so:
+        /// appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         /// </summary>
         /// <param name="appCast">the non-null string XML app cast</param>
         AppCast DeserializeAppCast(string appCastString);

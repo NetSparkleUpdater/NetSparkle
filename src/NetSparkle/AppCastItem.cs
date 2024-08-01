@@ -208,10 +208,10 @@ namespace NetSparkleUpdater
             {
                 return 1;
             }
-            if ((string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version)) ||
-                (Version != null && !Version.Contains(".")) || (other.Version != null && !other.Version.Contains(".")))
+            // if neither one has version information, compare them via their titles.
+            if (string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version))
             {
-                return 0;
+                return Title?.CompareTo(other.Title) ?? 0;
             }
             SemVerLike v1 = SemVerLike.Parse(Version);
             SemVerLike v2 = SemVerLike.Parse(other.Version);

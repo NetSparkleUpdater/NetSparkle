@@ -64,7 +64,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         public string? PathToKeyFiles { get; set; }
 
         [Option("signature-file-extension", SetName = "local", Required = false,
-            HelpText = "Suffix (without '.') to append to appcast.xml for signature file",
+            HelpText = "Suffix (without '.') to append to appcast.xml for signature file. If you change this, make sure to also set ",
             Default = "signature")]
         public string? SignatureFileExtension { get; set; }
 

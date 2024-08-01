@@ -27,7 +27,7 @@ namespace NetSparkleUnitTests
                 AssemblyVersion = installedVersion
             });
 
-            var cast = updater.AppCastHandler as AppCastHandler;
+            var cast = updater.AppCastHelper as AppCastHelper;
             if (cast != null)
             {
                 if (filter != null)

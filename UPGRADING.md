@@ -74,6 +74,9 @@
   * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 * Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
 * Added `JsonAppCastGenerator` to read/write app casts from/to JSON (use with app cast generator option `--output-type`)
+* Added `ChannelAppCastFilter` (implements `IAppCastFilter`) for easy way to filter your app cast items by a channel, e.g. `beta` or `alpha`. Use by setting `AppCastHelper.AppCastFilter`. Uses simple `string.Contains` check to search for channels in the `AppCastItem`'s version information.
+  * If you want to allow versions like `2.0.0-beta.1`, set `ChannelName` to `"beta"`
+  * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
 
 ## Updating from 0.X or 1.X to 2.X
 

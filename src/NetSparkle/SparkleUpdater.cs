@@ -69,7 +69,7 @@ namespace NetSparkleUpdater
         private string? _restartExecutableName;
         private string? _restartExecutablePath;
 
-        private AppCastHandler? _appCastHandler;
+        private AppCastHelper? _appCastHelper;
         private IAppCastGenerator? _appCastGenerator;
 
         /// <summary>
@@ -457,17 +457,17 @@ namespace NetSparkleUpdater
         /// The object responsible for parsing app cast information and checking to
         /// see if any updates are available in a given app cast
         /// </summary>
-        public AppCastHandler AppCastHandler
+        public AppCastHelper AppCastHelper
         {
             get
             {
-                if (_appCastHandler == null)
+                if (_appCastHelper == null)
                 {
-                    _appCastHandler = new AppCastHandler();
+                    _appCastHelper = new AppCastHelper();
                 }
-                return _appCastHandler;
+                return _appCastHelper;
             }
-            set => _appCastHandler = value;
+            set => _appCastHelper = value;
         }
 
         public IAppCastGenerator AppCastGenerator
@@ -716,18 +716,19 @@ namespace NetSparkleUpdater
             {
                 AppCastDataDownloader = new WebRequestAppCastDataDownloader(LogWriter);
             }
-            AppCastHandler.SetupAppCastHandler(AppCastDataDownloader, AppCastUrl, config, SignatureVerifier, LogWriter);
+            AppCastHelper.SetupAppCastHelper(AppCastDataDownloader, AppCastUrl, 
+                config.InstalledVersion, SignatureVerifier, LogWriter);
             // check if any updates are available
             try
             {
                 LogWriter?.PrintMessage("About to start downloading the app cast...");
-                var appCastStr = await AppCastHandler.DownloadAppCast();
+                var appCastStr = await AppCastHelper.DownloadAppCast();
                 if (appCastStr != null && !string.IsNullOrWhiteSpace(appCastStr))
                 {
                     LogWriter?.PrintMessage("App cast successfully downloaded. Parsing...");
                     var appCast = await AppCastGenerator.DeserializeAppCastAsync(appCastStr);
                     LogWriter?.PrintMessage("App cast parsed; getting available updates...");
-                    updates = AppCastHandler.GetFilteredUpdates(appCast);
+                    updates = AppCastHelper.FilterUpdates(appCast.Items);
                 }
             }
             catch (Exception e)
