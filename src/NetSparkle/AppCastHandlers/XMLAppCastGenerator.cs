@@ -62,7 +62,6 @@ namespace NetSparkleUpdater.AppCastHandlers
                         appCast.Items.Add(currentItem);
                     }
                 }
-
                 // sort versions in reverse order
                 appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
             }
