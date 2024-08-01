@@ -43,7 +43,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     return semVer.AllSuffixes.ToLower().Contains(lowerChannelName);
                 }
                 return true;
-            });
+            }).OrderByDescending(x => x.SemVerLikeVersion);
         }
     }
 }
