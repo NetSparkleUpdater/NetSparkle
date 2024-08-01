@@ -37,6 +37,9 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// with <seealso cref="AppCastHelper"/>, you must filter out old versions of <seealso cref="AppCastItem"/>
         /// yourself if you want that to happen! In other words, <seealso cref="AppCastHelper"/> skips this step
         /// when there is an <seealso cref="IAppCastFilter"/> implementation available.
+        /// 
+        /// Note that items will still be filtered based on OS and signature information as necessary. You don't
+        /// need to handle that.
         /// </summary>
         public IAppCastFilter? AppCastFilter { get; set; }
 
@@ -72,7 +75,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="installedVersion">installed version of the software</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
         /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
-        public void SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
+        public virtual void SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
         {
             _dataDownloader = dataDownloader;
             _installedVersion = installedVersion;
@@ -238,7 +241,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// Check if an AppCastItem update is valid, according to platform, signature requirements and current installed version number.
+        /// Check if an AppCastItem update is valid, according to platform, signature requirements 
+        /// and current installed version number.
         /// In the case where your app implements a downgrade strategy, e.g. when switching from a beta to a 
         /// stable channel - there has to be a way to tell the update mechanism that you wish to ignore 
         /// the beta AppCastItem elements, and that the latest stable element should be installed.  
