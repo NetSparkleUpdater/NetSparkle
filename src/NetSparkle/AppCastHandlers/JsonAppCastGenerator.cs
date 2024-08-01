@@ -34,10 +34,13 @@ namespace NetSparkleUpdater.AppCastHandlers
         public AppCast DeserializeAppCast(string appCastString)
         {
 #if NETFRAMEWORK || NETSTANDARD
-            return JsonSerializer.Deserialize<AppCast>(appCastString) ?? new AppCast();
+            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString) ?? new AppCast();
 #else
-            return JsonSerializer.Deserialize<AppCast>(appCastString, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString, SourceGenerationContext.Default.AppCast) ?? new AppCast();
 #endif
+            // sort versions in reverse order
+            appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+            return appCast;
         }
 
         /// <inheritdoc/>
