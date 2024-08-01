@@ -43,6 +43,11 @@ namespace NetSparkleUpdater
         [JsonPropertyName("items")]
         public List<AppCastItem> Items { get; set; }
 
+        /// <summary>
+        /// Default constructor for <seealso cref="AppCast"/> objects.
+        /// Sets `<seealso cref="Items"/> to an empty list and sets 
+        /// <seealso cref="Description"/> to "Most recent changes with links to updates".
+        /// </summary>
         public AppCast()
         {
             Items = new List<AppCastItem>();
