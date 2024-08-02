@@ -7,6 +7,7 @@ using System.Linq;
 using Xunit;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -744,7 +745,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Theory]
         [InlineData(AppCastMakerType.Xml)]
         [InlineData(AppCastMakerType.Json)]
-        public void NetSparkleCanParseHumanReadableAppCast(AppCastMakerType appCastMakerType)
+        public async void NetSparkleCanParseHumanReadableAppCast(AppCastMakerType appCastMakerType)
         {
             var tempDir = GetCleanTempDir();
             // create dummy file
@@ -789,28 +790,27 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // for debugging print out app cast
                 // Console.WriteLine(File.ReadAllText(appCastFileName));
                 // test NetSparkle reading file
-                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.AppCastHandler();
+                var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
                 var publicKey = signatureManager.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
-                appCastHandler.SetupAppCastHandler(
-                       appCastMakerType == AppCastMakerType.Xml 
-                            ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                            : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter),
+                IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
-                        new EmptyTestDataConfiguration(
-                            new FakeTestDataAssemblyAccessor() 
-                            {
-                                AssemblyVersion = "1.0"
-                            }), 
+                        "1.0",
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
                         logWriter);
-                var didSucceed = appCastHandler.DownloadAndParse();
-                Assert.True(didSucceed);
-                var updates = appCastHandler.GetAvailableUpdates();
+                var appCast = await appCastHelper.DownloadAppCast();
+                Assert.False(string.IsNullOrWhiteSpace(appCast));
+                var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
+                Assert.NotNull(appCastObj);
+                Assert.NotEmpty(appCastObj.Items);
+                var updates = appCastHelper.FilterUpdates(appCastObj.Items);
                 Assert.Single(updates);
                 Assert.Equal("2.0", updates[0].Version);
                 Assert.Equal("https://example.com/downloads/hello%202.0.exe", updates[0].DownloadLink);
@@ -918,7 +918,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Theory]
         [InlineData(AppCastMakerType.Xml)]
         [InlineData(AppCastMakerType.Json)]
-        public void CanSetCriticalVersion(AppCastMakerType appCastMakerType)
+        public async void CanSetCriticalVersion(AppCastMakerType appCastMakerType)
         {
             // setup test dir
             var tempDir = GetCleanTempDir();
@@ -969,28 +969,27 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
                 Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension())));
                 // test NetSparkle reading file
-                var appCastHandler = new NetSparkleUpdater.AppCastHandlers.AppCastHandler();
+                var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
                 var publicKey = signatureManager.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
-                appCastHandler.SetupAppCastHandler(
-                       appCastMakerType == AppCastMakerType.Xml 
-                            ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                            : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter),
+                IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
                         appCastFileName,
-                        new EmptyTestDataConfiguration(
-                            new FakeTestDataAssemblyAccessor() 
-                            {
-                                AssemblyVersion = "1.0"
-                            }), 
+                        "1.0",
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
                         logWriter);
-                var didSucceed = appCastHandler.DownloadAndParse();
-                Assert.True(didSucceed);
-                var updates = appCastHandler.GetAvailableUpdates();
+                var appCast = await appCastHelper.DownloadAppCast();
+                Assert.False(string.IsNullOrWhiteSpace(appCast));
+                var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
+                Assert.NotNull(appCastObj);
+                Assert.NotEmpty(appCastObj.Items);
+                var updates = appCastHelper.FilterUpdates(appCastObj.Items);
                 Assert.Equal(2, updates.Count());
                 // 1.4 should not be marked critical; 1.3 should be
                 Assert.Equal("1.4", updates[0].Version);
