@@ -71,7 +71,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public async Task<AppCast> DeserializeAppCastAsync(string appCastString)
         {
-            return await new Task<AppCast>(() => DeserializeAppCast(appCastString));
+            return await Task.Run(() => DeserializeAppCast(appCastString));
         }
 
         /// <inheritdoc/>
@@ -88,7 +88,7 @@ namespace NetSparkleUpdater.AppCastHandlers
 #else
             var data = await File.ReadAllTextAsync(filePath);
 #endif
-            return await new Task<AppCast>(() => DeserializeAppCast(data));
+            return await Task.Run(() => DeserializeAppCast(data));
         }
 
         // https://stackoverflow.com/a/955698/3938401
@@ -125,7 +125,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     doc.Save(writer);
                 }
-                return writer.ToString();
+                return writer.ToString() ?? "";
             }
         }
 
@@ -139,14 +139,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                 using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
                 {
 #if NETFRAMEWORK || NETSTANDARD
-                    await new Task(() => doc.Save(writer));
+                    await Task.Run(() => doc.Save(writer));
 #else
                     var cancelTokenSource = new CancellationTokenSource();
                     var cancelToken = cancelTokenSource.Token;
                     await doc.SaveAsync(xmlWriter, cancelToken);
 #endif
                 }
-                return writer.ToString();
+                return writer.ToString() ?? "";
             }
         }
 
