@@ -58,7 +58,9 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
 
                 if (_itemToDownload != null)
                 {
-                    DownloadingTitle = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
+                    // TODO: did use item.AppName, which no longer exists (it is now
+                    // in the AppCast object). When we separate out the UI more, fix this
+                    DownloadingTitle = string.Format("Downloading {0}", _itemToDownload.Title + " " + _itemToDownload.Version);
                 }
                 else
                 {

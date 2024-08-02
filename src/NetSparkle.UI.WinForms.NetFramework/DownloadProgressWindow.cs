@@ -50,7 +50,9 @@ namespace NetSparkleUpdater.UI.WinForms
             // init ui
             btnInstallAndReLaunch.Visible = false;
             btnInstallAndReLaunch.Text = "Install and Relaunch";
-            lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName + " " + item.Version);
+            // TODO: did use item.AppName, which no longer exists (it is now
+            // in the AppCast object). When we separate out the UI more, fix this
+            lblHeader.Text = lblHeader.Text.Replace("APP", item.Title + " " + item.Version);
             downloadProgressLbl.Text = "";
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;

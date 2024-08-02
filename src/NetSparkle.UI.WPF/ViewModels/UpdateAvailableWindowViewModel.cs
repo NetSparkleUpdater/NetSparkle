@@ -210,7 +210,9 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             AppCastItem? item = items.FirstOrDefault();
 
             // TODO: string translations
-            TitleHeaderText = string.Format("A new version of {0} is available.", item?.AppName ?? "the application");
+            // TODO: did use item.AppName, which no longer exists (it is now
+            // in the AppCast object). When we separate out the UI more, fix this
+            TitleHeaderText = string.Format("A new version of {0} is available.", item?.Title ?? "the application");
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             if (item != null)
             {
@@ -219,14 +221,18 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
                 {
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
-                    var versionObj = SemVerLike.Parse(item.AppVersionInstalled);
+                    // TODO: did use item.AppVersionInstalled, which no longer exists (it is now
+                    // in the AppCast object). When we separate out the UI more, fix this.
+                    var versionObj = SemVerLike.Parse(item.Version);
                     versionString = versionObj.ToString();
                 }
                 catch
                 {
                     versionString = "?";
                 }
-                InfoText = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, downloadInstallText, 
+                // TODO: did use item.AppName, which no longer exists (it is now
+                // in the AppCast object). When we separate out the UI more, fix this
+                InfoText = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.Title, versionString, downloadInstallText, 
                     item.Version);
             }
             else

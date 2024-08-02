@@ -78,7 +78,9 @@ namespace NetSparkleUpdater.UI.WinForms
             AppCastItem item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
-            lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.AppName : "the application");
+            // TODO: did use item.AppName, which no longer exists (it is now
+            // in the AppCast object). When we separate out the UI more, fix this
+            lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.Title : "the application");
             if (item != null)
             {
                 var versionString = "";
@@ -86,14 +88,18 @@ namespace NetSparkleUpdater.UI.WinForms
                 {
                     // Use try/catch since Version constructor can throw an exception and we don't want to
                     // die just because the user has a malformed version string
-                    var versionObj = SemVerLike.Parse(item.AppVersionInstalled);
+                    // TODO: did use item.AppVersionInstalled, which no longer exists (it is now
+                    // in the AppCast object). When we separate out the UI more, fix this.
+                    var versionObj = SemVerLike.Parse(item.Version);
                     versionString = versionObj.ToString();
                 }
                 catch
                 {
                     versionString = "?";
                 }
-                lblInfoText.Text = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, 
+                // TODO: did use item.AppName, which no longer exists (it is now
+                // in the AppCast object). When we separate out the UI more, fix this
+                lblInfoText.Text = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.Title, versionString, 
                     downloadInstallText, item.Version);
             }
             else
