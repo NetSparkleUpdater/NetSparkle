@@ -71,6 +71,7 @@ namespace NetSparkleUpdater
 
         private AppCastHelper? _appCastHelper;
         private IAppCastGenerator? _appCastGenerator;
+        private IUpdateDownloader? _updateDownloader;
 
         /// <summary>
         /// The progress window is shown on a separate thread.
@@ -430,7 +431,6 @@ namespace NetSparkleUpdater
             }
         }
 
-        private IUpdateDownloader? _updateDownloader;
         /// <summary>
         /// The object responsable for downloading update files for your application
         /// </summary>
@@ -470,6 +470,10 @@ namespace NetSparkleUpdater
             set => _appCastHelper = value;
         }
 
+        /// <summary>
+        /// Object responsible for serializing and deserializing 
+        /// <seealso cref="AppCast"/> objects after data has been downloaded.
+        /// </summary>
         public IAppCastGenerator AppCastGenerator
         {
             get
@@ -539,6 +543,16 @@ namespace NetSparkleUpdater
         {
             get => _installerProcess;
         }
+
+        /// <summary>
+        /// A cache / copy of the most recently downloaded <seealso cref="AppCast"/>.
+        /// Set after parsing an app cast that was downloaded from online. 
+        /// This property only for convenience's sake.
+        /// Use if you aren't storing the app cast downloaded data yourself somewhere.
+        /// Will be wiped/reset/changed after downloading a new app cast, so be careful using this
+        /// if you aren't saving the data yourself somewhere.
+        /// </summary>
+        public AppCast? AppCastCache { get; set; }
 
         #endregion
 
@@ -726,7 +740,7 @@ namespace NetSparkleUpdater
                 if (appCastStr != null && !string.IsNullOrWhiteSpace(appCastStr))
                 {
                     LogWriter?.PrintMessage("App cast successfully downloaded. Parsing...");
-                    var appCast = await AppCastGenerator.DeserializeAppCastAsync(appCastStr);
+                    var appCast = AppCastCache = await AppCastGenerator.DeserializeAppCastAsync(appCastStr);
                     LogWriter?.PrintMessage("App cast parsed; getting available updates...");
                     updates = AppCastHelper.FilterUpdates(appCast.Items);
                 }
