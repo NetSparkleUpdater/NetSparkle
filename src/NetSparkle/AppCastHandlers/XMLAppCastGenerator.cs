@@ -28,12 +28,21 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         public static readonly XNamespace SparkleNamespace = "http://www.andymatuschak.org/xml-namespaces/sparkle";
 
+        /// <summary>
+        /// An app cast generator that reads/writes XML
+        /// </summary>
+        /// <param name="logger">Optional <seealso cref="ILogger"/> for logging data</param>
         public XMLAppCastGenerator(ILogger? logger = null)
         {
             _logWriter = logger;
             HumanReadableOutput = true;
         }
 
+        /// <summary>
+        /// Set to true to make serialized output human readable (newlines, indents) when written to a file.
+        /// Set to false to make this output not necessarily human readable.
+        /// Defaults to true.
+        /// </summary>
         public bool HumanReadableOutput { get; set; }
 
         /// <inheritdoc/>
@@ -370,7 +379,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <summary>
         /// Create app cast XML document as an <seealso cref="XDocument"/> object
         /// </summary>
-        /// <param name="items">The <seealso cref="AppCastItem"/> list to include in the output file</param>
+        /// <param name="appCastItems">The <seealso cref="AppCastItem"/> list to include in the output file</param>
         /// <param name="title">Application title/title for the app cast</param>
         /// <param name="link">Link to the where the app cast is going to be downloaded</param>
         /// <param name="description">Text that describes the app cast (e.g. what it provides)</param>

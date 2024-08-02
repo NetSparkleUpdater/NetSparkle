@@ -126,6 +126,14 @@ namespace NetSparkleUpdater.AppCastHandlers
             return null;
         }
 
+        /// <summary>
+        /// Downloads an app cast from the app cast URL sent to <see cref="SetupAppCastHelper"/>
+        /// and verifies its signature (if signatures are required for app casts).
+        /// Configure functionality by implementing your own <seealso cref="IAppCastDataDownloader"/> 
+        /// or by overriding this method in a subclass.
+        /// </summary>
+        /// <returns>Downloaded app cast raw string if download and verification succeeded. Null if
+        /// the operation failed somehow.</returns>
         public virtual async Task<string?> DownloadAppCast()
         {
             CheckSetupCalled();
@@ -142,8 +150,13 @@ namespace NetSparkleUpdater.AppCastHandlers
             try
             {
                 _logWriter?.PrintMessage("Downloading app cast data...");
-                var appcast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl) ?? "";
-                bool isValidAppcast = true;
+                var appCast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl) ?? "";
+                if (string.IsNullOrWhiteSpace(appCast))
+                {
+                    _logWriter?.PrintMessage("Failed to download app cast from URL {0}", _castUrl ?? "");
+                    return null;
+                }
+                bool isValidAppCast = true;
                 if (IsSignatureNeeded())
                 {
                     _logWriter?.PrintMessage("Downloading app cast signature data...");
@@ -155,12 +168,12 @@ namespace NetSparkleUpdater.AppCastHandlers
                         _logWriter?.PrintMessage("Attempting to check for legacy .dsa signature data...");
                         signature = await DownloadSignatureData(_castUrl, ".dsa");
                     }
-                    isValidAppcast = VerifyAppCast(appcast, signature);
+                    isValidAppCast = VerifyAppCast(appCast, signature);
                 }
-                if (isValidAppcast)
+                if (isValidAppCast)
                 {
                     _logWriter?.PrintMessage("Appcast is valid!");
-                    return appcast;
+                    return appCast;
                 }
             }
             catch (Exception e)
@@ -171,6 +184,14 @@ namespace NetSparkleUpdater.AppCastHandlers
             return null;
         }
 
+        /// <summary>
+        /// Verify a given app cast string based on a given cryptographic signature.
+        /// Verified via the <seealso cref="ISignatureVerifier"/> sent to 
+        /// <see cref="SetupAppCastHelper"/>.
+        /// </summary>
+        /// <param name="appCast">App cast string to verify</param>
+        /// <param name="signature">Signature of app cast</param>
+        /// <returns>True if signature is not required OR required and valid; false otherwise</returns>
         protected bool VerifyAppCast(string? appCast, string? signature)
         {
             if (string.IsNullOrWhiteSpace(appCast))
@@ -194,9 +215,17 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// Returns filtered list of updates between current installed version and latest version in <see cref="Items"/>. 
+        /// Returns filtered list of updates between current installed version and latest version.
+        /// By default, checks operating system (always does this no matter what unless this function is overriden), 
+        /// whether or not signatures are available (if signatures are required), and
+        /// version of the software (filters out anything that is the same version or older).
+        /// Adjust behavior via the <seealso cref="FilterOutItemsWithNoVersion"/> and 
+        /// <seealso cref="FilterOutItemsWithNoDownloadLink"/> bool properties,
+        /// <seealso cref="AppCastHelper.AppCastFilter"/> (NOTE: if you use this, you will need to handle filtering 
+        /// out items that are older than the user's current version), or override this method in a subclass.
         /// </summary>
-        /// <returns>A list of <seealso cref="AppCastItem"/> updates that could be installed</returns>
+        /// <param name="items">List of <seealso cref="AppCastItem"/> items to filter</param>
+        /// <returns>A list of filtered <seealso cref="AppCastItem"/> updates that could be installed</returns>
         public virtual List<AppCastItem> FilterUpdates(List<AppCastItem> items)
         {
             CheckSetupCalled();

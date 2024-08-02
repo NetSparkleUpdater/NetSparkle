@@ -26,7 +26,9 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <summary>
-        /// True if serialized files should be human readable; false otherwise
+        /// Set to true to make serialized output human readable (newlines, indents) when written to a file.
+        /// Set to false to make this output not necessarily human readable.
+        /// Defaults to true.
         /// </summary>
         public bool HumanReadableOutput { get; set; }
 
