@@ -82,7 +82,7 @@ namespace NetSparkleUpdater.UI.WinForms
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             if (item != null)
             {
-                InfoText = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
+                lblInfoText.Text = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
             }
             else
             {
