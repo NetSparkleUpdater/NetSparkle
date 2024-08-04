@@ -116,6 +116,12 @@ In your project file, make sure you set up a few things so that the library can 
 </PropertyGroup>
 ```
 
+IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
+
+```xml
+<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+```
+
 ### Code
 
 ```csharp
