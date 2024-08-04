@@ -9,6 +9,10 @@ namespace NetSparkleUpdater.AppCastHandlers
     /// Basic <seealso cref="IAppCastFilter"/> implementation for filtering
     /// your app cast items based on a channel name (e.g. "beta"). Makes it
     /// easy to allow your users to be on a beta software track or similar.
+    /// Note that a "stable" channel search string will not be interpreted as versions 
+    /// like "1.0.0"; it will look for versions like "1.0.0-stable1" (aka search for
+    /// the string "stable").
+    /// Names are compared in a case-insensitive manner.
     /// </summary>
     public class ChannelAppCastFilter : IAppCastFilter
     {
@@ -22,7 +26,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             RemoveOlderItems = true;
             KeepItemsWithNoSuffix = true;
-            ChannelName = "";
+            ChannelSearchNames = new List<string>();
             _logWriter = logWriter;
         }
 
@@ -34,18 +38,19 @@ namespace NetSparkleUpdater.AppCastHandlers
         public bool RemoveOlderItems { get; set; }
 
         /// <summary>
-        /// Channel name (e.g. "beta" or "alpha" to filter by).
-        /// Defaults to "".
+        /// Channel names (e.g. "beta" or "alpha") to filter by.
+        /// Defaults to "". 
+        /// Names are compared in a case-insensitive manner.
         /// </summary>
-        public string ChannelName { get; set; }
+        public List<string> ChannelSearchNames { get; set; }
 
         /// <summary>
-        /// When filtering by <see cref="ChannelName"/>, true to keep items
+        /// When filtering by <see cref="ChannelSearchNames"/>, true to keep items
         /// that have a version with no suffix (e.g. "1.2.3" only);
         /// false to get rid of those. Setting this to true will 
         /// allow users on a beta channel to get updates for the standard
         /// update channel.
-        /// Has no effect when <see cref="ChannelName"/> is whitespace/empty.
+        /// Has no effect when <see cref="ChannelSearchNames"/> is whitespace/empty.
         /// Defaults to true.
         /// </summary>
         public bool KeepItemsWithNoSuffix { get; set; }
@@ -53,7 +58,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)
         {
-            var lowerChannelName = ChannelName.ToLower();
+            var lowerChannelNames = ChannelSearchNames.Select(s => s.ToLowerInvariant()).ToArray();
             return items.Where((item) => 
             {
                 var semVer = SemVerLike.Parse(item.Version);
@@ -62,12 +67,21 @@ namespace NetSparkleUpdater.AppCastHandlers
                     _logWriter?.PrintMessage("Removing older item from filtered app cast results");
                     return false;
                 }
-                if (!string.IsNullOrWhiteSpace(ChannelName))
+                if (lowerChannelNames.Length > 0)
                 {
-                    _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
-                        lowerChannelName, KeepItemsWithNoSuffix);
-                    return semVer.AllSuffixes.ToLower().Contains(lowerChannelName) ||
-                        (KeepItemsWithNoSuffix && string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()));
+                    foreach (var channelName in lowerChannelNames)
+                    {
+                        _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
+                            channelName, KeepItemsWithNoSuffix);
+                        var shouldKeep = semVer.AllSuffixes.ToLower().Contains(channelName) ||
+                            (KeepItemsWithNoSuffix && string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()));
+                        if (shouldKeep)
+                        {
+                            return true;
+                        }
+                    }
+                    _logWriter?.PrintMessage("Item with version {0} was discarded", semVer.ToString());
+                    return false;
                 }
                 return true;
             }).OrderByDescending(x => x.SemVerLikeVersion);
