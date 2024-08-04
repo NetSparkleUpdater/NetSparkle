@@ -38,11 +38,16 @@
   * New `AppCast` model class that holds info on the actual app cast and its items
   * `AppCastItem` no longer contains information on serializing or parsing to/from XML
   * App cast parsing/serializing is now handled by an `IAppCastGenerator` implementation
-    * `SparkleUpdater` now has an `AppCastGenerator` member
-    * `XMLAppCast` renamed to `AppCastHandler` and takes an `IAppCastGenerator` in its `SetupAppCastHandler` method. `AppCastHandler` now manages its major tasks through other objects. Filtering still lives in the `AppCastHandler` object however.
-    * `AppCastHandler` now uses the `IAppCastGenerator` to parse the app cast
+    * `XMLAppCast` renamed to `AppCastHelper`
+    * `SparkleUpdater` now has an `AppCastGenerator` member that handles deserializing the app cast rather than `AppCastHelper`
     * `AppCastItem` serialization now expects the full download link to already be known (serialization will not consider the overall app cast URL)
-  * `IAppCastHandler` is no longer available/used. (Further notes TBD as this API is subject to change.)
+  * `IAppCastHandler` is no longer available/used.
+    * App cast downloading and item filtering is now handled by `AppCastHelper`.
+    * If you want to manage downloads, implement `IAppCastDataDownloader` and set `SparkleUpdater.AppCastDataDownloader`
+    * If you want to manage deserializing/serializing the app cast, implement `IAppCastGenerator` and set `SparkleUpdater.AppCastGenerator`
+    * If you want to manage filtering on your own, implement `IAppCastFilter` and set `SparkleUpdater.AppCastHelper.AppCastFilter`
+      * `AppCastHelper` also has two new properties: `FilterOutItemsWithNoVersion` and `FilterOutItemsWithNoDownloadLink`, which both default to `true`.
+    * If you need absolute control more than the above, you can subclass `AppCastHelper` and override methods: `SetupAppCastHelper`, `DownloadAppCast`, and `FilterUpdates`. This probably is not necessary, however, and you can do what you want through the interfaces, most likely.
   * `AppCastHelper.SetupAppCastHelper` signature is now `SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)` (note: no longer takes a `Configuration` object)
 * Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
 
@@ -79,6 +84,7 @@
   * If you want to allow versions like `2.0.0-beta.1`, set `ChannelName` to `"beta"`
   * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
   * Set `KeepItemsWithNoSuffix` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
+* `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
 
 ## Updating from 0.X or 1.X to 2.X
 
