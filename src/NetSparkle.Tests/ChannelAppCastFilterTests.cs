@@ -26,11 +26,11 @@ namespace NetSparkleUnitTests
                 new AppCastItem() { Version = "1.1-alpha1" },
                 new AppCastItem() { Version = "1.0.0" },
             };
-            filter.ChannelSearchNames = ["alpha"];
+            filter.ChannelSearchNames = new List<string>() { "alpha" };
             var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Single(filtered);
             Assert.Equal("1.1-alpha1", filtered[0].Version);
-            filter.ChannelSearchNames = ["beta"];
+            filter.ChannelSearchNames = new List<string>() { "beta" };
             filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Equal(2, filtered.Count);
             Assert.Equal("2.0-beta1", filtered[0].Version);
@@ -49,7 +49,7 @@ namespace NetSparkleUnitTests
                 new AppCastItem() { Version = "1.1-alpha1" },
                 new AppCastItem() { Version = "1.0.0" },
             };
-            filter.ChannelSearchNames = ["beta"];
+            filter.ChannelSearchNames = new List<string>() { "beta" };
             var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Single(filtered);
             Assert.Equal("2.0", filtered[0].Version);
@@ -67,7 +67,7 @@ namespace NetSparkleUnitTests
                 new AppCastItem() { Version = "1.1-alpha1" },
                 new AppCastItem() { Version = "1.0.0" },
             };
-            filter.ChannelSearchNames = ["alpha", "beta"];
+            filter.ChannelSearchNames = new List<string>() { "alpha", "beta" };
             var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Equal(2, filtered.Count);
             Assert.Equal("1.1-beta1", filtered[0].Version);
@@ -86,7 +86,7 @@ namespace NetSparkleUnitTests
                 new AppCastItem() { Version = "1.1-beta4" },
                 new AppCastItem() { Version = "1.0.0" },
             };
-            filter.ChannelSearchNames = ["beta"];
+            filter.ChannelSearchNames = new List<string>() { "beta" };
             var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Equal(2, filtered.Count);
             Assert.Equal("1.2-beta1", filtered[0].Version);
