@@ -278,7 +278,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 newAppCastItem.OperatingSystem = osAttribute?.Value;
             }
             var mimeTypeAttribute = enclosureElement?.Attribute(SparkleNamespace + _typeAttribute);
-            if (mimeTypeAttribute?.Value != null && !string.IsNullOrWhiteSpace(mimeTypeAttribute?.Value))
+            if (mimeTypeAttribute?.Value != null && !string.IsNullOrWhiteSpace(mimeTypeAttribute.Value))
             {
                 newAppCastItem.MIMEType = mimeTypeAttribute.Value;
             }
