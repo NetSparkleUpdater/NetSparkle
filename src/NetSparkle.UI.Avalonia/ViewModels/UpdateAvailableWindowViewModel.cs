@@ -229,8 +229,10 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <param name="releaseNotesHTMLTemplate">The HTML string template to show in the release notes</param>
         /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
         /// <param name="releaseNotesDateFormat">Date format for release notes</param>
+        /// <param name="appNameTitle">Title for application</param>
+        /// <param name="installedVersion">Currently installed version of application</param>
         public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D", string appNameTitle = "the application", string installedVersion = "")
         {
             _updates = items;
             if (ReleaseNotesGrabber == null)
@@ -253,30 +255,11 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             AppCastItem? item = items.FirstOrDefault();
 
             // TODO: string translations
-            // TODO: did use item.AppName, which no longer exists (it is now
-            // in the AppCast object). When we separate out the UI more, fix this
-            TitleHeaderText = string.Format("A new version of {0} is available.", item?.Title ?? "the application");
+            TitleHeaderText = string.Format("A new version of {0} is available.", appNameTitle);
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             if (item != null)
             {
-                var versionString = "";
-                try
-                {
-                    // Use try/catch since Version constructor can throw an exception and we don't want to
-                    // die just because the user has a malformed version string
-                    // TODO: did use item.AppVersionInstalled, which no longer exists (it is now
-                    // in the AppCast object). When we separate out the UI more, fix this.
-                    var versionObj = SemVerLike.Parse(item.Version);
-                    versionString = versionObj.ToString();
-                }
-                catch
-                {
-                    versionString = "?";
-                }
-                // TODO: did use item.AppName, which no longer exists (it is now
-                // in the AppCast object). When we separate out the UI more, fix this
-                InfoText = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.Title, versionString,
-                    downloadInstallText, item.Version);
+                InfoText = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
             }
             else
             {
