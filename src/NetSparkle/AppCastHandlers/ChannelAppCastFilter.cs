@@ -25,7 +25,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public ChannelAppCastFilter(ILogger? logWriter = null)
         {
             RemoveOlderItems = true;
-            KeepItemsWithNoSuffix = true;
+            KeepItemsWithNoVersionSuffix = true;
             ChannelSearchNames = new List<string>();
             _logWriter = logWriter;
         }
@@ -53,7 +53,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Has no effect when <see cref="ChannelSearchNames"/> is whitespace/empty.
         /// Defaults to true.
         /// </summary>
-        public bool KeepItemsWithNoSuffix { get; set; }
+        public bool KeepItemsWithNoVersionSuffix { get; set; }
 
         /// <inheritdoc/>
         public IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)
@@ -72,9 +72,9 @@ namespace NetSparkleUpdater.AppCastHandlers
                     foreach (var channelName in lowerChannelNames)
                     {
                         _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
-                            channelName, KeepItemsWithNoSuffix);
+                            channelName, KeepItemsWithNoVersionSuffix);
                         var shouldKeep = semVer.AllSuffixes.ToLower().Contains(channelName) ||
-                            (KeepItemsWithNoSuffix && string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()));
+                            (KeepItemsWithNoVersionSuffix && string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()));
                         if (shouldKeep)
                         {
                             return true;
@@ -82,6 +82,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                     }
                     _logWriter?.PrintMessage("Item with version {0} was discarded", semVer.ToString());
                     return false;
+                }
+                else
+                {
+                    // if we are not wanting any channels but we have a suffix on an item, discard it
+                    if (!string.IsNullOrWhiteSpace(semVer.AllSuffixes))
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }).OrderByDescending(x => x.SemVerLikeVersion);
