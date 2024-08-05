@@ -241,10 +241,10 @@ namespace NetSparkleUpdater.AppCastHandlers
             newAppCastItem.Version = item.Element(SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
             newAppCastItem.ShortVersion = item.Element(SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
             bool isCritical = false;
-            string critical = item.Element(SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
-            if (critical != null && (critical == "true" || critical == "1" || critical == "yes"))
+            string? critical = item.Element(SparkleNamespace + _criticalAttribute)?.Value ?? null;
+            if (critical != null)
             {
-                isCritical = true;
+                isCritical = true; // if element exists at all in <item>, it is a critical version
             }
             newAppCastItem.IsCriticalUpdate = isCritical;
 
@@ -297,6 +297,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
             // also check to see if the enclosure portion is marked as critical
             // if either the overall item or the enclosure is marked critical, this is a critical update
+            // for the enclosure, the critical status has to be one of "true", "1", or "yes"
             critical = enclosureElement?.Attribute(SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
             if (critical != null && (critical == "true" || critical == "1" || critical == "yes"))
             {
