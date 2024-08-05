@@ -118,7 +118,10 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
             var xmlGenerator = new XMLAppCastGenerator()
             {
-                HumanReadableOutput = HumanReadableOutput
+                HumanReadableOutput = HumanReadableOutput,
+                OutputSignatureAttribute = _opts.UseEd25519SignatureAttributeForXml 
+                    ? XMLAppCastGenerator.Ed25519SignatureAttribute 
+                    : XMLAppCastGenerator.SignatureAttribute
             };
             Console.WriteLine("Writing xml app cast to {0}", path);
             var appCast = new AppCast() 

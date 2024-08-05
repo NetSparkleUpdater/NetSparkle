@@ -27,6 +27,16 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Sparkle XML namespace
         /// </summary>
         public static readonly XNamespace SparkleNamespace = "http://www.andymatuschak.org/xml-namespaces/sparkle";
+        
+        /// <summary>
+        /// Default XML attribute name for ed25519 signatures
+        /// </summary>
+        public static readonly string Ed25519SignatureAttribute = "edSignature";
+        
+        /// <summary>
+        /// Default XML attribute name for a signature for an unspecified algorithm
+        /// </summary>
+        public static readonly string SignatureAttribute = "signature";
 
         /// <summary>
         /// An app cast generator that reads/writes XML
@@ -36,6 +46,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             _logWriter = logger;
             HumanReadableOutput = true;
+            OutputSignatureAttribute = SignatureAttribute;
         }
 
         /// <summary>
@@ -44,6 +55,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Defaults to true.
         /// </summary>
         public bool HumanReadableOutput { get; set; }
+
+        /// <summary>
+        /// Output attribute title for signatures. Defaults to
+        /// <seealso cref="SignatureAttribute"/>.
+        /// </summary>
+        public string OutputSignatureAttribute { get; set; }
 
         /// <inheritdoc/>
         public AppCast DeserializeAppCast(string appCastString)
@@ -184,8 +201,6 @@ namespace NetSparkleUpdater.AppCastHandlers
         private const string _versionAttribute = "version";
         private const string _shortVersionAttribute = "shortVersionString";
         private const string _dsaSignatureAttribute = "dsaSignature";
-        private const string _ed25519SignatureAttribute = "edSignature";
-        private const string _signatureAttribute = "signature";
         private const string _criticalAttribute = "criticalUpdate";
         private const string _operatingSystemAttribute = "os";
         private const string _lengthAttribute = "length";
@@ -209,14 +224,14 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             //release notes
             var releaseNotesElement = item.Element(SparkleNamespace + _releaseNotesLinkNode);
-            newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
+            newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(SparkleNamespace + SignatureAttribute)?.Value ?? string.Empty;
             if (newAppCastItem.ReleaseNotesSignature == string.Empty)
             {
                 newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
             }
             if (newAppCastItem.ReleaseNotesSignature == string.Empty)
             {
-                newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
+                newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(SparkleNamespace + Ed25519SignatureAttribute)?.Value ?? string.Empty;
             }
             newAppCastItem.ReleaseNotesLink = releaseNotesElement?.Value.Trim() ?? string.Empty;
 
@@ -243,14 +258,14 @@ namespace NetSparkleUpdater.AppCastHandlers
             //    }
             //}
 
-            newAppCastItem.DownloadSignature = enclosureElement?.Attribute(SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
+            newAppCastItem.DownloadSignature = enclosureElement?.Attribute(SparkleNamespace + SignatureAttribute)?.Value ?? string.Empty;
             if (newAppCastItem.DownloadSignature == string.Empty)
             {
                 newAppCastItem.DownloadSignature = enclosureElement?.Attribute(SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
             }
             if (newAppCastItem.DownloadSignature == string.Empty)
             {
-                newAppCastItem.DownloadSignature = enclosureElement?.Attribute(SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
+                newAppCastItem.DownloadSignature = enclosureElement?.Attribute(SparkleNamespace + Ed25519SignatureAttribute)?.Value ?? string.Empty;
             }
             string length = enclosureElement?.Attribute(_lengthAttribute)?.Value ?? string.Empty;
             if (length != null)
@@ -314,10 +329,14 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Create XML node from this instance of AppCastItem
         /// </summary>
         /// <returns>An XML node</returns>
-        public static XElement GetXElement(AppCastItem appCastItem)
+        public static XElement GetXElement(AppCastItem appCastItem, string signatureAttribute = "")
         {
-            var item = new XElement(_itemNode);
+            if (string.IsNullOrWhiteSpace(signatureAttribute))
+            {
+                signatureAttribute = SignatureAttribute;
+            }
 
+            var item = new XElement(_itemNode);
             item.Add(new XElement(_titleNode) { Value = appCastItem.Title ?? "" });
 
             if (!string.IsNullOrWhiteSpace(appCastItem.ReleaseNotesLink))
@@ -325,7 +344,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 var releaseNotes = new XElement(SparkleNamespace + _releaseNotesLinkNode) { Value = appCastItem.ReleaseNotesLink };
                 if (!string.IsNullOrWhiteSpace(appCastItem.ReleaseNotesSignature))
                 {
-                    releaseNotes.Add(new XAttribute(SparkleNamespace + _signatureAttribute, appCastItem.ReleaseNotesSignature));
+                    releaseNotes.Add(new XAttribute(SparkleNamespace + signatureAttribute, appCastItem.ReleaseNotesSignature));
                 }
                 item.Add(releaseNotes);
             }
@@ -369,7 +388,7 @@ namespace NetSparkleUpdater.AppCastHandlers
 
                 if (!string.IsNullOrWhiteSpace(appCastItem.DownloadSignature))
                 {
-                    enclosure.Add(new XAttribute(SparkleNamespace + _signatureAttribute, appCastItem.DownloadSignature));
+                    enclosure.Add(new XAttribute(SparkleNamespace + signatureAttribute, appCastItem.DownloadSignature));
                 }
                 item.Add(enclosure);
             }
@@ -404,7 +423,7 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             foreach (var item in appCastItems)
             {
-                channel.Add(GetXElement(item));
+                channel.Add(GetXElement(item, OutputSignatureAttribute));
             }
 
             var document = new XDocument(

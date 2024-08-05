@@ -68,6 +68,11 @@ namespace NetSparkleUpdater.AppCastGenerator
             Default = "signature")]
         public string? SignatureFileExtension { get; set; }
 
+        [Option("use-ed25519-signature-attribute", SetName = "local", Required = false,
+            HelpText = "If true and doing XML output, the output signature attribute in the XML will be 'edSignature' rather than 'signature' to match the original Sparkle library.",
+            Default = "signature")]
+        public bool UseEd25519SignatureAttributeForXml { get; set; }
+
         [Option("public-key-override", SetName = "local", Required = false, HelpText = "Public key override (ignores whatever is in the public key file) for signing binaries. This" +
             " overrides ALL other public keys set when verifying binaries, INCLUDING public key set via environment variables! " +
             "If not set, uses --key-path (if set) or the default SignatureManager location. Not used in --generate-keys or --export.", Default = "")]
