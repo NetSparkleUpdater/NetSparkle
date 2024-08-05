@@ -380,20 +380,10 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 var enclosure = new XElement(_enclosureNode);
                 enclosure.Add(new XAttribute(_urlAttribute, appCastItem.DownloadLink));
-                if (!string.IsNullOrWhiteSpace(appCastItem.Version))
-                {
-                    enclosure.Add(new XAttribute(SparkleNamespace + _versionAttribute, appCastItem.Version));
-                }
-
-                if (!string.IsNullOrWhiteSpace(appCastItem.ShortVersion))
-                {
-                    enclosure.Add(new XAttribute(SparkleNamespace + _shortVersionAttribute, appCastItem.ShortVersion));
-                }
 
                 enclosure.Add(new XAttribute(_lengthAttribute, appCastItem.UpdateSize));
                 enclosure.Add(new XAttribute(SparkleNamespace + _operatingSystemAttribute, appCastItem.OperatingSystem ?? AppCastItem.DefaultOperatingSystem));
                 enclosure.Add(new XAttribute(_typeAttribute, appCastItem.MIMEType ?? AppCastItem.DefaultMIMEType));
-                enclosure.Add(new XAttribute(SparkleNamespace + _criticalAttribute, appCastItem.IsCriticalUpdate));
 
                 // enhance compatibility with Sparkle app casts (#275)
                 item.Add(new XElement(SparkleNamespace + _versionAttribute, appCastItem.Version));
