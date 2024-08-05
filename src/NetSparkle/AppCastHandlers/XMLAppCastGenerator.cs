@@ -237,14 +237,30 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             //description
             newAppCastItem.Description = item.Element(_descriptionNode)?.Value.Trim() ?? string.Empty;
+            
+            newAppCastItem.Version = item.Element(SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
+            newAppCastItem.ShortVersion = item.Element(SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
+            bool isCritical = false;
+            string critical = item.Element(SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
+            if (critical != null && (critical == "true" || critical == "1" || critical == "yes"))
+            {
+                isCritical = true;
+            }
+            newAppCastItem.IsCriticalUpdate = isCritical;
 
-            //enclosure
+            // process the <enclosure /> data
             var enclosureElement = item.Element(_enclosureNode) ?? item.Element(SparkleNamespace + _enclosureNode);
 
-            newAppCastItem.Version = enclosureElement?.Attribute(SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
-            newAppCastItem.ShortVersion = enclosureElement?.Attribute(SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
+            // check enclosure for info if it wasn't in the overall item
+            if (string.IsNullOrWhiteSpace(newAppCastItem.Version))
+            {
+                newAppCastItem.Version = enclosureElement?.Attribute(SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
+            }
+            if (string.IsNullOrWhiteSpace(newAppCastItem.ShortVersion))
+            {
+                newAppCastItem.ShortVersion = enclosureElement?.Attribute(SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
+            }
             newAppCastItem.DownloadLink = enclosureElement?.Attribute(_urlAttribute)?.Value ?? string.Empty;
-            newAppCastItem.DownloadLink = newAppCastItem.DownloadLink;
             //if (!string.IsNullOrWhiteSpace(newAppCastItem.DownloadLink) && !newAppCastItem.DownloadLink.Contains("/"))
             //{
             //    // Download link contains only the filename -> complete with _castUrl
@@ -279,13 +295,14 @@ namespace NetSparkleUpdater.AppCastHandlers
                     newAppCastItem.UpdateSize = 0;
                 }
             }
-            bool isCritical = false;
-            string critical = enclosureElement?.Attribute(SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
-            if (critical != null && critical == "true" || critical == "1")
+            // also check to see if the enclosure portion is marked as critical
+            // if either the overall item or the enclosure is marked critical, this is a critical update
+            critical = enclosureElement?.Attribute(SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
+            if (critical != null && (critical == "true" || critical == "1" || critical == "yes"))
             {
                 isCritical = true;
             }
-            newAppCastItem.IsCriticalUpdate = isCritical;
+            newAppCastItem.IsCriticalUpdate |= isCritical;
 
             var osAttribute = enclosureElement?.Attribute(SparkleNamespace + _operatingSystemAttribute);
             if (!string.IsNullOrWhiteSpace(osAttribute?.Value))
