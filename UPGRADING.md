@@ -50,8 +50,9 @@
     * If you need absolute control more than the above, you can subclass `AppCastHelper` and override methods: `SetupAppCastHelper`, `DownloadAppCast`, and `FilterUpdates`. This probably is not necessary, however, and you can do what you want through the interfaces, most likely.
   * `AppCastHelper.SetupAppCastHelper` signature is now `SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)` (note: no longer takes a `Configuration` object)
 * Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
-* XML appcasts no longer write `version`, `shortVersion`, or `criticalUpdate` to the `<enclosure/>`. Instead, those are all written to the overall `<item>`.
+* XML app casts write `version`, `shortVersion`, and `criticalUpdate` to the `<item>` tag and the `<enclosure>` (for backwards/Sparkle compat).
   * If both the overall `<item>` and the `<enclosure>` have this data, the info from the `<item>` is prioritized.
+  * JSON app casts are not affected.
 
 **Changes/Fixes**
 
