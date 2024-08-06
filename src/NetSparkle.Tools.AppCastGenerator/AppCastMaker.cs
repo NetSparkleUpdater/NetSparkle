@@ -317,7 +317,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string? productName, SemVerLike productVersion, bool useChangelogs, string? changelogFileNamePrefix)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string? productName, SemVerLike productVersion, bool useChangelogs, string? changelogFileNamePrefix, string? channel)
         {
             var fullProductVersionString = productVersion.ToString();
             var itemTitle = string.IsNullOrWhiteSpace(productName) 
@@ -396,7 +396,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Description = "",
                 DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
                 OperatingSystem = _opts.OperatingSystem?.Trim(),
-                MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name)
+                MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name),
+                Channel = channel,
             };
 
             if (hasChangelogForFile)
@@ -511,7 +512,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix, _opts.Channel);
                         if (item != null)
                         {
                             items.Add(item);

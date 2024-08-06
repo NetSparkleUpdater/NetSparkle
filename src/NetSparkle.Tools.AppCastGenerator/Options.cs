@@ -105,7 +105,10 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option("critical-versions", SetName = "local", Required = false, HelpText = "Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., \"1.0.2,1.2.3.1\"", Default = "")]
         public string? CriticalVersions { get; set; }
 
-        [Option("output-type", SetName = "local", Required = false, HelpText = "Output type for app cast file (xml or json); defaults to 'xml'", Default = "xml")]
+        [Option("channel", SetName = "local", Required = false, HelpText = "Name of release channel for any items added into the app cast. Should be a single channel; does not support things like \"beta,gamma\". Do not set if you want to use your release channel - if you set this to \"release\" or \"stable\", those will be treated as special channels and not as the stable channel. (Unless you want all your items to be in a specific channel, of course.)", Default = "")]
+        public string? Channel { get; set; }
+
+        [Option("output-type", SetName = "local", Required = false, HelpText = "Output type for app cast file ('xml' or 'json' without the ' marks); defaults to 'xml'", Default = "xml")]
         public string? OutputType { get; set; }
 
         #region Key Generation
