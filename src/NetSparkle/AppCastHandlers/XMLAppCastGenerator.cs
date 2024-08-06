@@ -207,6 +207,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         private const string _typeAttribute = "type";
         private const string _urlAttribute = "url";
         private const string _pubDateNode = "pubDate";
+        private const string _channelNode = "channel";
 
         /// <summary>
         /// Parse item Xml Node to AppCastItem
@@ -247,6 +248,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 isCritical = true; // if element exists at all in <item>, it is a critical version
             }
             newAppCastItem.IsCriticalUpdate = isCritical;
+            newAppCastItem.Channel = item.Element(SparkleNamespace + _channelNode)?.Value;
 
             // process the <enclosure /> data
             var enclosureElement = item.Element(_enclosureNode) ?? item.Element(SparkleNamespace + _enclosureNode);
@@ -399,6 +401,10 @@ namespace NetSparkleUpdater.AppCastHandlers
                 // enhance compatibility with Sparkle app casts (#275)
                 item.Add(new XElement(SparkleNamespace + _versionAttribute, appCastItem.Version));
                 item.Add(new XElement(SparkleNamespace + _shortVersionAttribute, appCastItem.ShortVersion));
+                if (!string.IsNullOrWhiteSpace(appCastItem.Channel))
+                {
+                    item.Add(new XElement(SparkleNamespace + _channelNode) { Value = appCastItem.Channel });
+                }
                 if (appCastItem.IsCriticalUpdate)
                 {
                     item.Add(new XElement(SparkleNamespace + _criticalAttribute));
