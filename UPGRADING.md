@@ -88,6 +88,7 @@
   * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
   * Set `KeepItemsWithNoSuffix` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
 * `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
+* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this.
 
 ## Updating from 0.X or 1.X to 2.X
 

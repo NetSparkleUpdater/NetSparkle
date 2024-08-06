@@ -1007,6 +1007,100 @@ namespace NetSparkle.Tests.AppCastGenerator
         [Theory]
         [InlineData(AppCastMakerType.Xml)]
         [InlineData(AppCastMakerType.Json)]
+        public async void CanSetChannel(AppCastMakerType appCastMakerType)
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var dummyFilePath = Path.Combine(tempDir, "hello myapp 1.3.txt");
+            var dummyFilePath2 = Path.Combine(tempDir, "hello myapp 1.4.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath, tempData);
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(dummyFilePath2, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = GetOperatingSystemForAppCastString(),
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                CriticalVersions = "1.3",
+                Channel = "preview"
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                Assert.Equal(2, items.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", items[0].Version);
+                Assert.False(items[0].IsCriticalUpdate);
+                Assert.Equal("preview", items[0].Channel);
+                Assert.Equal("1.3", items[1].Version);
+                Assert.True(items[1].IsCriticalUpdate);
+                Assert.Equal("preview", items[1].Channel);
+                // make sure data ends up in file, too
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+                // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
+                Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension())));
+                // test NetSparkle reading file
+                var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
+                var publicKey = signatureManager.GetPublicKey();
+                var publicKeyString = Convert.ToBase64String(publicKey);
+                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                appCastHelper.SetupAppCastHelper(
+                        new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
+                        appCastFileName,
+                        "1.0",
+                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
+                            NetSparkleUpdater.Enums.SecurityMode.Strict,
+                            publicKeyString),
+                        logWriter);
+                var appCast = await appCastHelper.DownloadAppCast();
+                Assert.False(string.IsNullOrWhiteSpace(appCast));
+                var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
+                Assert.NotNull(appCastObj);
+                Assert.NotEmpty(appCastObj.Items);
+                var updates = appCastHelper.FilterUpdates(appCastObj.Items);
+                Assert.Equal(2, updates.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", updates[0].Version);
+                Assert.False(updates[0].IsCriticalUpdate);
+                Assert.Equal("preview", updates[0].Channel);
+                Assert.Equal("1.3", updates[1].Version);
+                Assert.True(updates[1].IsCriticalUpdate);
+                Assert.Equal("preview", updates[1].Channel);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
         public void ChangelogNameInAppcastMatchesFilesystem(AppCastMakerType appCastMakerType)
         {
             // setup test dir
