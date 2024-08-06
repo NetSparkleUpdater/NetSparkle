@@ -14,7 +14,7 @@ namespace NetSparkleUnitTests
     public class ChannelAppCastFilterTests
     {
         [Fact]
-        public void CanFilterItemsByChannel()
+        public void CanFilterItemsByVersionChannel()
         {
             var logWriter = new LogWriter(LogWriterOutputMode.Console);
             var filter = new ChannelAppCastFilter(logWriter);
@@ -34,6 +34,63 @@ namespace NetSparkleUnitTests
             filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Equal(2, filtered.Count);
             Assert.Equal("2.0-beta1", filtered[0].Version);
+        }
+
+        [Fact]
+        public void CanFilterItemsByVersionChannelStrangeCasing()
+        {
+            var logWriter = new LogWriter(LogWriterOutputMode.Console);
+            var filter = new ChannelAppCastFilter(logWriter);
+            var currentVersion = new SemVerLike("1.0.0", "");
+            var items = new List<AppCastItem>()
+            {
+                new AppCastItem() { Version = "2.0-BEta1" },
+                new AppCastItem() { Version = "1.1-beta1" },
+                new AppCastItem() { Version = "1.1-AlPha1" },
+                new AppCastItem() { Version = "1.0.0" },
+            };
+            filter.ChannelSearchNames = new List<string>() { "alpha" };
+            var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Single(filtered);
+            Assert.Equal("1.1-AlPha1", filtered[0].Version);
+            filter.ChannelSearchNames = new List<string>() { "beta" };
+            filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Equal(2, filtered.Count);
+            Assert.Equal("2.0-BEta1", filtered[0].Version);
+            Assert.Equal("1.1-beta1", filtered[1].Version);
+        }
+
+        [Fact]
+        public void CanFilterItemsByAppCastItemChannel()
+        {
+            var logWriter = new LogWriter(LogWriterOutputMode.Console);
+            var filter = new ChannelAppCastFilter(logWriter);
+            var currentVersion = new SemVerLike("1.0.0", "");
+            var items = new List<AppCastItem>()
+            {
+                new AppCastItem() { Version = "2.0", Channel = "gamma" },
+                new AppCastItem() { Version = "1.2-preview", Channel = "beta" },
+                new AppCastItem() { Version = "1.1-beta1" },
+                new AppCastItem() { Version = "1.0.0" },
+            };
+            filter.ChannelSearchNames = new List<string>() { "gamma" };
+            var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Single(filtered);
+            Assert.Equal("2.0", filtered[0].Version);
+            filter.ChannelSearchNames = new List<string>() { "beta" };
+            filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Equal(2, filtered.Count);
+            Assert.Equal("1.2-preview", filtered[0].Version);
+            Assert.Equal("beta", filtered[0].Channel);
+            Assert.Equal("1.1-beta1", filtered[1].Version);
+            Assert.Null(filtered[1].Channel);
+            filter.ChannelSearchNames = new List<string>() { "beta", "preview" };
+            filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Equal(2, filtered.Count);
+            Assert.Equal("1.2-preview", filtered[0].Version);
+            Assert.Equal("beta", filtered[0].Channel);
+            Assert.Equal("1.1-beta1", filtered[1].Version);
+            Assert.Null(filtered[1].Channel);
         }
 
         [Fact]
@@ -185,11 +242,12 @@ namespace NetSparkleUnitTests
         {
             var logWriter = new LogWriter(LogWriterOutputMode.Console);
             var filter = new ChannelAppCastFilter(logWriter);
-            filter.KeepItemsWithNoVersionSuffix = true;
+            filter.KeepItemsWithNoChannelInfo = true;
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
-                new AppCastItem() { Version = "2.0" },
+                new AppCastItem() { Version = "2.0", Channel = "" },
+                new AppCastItem() { Version = "2.0", Channel = "gamma" }, // will be discarded!
                 new AppCastItem() { Version = "2.0-beta1" },
                 new AppCastItem() { Version = "1.0.0" },
             };
@@ -199,7 +257,7 @@ namespace NetSparkleUnitTests
             Assert.Equal("2.0", filtered[0].Version);
             Assert.Equal("2.0-beta1", filtered[1].Version);
             // now don't keep items with no channel names
-            filter.KeepItemsWithNoVersionSuffix = false;
+            filter.KeepItemsWithNoChannelInfo = false;
             filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
             Assert.Single(filtered);
             Assert.Equal("2.0-beta1", filtered[0].Version);

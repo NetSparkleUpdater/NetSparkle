@@ -25,7 +25,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public ChannelAppCastFilter(ILogger? logWriter = null)
         {
             RemoveOlderItems = true;
-            KeepItemsWithNoVersionSuffix = true;
+            KeepItemsWithNoChannelInfo = true;
             ChannelSearchNames = new List<string>();
             _logWriter = logWriter;
         }
@@ -38,22 +38,23 @@ namespace NetSparkleUpdater.AppCastHandlers
         public bool RemoveOlderItems { get; set; }
 
         /// <summary>
-        /// Channel names (e.g. "beta" or "alpha") to filter by.
-        /// Defaults to "". 
+        /// Channel names (e.g. "beta" or "alpha") to filter by in 
+        /// the app cast item's version and channel information.
+        /// Defaults to an empty list. 
         /// Names are compared in a case-insensitive manner.
         /// </summary>
         public List<string> ChannelSearchNames { get; set; }
 
         /// <summary>
         /// When filtering by <see cref="ChannelSearchNames"/>, true to keep items
-        /// that have a version with no suffix (e.g. "1.2.3" only);
-        /// false to get rid of those. Setting this to true will 
-        /// allow users on a beta channel to get updates for the standard
-        /// update channel.
+        /// that have a version with no suffix (e.g. "1.2.3" only; "1.2.3-beta1" has a suffix)
+        /// AND no explicit Item.Channel. false to get rid of those. Setting this to true will 
+        /// allow users on a beta channel to get updates that have no channel information
+        /// explicitly set.
         /// Has no effect when <see cref="ChannelSearchNames"/> is whitespace/empty.
         /// Defaults to true.
         /// </summary>
-        public bool KeepItemsWithNoVersionSuffix { get; set; }
+        public bool KeepItemsWithNoChannelInfo { get; set; }
 
         /// <inheritdoc/>
         public IEnumerable<AppCastItem> GetFilteredAppCastItems(SemVerLike installed, IEnumerable<AppCastItem> items)
@@ -62,6 +63,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             return items.Where((item) => 
             {
                 var semVer = SemVerLike.Parse(item.Version);
+                var appCastItemChannel = item.Channel ?? "";
                 if (RemoveOlderItems && semVer.CompareTo(installed) <= 0)
                 {
                     _logWriter?.PrintMessage("Removing older item from filtered app cast results");
@@ -71,13 +73,20 @@ namespace NetSparkleUpdater.AppCastHandlers
                 {
                     foreach (var channelName in lowerChannelNames)
                     {
-                        _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
-                            channelName, KeepItemsWithNoVersionSuffix);
-                        var shouldKeep = semVer.AllSuffixes.ToLower().Contains(channelName) ||
-                            (KeepItemsWithNoVersionSuffix && string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()));
-                        if (shouldKeep)
+                        if (!string.IsNullOrWhiteSpace(channelName)) // ignore empty channel names
                         {
-                            return true;
+                            _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
+                                channelName, KeepItemsWithNoChannelInfo);
+                            var shouldKeep = 
+                                semVer.AllSuffixes.ToLower().Contains(channelName) ||
+                                appCastItemChannel.ToLower().Contains(channelName) ||
+                                (KeepItemsWithNoChannelInfo && 
+                                string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()) &&
+                                string.IsNullOrWhiteSpace(appCastItemChannel));
+                            if (shouldKeep)
+                            {
+                                return true;
+                            }
                         }
                     }
                     _logWriter?.PrintMessage("Item with version {0} was discarded", semVer.ToString());

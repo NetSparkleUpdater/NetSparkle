@@ -117,6 +117,17 @@ namespace NetSparkleUpdater
         /// </summary>
         [JsonPropertyName("os")]
         public string? OperatingSystem { get; set; }
+        /// <summary>
+        /// Channel for this app cast item. A channel can also be set in
+        /// the version property via semver, and when using 
+        /// <seealso cref="ChannelAppCastFilter"/>, both the channel and version data
+        /// will be used when filtering channels for this app cast item.
+        /// Often a single word like "beta", "gamma", "rc", etc. Note that this can be
+        /// an empty string, but "stable" or "release" will be treated as a special
+        /// channel, NOT as a "normal" channel for all users.
+        /// </summary>
+        [JsonPropertyName("channel")]
+        public string? Channel { get; set; }
 
         /// <summary>
         /// True if this update is a windows update; false otherwise.
@@ -198,7 +209,7 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Compares this <see cref="AppCastItem"/> version to the version of another <see cref="AppCastItem"/>.
-        /// If versions are the same, uses title to sort.
+        /// If versions are the same, uses channel, then title to sort.
         /// </summary>
         /// <param name="other">the other instance</param>
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
@@ -218,7 +229,8 @@ namespace NetSparkleUpdater
             var versionCompare = v1.CompareTo(v2);
             if (versionCompare == 0)
             {
-                return Title?.CompareTo(other.Title) ?? 0;
+                var channelCompare = Channel?.CompareTo(other.Channel) ?? 0;
+                return channelCompare == 0 ? Title?.CompareTo(other.Title) ?? 0 : channelCompare;
             }
             return versionCompare;
         }
