@@ -51,13 +51,14 @@ namespace NetSparkleUpdater.AppCastGenerator
                 {
                     var logWriter = new LogWriter(LogWriterOutputMode.Console);
                     var generator = new JsonAppCastGenerator(logWriter);
-                    var appCast = generator.DeserializeAppCastFromFile(appCastFileName);
+                    var appCast = generator.DeserializeAppCastFromFileWithoutSorting(appCastFileName);
+                    Console.WriteLine("Deserializing app cast from JSON file...{0} = title", appCast.Title);
                     productName = appCast.Title;
 
                     foreach (var currentItem in appCast.Items)
                     {
-                        Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                            currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystem);
+                        Console.WriteLine("Found an item in the app cast: version {0} (short version = {1}; title = {3}) -- os = {2}",
+                            currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystem, currentItem.Title);
                         var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
                         if (itemFound == null)
                         {
@@ -71,7 +72,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                             {
                                 items.Remove(itemFound); // remove old item.
                                 items.Add(currentItem);
-                                Console.WriteLine("Overwriting old item with newly found one...", Color.Yellow);
+                                Console.WriteLine("Overwriting old item (title: {0}, version: {1}) with newly found one with title {2} and version {3}...", itemFound.Title, itemFound.Version, currentItem.Title, currentItem.Version, Color.Yellow);
                             }
                         }
                     }
@@ -79,7 +80,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             } 
             catch (Exception e)
             {
-                Console.WriteLine($"Error reading previous app cast: {e.Message}. Not using it for any items...", Color.Red);
+                Console.WriteLine($"Error reading previous app cast: {e.Message}. Not using it for any items...JSON was {appCastFileName}", Color.Red);
                 return (new List<AppCastItem>(), null);
             }
             items.Sort((a, b) => {

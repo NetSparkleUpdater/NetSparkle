@@ -43,7 +43,10 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <summary>
         /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
         /// Should not return duplicate versions.
-        /// The items list should always be non-null and sorted by AppCastItem.Version descending.
+        /// Sorting should be done after reading in the file is done and items are parsed, as duplicates
+        /// will be overwritten in the order they are read.
+        /// The items list should always be non-null and sorted by AppCastItem.Version descending when the function
+        /// is complete.
         /// </summary>
         /// <param name="appCastFileName">File name/path for app cast file to read</param>
         /// <param name="overwriteOldItemsInAppcast">If true and an item is loaded with a version that has already been found,

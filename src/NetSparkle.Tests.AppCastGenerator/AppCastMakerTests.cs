@@ -336,10 +336,14 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("json", maker.GetAppCastExtension());
         }
        
-        [Fact]
-        public void CanGetItemsAndProductNameFromExistingAppCast()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanGetItemsAndProductNameFromExistingAppCast(AppCastMakerType appCastMakerType)
         {
-            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
+            AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml
+                ? new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options())
+                : new JsonAppCastMaker(_fixture.GetSignatureManager(), new Options());
             // create fake app cast file
             var appCastData = @"";
             var fakeAppCastFilePath = Path.GetTempFileName();
@@ -348,7 +352,9 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Empty(items);
             Assert.Null(productName);
             // now create something with some actual data!
-            appCastData = @"
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                appCastData = @"
 <?xml version=""1.0"" encoding=""UTF-8""?>
 <rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
     <channel>
@@ -385,8 +391,44 @@ namespace NetSparkle.Tests.AppCastGenerator
     </channel>
 </rss>
 ".Trim();
+            }
+            else
+            {
+                appCastData = @"
+                {
+                    ""title"": ""NetSparkle Test App"",
+                    ""langauge"": ""en"",
+                    ""description"": ""Most recent changes with links to updates."",
+                    ""link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.json"",
+                    ""items"": [
+                        {
+                            ""title"": ""Version 2.0"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md"",
+                            ""publication_date"": ""2016-10-28T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"",
+                            ""version"": ""2.0"",
+                            ""os"": ""windows"",
+                            ""size"": 12288,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""foo""
+                        },
+                        {
+                            ""title"": ""Version 1.3"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md"",
+                            ""publication_date"": ""2016-10-27T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe"",
+                            ""version"": ""1.3"",
+                            ""os"": ""linux"",
+                            ""size"": 11555,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""bar""
+                        }
+                    ]
+                }".Trim();
+            }
             fakeAppCastFilePath = Path.GetTempFileName();
             File.WriteAllText(fakeAppCastFilePath, appCastData);
+            Console.WriteLine(appCastData);
             (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);
             Assert.Equal("NetSparkle Test App", productName);
             Assert.Equal(2, items.Count);
@@ -409,8 +451,11 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(11555, items[1].UpdateSize);
             Assert.Equal("bar", items[1].DownloadSignature);
 
-            // test duplicate items
-            appCastData = @"
+            // test duplicate items -- items found earlier in the app cast parsing should be
+            // overwritten by later items if they have the same version
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                appCastData = @"
 <?xml version=""1.0"" encoding=""UTF-8""?>
 <rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
     <channel>
@@ -460,6 +505,52 @@ namespace NetSparkle.Tests.AppCastGenerator
     </channel>
 </rss>
 ".Trim();
+            }
+            else
+            {
+                appCastData = @"
+                {
+                    ""title"": ""NetSparkle Test App"",
+                    ""langauge"": ""en"",
+                    ""description"": ""Most recent changes with links to updates."",
+                    ""link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.json"",
+                    ""items"": [
+                        {
+                            ""title"": ""Version 2.0"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md"",
+                            ""publication_date"": ""2016-10-28T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"",
+                            ""version"": ""2.0"",
+                            ""os"": ""windows"",
+                            ""size"": 12288,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""foo""
+                        },
+                        {
+                            ""title"": ""Version 1.3"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md"",
+                            ""publication_date"": ""2016-10-27T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe"",
+                            ""version"": ""1.3"",
+                            ""os"": ""linux"",
+                            ""size"": 11555,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""bar""
+                        },
+                        {
+                            ""title"": ""Version 1.3 - The Real Deal"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-real-release-notes.md"",
+                            ""publication_date"": ""2016-10-27T12:44:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe"",
+                            ""version"": ""1.3"",
+                            ""os"": ""macOS"",
+                            ""size"": 22222,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""moo""
+                        }
+                    ]
+                }".Trim();
+            }
             fakeAppCastFilePath = Path.GetTempFileName();
             File.WriteAllText(fakeAppCastFilePath, appCastData);
             (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, true);
@@ -1152,10 +1243,14 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
-        [Fact]
-        public void CanGetSemVerLikeVersionsFromExistingAppCast()
+        [Theory]
+        [InlineData(AppCastMakerType.Xml)]
+        [InlineData(AppCastMakerType.Json)]
+        public void CanGetSemVerLikeVersionsFromExistingAppCast(AppCastMakerType appCastMakerType)
         {
-            var maker = new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options());
+            AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml
+                ? new XMLAppCastMaker(_fixture.GetSignatureManager(), new Options())
+                : new JsonAppCastMaker(_fixture.GetSignatureManager(), new Options());
             // create fake app cast file
             var appCastData = @"";
             var fakeAppCastFilePath = Path.GetTempFileName();
@@ -1164,7 +1259,9 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Empty(items);
             Assert.Null(productName);
             // now create something with some actual data!
-            appCastData = @"
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                appCastData = @"
 <?xml version=""1.0"" encoding=""UTF-8""?>
 <rss xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"" version=""2.0"">
     <channel>
@@ -1203,6 +1300,43 @@ namespace NetSparkle.Tests.AppCastGenerator
     </channel>
 </rss>
 ".Trim();
+            }
+            else
+            {
+                appCastData = @"
+                {
+                    ""title"": ""NetSparkle Test App"",
+                    ""langauge"": ""en"",
+                    ""description"": ""Most recent changes with links to updates."",
+                    ""link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.json"",
+                    ""items"": [
+                        {
+                            ""title"": ""Version 2.0 Beta 1"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md"",
+                            ""publication_date"": ""2016-10-28T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"",
+                            ""version"": ""2.0-beta1"",
+                            ""short_version"": ""2.0"",
+                            ""os"": ""windows"",
+                            ""size"": 1337,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""foo""
+                        },
+                        {
+                            ""title"": ""Version 2.0 Alpha 1"",
+                            ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md"",
+                            ""publication_date"": ""2016-10-28T10:30:00"",
+                            ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"",
+                            ""version"": ""2.0-alpha.1"",
+                            ""short_version"": ""2.0"",
+                            ""os"": ""windows"",
+                            ""size"": 2337,
+                            ""type"": ""application/octet-stream"",
+                            ""signature"": ""bar""
+                        }
+                    ]
+                }".Trim();
+            }
             fakeAppCastFilePath = Path.GetTempFileName();
             File.WriteAllText(fakeAppCastFilePath, appCastData);
             (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, false);

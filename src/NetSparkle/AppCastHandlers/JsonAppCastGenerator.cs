@@ -32,17 +32,33 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// </summary>
         public bool HumanReadableOutput { get; set; }
 
-        /// <inheritdoc/>
-        public AppCast DeserializeAppCast(string appCastString)
+        /// <summary>
+        /// Deserialize the app cast string into a list of <see cref="AppCastItem"/> objects.
+        /// When complete, the <seealso cref="AppCast.Items"/> list should contain the parsed information
+        /// as <see cref="AppCastItem"/> objects that are sorted in reverse order (if shouldSort is true) like so:
+        /// appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+        /// </summary>
+        /// <param name="appCastString">the non-null app cast</param>
+        /// <param name="shouldSort">whether or not output should be sorted</param>
+        public AppCast DeserializeAppCast(string appCastString, bool shouldSort = true)
         {
 #if NETFRAMEWORK || NETSTANDARD
             var appCast = JsonSerializer.Deserialize<AppCast>(appCastString) ?? new AppCast();
 #else
             var appCast = JsonSerializer.Deserialize<AppCast>(appCastString, SourceGenerationContext.Default.AppCast) ?? new AppCast();
 #endif
-            // sort versions in reverse order
-            appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+            if (shouldSort)
+            {
+                // sort versions in reverse order
+                appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+            }
             return appCast;
+        }
+
+        /// <inheritdoc/>
+        public AppCast DeserializeAppCast(string appCastString)
+        {
+            return DeserializeAppCast(appCastString, true);
         }
 
         /// <inheritdoc/>
@@ -63,6 +79,18 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             string json = File.ReadAllText(filePath);
             return DeserializeAppCast(json);
+        }
+
+        /// <summary>
+        /// Deserialize the app cast from a file at the given path 
+        /// into a list of <see cref="AppCastItem"/> objects.
+        /// When complete, the <seealso cref="AppCast.Items"/> list is explicitly not sorted.
+        /// </summary>
+        /// <param name="filePath">Path to the file on disk to deserialize</param>
+        public AppCast DeserializeAppCastFromFileWithoutSorting(string filePath)
+        {
+            string json = File.ReadAllText(filePath);
+            return DeserializeAppCast(json, false);
         }
 
         /// <inheritdoc/>
