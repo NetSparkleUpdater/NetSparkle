@@ -8,6 +8,7 @@ using Xunit;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using NetSparkleUpdater.Interfaces;
+using NetSparkleUpdater.AppCastHandlers;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -1087,6 +1088,124 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Assert.False(updates[0].IsCriticalUpdate);
                 Assert.Equal("1.3", updates[1].Version);
                 Assert.True(updates[1].IsCriticalUpdate);
+            }
+            finally
+            {
+                // make sure tempDir always cleaned up
+                CleanUpDir(tempDir);
+            }
+        }
+
+        [Theory]
+        [InlineData(AppCastMakerType.Xml, true)]
+        [InlineData(AppCastMakerType.Xml, false)]
+        [InlineData(AppCastMakerType.Json, true)]
+        public async void CanChangeXmlSignatureOutput(AppCastMakerType appCastMakerType, bool useEdSignatureAttr)
+        {
+            // setup test dir
+            var tempDir = GetCleanTempDir();
+            // create dummy files
+            var myApp13FilePath = Path.Combine(tempDir, "hello myapp 1.3.txt");
+            var myApp14FilePath = Path.Combine(tempDir, "hello myapp 1.4.txt");
+            const int fileSizeBytes = 57;
+            var tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(myApp13FilePath, tempData);
+            tempData = RandomString(fileSizeBytes);
+            File.WriteAllText(myApp14FilePath, tempData);
+            var opts = new Options()
+            {
+                FileExtractVersion = true,
+                SearchBinarySubDirectories = true,
+                SourceBinaryDirectory = tempDir,
+                Extensions = "txt",
+                OutputDirectory = tempDir,
+                OperatingSystem = GetOperatingSystemForAppCastString(),
+                BaseUrl = "https://example.com/downloads",
+                OverwriteOldItemsInAppcast = false,
+                ReparseExistingAppCast = false,
+                UseEd25519SignatureAttributeForXml = useEdSignatureAttr,
+            };
+
+            try
+            {
+                var signatureManager = _fixture.GetSignatureManager();
+                Assert.True(signatureManager.KeysExist());
+                var myApp13Signature = signatureManager.GetSignatureForFile(myApp13FilePath);
+                var myApp14Signature = signatureManager.GetSignatureForFile(myApp14FilePath);
+
+                AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
+                    ? new XMLAppCastMaker(signatureManager, opts)
+                    : new JsonAppCastMaker(signatureManager, opts);
+                var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+                var (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
+                Assert.Equal(2, items.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", items[0].Version);
+                Assert.Equal(myApp14Signature, items[0].DownloadSignature);
+                Assert.True(signatureManager.VerifySignature(myApp14FilePath, items[0].DownloadSignature));
+                Assert.Equal("1.3", items[1].Version);
+                Assert.Equal(myApp13Signature, items[1].DownloadSignature);
+                Assert.True(signatureManager.VerifySignature(myApp13FilePath, items[1].DownloadSignature));
+                // make sure data ends up in file, too
+                if (items != null)
+                {
+                    maker.SerializeItemsToFile(items, productName, appCastFileName);
+                    maker.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "signature");
+                }
+                // DEBUG: Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast.xml")));
+                var rawFile = File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension()));
+                // Console.WriteLine(rawFile);
+                if (appCastMakerType == AppCastMakerType.Xml)
+                {
+                    if (useEdSignatureAttr)
+                    {
+                        // make sure output file got the ed25519 signature attribute
+                        Assert.Contains(XMLAppCastGenerator.Ed25519SignatureAttribute, rawFile);
+                        // won't contain sparkle:signature
+                        Assert.DoesNotContain("sparkle:" + XMLAppCastGenerator.SignatureAttribute, rawFile); 
+                    }
+                    else
+                    {
+                        Assert.DoesNotContain(XMLAppCastGenerator.Ed25519SignatureAttribute, rawFile);
+                        Assert.Contains("sparkle:" + XMLAppCastGenerator.SignatureAttribute, rawFile); 
+                    }
+                }
+                if (appCastMakerType == AppCastMakerType.Json)
+                {
+                    // does not affect JSON at all
+                    Assert.Contains("signature", rawFile);
+                    Assert.DoesNotContain(XMLAppCastGenerator.Ed25519SignatureAttribute, rawFile); 
+                }
+                // test NetSparkle reading file
+                var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
+                var publicKey = signatureManager.GetPublicKey();
+                var publicKeyString = Convert.ToBase64String(publicKey);
+                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                appCastHelper.SetupAppCastHelper(
+                        new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(), 
+                        appCastFileName,
+                        "1.0",
+                        new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
+                            NetSparkleUpdater.Enums.SecurityMode.Strict,
+                            publicKeyString),
+                        logWriter);
+                var appCast = await appCastHelper.DownloadAppCast();
+                Assert.False(string.IsNullOrWhiteSpace(appCast));
+                var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
+                Assert.NotNull(appCastObj);
+                Assert.NotEmpty(appCastObj.Items);
+                var updates = appCastHelper.FilterUpdates(appCastObj.Items);
+                Assert.Equal(2, updates.Count());
+                // 1.4 should not be marked critical; 1.3 should be
+                Assert.Equal("1.4", updates[0].Version);
+                Assert.Equal("1.3", updates[1].Version);
+                Assert.Equal(myApp14Signature, updates[0].DownloadSignature);
+                Assert.True(signatureManager.VerifySignature(myApp14FilePath, updates[0].DownloadSignature));
+                Assert.Equal(myApp13Signature, updates[1].DownloadSignature);
+                Assert.True(signatureManager.VerifySignature(myApp13FilePath, updates[1].DownloadSignature));
             }
             finally
             {
