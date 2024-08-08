@@ -67,10 +67,13 @@ namespace NetSparkleUpdater.AppCastHandlers
             using (var stream = Utilities.GenerateStreamFromString(appCastString, Encoding.UTF8))
             {
 #if NETFRAMEWORK || NETSTANDARD
-                return await JsonSerializer.DeserializeAsync<AppCast>(stream) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream) ?? new AppCast();
 #else
-                return await JsonSerializer.DeserializeAsync<AppCast>(stream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
 #endif
+                // sort versions in reverse order
+                output.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+                return output;
             }
         }
 
@@ -99,10 +102,13 @@ namespace NetSparkleUpdater.AppCastHandlers
             using (FileStream fileStream = File.OpenRead(filePath))
             {
 #if NETFRAMEWORK || NETSTANDARD
-                return await JsonSerializer.DeserializeAsync<AppCast>(fileStream) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream) ?? new AppCast();
 #else
-                return await JsonSerializer.DeserializeAsync<AppCast>(fileStream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
 #endif
+                // sort versions in reverse order
+                output.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
+                return output;
             }
         }
 
