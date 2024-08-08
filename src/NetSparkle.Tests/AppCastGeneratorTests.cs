@@ -19,6 +19,22 @@ namespace NetSparkleUnitTests
             Json = 1
         }
 
+        private IAppCastGenerator GetGeneratorForType(AppCastMakerType appCastMakerType)
+        {
+            var logger = new LogWriter()
+            {
+                OutputMode = NetSparkleUpdater.Enums.LogWriterOutputMode.Console
+            };
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                return new XMLAppCastGenerator(logger);
+            }
+            else
+            {
+                return new JsonAppCastGenerator(logger);
+            }
+        }
+
         [Theory]
         [InlineData(AppCastMakerType.Xml)]
         [InlineData(AppCastMakerType.Json)]
@@ -36,19 +52,7 @@ namespace NetSparkleUnitTests
                 }
             };
 
-            var logger = new LogWriter()
-            {
-                OutputMode = NetSparkleUpdater.Enums.LogWriterOutputMode.Console
-            };
-            IAppCastGenerator maker = null;
-            if (appCastMakerType == AppCastMakerType.Xml)
-            {
-                maker = new XMLAppCastGenerator(logger);
-            }
-            else
-            {
-                maker = new JsonAppCastGenerator(logger);
-            }
+            IAppCastGenerator maker = GetGeneratorForType(appCastMakerType);
             var serialized = maker.SerializeAppCast(appCast); // .Serialize() makes no promises about sorting
             var deserialized = maker.DeserializeAppCast(serialized);
             Assert.Equal(3, deserialized.Items.Count);
