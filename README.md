@@ -511,7 +511,7 @@ Contributions are ALWAYS welcome! If you see a new feature you'd like to add, pl
 
 * Unit tests for all parts of the project
 * Extensive testing on macOS/Linux
-* More built-in app cast parsers (e.g. natively support using/creating JSON feeds) -- possible via interfaces but not built-in yet
+* More built-in app cast parsers
 * More options in the app cast generator
 * See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues) for more
 

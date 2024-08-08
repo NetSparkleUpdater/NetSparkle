@@ -53,14 +53,16 @@ namespace NetSparkleUpdater.Interfaces
         Task<AppCast> DeserializeAppCastFromFileAsync(string filePath);
 
         /// <summary>
-        /// Serialize the given <see cref="AppCast"/> to a string
+        /// Serialize the given <see cref="AppCast"/> to a string.
+        /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
         /// <returns>The string representation of the given <see cref="AppCast"/></returns>
         string SerializeAppCast(AppCast appCast);
 
         /// <summary>
-        /// Serialize the given <see cref="AppCast"/> to a string asyncronously
+        /// Serialize the given <see cref="AppCast"/> to a string asyncronously.
+        /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
         /// <returns>The string representation of the given <see cref="AppCast"/></returns>
@@ -69,6 +71,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Serialize the given <see cref="AppCast"/> to a file. Can overwrite
         /// old file, at any, at the given path.
+        /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
         /// <param name="outputPath">Output path for data.</param>
@@ -77,6 +80,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Serialize the given <see cref="AppCast"/> to a file asyncronously. Can overwrite
         /// old file, at any, at the given path.
+        /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
         /// <param name="outputPath">Output path for data.</param>
