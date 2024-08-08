@@ -40,9 +40,15 @@ namespace NetSparkleUnitTests
             {
                 OutputMode = NetSparkleUpdater.Enums.LogWriterOutputMode.Console
             };
-            IAppCastGenerator maker = appCastMakerType == AppCastMakerType.Xml 
-                ? new XMLAppCastGenerator(logger)
-                : new JsonAppCastGenerator(logger);
+            IAppCastGenerator maker = null;
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                maker = new XMLAppCastGenerator(logger);
+            }
+            else
+            {
+                maker = new JsonAppCastGenerator(logger);
+            }
             var serialized = maker.SerializeAppCast(appCast); // .Serialize() makes no promises about sorting
             var deserialized = maker.DeserializeAppCast(serialized);
             Assert.Equal(3, deserialized.Items.Count);
