@@ -118,7 +118,7 @@ namespace NetSparkleUnitTests
                         DownloadSignature = "seru3112",
                         IsCriticalUpdate = true,
                         OperatingSystem = "linux",
-                        PublicationDate = new DateTime(2023, 12, 09, 12, 12, 12),
+                        PublicationDate = new DateTime(2023, 12, 09, 12, 12, 12, DateTimeKind.Local),
                         Channel = "",
                     },
                     new AppCastItem() 
@@ -130,11 +130,12 @@ namespace NetSparkleUnitTests
                         DownloadSignature = "seru311b2",
                         ReleaseNotesLink = "https://mysite.com/update09beta.md",
                         ReleaseNotesSignature = "srjlwj",
-                        PublicationDate = new DateTime(1999, 12, 09, 11, 11, 11),
+                        PublicationDate = new DateTime(1999, 12, 09, 11, 11, 11, DateTimeKind.Local),
                         Channel = "beta",
                     },
                 }
             };
+            Console.WriteLine(appCast.Items[0].PublicationDate.ToString());
             IAppCastGenerator maker = GetGeneratorForType(appCastMakerType);
             var serialized = "";
             if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCast))
