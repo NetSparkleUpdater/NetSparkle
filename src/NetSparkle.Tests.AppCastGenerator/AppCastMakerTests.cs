@@ -958,6 +958,30 @@ namespace NetSparkle.Tests.AppCastGenerator
             }
         }
 
+        [Fact]
+        public void CanSetOutputFileNameViaCLI()
+        {
+            var opts = new Options()
+            {
+                Extensions = "txt",
+                OutputDirectory = ".",
+                OperatingSystem = "windows",
+                BaseUrl = "https://example.com/downloads",
+                OutputFileName = "we-like-files"
+            };
+
+            var signatureManager = _fixture.GetSignatureManager();
+            Assert.True(signatureManager.KeysExist());
+
+            var maker = new XMLAppCastMaker(signatureManager, opts);
+            // no file name sent should default to "appcast"
+            var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
+            Assert.Contains("appcast", appCastFileName);
+            // sending file name changes output
+            appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory, opts.OutputFileName);
+            Assert.Contains("we-like-files", appCastFileName);
+        }
+
         [Theory]
         [InlineData(AppCastMakerType.Xml)]
         [InlineData(AppCastMakerType.Json)]

@@ -68,6 +68,11 @@ namespace NetSparkleUpdater.AppCastGenerator
             Default = "signature")]
         public string? SignatureFileExtension { get; set; }
 
+        [Option("output-file-name", SetName = "local", Required = false,
+            HelpText = "Output file name without the . or extension. Extension is controlled by whether it is an xml or json output and is not configurable. Defaults to 'appcast'. Of course, you can always change this later on your own; this option is only for convenience.",
+            Default = "appcast")]
+        public string? OutputFileName { get; set; }
+
         [Option("use-ed25519-signature-attribute", SetName = "local", Required = false,
             HelpText = "If true and doing XML output, the output signature attribute in the XML will be 'edSignature' rather than 'signature' to match the original Sparkle library.",
             Default = "signature")]

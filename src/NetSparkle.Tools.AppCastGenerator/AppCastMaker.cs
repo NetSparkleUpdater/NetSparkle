@@ -425,14 +425,16 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="desiredOutputDirectory"></param>
         /// <param name="sourceBinaryDirectory"></param>
+        /// <param name="appCastFileName">file name for output w/o extension or . for extension</param>
         /// <returns></returns>
-        public string GetPathToAppCastOutput(string desiredOutputDirectory, string sourceBinaryDirectory)
+        public string GetPathToAppCastOutput(string desiredOutputDirectory, string sourceBinaryDirectory, string appCastFileName = "appcast")
         {
             if (string.IsNullOrWhiteSpace(desiredOutputDirectory))
             {
                 desiredOutputDirectory = sourceBinaryDirectory;
             }
-            return Path.Combine(desiredOutputDirectory, "appcast." + GetAppCastExtension());
+            return Path.Combine(desiredOutputDirectory, 
+                appCastFileName.Trim().Trim('.') + "." + GetAppCastExtension());
         }
 
         /// <summary>
