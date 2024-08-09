@@ -160,7 +160,6 @@ namespace NetSparkleUnitTests
                 File.Delete(path);
             }
             // manually parse things
-            Console.WriteLine(serialized);
             if (appCastMakerType == AppCastMakerType.Xml)
             {
                 XDocument doc = XDocument.Parse(serialized);
