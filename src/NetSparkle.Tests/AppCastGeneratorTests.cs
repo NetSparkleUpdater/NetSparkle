@@ -150,14 +150,14 @@ namespace NetSparkleUnitTests
             {
                 var path = System.IO.Path.GetTempFileName();
                 maker.SerializeAppCastToFile(appCast, path);
-                serialized = await File.ReadAllTextAsync(path);
+                serialized = File.ReadAllText(path);
                 File.Delete(path);
             }
             else if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCastToFileAsync))
             {
                 var path = System.IO.Path.GetTempFileName();
                 await maker.SerializeAppCastToFileAsync(appCast, path);
-                serialized = await File.ReadAllTextAsync(path);
+                serialized = File.ReadAllText(path);
                 File.Delete(path);
             }
             // manually parse things
@@ -321,14 +321,14 @@ namespace NetSparkleUnitTests
             else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFile))
             {
                 var path = System.IO.Path.GetTempFileName();
-                await File.WriteAllTextAsync(path, appCastToDeserialize);
+                File.WriteAllText(path, appCastToDeserialize);
                 deserialized = maker.DeserializeAppCastFromFile(path);
                 File.Delete(path);
             }
             else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))
             {
                 var path = System.IO.Path.GetTempFileName();
-                await File.WriteAllTextAsync(path, appCastToDeserialize);
+                File.WriteAllText(path, appCastToDeserialize);
                 deserialized = await maker.DeserializeAppCastFromFileAsync(path);
                 File.Delete(path);
             }
@@ -344,12 +344,12 @@ namespace NetSparkleUnitTests
             Assert.Equal("seru3112", deserialized.Items[0].DownloadSignature);
             Assert.True(deserialized.Items[0].IsCriticalUpdate);
             Assert.Equal("linux", deserialized.Items[0].OperatingSystem);
-            Assert.Equal(2023, deserialized.Items[0].PublicationDate.Year);
-            Assert.Equal(12, deserialized.Items[0].PublicationDate.Month);
-            Assert.Equal(9, deserialized.Items[0].PublicationDate.Day);
+            Assert.Equal(2023, deserialized.Items[0].PublicationDate.ToUniversalTime().Year);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.ToUniversalTime().Month);
+            Assert.Equal(9, deserialized.Items[0].PublicationDate.ToUniversalTime().Day);
             Assert.Equal(3, deserialized.Items[0].PublicationDate.ToUniversalTime().Hour);
-            Assert.Equal(12, deserialized.Items[0].PublicationDate.Minute);
-            Assert.Equal(12, deserialized.Items[0].PublicationDate.Second);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.ToUniversalTime().Minute);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.ToUniversalTime().Second);
             Assert.True(string.IsNullOrWhiteSpace(deserialized.Items[0].Channel));
 
             Assert.Equal("Super Beta", deserialized.Items[1].Title);
@@ -359,12 +359,12 @@ namespace NetSparkleUnitTests
             Assert.Equal("seru311b2", deserialized.Items[1].DownloadSignature);
             Assert.Equal("https://mysite.com/update09beta.md", deserialized.Items[1].ReleaseNotesLink);
             Assert.Equal("srjlwj", deserialized.Items[1].ReleaseNotesSignature);
-            Assert.Equal(1999, deserialized.Items[1].PublicationDate.Year);
-            Assert.Equal(12, deserialized.Items[1].PublicationDate.Month);
-            Assert.Equal(9, deserialized.Items[1].PublicationDate.Day);
+            Assert.Equal(1999, deserialized.Items[1].PublicationDate.ToUniversalTime().Year);
+            Assert.Equal(12, deserialized.Items[1].PublicationDate.ToUniversalTime().Month);
+            Assert.Equal(9, deserialized.Items[1].PublicationDate.ToUniversalTime().Day);
             Assert.Equal(2, deserialized.Items[1].PublicationDate.ToUniversalTime().Hour);
-            Assert.Equal(11, deserialized.Items[1].PublicationDate.Minute);
-            Assert.Equal(11, deserialized.Items[1].PublicationDate.Second);
+            Assert.Equal(11, deserialized.Items[1].PublicationDate.ToUniversalTime().Minute);
+            Assert.Equal(11, deserialized.Items[1].PublicationDate.ToUniversalTime().Second);
             Assert.Equal("beta", deserialized.Items[1].Channel);
             Assert.False(deserialized.Items[1].IsCriticalUpdate);
             Assert.Equal(AppCastItem.DefaultOperatingSystem, deserialized.Items[1].OperatingSystem);
