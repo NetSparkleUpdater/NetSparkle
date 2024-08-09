@@ -82,13 +82,14 @@
 * Added `nullability` compatibility to core and UI libraries (#595)
   * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 * Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
-* Added `JsonAppCastGenerator` to read/write app casts from/to JSON (use with app cast generator option `--output-type`)
+* Added `JsonAppCastGenerator` to read/write app casts from/to JSON (output json with the app cast generator option `--output-type json` and then set the `AppCastGenerator` on your `SparkleUpdater` object to an instance of `JsonAppCastGenerator`)
 * Added `ChannelAppCastFilter` (implements `IAppCastFilter`) for easy way to filter your app cast items by a channel, e.g. `beta` or `alpha`. Use by setting `AppCastHelper.AppCastFilter`. Uses simple `string.Contains` invariant lowercase string check to search for channels in the `AppCastItem`'s version information.
   * If you want to allow versions like `2.0.0-beta.1`, set `ChannelSearchNames` to `new List<string>() {"beta"}`
   * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
-  * Set `KeepItemsWithNoSuffix` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
+  * Set `KeepItemsWithNoChannelInfo` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
 * `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
-* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this.
+* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this (note that using this will set ALL items added to the app cast to that specific channel; to add only new items to your app cast instead of rewriting the whole thing, use the `--reparse-existing` option).
+* App cast generator has a new `--use-ed25519-signature-attribute` to use `edSignature` in its XML output instead of `signature` (json output unaffected) to match the original Sparkle library
 
 ## Updating from 0.X or 1.X to 2.X
 

@@ -12,9 +12,11 @@
 
 # 
 
-NetSparkle is a software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
+NetSparkle is a highly-configurable software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
 
 NetSparkle 2.0 brings the ability to customize most of NetSparkle -- custom UIs are now possible, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts), and many more enhancements are available!
+
+_Note: NetSparkle 3.0 development is in progress and includes: built-in JSON app cast reading/writing instead of just XML, built-in ability to use different channels for your apps (e.g. beta, alpha, preview), semver compatibility, a reworked app cast serializing/deserializing API, a new assembly accessor, trimming/AOT compatibility, smaller file size due to fewer dependencies, and more! See the Issues list for more information about what's left. Updates to this README are pending, so ask questions on Gitter or on GitHub discussions if you're using a newer preview/building from source._
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
