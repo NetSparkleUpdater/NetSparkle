@@ -212,7 +212,7 @@ namespace NetSparkleUnitTests
                 Assert.Equal("seru3112", element["signature"].ToString());
                 Assert.Equal("true", element["is_critical"].ToString());
                 Assert.Equal("linux", element["os"].ToString());
-                Assert.Contains("2023-12-09T12:12:12", element["publication_date"].ToString());
+                Assert.Contains("2023-12-09T03:12:12Z", element["publication_date"].ToString());
                 Assert.Equal("", element["channel"].ToString());
                 element = items.ElementAt(1);
                 Assert.Equal("Super Beta", element["title"].ToString());
@@ -224,7 +224,7 @@ namespace NetSparkleUnitTests
                 Assert.Equal("srjlwj", element["release_notes_signature"].ToString());
                 Assert.Equal("false", element["is_critical"].ToString());
                 Assert.Equal(AppCastItem.DefaultOperatingSystem, element["os"].ToString());
-                Assert.Contains("1999-12-09T11:11:11", element["publication_date"].ToString());
+                Assert.Contains("1999-12-09T02:11:11Z", element["publication_date"].ToString());
                 Assert.Equal("beta", element["channel"].ToString());
             }
         }
@@ -282,7 +282,7 @@ namespace NetSparkleUnitTests
       ""version"": ""1.3"",
       ""url"": ""https://mysite.com/update.deb"",
       ""signature"": ""seru3112"",
-      ""publication_date"": ""2023-12-09T12:12:12.000000"",
+      ""publication_date"": ""2023-12-09T03:12:12Z"",
       ""is_critical"": true,
       ""size"": 0,
       ""os"": ""linux"",
@@ -297,7 +297,7 @@ namespace NetSparkleUnitTests
       ""release_notes_signature"": ""srjlwj"",
       ""url"": ""https://mysite.com/update09beta.exe"",
       ""signature"": ""seru311b2"",
-      ""publication_date"": ""1999-12-09T11:11:11.0000000"",
+      ""publication_date"": ""1999-12-09T02:11:11Z"",
       ""is_critical"": false,
       ""size"": 0,
       ""os"": ""windows"",

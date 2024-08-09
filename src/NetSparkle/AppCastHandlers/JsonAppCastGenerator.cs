@@ -42,10 +42,12 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="shouldSort">whether or not output should be sorted</param>
         public AppCast DeserializeAppCast(string appCastString, bool shouldSort = true)
         {
+            var options = GetSerializerOptions();
 #if NETFRAMEWORK || NETSTANDARD
-            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString) ?? new AppCast();
+            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString, options) ?? new AppCast();
 #else
-            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+            var jsonContext = new SourceGenerationContext(options);
+            var appCast = JsonSerializer.Deserialize<AppCast>(appCastString, jsonContext.AppCast) ?? new AppCast();
 #endif
             if (shouldSort)
             {
@@ -64,12 +66,14 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public async Task<AppCast> DeserializeAppCastAsync(string appCastString)
         {
+            var options = GetSerializerOptions();
             using (var stream = Utilities.GenerateStreamFromString(appCastString, Encoding.UTF8))
             {
 #if NETFRAMEWORK || NETSTANDARD
-                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream, options) ?? new AppCast();
 #else
-                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+                var jsonContext = new SourceGenerationContext(options);
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(stream, jsonContext.AppCast) ?? new AppCast();
 #endif
                 // sort versions in reverse order
                 output.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
@@ -99,16 +103,38 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public async Task<AppCast> DeserializeAppCastFromFileAsync(string filePath)
         {
+            var options = GetSerializerOptions();
             using (FileStream fileStream = File.OpenRead(filePath))
             {
 #if NETFRAMEWORK || NETSTANDARD
-                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream) ?? new AppCast();
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream, options) ?? new AppCast();
 #else
-                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream, SourceGenerationContext.Default.AppCast) ?? new AppCast();
+                var jsonContext = new SourceGenerationContext(options);
+                var output = await JsonSerializer.DeserializeAsync<AppCast>(fileStream, jsonContext.AppCast) ?? new AppCast();
 #endif
                 // sort versions in reverse order
                 output.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
                 return output;
+            }
+        }
+
+        /// <summary>
+        /// Class to convert DateTime to universal time when serializing and then
+        /// convert to local time when unserializing so that time zones are always
+        /// written.
+        /// From: https://github.com/dotnet/runtime/issues/1566
+        /// </summary>
+        public class DateTimeConverter : JsonConverter<DateTime>
+        {
+            /// <inheritdoc/>
+            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return reader.GetDateTime().ToLocalTime();
+            }
+            /// <inheritdoc/>
+            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToUniversalTime());
             }
         }
 
@@ -118,11 +144,13 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns></returns>
         protected JsonSerializerOptions GetSerializerOptions()
         {
-            return new JsonSerializerOptions 
+            var opts = new JsonSerializerOptions 
             { 
                 WriteIndented = HumanReadableOutput,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
+            opts.Converters.Add(new DateTimeConverter());
+            return opts;
         }
 
         /// <inheritdoc/>
