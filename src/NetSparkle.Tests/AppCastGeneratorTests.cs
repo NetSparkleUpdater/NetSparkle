@@ -160,6 +160,7 @@ namespace NetSparkleUnitTests
                 File.Delete(path);
             }
             // manually parse things
+            Console.WriteLine(serialized);
             if (appCastMakerType == AppCastMakerType.Xml)
             {
                 XDocument doc = XDocument.Parse(serialized);
@@ -227,6 +228,146 @@ namespace NetSparkleUnitTests
                 Assert.Contains("1999-12-09T11:11:11", element["publication_date"].ToString());
                 Assert.Equal("beta", element["channel"].ToString());
             }
+        }
+
+        [Theory]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCast))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastAsync))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastFromFile))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCast))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastAsync))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastFromFile))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))]
+        public async void TestCanDeserializeAppCast(AppCastMakerType appCastMakerType, string deserializeFuncName)
+        {
+            var appCastToDeserialize = "";
+            if (appCastMakerType == AppCastMakerType.Xml)
+            {
+                appCastToDeserialize = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<rss version=""2.0"" xmlns:sparkle=""http://www.andymatuschak.org/xml-namespaces/sparkle"">
+  <channel>
+    <title>My App</title>
+    <link>https://mysite.com/updates</link>
+    <description>My App Updates</description>
+    <language>en_US</language>
+    <item>
+      <title></title>
+      <pubDate>Sat, 09 Dec 2023 12:12:12 +09:00</pubDate>
+      <sparkle:version>1.3</sparkle:version>
+      <sparkle:shortVersionString />
+      <sparkle:criticalUpdate />
+      <enclosure url=""https://mysite.com/update.deb"" sparkle:version=""1.3"" length=""0"" sparkle:os=""linux"" type=""application/octet-stream"" sparkle:criticalUpdate=""true"" sparkle:signature=""seru3112"" />
+    </item>
+    <item>
+      <title>Super Beta</title>
+      <sparkle:releaseNotesLink sparkle:signature=""srjlwj"">https://mysite.com/update09beta.md</sparkle:releaseNotesLink>
+      <pubDate>Thu, 09 Dec 1999 11:11:11 +09:00</pubDate>
+      <sparkle:version>0.9-beta1</sparkle:version>
+      <sparkle:shortVersionString>0.9</sparkle:shortVersionString>
+      <sparkle:channel>beta</sparkle:channel>
+      <enclosure url=""https://mysite.com/update09beta.exe"" sparkle:version=""0.9-beta1"" sparkle:shortVersionString=""0.9"" length=""0"" sparkle:os=""windows"" type=""application/octet-stream"" sparkle:criticalUpdate=""false"" sparkle:signature=""seru311b2"" />
+    </item>
+  </channel>
+</rss>".Trim();
+            }
+            else
+            {
+                appCastToDeserialize = @"{
+  ""title"": ""My App"",
+  ""language"": ""en_US"",
+  ""description"": ""My App Updates"",
+  ""link"": ""https://mysite.com/updates"",
+  ""items"": [
+    {
+      ""version"": ""1.3"",
+      ""url"": ""https://mysite.com/update.deb"",
+      ""signature"": ""seru3112"",
+      ""publication_date"": ""2023-12-09T12:12:12"",
+      ""is_critical"": true,
+      ""size"": 0,
+      ""os"": ""linux"",
+      ""channel"": """",
+      ""type"": ""application/octet-stream""
+    },
+    {
+      ""title"": ""Super Beta"",
+      ""version"": ""0.9-beta1"",
+      ""short_version"": ""0.9"",
+      ""release_notes_link"": ""https://mysite.com/update09beta.md"",
+      ""release_notes_signature"": ""srjlwj"",
+      ""url"": ""https://mysite.com/update09beta.exe"",
+      ""signature"": ""seru311b2"",
+      ""publication_date"": ""1999-12-09T11:11:11"",
+      ""is_critical"": false,
+      ""size"": 0,
+      ""os"": ""windows"",
+      ""channel"": ""beta"",
+      ""type"": ""application/octet-stream""
+    }
+  ]
+}";
+            }
+            IAppCastGenerator maker = GetGeneratorForType(appCastMakerType);
+            AppCast deserialized = null;
+            if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCast))
+            {
+                deserialized = maker.DeserializeAppCast(appCastToDeserialize);
+            }
+            else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastAsync))
+            {
+                deserialized = await maker.DeserializeAppCastAsync(appCastToDeserialize);
+            }
+            else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFile))
+            {
+                var path = System.IO.Path.GetTempFileName();
+                await File.WriteAllTextAsync(path, appCastToDeserialize);
+                deserialized = maker.DeserializeAppCastFromFile(path);
+                File.Delete(path);
+            }
+            else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))
+            {
+                var path = System.IO.Path.GetTempFileName();
+                await File.WriteAllTextAsync(path, appCastToDeserialize);
+                deserialized = await maker.DeserializeAppCastFromFileAsync(path);
+                File.Delete(path);
+            }
+            // now that we have the app cast, test the data in it
+            Assert.Equal("My App", deserialized.Title);
+            Assert.Equal("My App Updates", deserialized.Description);
+            Assert.Equal("https://mysite.com/updates", deserialized.Link);
+            Assert.Equal("en_US", deserialized.Language);
+            Assert.Equal(2, deserialized.Items.Count);
+
+            Assert.Equal("1.3", deserialized.Items[0].Version);
+            Assert.Equal("https://mysite.com/update.deb", deserialized.Items[0].DownloadLink);
+            Assert.Equal("seru3112", deserialized.Items[0].DownloadSignature);
+            Assert.True(deserialized.Items[0].IsCriticalUpdate);
+            Assert.Equal("linux", deserialized.Items[0].OperatingSystem);
+            Assert.Equal(2023, deserialized.Items[0].PublicationDate.Year);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.Month);
+            Assert.Equal(9, deserialized.Items[0].PublicationDate.Day);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.Hour);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.Minute);
+            Assert.Equal(12, deserialized.Items[0].PublicationDate.Second);
+            Assert.True(string.IsNullOrWhiteSpace(deserialized.Items[0].Channel));
+
+            Assert.Equal("Super Beta", deserialized.Items[1].Title);
+            Assert.Equal("0.9-beta1", deserialized.Items[1].Version);
+            Assert.Equal("0.9", deserialized.Items[1].ShortVersion);
+            Assert.Equal("https://mysite.com/update09beta.exe", deserialized.Items[1].DownloadLink);
+            Assert.Equal("seru311b2", deserialized.Items[1].DownloadSignature);
+            Assert.Equal("https://mysite.com/update09beta.md", deserialized.Items[1].ReleaseNotesLink);
+            Assert.Equal("srjlwj", deserialized.Items[1].ReleaseNotesSignature);
+            Assert.Equal(1999, deserialized.Items[1].PublicationDate.Year);
+            Assert.Equal(12, deserialized.Items[1].PublicationDate.Month);
+            Assert.Equal(9, deserialized.Items[1].PublicationDate.Day);
+            Assert.Equal(11, deserialized.Items[1].PublicationDate.Hour);
+            Assert.Equal(11, deserialized.Items[1].PublicationDate.Minute);
+            Assert.Equal(11, deserialized.Items[1].PublicationDate.Second);
+            Assert.Equal("beta", deserialized.Items[1].Channel);
+            Assert.False(deserialized.Items[1].IsCriticalUpdate);
+            Assert.Equal(AppCastItem.DefaultOperatingSystem, deserialized.Items[1].OperatingSystem);
         }
     }
 }
