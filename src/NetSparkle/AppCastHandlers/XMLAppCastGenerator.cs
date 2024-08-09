@@ -130,13 +130,14 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Get default settings for writing XMl
         /// </summary>
         /// <returns>Default XML writing settings</returns>
-        protected XmlWriterSettings GetXmlWriterSettings()
+        protected XmlWriterSettings GetXmlWriterSettings(bool async = false)
         {
             return new XmlWriterSettings()
             {
                 NewLineChars = Environment.NewLine, 
                 Encoding = new UTF8Encoding(false), 
-                Indent = HumanReadableOutput
+                Indent = HumanReadableOutput,
+                Async = async
             };
         }
 
@@ -159,7 +160,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public async Task<string> SerializeAppCastAsync(AppCast appCast)
         {
             var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
-            var settings = GetXmlWriterSettings();
+            var settings = GetXmlWriterSettings(true);
             using (TextWriter writer = new Utf8StringWriter())
             {
                 using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
