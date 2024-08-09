@@ -222,7 +222,7 @@ namespace NetSparkleUpdater
         /// <returns><seealso cref="Task"/> that you can await for the completion of this function</returns>
         public static async Task WriteTextAsync(string filePath, string text)
         {
-            byte[] encodedText = Encoding.Unicode.GetBytes(text);
+            byte[] encodedText = Encoding.UTF8.GetBytes(text);
 
             using (var sourceStream =
                 new FileStream(

@@ -159,7 +159,6 @@ namespace NetSparkleUnitTests
                 serialized = File.ReadAllText(path);
                 File.Delete(path);
             }
-            Console.WriteLine(serialized);
             // manually parse things
             if (appCastMakerType == AppCastMakerType.Xml)
             {
