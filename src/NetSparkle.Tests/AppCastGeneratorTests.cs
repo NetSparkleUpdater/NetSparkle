@@ -118,7 +118,7 @@ namespace NetSparkleUnitTests
                         DownloadSignature = "seru3112",
                         IsCriticalUpdate = true,
                         OperatingSystem = "linux",
-                        PublicationDate = new DateTime(2023, 12, 09, 12, 12, 12, DateTimeKind.Local),
+                        PublicationDate = new DateTime(2023, 12, 09, 12, 12, 12, DateTimeKind.Utc),
                         Channel = "",
                     },
                     new AppCastItem() 
@@ -130,7 +130,7 @@ namespace NetSparkleUnitTests
                         DownloadSignature = "seru311b2",
                         ReleaseNotesLink = "https://mysite.com/update09beta.md",
                         ReleaseNotesSignature = "srjlwj",
-                        PublicationDate = new DateTime(1999, 12, 09, 11, 11, 11, DateTimeKind.Local),
+                        PublicationDate = new DateTime(1999, 12, 09, 11, 11, 11, DateTimeKind.Utc),
                         Channel = "beta",
                     },
                 }
@@ -213,7 +213,7 @@ namespace NetSparkleUnitTests
                 Assert.Equal("seru3112", element["signature"].ToString());
                 Assert.Equal("true", element["is_critical"].ToString());
                 Assert.Equal("linux", element["os"].ToString());
-                Assert.Contains("2023-12-09T03:12:12Z", element["publication_date"].ToString());
+                Assert.Contains("2023-12-09T12:12:12Z", element["publication_date"].ToString());
                 Assert.Equal("", element["channel"].ToString());
                 element = items.ElementAt(1);
                 Assert.Equal("Super Beta", element["title"].ToString());
@@ -225,7 +225,7 @@ namespace NetSparkleUnitTests
                 Assert.Equal("srjlwj", element["release_notes_signature"].ToString());
                 Assert.Equal("false", element["is_critical"].ToString());
                 Assert.Equal(AppCastItem.DefaultOperatingSystem, element["os"].ToString());
-                Assert.Contains("1999-12-09T02:11:11Z", element["publication_date"].ToString());
+                Assert.Contains("1999-12-09T11:11:11Z", element["publication_date"].ToString());
                 Assert.Equal("beta", element["channel"].ToString());
             }
         }
@@ -347,7 +347,7 @@ namespace NetSparkleUnitTests
             Assert.Equal(2023, deserialized.Items[0].PublicationDate.Year);
             Assert.Equal(12, deserialized.Items[0].PublicationDate.Month);
             Assert.Equal(9, deserialized.Items[0].PublicationDate.Day);
-            Assert.Equal(12, deserialized.Items[0].PublicationDate.Hour);
+            Assert.Equal(3, deserialized.Items[0].PublicationDate.ToUniversalTime().Hour);
             Assert.Equal(12, deserialized.Items[0].PublicationDate.Minute);
             Assert.Equal(12, deserialized.Items[0].PublicationDate.Second);
             Assert.True(string.IsNullOrWhiteSpace(deserialized.Items[0].Channel));
@@ -362,7 +362,7 @@ namespace NetSparkleUnitTests
             Assert.Equal(1999, deserialized.Items[1].PublicationDate.Year);
             Assert.Equal(12, deserialized.Items[1].PublicationDate.Month);
             Assert.Equal(9, deserialized.Items[1].PublicationDate.Day);
-            Assert.Equal(11, deserialized.Items[1].PublicationDate.Hour);
+            Assert.Equal(2, deserialized.Items[1].PublicationDate.ToUniversalTime().Hour);
             Assert.Equal(11, deserialized.Items[1].PublicationDate.Minute);
             Assert.Equal(11, deserialized.Items[1].PublicationDate.Second);
             Assert.Equal("beta", deserialized.Items[1].Channel);

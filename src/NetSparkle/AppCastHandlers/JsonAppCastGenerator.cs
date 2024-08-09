@@ -131,6 +131,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 return reader.GetDateTime().ToLocalTime();
             }
+
             /// <inheritdoc/>
             public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
             {
