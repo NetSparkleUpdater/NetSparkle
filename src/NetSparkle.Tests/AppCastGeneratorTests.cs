@@ -135,7 +135,6 @@ namespace NetSparkleUnitTests
                     },
                 }
             };
-            Console.WriteLine(appCast.Items[0].PublicationDate.ToString());
             IAppCastGenerator maker = GetGeneratorForType(appCastMakerType);
             var serialized = "";
             if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCast))
@@ -160,6 +159,7 @@ namespace NetSparkleUnitTests
                 serialized = File.ReadAllText(path);
                 File.Delete(path);
             }
+            Console.WriteLine(serialized);
             // manually parse things
             if (appCastMakerType == AppCastMakerType.Xml)
             {
