@@ -12,10 +12,13 @@ namespace NetSparkleUpdater.Interfaces
     public interface IAppCastFilter
     {
         /// <summary>
-        /// Filter AppCast with SemVerLike version specification.
+        /// Filter AppCast with SemVerLike version specification. NOTE: When you use this interface
+        /// with <seealso cref="AppCastHelper"/>, you must filter out old versions of <seealso cref="AppCastItem"/>
+        /// yourself if you want that to happen! In other words, <seealso cref="AppCastHelper"/> skips this step
+        /// when there is an <seealso cref="IAppCastFilter"/> implementation available.
         /// </summary>
         /// <remarks>
-        /// Implementor has responsibility to both order the versions in the app cast 
+        /// Implementor has responsibility to both order the versions in the app cast if desired
         /// (put the ones you want in order starting at index 0) and filter out items you don't want at all.
         /// 
         /// Consider these use cases:

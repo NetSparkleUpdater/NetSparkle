@@ -134,7 +134,7 @@ namespace NetSparkleUpdater.UI.WPF
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
             viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "", 
-                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat);
+                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, sparkle.AppCastCache?.Title ?? "the application", sparkle.Configuration.AssemblyAccessor.AssemblyVersion);
             ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
@@ -145,7 +145,8 @@ namespace NetSparkleUpdater.UI.WPF
             var viewModel = new DownloadProgressWindowViewModel()
             {
                 ItemToDownload = item,
-                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
+                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate,
+                DownloadTitle = sparkle.AppCastCache?.Title ?? "application"
             };
             var window = new DownloadProgressWindow(viewModel)
             {

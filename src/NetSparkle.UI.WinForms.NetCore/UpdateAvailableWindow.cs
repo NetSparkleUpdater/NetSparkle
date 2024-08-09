@@ -53,8 +53,10 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <param name="releaseNotesHTMLTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
         /// <param name="additionalReleaseNotesHeaderHTML">Additional text they will inserted into HTML Head. For Stylesheets.</param>
         /// <param name="releaseNotesDateFormat">Date format for release notes</param>
+        /// <param name="appNameTitle">Title for application</param>
+        /// <param name="installedVersion">Currently installed version of application</param>
         public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon? applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D")
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D", string appNameTitle = "the application", string installedVersion = "")
         {
             _sparkle = sparkle;
             _updates = items;
@@ -78,23 +80,10 @@ namespace NetSparkleUpdater.UI.WinForms
             AppCastItem? item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
-            lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? item.AppName : "the application");
+            lblHeader.Text = lblHeader.Text.Replace("APP", appNameTitle);
             if (item != null)
             {
-                var versionString = "";
-                try
-                {
-                    // Use try/catch since Version constructor can throw an exception and we don't want to
-                    // die just because the user has a malformed version string
-                    var versionObj = SemVerLike.Parse(item.AppVersionInstalled);
-                    versionString = versionObj.ToString();
-                }
-                catch
-                {
-                    versionString = "?";
-                }
-                lblInfoText.Text = string.Format("{0} {3} is now available (you have {1}). Would you like to {2} it now?", item.AppName, versionString, 
-                    downloadInstallText, item.Version);
+                lblInfoText.Text = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
             }
             else
             {

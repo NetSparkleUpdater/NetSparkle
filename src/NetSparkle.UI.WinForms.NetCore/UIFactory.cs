@@ -85,7 +85,7 @@ namespace NetSparkleUpdater.UI.WinForms
         public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
             var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded,
-                ReleaseNotesHTMLTemplate ?? "", AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat ?? "D");
+                ReleaseNotesHTMLTemplate ?? "", AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat ?? "D", sparkle.AppCastCache?.Title ?? "the application", sparkle.Configuration.AssemblyAccessor.AssemblyVersion);
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
@@ -110,7 +110,8 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <inheritdoc/>
         public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
         {
-            var window = new DownloadProgressWindow(item, _applicationIcon)
+            var window = new DownloadProgressWindow(item, _applicationIcon, 
+                sparkle.AppCastCache?.Title ?? "application")
             {
                 SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };

@@ -19,7 +19,6 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         private string _errorMessageText;
         private bool _isErrorMessageVisible;
 
-        private string _downloadingTitle;
         private double _downloadProgressValue;
         private string _userReadableDownloadProgress;
 
@@ -36,7 +35,6 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             DidDownloadAnything = false;
             _errorMessageText = "";
             IsErrorMessageVisible = false;
-            _downloadingTitle = "";
             _userReadableDownloadProgress = "";
             _actionButtonTitle = "Install";
             _downloadProgressValue = 0.0;
@@ -45,8 +43,6 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
 
         /// <summary>
         /// <see cref="AppCastItem"/> that is going to be downloaded.
-        /// Setting this property changes the <see cref="DownloadingTitle"/>
-        /// property
         /// </summary>
         public AppCastItem? ItemToDownload
         {
@@ -55,15 +51,6 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             { 
                 _itemToDownload = value;
                 NotifyPropertyChanged();
-
-                if (_itemToDownload != null)
-                {
-                    DownloadingTitle = string.Format("Downloading {0}", _itemToDownload.AppName + " " + _itemToDownload.Version);
-                }
-                else
-                {
-                    DownloadingTitle = "Downloading...";
-                }
             }
         }
 
@@ -107,14 +94,25 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         }
 
         /// <summary>
+        /// Title for software download.
+        /// </summary>
+        public string? DownloadTitle { get; set; } = "";
+
+        /// <summary>
         /// Title to show to the user (e.g. "Downloading...").
         /// This property is automatically set when <see cref="ItemToDownload"/>
         /// is changed
         /// </summary>
         public string DownloadingTitle
         {
-            get => _downloadingTitle;
-            set { _downloadingTitle = value; NotifyPropertyChanged(); }
+            get 
+            {
+                if (_itemToDownload != null)
+                {
+                    return string.Format("Downloading {0}", DownloadTitle + " " + _itemToDownload.Version);
+                }
+                return "Downloading...";
+            }
         }
 
         /// <summary>

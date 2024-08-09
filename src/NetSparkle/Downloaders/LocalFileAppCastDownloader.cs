@@ -41,6 +41,16 @@ namespace NetSparkleUpdater.Downloaders
             }
             return File.ReadAllText(url);
         }
+        
+        /// <inheritdoc/>
+        public async Task<string> DownloadAndGetAppCastDataAsync(string url)
+        {
+            #if NETFRAMEWORK || NETSTANDARD
+                return await Utilities.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url);
+            #else
+                return await File.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url);
+            #endif
+        }
 
         /// <inheritdoc/>
         public Encoding GetAppCastEncoding()

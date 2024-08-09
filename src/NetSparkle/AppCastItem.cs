@@ -3,6 +3,8 @@ using NetSparkleUpdater.Interfaces;
 using System;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NetSparkleUpdater
 {
@@ -17,30 +19,34 @@ namespace NetSparkleUpdater
         private string? _version;
 
         /// <summary>
+        /// Default MIME type for an App Cast Item (application/octet-stream)
+        /// </summary>
+        public static string DefaultMIMEType = "application/octet-stream";
+        /// <summary>
+        /// Default operating system for an App Cast Item (windows)
+        /// </summary>
+        public static string DefaultOperatingSystem = "windows";
+
+        /// <summary>
         /// Default constructor for an app cast item
         /// </summary>
         public AppCastItem()
         {
-            MIMEType = _defaultType;
+            MIMEType = DefaultMIMEType;
+            OperatingSystem = DefaultOperatingSystem;
         }
 
         /// <summary>
-        /// The application name
-        /// </summary>
-        public string? AppName { get; set; }
-        /// <summary>
-        /// The installed version
-        /// </summary>
-        public string? AppVersionInstalled { get; set; }
-        /// <summary>
         /// The item title
         /// </summary>
+        [JsonPropertyName("title")]
         public string? Title { get; set; }
         /// <summary>
         /// The available version -- this technically can be null if file parsing fails, 
         /// but since NetSparkleUpdater runs off of version information, doing this is
         /// not a great way to use this library.
         /// </summary>
+        [JsonPropertyName("version")]
         public string? Version 
         { 
             get => _version; 
@@ -49,6 +55,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// The available version as a SemVerLike object (handles things like 1.2-alpha1)
         /// </summary>
+        [JsonIgnore]
         public SemVerLike SemVerLikeVersion
         {
             get 
@@ -63,44 +70,64 @@ namespace NetSparkleUpdater
         /// <summary>
         /// Shortened version
         /// </summary>
+        [JsonPropertyName("short_version")]
         public string? ShortVersion { get; set; }
         /// <summary>
         /// The release notes link
         /// </summary>
+        [JsonPropertyName("release_notes_link")]
         public string? ReleaseNotesLink { get; set; }
         /// <summary>
         /// The signature of the Release Notes file
         /// </summary>
+        [JsonPropertyName("release_notes_signature")]
         public string? ReleaseNotesSignature { get; set; }
         /// <summary>
         /// The embedded description
         /// </summary>
+        [JsonPropertyName("description")]
         public string? Description { get; set; }
         /// <summary>
         /// The download link
         /// </summary>
+        [JsonPropertyName("url")]
         public string? DownloadLink { get; set; }
         /// <summary>
         /// The signature of the download file
         /// </summary>
+        [JsonPropertyName("signature")]
         public string? DownloadSignature { get; set; }
         /// <summary>
         /// Date item was published
         /// </summary>
+        [JsonPropertyName("publication_date")]
         public DateTime PublicationDate { get; set; }
         /// <summary>
         /// Whether the update was marked critical or not via sparkle:critical
         /// </summary>
+        [JsonPropertyName("is_critical")]
         public bool IsCriticalUpdate { get; set; }
         /// <summary>
         /// Length of update set via sparkle:length (usually the # of bytes of the update)
         /// </summary>
+        [JsonPropertyName("size")]
         public long UpdateSize { get; set; }
-
         /// <summary>
         /// Operating system that this update applies to
         /// </summary>
-        public string? OperatingSystemString { get; set; }
+        [JsonPropertyName("os")]
+        public string? OperatingSystem { get; set; }
+        /// <summary>
+        /// Channel for this app cast item. A channel can also be set in
+        /// the version property via semver, and when using 
+        /// <seealso cref="ChannelAppCastFilter"/>, both the channel and version data
+        /// will be used when filtering channels for this app cast item.
+        /// Often a single word like "beta", "gamma", "rc", etc. Note that this can be
+        /// an empty string, but "stable" or "release" will be treated as a special
+        /// channel, NOT as a "normal" channel for all users.
+        /// </summary>
+        [JsonPropertyName("channel")]
+        public string? Channel { get; set; }
 
         /// <summary>
         /// True if this update is a windows update; false otherwise.
@@ -108,13 +135,14 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Windows update.
         /// </summary>
+        [JsonIgnore]
         public bool IsWindowsUpdate
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "win" || lowercasedOS == "windows")
                     {
                         return true;
@@ -131,13 +159,14 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Windows update.
         /// </summary>
+        [JsonIgnore]
         public bool IsMacOSUpdate
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "mac" || lowercasedOS == "macos" || lowercasedOS == "osx")
                     {
                         return true;
@@ -153,13 +182,14 @@ namespace NetSparkleUpdater
         /// checked with a case-insensitive check). If not specified,
         /// assumed to be a Linux update.
         /// </summary>
+        [JsonIgnore]
         public bool IsLinuxUpdate
         {
             get
             {
-                if (OperatingSystemString != null)
+                if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystemString.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLower();
                     if (lowercasedOS == "linux")
                     {
                         return true;
@@ -172,220 +202,14 @@ namespace NetSparkleUpdater
         /// <summary>
         /// MIME type for file as specified in the closure tag. Defaults to "application/octet-stream".
         /// </summary>
+        [JsonPropertyName("type")]
         public string MIMEType { get; set; }
-
-        #region XML
-
-        private const string _itemNode = "item";
-        private const string _titleNode = "title";
-        private const string _enclosureNode = "enclosure";
-        private const string _releaseNotesLinkNode = "releaseNotesLink";
-        private const string _descriptionNode = "description";
-        private const string _versionAttribute = "version";
-        private const string _shortVersionAttribute = "shortVersionString";
-        private const string _dsaSignatureAttribute = "dsaSignature";
-        private const string _ed25519SignatureAttribute = "edSignature";
-        private const string _signatureAttribute = "signature";
-        private const string _criticalAttribute = "criticalUpdate";
-        private const string _operatingSystemAttribute = "os";
-        private const string _lengthAttribute = "length";
-        private const string _typeAttribute = "type";
-        private const string _urlAttribute = "url";
-        private const string _pubDateNode = "pubDate";
-        private const string _defaultOperatingSystem = "windows";
-        private const string _defaultType = "application/octet-stream";
-
-        /// <summary>
-        /// Parse item Xml Node to AppCastItem
-        /// </summary>
-        /// <param name="installedVersion">Currently installed version</param>
-        /// <param name="applicationName">Application name</param>
-        /// <param name="castUrl">The url of the appcast</param>
-        /// <param name="item">The item XML node</param>
-        /// <param name="logWriter">logwriter instance</param>
-        /// <returns>AppCastItem from Xml Node</returns>
-        public static AppCastItem Parse(string? installedVersion, string? applicationName, string? castUrl, XElement item, ILogger? logWriter)
-        {
-            var newAppCastItem = new AppCastItem()
-            {
-                AppVersionInstalled = installedVersion,
-                AppName = applicationName,
-                UpdateSize = 0,
-                IsCriticalUpdate = false,
-                OperatingSystemString = _defaultOperatingSystem,
-                MIMEType = _defaultType
-            };
-
-            //title
-            newAppCastItem.Title = item.Element(_titleNode)?.Value ?? string.Empty;
-
-            //release notes
-            var releaseNotesElement = item.Element(XMLAppCast.SparkleNamespace + _releaseNotesLinkNode);
-            newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(XMLAppCast.SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
-            if (newAppCastItem.ReleaseNotesSignature == string.Empty)
-            {
-                newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(XMLAppCast.SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
-            }
-            if (newAppCastItem.ReleaseNotesSignature == string.Empty)
-            {
-                newAppCastItem.ReleaseNotesSignature = releaseNotesElement?.Attribute(XMLAppCast.SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
-            }
-            newAppCastItem.ReleaseNotesLink = releaseNotesElement?.Value.Trim() ?? string.Empty;
-
-            //description
-            newAppCastItem.Description = item.Element(_descriptionNode)?.Value.Trim() ?? string.Empty;
-
-            //enclosure
-            var enclosureElement = item.Element(_enclosureNode) ?? item.Element(XMLAppCast.SparkleNamespace + _enclosureNode);
-
-            newAppCastItem.Version = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
-            newAppCastItem.ShortVersion = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
-            newAppCastItem.DownloadLink = enclosureElement?.Attribute(_urlAttribute)?.Value ?? string.Empty;
-            if (!string.IsNullOrWhiteSpace(newAppCastItem.DownloadLink) && !newAppCastItem.DownloadLink.Contains("/"))
-            {
-                // Download link contains only the filename -> complete with _castUrl
-                if (castUrl == null)
-                {
-                    newAppCastItem.DownloadLink = newAppCastItem.DownloadLink;
-                }
-                else
-                {
-                    newAppCastItem.DownloadLink = castUrl.Substring(0, castUrl.LastIndexOf('/') + 1) + newAppCastItem.DownloadLink;
-                }
-            }
-
-            newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _signatureAttribute)?.Value ?? string.Empty;
-            if (newAppCastItem.DownloadSignature == string.Empty)
-            {
-                newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _dsaSignatureAttribute)?.Value ?? string.Empty;
-            }
-            if (newAppCastItem.DownloadSignature == string.Empty)
-            {
-                newAppCastItem.DownloadSignature = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _ed25519SignatureAttribute)?.Value ?? string.Empty;
-            }
-            string length = enclosureElement?.Attribute(_lengthAttribute)?.Value ?? string.Empty;
-            if (length != null)
-            {
-                if (long.TryParse(length, out var size))
-                {
-                    newAppCastItem.UpdateSize = size;
-                }
-                else
-                {
-                    newAppCastItem.UpdateSize = 0;
-                }
-            }
-            bool isCritical = false;
-            string critical = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _criticalAttribute)?.Value ?? string.Empty;
-            if (critical != null && critical == "true" || critical == "1")
-            {
-                isCritical = true;
-            }
-            newAppCastItem.IsCriticalUpdate = isCritical;
-
-            newAppCastItem.OperatingSystemString = enclosureElement?.Attribute(XMLAppCast.SparkleNamespace + _operatingSystemAttribute)?.Value ?? _defaultOperatingSystem;
-
-            newAppCastItem.MIMEType = enclosureElement?.Attribute(_typeAttribute)?.Value ?? _defaultType;
-
-            //pub date
-            var pubDateElement = item.Element(_pubDateNode);
-            if (pubDateElement != null)
-            {
-                // "ddd, dd MMM yyyy HH:mm:ss zzz" => Standard date format
-                //      e.g. "Sat, 26 Oct 2019 22:05:11 -05:00"
-                // "ddd, dd MMM yyyy HH:mm:ss Z" => Check for MS AppCenter Sparkle date format which ends with GMT
-                //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
-                // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
-                //      e.g. "Sat, 26 Oct 2019 22:05:11"
-                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", 
-                    "ddd, dd MMM yyyy HH:mm:ss", "ddd, dd MMM yyyy HH:mm:ss K" };
-                string dt = pubDateElement.Value.Trim();
-                if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
-                {
-                    logWriter?.PrintMessage("While parsing app cast item, converted '{0}' to {1}.", dt, dateValue);
-                    newAppCastItem.PublicationDate = dateValue;
-                }
-                else
-                {
-                    logWriter?.PrintMessage("Cannot parse item's DateTime: {0}", dt);
-                }
-            }
-
-            return newAppCastItem;
-        }
-
-        /// <summary>
-        /// Create Xml node from this instance of AppCastItem
-        /// </summary>
-        /// <returns>An XML node</returns>
-        public XElement GetXElement()
-        {
-            var item = new XElement(_itemNode);
-
-            item.Add(new XElement(_titleNode) { Value = Title ?? "" });
-
-            if (!string.IsNullOrWhiteSpace(ReleaseNotesLink))
-            {
-                var releaseNotes = new XElement(XMLAppCast.SparkleNamespace + _releaseNotesLinkNode) { Value = ReleaseNotesLink };
-                if (!string.IsNullOrWhiteSpace(ReleaseNotesSignature))
-                {
-                    releaseNotes.Add(new XAttribute(XMLAppCast.SparkleNamespace + _signatureAttribute, ReleaseNotesSignature));
-                }
-                item.Add(releaseNotes);
-            }
-
-            if (!string.IsNullOrWhiteSpace(Description))
-            {
-                item.Add(new XElement(_descriptionNode) { Value = Description });
-            }
-
-            if (PublicationDate != DateTime.MinValue && PublicationDate != DateTime.MaxValue)
-            {
-                item.Add(new XElement(_pubDateNode) { Value = PublicationDate.ToString("ddd, dd MMM yyyy HH:mm:ss zzz", System.Globalization.CultureInfo.InvariantCulture) });
-            }
-
-            if (!string.IsNullOrWhiteSpace(DownloadLink))
-            {
-                var enclosure = new XElement(_enclosureNode);
-                enclosure.Add(new XAttribute(_urlAttribute, DownloadLink));
-                if (Version != null)
-                {
-                    enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
-                }
-
-                if (!string.IsNullOrWhiteSpace(ShortVersion))
-                {
-                    enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _shortVersionAttribute, ShortVersion));
-                }
-
-                enclosure.Add(new XAttribute(_lengthAttribute, UpdateSize));
-                enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _operatingSystemAttribute, OperatingSystemString ?? _defaultOperatingSystem));
-                enclosure.Add(new XAttribute(_typeAttribute, MIMEType ?? _defaultType));
-                enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _criticalAttribute, IsCriticalUpdate));
-
-                // enhance compatibility with Sparkle app casts (#275)
-                item.Add(new XElement(XMLAppCast.SparkleNamespace + _versionAttribute, Version));
-                item.Add(new XElement(XMLAppCast.SparkleNamespace + _shortVersionAttribute, ShortVersion));
-                if (IsCriticalUpdate)
-                {
-                    item.Add(new XElement(XMLAppCast.SparkleNamespace + _criticalAttribute));
-                }
-
-                if (!string.IsNullOrWhiteSpace(DownloadSignature))
-                {
-                    enclosure.Add(new XAttribute(XMLAppCast.SparkleNamespace + _signatureAttribute, DownloadSignature));
-                }
-                item.Add(enclosure);
-            }
-            return item;
-        }
-
-        #endregion
 
         #region IComparable<AppCastItem> Members
 
         /// <summary>
-        /// Compares this <see cref="AppCastItem"/> version to the version of another <see cref="AppCastItem"/>
+        /// Compares this <see cref="AppCastItem"/> version to the version of another <see cref="AppCastItem"/>.
+        /// If versions are the same, uses channel, then title to sort.
         /// </summary>
         /// <param name="other">the other instance</param>
         /// <returns>-1, 0, 1 if this instance is less than, equal to, or greater than the <paramref name="other"/></returns>
@@ -395,14 +219,20 @@ namespace NetSparkleUpdater
             {
                 return 1;
             }
-            if ((string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version)) ||
-                (Version != null && !Version.Contains(".")) || (other.Version != null && !other.Version.Contains(".")))
+            // if neither one has version information, compare them via their titles.
+            if (string.IsNullOrWhiteSpace(Version) && string.IsNullOrWhiteSpace(other.Version))
             {
-                return 0;
+                return Title?.CompareTo(other.Title) ?? 0;
             }
             SemVerLike v1 = SemVerLike.Parse(Version);
             SemVerLike v2 = SemVerLike.Parse(other.Version);
-            return v1.CompareTo(v2);
+            var versionCompare = v1.CompareTo(v2);
+            if (versionCompare == 0)
+            {
+                var channelCompare = Channel?.CompareTo(other.Channel) ?? 0;
+                return channelCompare == 0 ? Title?.CompareTo(other.Title) ?? 0 : channelCompare;
+            }
+            return versionCompare;
         }
 
         /// <summary>
@@ -426,7 +256,7 @@ namespace NetSparkleUpdater
             {
                 return true;
             }
-            return AppName != null && AppName.Equals(item.AppName) && CompareTo(item) == 0;
+            return CompareTo(item) == 0;
         }
 
         /// <summary>
@@ -435,7 +265,7 @@ namespace NetSparkleUpdater
         /// <returns>the integer haschode of this app cast item</returns>
         public override int GetHashCode()
         {
-            return (Version?.GetHashCode() ?? 0) * 17 + (AppName?.GetHashCode() ?? 0);
+            return (Version?.GetHashCode() ?? 0) * 17 + (Title?.GetHashCode() ?? 0);
         }
 
         /// <summary>

@@ -37,7 +37,8 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         /// <param name="item">The appcast item to use</param>
         /// <param name="applicationIcon">Your application Icon</param>
-        public DownloadProgressWindow(AppCastItem item, Icon? applicationIcon)
+        /// <param name="downloadTitle">Name of application that is being downloaded</param>
+        public DownloadProgressWindow(AppCastItem item, Icon? applicationIcon, string downloadTitle = "")
         {
             InitializeComponent();
 
@@ -50,7 +51,7 @@ namespace NetSparkleUpdater.UI.WinForms
             // init ui
             btnInstallAndReLaunch.Visible = false;
             btnInstallAndReLaunch.Text = "Install and Relaunch";
-            lblHeader.Text = lblHeader.Text.Replace("APP", item.AppName + " " + item.Version);
+            lblHeader.Text = lblHeader.Text.Replace("APP", downloadTitle + " " + item.Version);
             downloadProgressLbl.Text = "";
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;

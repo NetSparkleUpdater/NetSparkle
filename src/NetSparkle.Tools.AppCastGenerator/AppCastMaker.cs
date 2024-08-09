@@ -43,7 +43,10 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <summary>
         /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
         /// Should not return duplicate versions.
-        /// The items list should always be non-null and sorted by AppCastItem.Version descending.
+        /// Sorting should be done after reading in the file is done and items are parsed, as duplicates
+        /// will be overwritten in the order they are read.
+        /// The items list should always be non-null and sorted by AppCastItem.Version descending when the function
+        /// is complete.
         /// </summary>
         /// <param name="appCastFileName">File name/path for app cast file to read</param>
         /// <param name="overwriteOldItemsInAppcast">If true and an item is loaded with a version that has already been found,
@@ -317,7 +320,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return productVersion;
         }
 
-        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string? productName, SemVerLike productVersion, bool useChangelogs, string? changelogFileNamePrefix)
+        public AppCastItem CreateAppCastItemFromFile(FileInfo binaryFileInfo, string? productName, SemVerLike productVersion, bool useChangelogs, string? changelogFileNamePrefix, string? channel)
         {
             var fullProductVersionString = productVersion.ToString();
             var itemTitle = string.IsNullOrWhiteSpace(productName) 
@@ -395,8 +398,9 @@ namespace NetSparkleUpdater.AppCastGenerator
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
                 DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
-                OperatingSystemString = _opts.OperatingSystem?.Trim(),
-                MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name)
+                OperatingSystem = _opts.OperatingSystem?.Trim(),
+                MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name),
+                Channel = channel,
             };
 
             if (hasChangelogForFile)
@@ -511,7 +515,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix, _opts.Channel);
                         if (item != null)
                         {
                             items.Add(item);

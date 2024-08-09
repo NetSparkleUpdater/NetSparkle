@@ -1,7 +1,9 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,9 +64,14 @@ namespace NetSparkleUpdater.AppCastGenerator
         public string? PathToKeyFiles { get; set; }
 
         [Option("signature-file-extension", SetName = "local", Required = false,
-            HelpText = "Suffix (without '.') to append to appcast.xml for signature file",
+            HelpText = "Suffix (without '.') to append to appcast.xml for signature file. If you change this, make sure to also set AppCastHelper.SignatureFileExtension in the core NetSparkleUpdater lib",
             Default = "signature")]
         public string? SignatureFileExtension { get; set; }
+
+        [Option("use-ed25519-signature-attribute", SetName = "local", Required = false,
+            HelpText = "If true and doing XML output, the output signature attribute in the XML will be 'edSignature' rather than 'signature' to match the original Sparkle library.",
+            Default = "signature")]
+        public bool UseEd25519SignatureAttributeForXml { get; set; }
 
         [Option("public-key-override", SetName = "local", Required = false, HelpText = "Public key override (ignores whatever is in the public key file) for signing binaries. This" +
             " overrides ALL other public keys set when verifying binaries, INCLUDING public key set via environment variables! " +
@@ -97,6 +104,12 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         [Option("critical-versions", SetName = "local", Required = false, HelpText = "Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., \"1.0.2,1.2.3.1\"", Default = "")]
         public string? CriticalVersions { get; set; }
+
+        [Option("channel", SetName = "local", Required = false, HelpText = "Name of release channel for any items added into the app cast. Should be a single channel; does not support things like \"beta,gamma\". Do not set if you want to use your release channel - if you set this to \"release\" or \"stable\", those will be treated as special channels and not as the stable channel. (Unless you want all your items to be in a specific channel, of course.)", Default = "")]
+        public string? Channel { get; set; }
+
+        [Option("output-type", SetName = "local", Required = false, HelpText = "Output type for app cast file ('xml' or 'json' without the ' marks); defaults to 'xml'", Default = "xml")]
+        public string? OutputType { get; set; }
 
         #region Key Generation
 

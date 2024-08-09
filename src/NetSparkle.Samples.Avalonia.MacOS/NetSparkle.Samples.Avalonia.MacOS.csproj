@@ -5,6 +5,8 @@
     <ApplicationIcon>software-update-available.ico</ApplicationIcon>
     <RootNamespace>NetSparkleUpdater.Samples.Avalonia</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Samples.Avalonia</AssemblyName>
+    <Version>1.0.0-beta1</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\*" />

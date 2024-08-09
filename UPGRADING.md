@@ -34,7 +34,25 @@
   * By default, timestamps are now output along with the `Tag` and actual log item
 * `RegistryConfiguration` has changed its default final path to `NetSparkleUpdater` instead of `AutoUpdate`. Please migrate saved configuration data yourself if you need to do so for your users (probably not necessary).
 * `ShowUpdateNeededUI` no longer shows an update window if the number of update items is 0. (Arguably a bug fix, but technically a breaking change.)
-
+* Major refactoring for app cast handling/parsing to clean up logic / make new formats easier
+  * New `AppCast` model class that holds info on the actual app cast and its items
+  * `AppCastItem` no longer contains information on serializing or parsing to/from XML
+  * App cast parsing/serializing is now handled by an `IAppCastGenerator` implementation
+    * `XMLAppCast` renamed to `AppCastHelper`
+    * `SparkleUpdater` now has an `AppCastGenerator` member that handles deserializing the app cast rather than `AppCastHelper`
+    * `AppCastItem` serialization now expects the full download link to already be known (serialization will not consider the overall app cast URL)
+  * `IAppCastHandler` is no longer available/used.
+    * App cast downloading and item filtering is now handled by `AppCastHelper`.
+    * If you want to manage downloads, implement `IAppCastDataDownloader` and set `SparkleUpdater.AppCastDataDownloader`
+    * If you want to manage deserializing/serializing the app cast, implement `IAppCastGenerator` and set `SparkleUpdater.AppCastGenerator`
+    * If you want to manage filtering on your own, implement `IAppCastFilter` and set `SparkleUpdater.AppCastHelper.AppCastFilter`
+      * `AppCastHelper` also has two new properties: `FilterOutItemsWithNoVersion` and `FilterOutItemsWithNoDownloadLink`, which both default to `true`.
+    * If you need absolute control more than the above, you can subclass `AppCastHelper` and override methods: `SetupAppCastHelper`, `DownloadAppCast`, and `FilterUpdates`. This probably is not necessary, however, and you can do what you want through the interfaces, most likely.
+  * `AppCastHelper.SetupAppCastHelper` signature is now `SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)` (note: no longer takes a `Configuration` object)
+* Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
+* XML app casts write `version`, `shortVersion`, and `criticalUpdate` to the `<item>` tag and the `<enclosure>` (both for backwards/Sparkle compat; we'd rather not write to `<enclosure>` but we don't want to break anyone that updates their app cast gen without updating the main library).
+  * If both the overall `<item>` and the `<enclosure>` have this data, the info from the `<item>` is prioritized.
+  * JSON app casts are not affected.
 
 **Changes/Fixes**
 
@@ -64,6 +82,13 @@
 * Added `nullability` compatibility to core and UI libraries (#595)
   * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 * Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
+* Added `JsonAppCastGenerator` to read/write app casts from/to JSON (use with app cast generator option `--output-type`)
+* Added `ChannelAppCastFilter` (implements `IAppCastFilter`) for easy way to filter your app cast items by a channel, e.g. `beta` or `alpha`. Use by setting `AppCastHelper.AppCastFilter`. Uses simple `string.Contains` invariant lowercase string check to search for channels in the `AppCastItem`'s version information.
+  * If you want to allow versions like `2.0.0-beta.1`, set `ChannelSearchNames` to `new List<string>() {"beta"}`
+  * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
+  * Set `KeepItemsWithNoSuffix` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
+* `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
+* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this.
 
 ## Updating from 0.X or 1.X to 2.X
 

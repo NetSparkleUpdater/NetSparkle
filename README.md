@@ -116,6 +116,12 @@ In your project file, make sure you set up a few things so that the library can 
 </PropertyGroup>
 ```
 
+IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
+
+```xml
+<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+```
+
 ### Code
 
 ```csharp
@@ -426,7 +432,7 @@ Having just the latest version of your software in the app cast has the added si
 3. If you don't want to generate signatures because you trust your AppCenter builds, use `SecurityMode.Unsafe` or the following `IAppCastHandler` override:
 
 ```csharp
-public bool DownloadAndParse()
+public override bool DownloadAndParse()
 {
     try
     {
@@ -435,7 +441,8 @@ public bool DownloadAndParse()
         var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
         if (!string.IsNullOrWhiteSpace(appCast))
         {
-            ParseAppCast(appCast);
+            Items.Clear();
+            Items.AddRange(ParseAppCast(appcast));
             return true;
         }
     }
@@ -504,7 +511,7 @@ Contributions are ALWAYS welcome! If you see a new feature you'd like to add, pl
 
 * Unit tests for all parts of the project
 * Extensive testing on macOS/Linux
-* More built-in app cast parsers (e.g. natively support using/creating JSON feeds) -- possible via interfaces but not built-in yet
+* More built-in app cast parsers
 * More options in the app cast generator
 * See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues) for more
 

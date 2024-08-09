@@ -5,6 +5,7 @@ using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -224,6 +225,7 @@ namespace NetSparkleUnitTests
             {
                 Assert.True(false, "Failed to build DLL");
             }
+            #pragma warning disable CS0618 // don't worry about deprecation notice
             var accessor = new AssemblyReflectionAccessor(_fixture.DllPath);
             Assert.Equal(AssemblyAccessorTestsFixture.Company, accessor.AssemblyCompany);
             Assert.Equal(AssemblyAccessorTestsFixture.Copyright, accessor.AssemblyCopyright);
@@ -231,6 +233,7 @@ namespace NetSparkleUnitTests
             Assert.Equal(AssemblyAccessorTestsFixture.Title, accessor.AssemblyTitle);
             Assert.Equal(AssemblyAccessorTestsFixture.Product, accessor.AssemblyProduct);
             Assert.Equal(AssemblyAccessorTestsFixture.AssemblyVersion, accessor.AssemblyVersion);
+            #pragma warning restore CS0618
         }
 #endif
     }

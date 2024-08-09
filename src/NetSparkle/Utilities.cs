@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater
 {
@@ -179,6 +181,69 @@ namespace NetSparkleUpdater
 
             }
             return false;
+        }
+
+        /// <summary>
+        /// Read all text from file asynchronously (this method is a fill-in for 
+        /// .NET Framework and .NET Standard)
+        /// From: https://stackoverflow.com/a/64860277/3938401
+        /// </summary>
+        /// <param name="path">path to file to read</param>
+        /// <returns>file data</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<string> ReadAllTextAsync(string path)
+        {
+            switch (path)
+            {
+                case "": throw new ArgumentException("Empty path name is not legal", nameof(path));
+                case null: throw new ArgumentNullException(nameof(path));
+            }
+
+            using var sourceStream = new FileStream(path, FileMode.Open, 
+                FileAccess.Read, FileShare.Read, 
+                bufferSize: 4096,
+                useAsync: true);
+            using var streamReader = new StreamReader(sourceStream, Encoding.UTF8, 
+                detectEncodingFromByteOrderMarks: true); 
+            // detectEncodingFromByteOrderMarks allows you to handle files with BOM correctly. 
+            // Otherwise you may get chinese characters even when your text does not contain any
+
+            return await streamReader.ReadToEndAsync();
+        }
+
+        /// <summary>
+        /// Write text asynchronously (this method is a fill-in for 
+        /// .NET Framework and .NET Standard)
+        /// https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/using-async-for-file-access
+        /// </summary>
+        /// <param name="filePath">Location to write text</param>
+        /// <param name="text">Text to write</param>
+        /// <returns><seealso cref="Task"/> that you can await for the completion of this function</returns>
+        public static async Task WriteTextAsync(string filePath, string text)
+        {
+            byte[] encodedText = Encoding.UTF8.GetBytes(text);
+
+            using (var sourceStream =
+                new FileStream(
+                    filePath,
+                    FileMode.Create, FileAccess.Write, FileShare.None,
+                    bufferSize: 4096, useAsync: true))
+            {
+                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+            }
+        }
+
+        /// <summary>
+        /// Create a <seealso cref="Stream"/> from a string
+        /// https://stackoverflow.com/a/5238289/3938401
+        /// </summary>
+        /// <param name="str">String to turn into a stream</param>
+        /// <param name="encoding"><seealso cref="Encoding"/> for stream</param>
+        /// <returns></returns>
+        public static MemoryStream GenerateStreamFromString(string str, Encoding encoding)
+        {
+            return new MemoryStream(encoding.GetBytes(str ?? ""));
         }
     }
 }
