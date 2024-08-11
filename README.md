@@ -135,7 +135,6 @@ _sparkle = new SparkleUpdater(
     UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null or choose some other UI factory or build your own!
     RelaunchAfterUpdate = false, // default is false; set to true if you want your app to restart after updating (keep as false if your installer will start your app for you)
     CustomInstallerArguments = "", // set if you want your installer to get some command-line args
-    ShowsUIOnMainThread = true, // required on Avalonia, preferred on WPF/WinForms
 };
 _sparkle.StartLoop(true); // `true` to run an initial check online -- only call StartLoop once for a given SparkleUpdater instance!
 ```
