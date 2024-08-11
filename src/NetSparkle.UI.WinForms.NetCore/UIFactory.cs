@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
-    /// UI factory for WinForms .NET Core interface
+    /// UI factory for WinForms .NET Core interface.
+    /// Note that it expects to be created on your main UI thread.
     /// </summary>
     public class UIFactory : IUIFactory
     {
@@ -20,6 +21,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// Icon used on various windows shown by NetSparkleUpdater
         /// </summary>
         protected Icon? _applicationIcon = null;
+        private SynchronizationContext _syncContext;
 
         /// <inheritdoc/>
         public UIFactory()
@@ -27,6 +29,7 @@ namespace NetSparkleUpdater.UI.WinForms
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
         }
 
         /// <inheritdoc/>
@@ -205,16 +208,26 @@ namespace NetSparkleUpdater.UI.WinForms
             Application.Exit();
         }
 
+
         /// <inheritdoc/>
         public void PerformUIAction(Action action)
         {
-            action.Invoke();
+            _syncContext.Post((object? state) =>
+            {
+                action.Invoke();
+            }, null);
         }
 
         /// <inheritdoc/>
         public async Task PerformAsyncUIAction(Func<Task> action)
         {
-            await action.Invoke();
+            await Task.Run(() =>
+            {
+                _syncContext.Post(async (object? state) =>
+                {
+                    await action.Invoke();
+                }, null);
+            });
         }
 
         #region --- Windows Forms Result Converters ---
