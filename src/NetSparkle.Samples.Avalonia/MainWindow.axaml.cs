@@ -26,8 +26,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
                     // use the following property to change the main grid background on the update window. nullable.
                     //UpdateWindowGridBackgroundBrush = new SolidColorBrush(Colors.Purple) 
                 },
-                // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
-                ShowsUIOnMainThread = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)

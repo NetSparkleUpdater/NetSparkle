@@ -41,7 +41,6 @@ namespace NetSparkleUpdater.Samples.NetFramework.WPF
                         TextBlock.SetFontStyle(window, FontStyles.Italic);
                     }
                 },
-                ShowsUIOnMainThread = false,
                 //RelaunchAfterUpdate = true,
                 //UseNotificationToast = true
             };
