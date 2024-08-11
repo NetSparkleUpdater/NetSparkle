@@ -5,6 +5,7 @@ using NetSparkleUpdater.Properties;
 using System.Windows.Media;
 using System.Windows;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using NetSparkleUpdater.UI.WPF.ViewModels;
 

@@ -113,9 +113,9 @@ namespace NetSparkleUpdater.UI.WPF
             }
         }
 
-        void IUpdateAvailable.Show(bool isOnMainThread)
+        void IUpdateAvailable.Show()
         {
-            ShowWindow(isOnMainThread);
+            ShowWindow(true);
         }
 
         /// <summary>

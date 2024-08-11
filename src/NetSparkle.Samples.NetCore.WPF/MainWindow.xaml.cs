@@ -40,7 +40,6 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
-                ShowsUIOnMainThread = false,
                 //RelaunchAfterUpdate = true,
                 //UseNotificationToast = true
             };
