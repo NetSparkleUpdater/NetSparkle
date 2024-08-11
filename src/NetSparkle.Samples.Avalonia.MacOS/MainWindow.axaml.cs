@@ -21,8 +21,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
             _sparkle = new CustomSparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app-macos/appcast.xml", new Ed25519Checker(Enums.SecurityMode.Strict, "8zPswEwycU7XQ7OcGQtI/b22pWo1qM2Ual2OhssaDyI="))
             {
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
-                // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
-                ShowsUIOnMainThread = true,
                 LogWriter = new LogWriter(LogWriterOutputMode.Console)
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };

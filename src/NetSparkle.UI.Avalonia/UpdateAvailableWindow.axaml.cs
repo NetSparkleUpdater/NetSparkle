@@ -158,9 +158,9 @@ namespace NetSparkleUpdater.UI.Avalonia
             }
         }
 
-        void IUpdateAvailable.Show(bool isOnMainThread)
+        void IUpdateAvailable.Show()
         {
-            ShowWindow(isOnMainThread);
+            ShowWindow();
         }
 
         /// <summary>
