@@ -80,6 +80,7 @@ namespace NetSparkleUpdater
         /// suffice as a "fix" for now.
         /// </summary>
         private Action? _actionToRunOnProgressWindowShown;
+        private SynchronizationContext _syncContext;
 
         #endregion
 
@@ -115,7 +116,8 @@ namespace NetSparkleUpdater
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
-            
+            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
+
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
             LogWriter = new LogWriter();
@@ -1051,10 +1053,15 @@ namespace NetSparkleUpdater
                             OnDownloadFinished(this, new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
+                    ProgressWindow?.Show();
                     _actionToRunOnProgressWindowShown?.Invoke();
                     _actionToRunOnProgressWindowShown = null;
-                    ProgressWindow?.Show();
                 });
+            }
+            else
+            {
+                _actionToRunOnProgressWindowShown?.Invoke();
+                _actionToRunOnProgressWindowShown = null;
             }
         }
 
@@ -1887,7 +1894,17 @@ namespace NetSparkleUpdater
 
         private void CallFuncConsideringUIThreads(Action action)
         {
-            UIFactory?.PerformUIAction(action);
+            if (UIFactory != null)
+            {
+                UIFactory.PerformUIAction(action);
+            }
+            else
+            {
+                _syncContext.Post((object? state) =>
+                {
+                    action.Invoke();
+                }, null);
+            }
         }
 
         private async Task CallFuncConsideringUIThreadsAsync(Func<Task> action)
@@ -1895,6 +1912,16 @@ namespace NetSparkleUpdater
             if (UIFactory != null)
             {
                 await UIFactory.PerformAsyncUIAction(action);
+            }
+            else
+            {
+                await Task.Run(() =>
+                {
+                    _syncContext.Post(async (object? state) =>
+                    {
+                        await action.Invoke();
+                    }, null);
+                });
             }
         }
 
