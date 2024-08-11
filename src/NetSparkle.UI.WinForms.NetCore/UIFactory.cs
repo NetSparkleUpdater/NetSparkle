@@ -7,6 +7,7 @@ using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.UI.WinForms
 {
@@ -202,6 +203,18 @@ namespace NetSparkleUpdater.UI.WinForms
         public void Shutdown(SparkleUpdater sparkle)
         {
             Application.Exit();
+        }
+
+        /// <inheritdoc/>
+        public void PerformUIAction(Action action)
+        {
+            action.Invoke();
+        }
+
+        /// <inheritdoc/>
+        public async Task PerformAsyncUIAction(Func<Task> action)
+        {
+            await action.Invoke();
         }
 
         #region --- Windows Forms Result Converters ---

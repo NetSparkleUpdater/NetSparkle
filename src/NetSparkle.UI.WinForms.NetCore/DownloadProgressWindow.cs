@@ -73,13 +73,13 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Show the UI and waits
         /// </summary>
-        void IDownloadProgress.Show(bool isOnMainThread)
+        void IDownloadProgress.Show()
         {
             Show();
-            if (!isOnMainThread)
-            {
-                Application.Run(this);
-            }
+            //if (!isOnMainThread)
+            //{
+            //    Application.Run(this);
+            //}
         }
 
         /// <summary>

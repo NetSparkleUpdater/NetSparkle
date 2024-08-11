@@ -190,13 +190,13 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Shows the dialog
         /// </summary>
-        void IUpdateAvailable.Show(bool IsOnMainThread)
+        void IUpdateAvailable.Show()
         {
             Show();
-            if (!IsOnMainThread)
-            {
-                Application.Run(this);
-            }
+            //if (!IsOnMainThread)
+            //{
+            //    Application.Run(this);
+            //}
         }
 
         void IUpdateAvailable.BringToFront()
