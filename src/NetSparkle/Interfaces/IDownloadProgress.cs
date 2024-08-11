@@ -25,7 +25,7 @@ namespace NetSparkleUpdater.Interfaces
         /// Show the UI for download progress
         /// </summary>
         /// <returns>True if download was successful; false otherwise</returns>
-        void Show(bool isOnMainThread);
+        void Show();
 
         /// <summary>
         /// Called when the download progress changes

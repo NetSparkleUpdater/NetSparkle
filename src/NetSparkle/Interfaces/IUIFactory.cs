@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
 {
@@ -133,5 +134,8 @@ namespace NetSparkleUpdater.Interfaces
         /// Can be null or "".
         /// </summary>
         string? AdditionalReleaseNotesHeaderHTML { get; set; }
+
+        void PerformUIAction(Action action);
+        Task PerformAsyncUIAction(Func<Task> action);
     }
 }

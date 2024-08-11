@@ -49,7 +49,6 @@ namespace NetSparkleUpdater
         private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
         private readonly CancellationTokenSource _cancelTokenSource;
-        private readonly SynchronizationContext _syncContext;
         private readonly string? _appReferenceAssembly;
 
         private bool _doInitialCheck;
@@ -120,8 +119,6 @@ namespace NetSparkleUpdater
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
             LogWriter = new LogWriter();
-            // Syncronization Context
-            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
             // init UI
             UIFactory?.Init(this);
             _appReferenceAssembly = null;
@@ -365,13 +362,6 @@ namespace NetSparkleUpdater
         /// Specifies if you want to use the notification toast message (not implemented in all UIs).
         /// </summary>
         public bool UseNotificationToast { get; set; }
-
-        /// <summary>
-        /// This setting is only valid on WinForms and WPF.
-        /// If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
-        /// Must be set to true if using NetSparkleUpdater from Avalonia.
-        /// </summary>
-        public bool ShowsUIOnMainThread { get; set; }
 
         /// <summary>
         /// Object that handles any diagnostic messages for NetSparkle.
@@ -815,65 +805,18 @@ namespace NetSparkleUpdater
 
         private void ShowUpdateAvailableWindow(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
-            if (UpdateAvailableWindow != null)
+            CallFuncConsideringUIThreads(() =>
             {
-                // close old window
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
-                    {
-                        UpdateAvailableWindow.Close();
-                        UpdateAvailableWindow = null;
-                    }, null);
-                }
-                else
-                {
-                    UpdateAvailableWindow.Close();
-                    UpdateAvailableWindow = null;
-                }
-            }
+                UpdateAvailableWindow?.Close();
+                UpdateAvailableWindow = null;
+                UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
 
-            // create the form
-            Thread thread = new Thread(() =>
-            {
-                try
+                if (UpdateAvailableWindow != null)
                 {
-                    // define action
-                    Action showSparkleUIForAvailableUpdate = () =>
-                    {
-                        UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
-
-                        if (UpdateAvailableWindow != null)
-                        {
-                            UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
-                            UpdateAvailableWindow.Show(ShowsUIOnMainThread);
-                        }
-                    };
-
-                    // call action
-                    if (ShowsUIOnMainThread)
-                    {
-                        _syncContext.Post((state) => showSparkleUIForAvailableUpdate(), null);
-                    }
-                    else
-                    {
-                        showSparkleUIForAvailableUpdate();
-                    }
-                }
-                catch (Exception e)
-                {
-                    LogWriter?.PrintMessage("Error showing sparkle form: {0}", e.Message);
+                    UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
+                    UpdateAvailableWindow.Show();
                 }
             });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
-            }
-#endif
-            thread.Start();
         }
 
         /// <summary>
@@ -1089,11 +1032,10 @@ namespace NetSparkleUpdater
                 }
                 ProgressWindow = null;
             }
-            Action showSparkleDownloadUI = () => {};
             if (ProgressWindow == null && UIFactory != null && !IsDownloadingSilently())
             {
                 // create the form
-                showSparkleDownloadUI = () =>
+                CallFuncConsideringUIThreads(() => 
                 {
                     ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
                     if (ProgressWindow != null)
@@ -1106,46 +1048,14 @@ namespace NetSparkleUpdater
                         if (shouldShowAsDownloadedAlready)
                         {
                             ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Post((state2) =>
-                            {
-                                OnDownloadFinished(this, new AsyncCompletedEventArgs(null, false, null));
-                                _actionToRunOnProgressWindowShown?.Invoke();
-                                _actionToRunOnProgressWindowShown = null;
-                            }, null);
+                            OnDownloadFinished(this, new AsyncCompletedEventArgs(null, false, null));
                         }
                     }
-                };
-            }
-            Thread thread = new Thread(() =>
-            {
-                // call action
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
-                    {
-                        showSparkleDownloadUI();
-                        _actionToRunOnProgressWindowShown?.Invoke();
-                        _actionToRunOnProgressWindowShown = null;
-                        ProgressWindow?.Show(ShowsUIOnMainThread);
-                    }, null);
-                }
-                else
-                {
-                    showSparkleDownloadUI();
                     _actionToRunOnProgressWindowShown?.Invoke();
                     _actionToRunOnProgressWindowShown = null;
-                    ProgressWindow?.Show(ShowsUIOnMainThread);
-                }
-            });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
+                    ProgressWindow?.Show();
+                });
             }
-#endif
-            thread.Start();
         }
 
         private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
@@ -1975,45 +1885,16 @@ namespace NetSparkleUpdater
             }
         }
 
-        /// <summary>
-        /// Events should always be fired on the thread that started the Sparkle object.
-        /// Used for events that are fired after coming from an update available window
-        /// or the download progress window.
-        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
-        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
-        /// is always on the main thread.
-        /// </summary>
-        /// <param name="action"></param>
         private void CallFuncConsideringUIThreads(Action action)
         {
-            if (ShowsUIOnMainThread)
-            {
-                action?.Invoke();
-            }
-            else
-            {
-                _syncContext.Post((state) => action?.Invoke(), null);
-            }
+            UIFactory?.PerformUIAction(action);
         }
 
-        /// <summary>
-        /// Events should always be fired on the thread that started the Sparkle object.
-        /// Used for events that are fired after coming from an update available window
-        /// or the download progress window.
-        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
-        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
-        /// is always on the main thread.
-        /// </summary>
-        /// <param name="action"></param>
         private async Task CallFuncConsideringUIThreadsAsync(Func<Task> action)
         {
-            if (ShowsUIOnMainThread)
+            if (UIFactory != null)
             {
-                await action.Invoke();
-            }
-            else
-            {
-                _syncContext.Post(async (state) => await action.Invoke(), null);
+                await UIFactory.PerformAsyncUIAction(action);
             }
         }
 
