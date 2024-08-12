@@ -134,8 +134,5 @@ namespace NetSparkleUpdater.Interfaces
         /// Can be null or "".
         /// </summary>
         string? AdditionalReleaseNotesHeaderHTML { get; set; }
-
-        void PerformUIAction(Action action);
-        Task PerformAsyncUIAction(Func<Task> action);
     }
 }
