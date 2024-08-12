@@ -2024,10 +2024,13 @@ namespace NetSparkleUpdater
                     // check if it's ok the recheck to software state
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
 
+                    LogWriter?.PrintMessage("Done reading config. !CheckTSPInternal = {0}; csp >= _checkFrequency = {1}", 
+                        !checkTSPInternal, csp >= _checkFrequency);
                     if (!checkTSPInternal || csp >= _checkFrequency)
                     {
                         checkTSP = true;
                         // when sparkle will be deactivated wait another cycle
+                        LogWriter?.PrintMessage("Config has check for update true? {0}", config.CheckForUpdate == true);
                         if (config.CheckForUpdate == true)
                         {
                             // update the runonce feature
@@ -2036,14 +2039,17 @@ namespace NetSparkleUpdater
                             // check if update is required
                             if (_cancelToken.IsCancellationRequested || !goIntoLoop)
                             {
+                                LogWriter?.PrintMessage("Cancellation token had cancellation requested and/or goIntoLoop was false");
                                 break;
                             }
+                            LogWriter?.PrintMessage("In worker thread loop, getting update status...");
                             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
                             if (_cancelToken.IsCancellationRequested)
                             {
                                 break;
                             }
                             isUpdateAvailable = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
+                            LogWriter?.PrintMessage("In worker thread loop, is update available? {0}", isUpdateAvailable);
                             if (isUpdateAvailable)
                             {
                                 List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
