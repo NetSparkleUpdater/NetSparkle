@@ -1894,9 +1894,9 @@ namespace NetSparkleUpdater
 
         private void CallFuncConsideringUIThreads(Action action)
         {
-            if (UIFactory != null)
+            if (UIFactory != null && UIFactory is IUIThreadManager tm)
             {
-                UIFactory.PerformUIAction(action);
+                tm.PerformUIAction(action);
             }
             else
             {
@@ -1909,9 +1909,9 @@ namespace NetSparkleUpdater
 
         private async Task CallFuncConsideringUIThreadsAsync(Func<Task> action)
         {
-            if (UIFactory != null)
+            if (UIFactory != null && UIFactory is IUIThreadManager tm)
             {
-                await UIFactory.PerformAsyncUIAction(action);
+                await tm.PerformAsyncUIAction(action);
             }
             else
             {
