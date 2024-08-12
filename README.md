@@ -127,12 +127,14 @@ IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code c
 ### Code
 
 ```csharp
+// NOTE: Under most, if not all, circumstances, SparkleUpdater should be initialized on your app's main UI thread.
+// This way, if you're using a built-in UI, all calls to UI objects will automatically go to the UI thread for you.
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
     new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
                        "base_64_public_key") // your base 64 public key -- generate this with the NetSparkleUpdater.Tools.AppCastGenerator .NET CLI tool on any OS
 ) {
-    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null or choose some other UI factory or build your own!
+    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null, or choose some other UI factory, or build your own IUIFactory implementation!
     RelaunchAfterUpdate = false, // default is false; set to true if you want your app to restart after updating (keep as false if your installer will start your app for you)
     CustomInstallerArguments = "", // set if you want your installer to get some command-line args
 };
