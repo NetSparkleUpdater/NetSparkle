@@ -31,7 +31,12 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkleUpdateDetector.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
             //_sparkleUpdateDetector.CloseApplication += _sparkleUpdateDetector_CloseApplication;
-            _sparkleUpdateDetector.StartLoop(true, true);
+            StartSparkle();
+        }
+
+        private async void StartSparkle()
+        {
+            await _sparkleUpdateDetector.StartLoop(true, true);
         }
 
         private void _sparkleUpdateDetector_CloseApplication()
@@ -50,9 +55,9 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
             }
         }
 
-        private void ExplicitUserRequestCheckButton_Click(object sender, EventArgs e)
+        private async void ExplicitUserRequestCheckButton_Click(object sender, EventArgs e)
         {
-            _sparkleUpdateDetector.CheckForUpdatesAtUserRequest();
+            await _sparkleUpdateDetector.CheckForUpdatesAtUserRequest();
         }
     }
 }

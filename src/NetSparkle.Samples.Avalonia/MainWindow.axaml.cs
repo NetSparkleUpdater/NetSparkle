@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using NetSparkleUpdater.SignatureVerifiers;
 using NetSparkleUpdater.UI.Avalonia;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Samples.Avalonia
 {
@@ -30,10 +31,15 @@ namespace NetSparkleUpdater.Samples.Avalonia
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            _sparkle.StartLoop(true, true);
+            StartSparkle();
         }
 
-        public async void ManualUpdateCheck_Click()
+        private async void StartSparkle()
+        {
+            await _sparkle.StartLoop(true, true);
+        }
+
+        public async Task ManualUpdateCheck_Click()
         {
             await _sparkle.CheckForUpdatesAtUserRequest();
         }

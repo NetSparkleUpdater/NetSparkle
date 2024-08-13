@@ -45,7 +45,12 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            _sparkle.StartLoop(true, true);
+            StartSparkle();
+        }
+
+        private async void StartSparkle()
+        {
+            await _sparkle.StartLoop(true, true);
         }
 
         private async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
