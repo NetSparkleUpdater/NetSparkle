@@ -553,9 +553,9 @@ namespace NetSparkleUpdater
         /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
-        public void StartLoop(bool doInitialCheck)
+        public async Task StartLoop(bool doInitialCheck)
         {
-            StartLoop(doInitialCheck, false);
+            await StartLoop(doInitialCheck, false);
         }
 
         /// <summary>
@@ -564,9 +564,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public void StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
+        public async Task StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
         {
-            StartLoop(doInitialCheck, false, checkFrequency);
+            await StartLoop(doInitialCheck, false, checkFrequency);
         }
 
         /// <summary>
@@ -576,9 +576,9 @@ namespace NetSparkleUpdater
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was less than 24 hours ago</param>
-        public void StartLoop(bool doInitialCheck, bool forceInitialCheck)
+        public async Task StartLoop(bool doInitialCheck, bool forceInitialCheck)
         {
-            StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
+            await StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
         }
 
         /// <summary>
@@ -589,7 +589,7 @@ namespace NetSparkleUpdater
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public async void StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
+        public async Task StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
             {
