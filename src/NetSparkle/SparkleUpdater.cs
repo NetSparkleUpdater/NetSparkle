@@ -980,21 +980,30 @@ namespace NetSparkleUpdater
                     {
                         UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
                         UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
+                        UpdateDownloader.DownloadStarted -= OnDownloadStarted;
                         UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
                         UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
+                        UpdateDownloader.DownloadStarted += OnDownloadStarted;
                     }
                     _actionToRunOnProgressWindowShown = () =>
                     {
                         Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                         LogWriter?.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
                         UpdateDownloader?.StartFileDownload(url, _downloadTempFileName);
-                        PerformMainThreadAction(() => 
-                        { 
-                            DownloadStarted?.Invoke(item, _downloadTempFileName);
-                        });
                     };
                     CreateAndShowProgressWindow(item, false);
                 }
+            }
+        }
+
+        private void OnDownloadStarted(object sender, string from, string to)
+        {
+            if (_itemBeingDownloaded != null && to != null)
+            {
+                PerformMainThreadAction(() =>
+                {
+                    DownloadStarted?.Invoke(_itemBeingDownloaded, to);
+                });
             }
         }
 

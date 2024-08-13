@@ -53,6 +53,7 @@
 * XML app casts write `version`, `shortVersion`, and `criticalUpdate` to the `<item>` tag and the `<enclosure>` (both for backwards/Sparkle compat; we'd rather not write to `<enclosure>` but we don't want to break anyone that updates their app cast gen without updating the main library).
   * If both the overall `<item>` and the `<enclosure>` have this data, the info from the `<item>` is prioritized.
   * JSON app casts are not affected.
+* `IUpdateDownloader` has a new event `DownloadStarted` of type `DownloadFromPathToPathEvent(object sender, string from, string to)`, which should be called right before any download begins.
 
 **Changes/Fixes**
 

@@ -67,6 +67,13 @@ namespace NetSparkleUpdater
     public delegate void DownloadEvent(AppCastItem item, string path);
 
     /// <summary>
+    /// A delegate for download events (start, canceled) with just a path.
+    /// Make sure to check that the path is valid in case this is called when the path is unknown/unset 
+    /// for some reason (e.g. failed before download began).
+    /// </summary>
+    public delegate void DownloadFromPathToPathEvent(object sender, string from, string to);
+
+    /// <summary>
     /// Delegate that provides information about some download progress that has been made
     /// </summary>
     /// <param name="sender">The object that initiated the event</param>

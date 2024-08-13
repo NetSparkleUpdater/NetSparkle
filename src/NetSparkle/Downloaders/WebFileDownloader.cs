@@ -104,6 +104,9 @@ namespace NetSparkleUpdater.Downloaders
         public bool IsDownloading { get; private set; }
 
         /// <inheritdoc/>
+        public event DownloadFromPathToPathEvent? DownloadStarted;
+
+        /// <inheritdoc/>
         public event DownloadProgressEvent? DownloadProgressChanged;
         
         /// <inheritdoc/>
@@ -149,6 +152,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     _cts = new CancellationTokenSource();
                 }
+                DownloadStarted?.Invoke(this, uri.ToString(), downloadFilePath);
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
                 using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cts.Token))
                 {
