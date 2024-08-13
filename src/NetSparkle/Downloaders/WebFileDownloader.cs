@@ -121,7 +121,7 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async Task StartFileDownload(Uri? uri, string downloadFilePath)
+        public async Task DownloadFile(Uri? uri, string downloadFilePath)
         {
             if (uri == null)
             {

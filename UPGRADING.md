@@ -54,6 +54,8 @@
   * If both the overall `<item>` and the `<enclosure>` have this data, the info from the `<item>` is prioritized.
   * JSON app casts are not affected.
 * `IUpdateDownloader` has a new event `DownloadStarted` of type `DownloadFromPathToPathEvent(object sender, string from, string to)`, which should be called right before any download begins.
+* `IUpdateDownloader.StartFileDownload` returns `Task`
+* `IUpdateDownloader.StartFileDownload` renamed to `IUpdateDownloader.DownloadFile`
 
 **Changes/Fixes**
 

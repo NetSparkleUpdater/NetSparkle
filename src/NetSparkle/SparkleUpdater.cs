@@ -989,7 +989,7 @@ namespace NetSparkleUpdater
                     {
                         Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                         LogWriter?.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                        UpdateDownloader?.StartFileDownload(url, _downloadTempFileName);
+                        UpdateDownloader?.DownloadFile(url, _downloadTempFileName);
                     };
                     CreateAndShowProgressWindow(item, false);
                 }
