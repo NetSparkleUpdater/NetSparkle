@@ -121,12 +121,11 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri? uri, string downloadFilePath)
+        public async Task StartFileDownload(Uri? uri, string downloadFilePath)
         {
             if (uri == null)
             {
                 _logger?.PrintMessage("StartFileDownloadAsync had a null Uri; not going to download anything");
-                return;
             }
             else 
             {

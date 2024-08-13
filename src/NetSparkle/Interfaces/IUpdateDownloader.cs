@@ -36,7 +36,7 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <param name="uri">URL for the download</param>
         /// <param name="downloadFilePath">Where to download the file</param>
-        void StartFileDownload(Uri? uri, string downloadFilePath);
+        Task StartFileDownload(Uri? uri, string downloadFilePath);
 
         /// <summary>
         /// Cancel the download.
