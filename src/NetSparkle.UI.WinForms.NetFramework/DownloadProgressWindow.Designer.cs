@@ -54,6 +54,7 @@ namespace NetSparkleUpdater.UI.WinForms
             this.tableLayoutPanel1.SetColumnSpan(this.progressDownload, 2);
             resources.ApplyResources(this.progressDownload, "progressDownload");
             this.progressDownload.Name = "progressDownload";
+            this.progressDownload.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             // 
             // btnInstallAndReLaunch
             // 

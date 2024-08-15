@@ -162,6 +162,7 @@ namespace NetSparkleUpdater.UI.WinForms
             }
             else
             {
+                progressDownload.Style = ProgressBarStyle.Continuous;
                 progressDownload.Value = percentage;
                 downloadProgressLbl.Text = "(" + Utilities.ConvertNumBytesToUserReadableString(bytesReceived) + " / " +
                     Utilities.ConvertNumBytesToUserReadableString(totalBytesToReceive) + ")";
