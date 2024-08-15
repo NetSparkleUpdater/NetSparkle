@@ -192,7 +192,14 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         void IUpdateAvailable.Show()
         {
-            Show();
+            if (InvokeRequired)
+            {
+                Invoke(() => Show());
+            }
+            else
+            {
+                Show();
+            }
             //if (!IsOnMainThread)
             //{
             //    Application.Run(this);
