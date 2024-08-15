@@ -209,27 +209,6 @@ namespace NetSparkleUpdater.UI.WinForms
             Application.Exit();
         }
 
-        /// <inheritdoc/>
-        public void PerformUIAction(Action action)
-        {
-            _syncContext.Post((object state) =>
-            {
-                action.Invoke();
-            }, null);
-        }
-
-        /// <inheritdoc/>
-        public async Task PerformAsyncUIAction(Func<Task> action)
-        {
-            await Task.Run(() =>
-            {
-                _syncContext.Post(async (object state) =>
-                {
-                    await action.Invoke();
-                }, null);
-            });
-        }
-
         #region --- Windows Forms Result Converters ---
 
         /// <summary>

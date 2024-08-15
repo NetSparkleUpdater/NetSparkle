@@ -250,32 +250,5 @@ namespace NetSparkleUpdater.UI.WPF
         {
             System.Windows.Application.Current.Shutdown();
         }
-
-
-        /// <inheritdoc/>
-        public void PerformUIAction(Action action)
-        {
-            if (Thread.CurrentThread == Application.Current.Dispatcher.Thread)
-            {
-                action.Invoke();
-            }
-            else
-            {
-                Application.Current.Dispatcher.Invoke(action);
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task PerformAsyncUIAction(Func<Task> action)
-        {
-            if (Thread.CurrentThread == Application.Current.Dispatcher.Thread)
-            {
-                await action.Invoke();
-            }
-            else
-            {
-                await Application.Current.Dispatcher.InvokeAsync(action);
-            }
-        }
     }
 }

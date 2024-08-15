@@ -241,17 +241,5 @@ namespace NetSparkleUpdater.UI.Avalonia
         {
             (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
         }
-
-        /// <inheritdoc/>
-        public void PerformUIAction(Action action)
-        {
-            Dispatcher.UIThread.InvokeAsync(action);
-        }
-
-        /// <inheritdoc/>
-        public async Task PerformAsyncUIAction(Func<Task> action)
-        {
-            await Dispatcher.UIThread.InvokeAsync(action);
-        }
     }
 }
