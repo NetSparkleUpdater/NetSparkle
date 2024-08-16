@@ -48,7 +48,7 @@ namespace NetSparkleUpdater
         private ILogger? _logWriter;
         private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
-        private readonly CancellationTokenSource _cancelTokenSource;
+        private CancellationTokenSource _cancelTokenSource;
         private readonly string? _appReferenceAssembly;
 
         private bool _doInitialCheck;
@@ -568,6 +568,8 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
+        /// Loop pauses for a few seconds on first run so that if the loop is started with the app,
+        /// the user isn't immediately shown an update window.
         /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
@@ -580,6 +582,8 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates on a given interval.
+        /// Loop pauses for a few seconds on first run so that if the loop is started with the app,
+        /// the user isn't immediately shown an update window.
         /// <para>You should only call this function when your app is initialized and shows its main UIw.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
@@ -602,18 +606,16 @@ namespace NetSparkleUpdater
             // first set the event handle
             _loopingHandle.Set();
 
-            // Start the helper thread as a background worker                     
-
             // store info
             _doInitialCheck = doInitialCheck;
             _forceInitialCheck = forceInitialCheck;
             _checkFrequency = checkFrequency;
+            // create new cancel token source
+            _cancelTokenSource = new CancellationTokenSource();
+            _cancelToken = _cancelTokenSource.Token;
 
             LogWriter?.PrintMessage("Starting background worker");
 
-            // start the work
-            //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            //_taskWorker.Start(scheduler);
             // don't allow starting the task 2x
             if (_taskWorker.IsCompleted == false && _taskWorker.Status != TaskStatus.Running &&
                 _taskWorker.Status != TaskStatus.WaitingToRun && _taskWorker.Status != TaskStatus.WaitingForActivation)
@@ -629,6 +631,7 @@ namespace NetSparkleUpdater
         {
             // ensure the work will finished
             _exitHandle.Set();
+            _cancelTokenSource.Cancel();
         }
 
         /// <summary>
@@ -1915,31 +1918,25 @@ namespace NetSparkleUpdater
                 {
                     break;
                 }
-                // set state
+                LogWriter?.PrintMessage("Before starting update loop, pausing for 3 seconds so we don't pop " +
+                    "up update window immediately...");
+                Thread.Sleep(3000);
                 bool isUpdateAvailable = false;
 
-                // notify
+                LogWriter?.PrintMessage("Starting update loop...");
                 _syncContextForWorkerLoop.Post((state) => LoopStarted?.Invoke(this), null);
 
                 // report status
                 if (doInitialCheck)
                 {
-                    // report status
-                    LogWriter?.PrintMessage("Starting update loop...");
-
-                    // read the config
                     LogWriter?.PrintMessage("Reading config...");
                     Configuration config = Configuration;
 
-                    // calc CheckTasp
                     bool checkTSPInternal = checkTSP;
-
                     if (isInitialCheck && checkTSPInternal)
                     {
                         checkTSPInternal = !_forceInitialCheck;
                     }
-
-                    // check if it's ok the recheck to software state
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
 
                     LogWriter?.PrintMessage("Done reading config. !CheckTSPInternal = {0}; csp >= _checkFrequency = {1}", 
@@ -1951,7 +1948,6 @@ namespace NetSparkleUpdater
                         LogWriter?.PrintMessage("Config has check for update true? {0}", config.CheckForUpdate == true);
                         if (config.CheckForUpdate == true)
                         {
-                            // update the runonce feature
                             goIntoLoop = !config.IsFirstRun;
 
                             // check if update is required
@@ -2008,7 +2004,7 @@ namespace NetSparkleUpdater
                                         }
                                     case NextUpdateAction.ProhibitUpdate:
                                         {
-                                            LogWriter?.PrintMessage("Update prohibited from consumer");
+                                            LogWriter?.PrintMessage("Update prohibited by consumer");
                                             break;
                                         }
                                     default:

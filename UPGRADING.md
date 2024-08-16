@@ -56,6 +56,7 @@
 * `IUpdateDownloader` has a new event `DownloadStarted` of type `DownloadFromPathToPathEvent(object sender, string from, string to)`, which should be called right before any download begins.
 * `IUpdateDownloader.StartFileDownload` returns `Task`
 * `IUpdateDownloader.StartFileDownload` renamed to `IUpdateDownloader.DownloadFile`
+* Background worker loop pauses for a few seconds before starting just in case the loop started with the software -- so the update available window isn't immediately shown to the user (if applicable)
 
 **Changes/Fixes**
 
