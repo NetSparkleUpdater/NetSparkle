@@ -1801,9 +1801,16 @@ namespace NetSparkleUpdater
                 // UpdateDetected allows for catching and overriding the update handling,
                 // so if the user has implemented it, tell them there is an update and stop
                 // handling everything.
-                if (UpdateDetected != null)
+                if (UpdateDetected != null || UpdateDetectedAsync != null)
                 {
-                    UpdateDetected(this, ev); // event's next action can change, here
+                    if (UpdateDetectedAsync != null)
+                    {
+                        await UpdateDetectedAsync(this, ev); // event's next action can change, here
+                    }
+                    else if (UpdateDetected != null)
+                    {
+                        UpdateDetected(this, ev); // event's next action can change, here
+                    }
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.PerformUpdateUnattended:
@@ -1977,12 +1984,19 @@ namespace NetSparkleUpdater
                                     updates[0],
                                     updates
                                 );
-                                if (UpdateDetected != null)
+                                if (UpdateDetected != null || UpdateDetectedAsync != null)
                                 {
                                     var re = new AutoResetEvent(false);
-                                    _syncContextForWorkerLoop.Post((state) =>
+                                    _syncContextForWorkerLoop.Post(async (state) =>
                                     {
-                                        UpdateDetected?.Invoke(this, ev);
+                                        if (UpdateDetectedAsync != null)
+                                        {
+                                            await UpdateDetectedAsync(this, ev);
+                                        }
+                                        else if (UpdateDetected != null)
+                                        {
+                                            UpdateDetected.Invoke(this, ev);
+                                        }
                                         re.Set();
                                     }, null);
                                     re.WaitOne(); // wait for UpdateDetected to finish even though we called back to UI thread

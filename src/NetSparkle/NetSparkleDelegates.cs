@@ -22,11 +22,20 @@ namespace NetSparkleUpdater
     public delegate void LoopFinishedOperation(object sender, bool updateRequired);
 
     /// <summary>
-    /// An update was detected for the user's currently running software  
+    /// An update was detected for the user's currently running software.
+    /// If both this and UpdateDetectedAsync are implemented, UpdateDetectedAsync is prioritized.
     /// </summary>
     /// <param name="sender">the object that initiated the call</param>
     /// <param name="e">Information about the update that was detected</param>
     public delegate void UpdateDetected(object sender, UpdateDetectedEventArgs e);
+
+    /// <summary>
+    /// An update was detected for the user's currently running software.
+    /// If both this and UpdateDetected are implemented, UpdateDetectedAsync is prioritized.
+    /// </summary>
+    /// <param name="sender">the object that initiated the call</param>
+    /// <param name="e">Information about the update that was detected</param>
+    public delegate Task UpdateDetectedAsync(object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
     /// <see cref="SparkleUpdater"/> has started checking for updates

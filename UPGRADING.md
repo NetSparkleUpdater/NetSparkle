@@ -94,6 +94,7 @@
 * `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
 * `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this (note that using this will set ALL items added to the app cast to that specific channel; to add only new items to your app cast instead of rewriting the whole thing, use the `--reparse-existing` option).
 * App cast generator has a new `--use-ed25519-signature-attribute` to use `edSignature` in its XML output instead of `signature` (json output unaffected) to match the original Sparkle library
+* Added `UpdateDetectedAsync` -- prioritized over `UpdateDetected` if both `UpdateDetectedAsync` and `UpdateDetected` are implemented.
 
 ## Updating from 0.X or 1.X to 2.X
 
