@@ -80,6 +80,7 @@ namespace NetSparkleUpdater
         /// suffice as a "fix" for now.
         /// </summary>
         private Action? _actionToRunOnProgressWindowShown;
+        private SynchronizationContext _syncContextForWorkerLoop;
 
         #endregion
 
@@ -115,6 +116,7 @@ namespace NetSparkleUpdater
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
+            _syncContextForWorkerLoop = SynchronizationContext.Current ?? new SynchronizationContext();
 
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
@@ -1917,7 +1919,7 @@ namespace NetSparkleUpdater
                 bool isUpdateAvailable = false;
 
                 // notify
-                LoopStarted?.Invoke(this);
+                _syncContextForWorkerLoop.Post((state) => LoopStarted?.Invoke(this), null);
 
                 // report status
                 if (doInitialCheck)
@@ -1992,7 +1994,7 @@ namespace NetSparkleUpdater
                                         {
                                             LogWriter?.PrintMessage("Unattended update desired from consumer");
                                             UserInteractionMode = UserInteractionMode.DownloadAndInstall;
-                                            UpdatesHaveBeenDownloaded(updates);
+                                            _syncContextForWorkerLoop.Post((state) => UpdatesHaveBeenDownloaded(updates), null);
                                             break;
                                         }
                                     case NextUpdateAction.ProhibitUpdate:
@@ -2003,7 +2005,7 @@ namespace NetSparkleUpdater
                                     default:
                                         {
                                             LogWriter?.PrintMessage("Preparing to show standard update UI");
-                                            UpdatesHaveBeenDownloaded(updates);
+                                            _syncContextForWorkerLoop.Post((state) => UpdatesHaveBeenDownloaded(updates), null);
                                             break;
                                         }
                                 }
@@ -2030,8 +2032,7 @@ namespace NetSparkleUpdater
                 // reset initial check
                 isInitialCheck = false;
 
-                // notify
-                LoopFinished?.Invoke(this, isUpdateAvailable);
+                _syncContextForWorkerLoop.Post((state) => LoopFinished?.Invoke(this, isUpdateAvailable), null);
 
                 // report wait statement
                 LogWriter?.PrintMessage("Sleeping for another {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
@@ -2081,7 +2082,7 @@ namespace NetSparkleUpdater
                 }
             } while (goIntoLoop);
 
-            // reset the islooping handle
+            // reset the looping handle
             if (!_disposed)
             {
                 _loopingHandle?.Reset();
