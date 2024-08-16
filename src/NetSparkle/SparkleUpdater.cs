@@ -1981,7 +1981,16 @@ namespace NetSparkleUpdater
                                     updates[0],
                                     updates
                                 );
-                                UpdateDetected?.Invoke(this, ev);
+                                if (UpdateDetected != null)
+                                {
+                                    var re = new AutoResetEvent(false);
+                                    _syncContextForWorkerLoop.Post((state) =>
+                                    {
+                                        UpdateDetected?.Invoke(this, ev);
+                                        re.Set();
+                                    }, null);
+                                    re.WaitOne(); // wait for UpdateDetected to finish even though we called back to UI thread
+                                }
                                 if (_cancelToken.IsCancellationRequested)
                                 {
                                     break;

@@ -50,7 +50,13 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
 
         private async void StartSparkle()
         {
+            _sparkle.UpdateDetected += _sparkle_UpdateDetected;
             await _sparkle.StartLoop(true, true);
+        }
+
+        private void _sparkle_UpdateDetected(object sender, Events.UpdateDetectedEventArgs e)
+        {
+            //e.NextAction = Enums.NextUpdateAction.PerformUpdateUnattended; // uncomment to see how the app will auto-update due to loop
         }
 
         private async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)
