@@ -104,7 +104,7 @@ We are open to contributions that might make the overall install/update process 
 
 ### Project file
 
-In your project file, make sure you set up a few things so that the library can read in the pertinent details later.
+In your project file, make sure you set up a few things so that the library can read in the pertinent details later. _Note: You can use your own `IAssemblyAccessor` to load version information from somewhere else. However, setting things up in your project file is easy, and NetSparkleUpdater can read that in natively!_
 
 ```xml
 <PropertyGroup>
@@ -118,7 +118,7 @@ In your project file, make sure you set up a few things so that the library can 
 </PropertyGroup>
 ```
 
-IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
+IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We also recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
 
 ```xml
 <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -128,7 +128,9 @@ IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code c
 
 ```csharp
 // NOTE: Under most, if not all, circumstances, SparkleUpdater should be initialized on your app's main UI thread.
-// This way, if you're using a built-in UI, all calls to UI objects will automatically go to the UI thread for you.
+// This way, if you're using a built-in UI with no custom adjustments, all calls to UI objects will automatically go to the UI thread for you.
+// Basically, SparkleUpdater's background loop will make calls to the thread that the SparkleUpdater was created on via SyncronizationContext.
+// So, if you start SparkleUpdater on the UI thread, the background loop events will auto-call to the UI thread for you.
 _sparkle = new SparkleUpdater(
     "http://example.com/appcast.xml", // link to your app cast file
     new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
@@ -138,7 +140,7 @@ _sparkle = new SparkleUpdater(
     RelaunchAfterUpdate = false, // default is false; set to true if you want your app to restart after updating (keep as false if your installer will start your app for you)
     CustomInstallerArguments = "", // set if you want your installer to get some command-line args
 };
-_sparkle.StartLoop(true); // `true` to run an initial check online -- only call StartLoop once for a given SparkleUpdater instance!
+_sparkle.StartLoop(true); // `true` to run an initial check online -- only call StartLoop **once** for a given SparkleUpdater instance!
 ```
 
 On the first Application.Idle event, your App Cast XML file will be downloaded, read, and compared to the currently running version. If it has a software update inside, the user will be notified with a little toast notification (if supported by the UI and enabled) or with an update dialog containing your release notes. The user can then ignore the update, ask to be reminded later, or download/install it now.
@@ -404,6 +406,16 @@ Please see [UPGRADING.md](UPGRADING.md) for information on breaking changes betw
 
 Nope. You can just reference the core library and handle everything yourself, including any custom UI. Check out the code samples for an example of doing that!
 
+### Can I run my UI on another thread besides my main UI thread?
+
+This isn't a built-in feature, as NetSparkleUpdater assumes that it can safely make calls/events to the UI on the thread that started the `SparkleUpdater` instance. However, if you'd like to do this, we have a sample on how to do this: `NetSparkle.Samples.Forms.Multithread`. Basically, instead of passing in a `UIFactory` to `SparkleUpdater`, you handle `SparkleUpdater`'s events yourself and show the UI however you want to show it - and yes, you can still use the built-in UI objects for this!
+
+(Note that on Avalonia, the answer is always "No" since they only support one UI thread at this time.)
+
+### On WinForms, can I let the user close the main window and still keep the updater forms around?
+
+Yes. You need to start the `NetSparkleUpdater` forms on a new thread(s). See the `NetSparkle.Samples.Forms.Multithread` sample for how to do this by handling events yourself and still using the built-in WinForms `UIFactory`.
+
 ### How do I make my .NET Framework WinForms app high DPI aware?
 
 See #238 [and this documentation](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/high-dpi-support-in-windows-forms?view=netframeworkdesktop-4.8#configuring-your-windows-forms-app-for-high-dpi-support) for the fix for making this work on the sample application. Basically, you need to use an app config file and manifest file to let Windows know that your application is DPI-aware. If that doesn't work for you, try some of the tips at [this SO post](https://stackoverflow.com/questions/4075802/creating-a-dpi-aware-application).
@@ -491,12 +503,12 @@ Yes! Please help us make this library awesome!
 
 ### What's the tagging scheme, here?
 
-* 2.x.y (Core)
-* 2.x.y-app-cast-generator
-* 2.x.y-dsa-helper
-* 2.x.y-UI-Avalonia
-* 2.x.y-UI-WinForms
-* 2.x.y-UI-WPF
+* Major.Minor.Patch (Core)
+* Major.Minor.Patch-app-cast-generator
+* Major.Minor.Patch-dsa-helper
+* Major.Minor.Patch-UI-Avalonia
+* Major.Minor.Patch-UI-WinForms
+* Major.Minor.Patch-UI-WPF
 
 ## Requirements
 
@@ -512,9 +524,8 @@ Contributions are ALWAYS welcome! If you see a new feature you'd like to add, pl
 
 ### Areas where we could use help/contributions
 
-* Unit tests for all parts of the project
-* Extensive testing on macOS/Linux
-* More built-in app cast parsers
+* Unit tests for all parts of the project, including UI unit tests, full download tests, etc.
+* Extensive testing/upgrades on macOS/Linux
 * More options in the app cast generator
 * See the [issues list](https://github.com/NetSparkleUpdater/NetSparkle/issues) for more
 
