@@ -40,13 +40,23 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
-                ShowsUIOnMainThread = false,
                 //RelaunchAfterUpdate = true,
                 //UseNotificationToast = true
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            _sparkle.StartLoop(true, true);
+            StartSparkle();
+        }
+
+        private async void StartSparkle()
+        {
+            _sparkle.UpdateDetected += _sparkle_UpdateDetected;
+            await _sparkle.StartLoop(true, true);
+        }
+
+        private void _sparkle_UpdateDetected(object sender, Events.UpdateDetectedEventArgs e)
+        {
+            //e.NextAction = Enums.NextUpdateAction.PerformUpdateUnattended; // uncomment to see how the app will auto-update due to loop
         }
 
         private async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)

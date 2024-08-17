@@ -80,7 +80,7 @@ namespace NetSparkleUpdater.UI.WinForms
             AppCastItem? item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
-            lblHeader.Text = lblHeader.Text.Replace("APP", appNameTitle);
+            lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? appNameTitle : "the application");
             if (item != null)
             {
                 lblInfoText.Text = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
@@ -190,13 +190,20 @@ namespace NetSparkleUpdater.UI.WinForms
         /// <summary>
         /// Shows the dialog
         /// </summary>
-        void IUpdateAvailable.Show(bool IsOnMainThread)
+        void IUpdateAvailable.Show()
         {
-            Show();
-            if (!IsOnMainThread)
+            if (InvokeRequired)
             {
-                Application.Run(this);
+                Invoke(() => Show());
             }
+            else
+            {
+                Show();
+            }
+            //if (!IsOnMainThread)
+            //{
+            //    Application.Run(this);
+            //}
         }
 
         void IUpdateAvailable.BringToFront()

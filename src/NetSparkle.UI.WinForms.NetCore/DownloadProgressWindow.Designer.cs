@@ -32,82 +32,82 @@ namespace NetSparkleUpdater.UI.WinForms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DownloadProgressWindow));
-            this.lblHeader = new System.Windows.Forms.Label();
-            this.progressDownload = new System.Windows.Forms.ProgressBar();
-            this.btnInstallAndReLaunch = new System.Windows.Forms.Button();
-            this.imgAppIcon = new System.Windows.Forms.PictureBox();
-            this.downloadProgressLbl = new System.Windows.Forms.Label();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).BeginInit();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
+            lblHeader = new System.Windows.Forms.Label();
+            progressDownload = new System.Windows.Forms.ProgressBar();
+            btnInstallAndReLaunch = new System.Windows.Forms.Button();
+            imgAppIcon = new System.Windows.Forms.PictureBox();
+            downloadProgressLbl = new System.Windows.Forms.Label();
+            buttonCancel = new System.Windows.Forms.Button();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            ((System.ComponentModel.ISupportInitialize)imgAppIcon).BeginInit();
+            tableLayoutPanel1.SuspendLayout();
+            SuspendLayout();
             // 
             // lblHeader
             // 
-            this.lblHeader.AutoEllipsis = true;
-            resources.ApplyResources(this.lblHeader, "lblHeader");
-            this.lblHeader.Name = "lblHeader";
+            lblHeader.AutoEllipsis = true;
+            resources.ApplyResources(lblHeader, "lblHeader");
+            lblHeader.Name = "lblHeader";
             // 
             // progressDownload
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.progressDownload, 2);
-            resources.ApplyResources(this.progressDownload, "progressDownload");
-            this.progressDownload.Name = "progressDownload";
+            tableLayoutPanel1.SetColumnSpan(progressDownload, 2);
+            resources.ApplyResources(progressDownload, "progressDownload");
+            progressDownload.Name = "progressDownload";
+            progressDownload.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             // 
             // btnInstallAndReLaunch
             // 
-            resources.ApplyResources(this.btnInstallAndReLaunch, "btnInstallAndReLaunch");
-            this.tableLayoutPanel1.SetColumnSpan(this.btnInstallAndReLaunch, 2);
-            this.btnInstallAndReLaunch.Name = "btnInstallAndReLaunch";
-            this.btnInstallAndReLaunch.UseVisualStyleBackColor = true;
-            this.btnInstallAndReLaunch.Click += new System.EventHandler(this.OnInstallAndReLaunchClick);
+            resources.ApplyResources(btnInstallAndReLaunch, "btnInstallAndReLaunch");
+            tableLayoutPanel1.SetColumnSpan(btnInstallAndReLaunch, 2);
+            btnInstallAndReLaunch.Name = "btnInstallAndReLaunch";
+            btnInstallAndReLaunch.UseVisualStyleBackColor = true;
+            btnInstallAndReLaunch.Click += OnInstallAndReLaunchClick;
             // 
             // imgAppIcon
             // 
-            resources.ApplyResources(this.imgAppIcon, "imgAppIcon");
-            this.imgAppIcon.Name = "imgAppIcon";
-            this.imgAppIcon.TabStop = false;
+            resources.ApplyResources(imgAppIcon, "imgAppIcon");
+            imgAppIcon.Name = "imgAppIcon";
+            imgAppIcon.TabStop = false;
             // 
             // downloadProgressLbl
             // 
-            resources.ApplyResources(this.downloadProgressLbl, "downloadProgressLbl");
-            this.tableLayoutPanel1.SetColumnSpan(this.downloadProgressLbl, 2);
-            this.downloadProgressLbl.Name = "downloadProgressLbl";
+            resources.ApplyResources(downloadProgressLbl, "downloadProgressLbl");
+            tableLayoutPanel1.SetColumnSpan(downloadProgressLbl, 2);
+            downloadProgressLbl.Name = "downloadProgressLbl";
             // 
             // buttonCancel
             // 
-            resources.ApplyResources(this.buttonCancel, "buttonCancel");
-            this.tableLayoutPanel1.SetColumnSpan(this.buttonCancel, 2);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            resources.ApplyResources(buttonCancel, "buttonCancel");
+            tableLayoutPanel1.SetColumnSpan(buttonCancel, 2);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += buttonCancel_Click;
             // 
             // tableLayoutPanel1
             // 
-            resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.lblHeader, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonCancel, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.imgAppIcon, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.progressDownload, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.btnInstallAndReLaunch, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.downloadProgressLbl, 0, 1);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            resources.ApplyResources(tableLayoutPanel1, "tableLayoutPanel1");
+            tableLayoutPanel1.Controls.Add(lblHeader, 1, 0);
+            tableLayoutPanel1.Controls.Add(buttonCancel, 0, 4);
+            tableLayoutPanel1.Controls.Add(imgAppIcon, 0, 0);
+            tableLayoutPanel1.Controls.Add(progressDownload, 0, 2);
+            tableLayoutPanel1.Controls.Add(btnInstallAndReLaunch, 0, 3);
+            tableLayoutPanel1.Controls.Add(downloadProgressLbl, 0, 1);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
             // 
             // DownloadProgressWindow
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.MaximizeBox = false;
-            this.Name = "DownloadProgressWindow";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-            ((System.ComponentModel.ISupportInitialize)(this.imgAppIcon)).EndInit();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.Control;
+            Controls.Add(tableLayoutPanel1);
+            MaximizeBox = false;
+            Name = "DownloadProgressWindow";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            ((System.ComponentModel.ISupportInitialize)imgAppIcon).EndInit();
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion

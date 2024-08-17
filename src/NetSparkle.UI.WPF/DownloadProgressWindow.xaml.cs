@@ -108,9 +108,9 @@ namespace NetSparkleUpdater.UI.WPF
             ActionButton.IsEnabled = shouldBeEnabled;
         }
 
-        void IDownloadProgress.Show(bool isOnMainThread)
+        void IDownloadProgress.Show()
         {
-            ShowWindow(isOnMainThread);
+            ShowWindow(true);
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)

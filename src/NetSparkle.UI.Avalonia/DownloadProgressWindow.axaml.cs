@@ -68,10 +68,9 @@ namespace NetSparkleUpdater.UI.Avalonia
                 DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(false));
             }
             Closing -= DownloadProgressWindow_Closing;
-            if (!_isOnMainThread && !_hasInitiatedShutdown)
+            if (!_hasInitiatedShutdown)
             {
                 _hasInitiatedShutdown = true;
-                _cancellationTokenSource.Cancel();
             }
         }
 
@@ -123,9 +122,9 @@ namespace NetSparkleUpdater.UI.Avalonia
             }
         }
 
-        void IDownloadProgress.Show(bool isOnMainThread)
+        void IDownloadProgress.Show()
         {
-            ShowWindow(isOnMainThread);
+            ShowWindow();
         }
 
         /// <summary>

@@ -82,7 +82,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
             get
             {
                 return _assemblyAttributes != null 
-                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyInformationalVersionAttribute)) ?? "" 
+                    ? FindAttributeData(_assemblyAttributes, typeof(AssemblyInformationalVersionAttribute)) ?? FileVersion
                     : "";
             }
         }

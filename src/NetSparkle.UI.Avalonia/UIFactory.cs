@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.Properties;
 using NetSparkleUpdater.UI.Avalonia.ViewModels;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.UI.Avalonia
 {

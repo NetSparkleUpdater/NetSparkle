@@ -17,6 +17,11 @@ namespace NetSparkleUpdater.Interfaces
         bool IsDownloading { get; }
 
         /// <summary>
+        /// Called when the download of a file is just about to begin
+        /// </summary>
+        public event DownloadFromPathToPathEvent? DownloadStarted;
+
+        /// <summary>
         /// Event to call when some progress has been made on the download
         /// </summary>
         event DownloadProgressEvent? DownloadProgressChanged;
@@ -31,7 +36,7 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <param name="uri">URL for the download</param>
         /// <param name="downloadFilePath">Where to download the file</param>
-        void StartFileDownload(Uri? uri, string downloadFilePath);
+        Task DownloadFile(Uri? uri, string downloadFilePath);
 
         /// <summary>
         /// Cancel the download.

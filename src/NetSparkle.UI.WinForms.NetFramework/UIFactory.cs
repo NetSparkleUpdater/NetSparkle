@@ -7,11 +7,13 @@ using NetSparkleUpdater.Enums;
 using System.Threading;
 using System.Collections.Generic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
-    /// UI factory for WinForms .NET Framework interface
+    /// UI factory for WinForms .NET Framework interface.
+    /// Note that it expects to be created on your main UI thread.
     /// </summary>
     public class UIFactory : IUIFactory
     {
@@ -20,12 +22,15 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         protected Icon? _applicationIcon = null;
 
+        private SynchronizationContext _syncContext;
+
         /// <inheritdoc/>
         public UIFactory()
         {
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
         }
 
         /// <inheritdoc/>

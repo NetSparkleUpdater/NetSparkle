@@ -48,8 +48,7 @@ namespace NetSparkleUpdater
         private ILogger? _logWriter;
         private readonly Task _taskWorker;
         private CancellationToken _cancelToken;
-        private readonly CancellationTokenSource _cancelTokenSource;
-        private readonly SynchronizationContext _syncContext;
+        private CancellationTokenSource _cancelTokenSource;
         private readonly string? _appReferenceAssembly;
 
         private bool _doInitialCheck;
@@ -81,6 +80,7 @@ namespace NetSparkleUpdater
         /// suffice as a "fix" for now.
         /// </summary>
         private Action? _actionToRunOnProgressWindowShown;
+        private SynchronizationContext _syncContextForWorkerLoop;
 
         #endregion
 
@@ -116,12 +116,11 @@ namespace NetSparkleUpdater
         {
             _latestDownloadedUpdateInfo = null;
             _hasAttemptedFileRedownload = false;
-            
+            _syncContextForWorkerLoop = SynchronizationContext.Current ?? new SynchronizationContext();
+
             UIFactory = factory;
             SignatureVerifier = signatureVerifier;
             LogWriter = new LogWriter();
-            // Syncronization Context
-            _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
             // init UI
             UIFactory?.Init(this);
             _appReferenceAssembly = null;
@@ -133,10 +132,7 @@ namespace NetSparkleUpdater
             }
 
             // adjust the delegates
-            _taskWorker = new Task(() =>
-            {
-                OnWorkerDoWork();
-            });
+            _taskWorker = new Task(OnWorkerDoWork);
             _cancelTokenSource = new CancellationTokenSource();
             _cancelToken = _cancelTokenSource.Token;
 
@@ -367,13 +363,6 @@ namespace NetSparkleUpdater
         public bool UseNotificationToast { get; set; }
 
         /// <summary>
-        /// This setting is only valid on WinForms and WPF.
-        /// If true, tries to run UI code on the main thread using <see cref="SynchronizationContext"/>.
-        /// Must be set to true if using NetSparkleUpdater from Avalonia.
-        /// </summary>
-        public bool ShowsUIOnMainThread { get; set; }
-
-        /// <summary>
         /// Object that handles any diagnostic messages for NetSparkle.
         /// If you want to use your own class for this, you should just
         /// need to override <see cref="LogWriter.PrintMessage"/> in your own class.
@@ -561,9 +550,9 @@ namespace NetSparkleUpdater
         /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
-        public void StartLoop(bool doInitialCheck)
+        public async Task StartLoop(bool doInitialCheck)
         {
-            StartLoop(doInitialCheck, false);
+            await StartLoop(doInitialCheck, false);
         }
 
         /// <summary>
@@ -572,32 +561,36 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public void StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
+        public async Task StartLoop(bool doInitialCheck, TimeSpan checkFrequency)
         {
-            StartLoop(doInitialCheck, false, checkFrequency);
+            await StartLoop(doInitialCheck, false, checkFrequency);
         }
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates every 24 hours.
+        /// Loop pauses for a few seconds on first run so that if the loop is started with the app,
+        /// the user isn't immediately shown an update window.
         /// <para>You should only call this function when your app is initialized and shows its main UI.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was less than 24 hours ago</param>
-        public void StartLoop(bool doInitialCheck, bool forceInitialCheck)
+        public async Task StartLoop(bool doInitialCheck, bool forceInitialCheck)
         {
-            StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
+            await StartLoop(doInitialCheck, forceInitialCheck, TimeSpan.FromHours(24));
         }
 
         /// <summary>
         /// Starts a SparkleUpdater background loop to check for updates on a given interval.
+        /// Loop pauses for a few seconds on first run so that if the loop is started with the app,
+        /// the user isn't immediately shown an update window.
         /// <para>You should only call this function when your app is initialized and shows its main UIw.</para>
         /// </summary>
         /// <param name="doInitialCheck">whether the first check should happen before or after the first interval</param>
         /// <param name="forceInitialCheck">if <paramref name="doInitialCheck"/> is true, whether the first check
         /// should happen even if the last check was within the last <paramref name="checkFrequency"/> interval</param>
         /// <param name="checkFrequency">the interval to wait between update checks</param>
-        public async void StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
+        public async Task StartLoop(bool doInitialCheck, bool forceInitialCheck, TimeSpan checkFrequency)
         {
             if (ClearOldInstallers != null)
             {
@@ -613,18 +606,16 @@ namespace NetSparkleUpdater
             // first set the event handle
             _loopingHandle.Set();
 
-            // Start the helper thread as a background worker                     
-
             // store info
             _doInitialCheck = doInitialCheck;
             _forceInitialCheck = forceInitialCheck;
             _checkFrequency = checkFrequency;
+            // create new cancel token source
+            _cancelTokenSource = new CancellationTokenSource();
+            _cancelToken = _cancelTokenSource.Token;
 
             LogWriter?.PrintMessage("Starting background worker");
 
-            // start the work
-            //var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            //_taskWorker.Start(scheduler);
             // don't allow starting the task 2x
             if (_taskWorker.IsCompleted == false && _taskWorker.Status != TaskStatus.Running &&
                 _taskWorker.Status != TaskStatus.WaitingToRun && _taskWorker.Status != TaskStatus.WaitingForActivation)
@@ -640,6 +631,7 @@ namespace NetSparkleUpdater
         {
             // ensure the work will finished
             _exitHandle.Set();
+            _cancelTokenSource.Cancel();
         }
 
         /// <summary>
@@ -815,65 +807,15 @@ namespace NetSparkleUpdater
 
         private void ShowUpdateAvailableWindow(List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
         {
+            UpdateAvailableWindow?.Close();
+            UpdateAvailableWindow = null;
+            UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
+
             if (UpdateAvailableWindow != null)
             {
-                // close old window
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
-                    {
-                        UpdateAvailableWindow.Close();
-                        UpdateAvailableWindow = null;
-                    }, null);
-                }
-                else
-                {
-                    UpdateAvailableWindow.Close();
-                    UpdateAvailableWindow = null;
-                }
+                UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
+                UpdateAvailableWindow.Show();
             }
-
-            // create the form
-            Thread thread = new Thread(() =>
-            {
-                try
-                {
-                    // define action
-                    Action showSparkleUIForAvailableUpdate = () =>
-                    {
-                        UpdateAvailableWindow = UIFactory?.CreateUpdateAvailableWindow(this, updates, isUpdateAlreadyDownloaded);
-
-                        if (UpdateAvailableWindow != null)
-                        {
-                            UpdateAvailableWindow.UserResponded += OnUpdateWindowUserResponded;
-                            UpdateAvailableWindow.Show(ShowsUIOnMainThread);
-                        }
-                    };
-
-                    // call action
-                    if (ShowsUIOnMainThread)
-                    {
-                        _syncContext.Post((state) => showSparkleUIForAvailableUpdate(), null);
-                    }
-                    else
-                    {
-                        showSparkleUIForAvailableUpdate();
-                    }
-                }
-                catch (Exception e)
-                {
-                    LogWriter?.PrintMessage("Error showing sparkle form: {0}", e.Message);
-                }
-            });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
-            }
-#endif
-            thread.Start();
         }
 
         /// <summary>
@@ -981,13 +923,11 @@ namespace NetSparkleUpdater
                     // so that the user can actually perform the install
                     _actionToRunOnProgressWindowShown = () =>
                     {
-                        CallFuncConsideringUIThreads(() => { 
-                            DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName); 
-                        });
+                        DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName); 
                         bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
                         if (shouldInstallAndRelaunch)
                         {
-                            CallFuncConsideringUIThreads(() => { ProgressWindowCompleted(this, new DownloadInstallEventArgs(true)); });
+                            ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
                         }
                     };
                     CreateAndShowProgressWindow(item, true);
@@ -1009,16 +949,13 @@ namespace NetSparkleUpdater
                         // we won't be able to download anyway since we couldn't delete the file :( we'll try next time the
                         // update loop goes around.
                         needsToDownload = false;
-                        CallFuncConsideringUIThreads(() =>
-                        {
-                            DownloadHadError?.Invoke(item, _downloadTempFileName,
-                                new Exception(string.Format("Unable to delete old download at {0}", _downloadTempFileName)));
-                        });
+                        DownloadHadError?.Invoke(item, _downloadTempFileName,
+                            new Exception(string.Format("Unable to delete old download at {0}", _downloadTempFileName)));
                     }
                 }
                 else
                 {
-                    CallFuncConsideringUIThreads(() => { DownloadedFileIsCorrupt?.Invoke(item, _downloadTempFileName); });
+                    DownloadedFileIsCorrupt?.Invoke(item, _downloadTempFileName);
                 }
             }
             if (item.DownloadLink == null || string.IsNullOrWhiteSpace(item.DownloadLink))
@@ -1034,21 +971,27 @@ namespace NetSparkleUpdater
                     {
                         UpdateDownloader.DownloadProgressChanged -= OnDownloadProgressChanged;
                         UpdateDownloader.DownloadFileCompleted -= OnDownloadFinished;
+                        UpdateDownloader.DownloadStarted -= OnDownloadStarted;
                         UpdateDownloader.DownloadProgressChanged += OnDownloadProgressChanged;
                         UpdateDownloader.DownloadFileCompleted += OnDownloadFinished;
+                        UpdateDownloader.DownloadStarted += OnDownloadStarted;
                     }
                     _actionToRunOnProgressWindowShown = () =>
                     {
                         Uri url = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
                         LogWriter?.PrintMessage("Starting to download {0} to {1}", item.DownloadLink, _downloadTempFileName);
-                        UpdateDownloader?.StartFileDownload(url, _downloadTempFileName);
-                        CallFuncConsideringUIThreads(() => 
-                        { 
-                            DownloadStarted?.Invoke(item, _downloadTempFileName);
-                        });
+                        UpdateDownloader?.DownloadFile(url, _downloadTempFileName);
                     };
                     CreateAndShowProgressWindow(item, false);
                 }
+            }
+        }
+
+        private void OnDownloadStarted(object sender, string from, string to)
+        {
+            if (_itemBeingDownloaded != null && to != null)
+            {
+                DownloadStarted?.Invoke(_itemBeingDownloaded, to);
             }
         }
 
@@ -1056,10 +999,7 @@ namespace NetSparkleUpdater
         {
             if (_itemBeingDownloaded != null) // just a null safety check, shouldn't be null in this case
             {
-                CallFuncConsideringUIThreads(() =>
-                {
-                    DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args);
-                });
+                DownloadMadeProgress?.Invoke(sender, _itemBeingDownloaded, args);
             }
         }
 
@@ -1089,63 +1029,31 @@ namespace NetSparkleUpdater
                 }
                 ProgressWindow = null;
             }
-            Action showSparkleDownloadUI = () => {};
             if (ProgressWindow == null && UIFactory != null && !IsDownloadingSilently())
             {
-                // create the form
-                showSparkleDownloadUI = () =>
+                ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
+                if (ProgressWindow != null)
                 {
-                    ProgressWindow = UIFactory?.CreateProgressWindow(this, castItem);
-                    if (ProgressWindow != null)
+                    ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
+                    if (UpdateDownloader != null)
                     {
-                        ProgressWindow.DownloadProcessCompleted += ProgressWindowCompleted;
-                        if (UpdateDownloader != null)
-                        {
-                            UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
-                        }
-                        if (shouldShowAsDownloadedAlready)
-                        {
-                            ProgressWindow?.FinishedDownloadingFile(true);
-                            _syncContext.Post((state2) =>
-                            {
-                                OnDownloadFinished(this, new AsyncCompletedEventArgs(null, false, null));
-                                _actionToRunOnProgressWindowShown?.Invoke();
-                                _actionToRunOnProgressWindowShown = null;
-                            }, null);
-                        }
+                        UpdateDownloader.DownloadProgressChanged += ProgressWindow.OnDownloadProgressChanged;
                     }
-                };
-            }
-            Thread thread = new Thread(() =>
-            {
-                // call action
-                if (ShowsUIOnMainThread)
-                {
-                    _syncContext.Post((state) =>
+                    if (shouldShowAsDownloadedAlready)
                     {
-                        showSparkleDownloadUI();
-                        _actionToRunOnProgressWindowShown?.Invoke();
-                        _actionToRunOnProgressWindowShown = null;
-                        ProgressWindow?.Show(ShowsUIOnMainThread);
-                    }, null);
+                        ProgressWindow?.FinishedDownloadingFile(true);
+                        OnDownloadFinished(this, new AsyncCompletedEventArgs(null, false, null));
+                    }
                 }
-                else
-                {
-                    showSparkleDownloadUI();
-                    _actionToRunOnProgressWindowShown?.Invoke();
-                    _actionToRunOnProgressWindowShown = null;
-                    ProgressWindow?.Show(ShowsUIOnMainThread);
-                }
-            });
-#if NETFRAMEWORK
-            thread.SetApartmentState(ApartmentState.STA);
-#else
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                thread.SetApartmentState(ApartmentState.STA); // only supported on Windows
+                ProgressWindow?.Show();
+                _actionToRunOnProgressWindowShown?.Invoke();
+                _actionToRunOnProgressWindowShown = null;
             }
-#endif
-            thread.Start();
+            else
+            {
+                _actionToRunOnProgressWindowShown?.Invoke();
+                _actionToRunOnProgressWindowShown = null;
+            }
         }
 
         private async void ProgressWindowCompleted(object sender, DownloadInstallEventArgs args)
@@ -1203,27 +1111,20 @@ namespace NetSparkleUpdater
                     }
                     catch (Exception deleteEx)
                     {
-                        CallFuncConsideringUIThreads(() =>
+                        string cleanUpErrorMessage = "Download canceled (Cleanup error): " + deleteEx.Message;
+                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
                         {
-                            string cleanUpErrorMessage = "Download canceled (Cleanup error): " + deleteEx.Message;
-                            if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
-                            {
-                                UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
-                            }
-                        });
+                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                        }
                     }
-
                 }
                 LogWriter?.PrintMessage("Download was canceled");
                 string errorMessage = "Download canceled";
-                CallFuncConsideringUIThreads(() =>
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
-                    {
-                        UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
-                    }
-                    DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                });
+                    UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
+                }
+                DownloadCanceled?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                 return;
             }
             if (e.Error != null)
@@ -1238,24 +1139,18 @@ namespace NetSparkleUpdater
                     catch (Exception deleteEx)
                     {
                         string cleanUpErrorMessage = "Error while downloading (Cleanup error): " + deleteEx.Message;
-                        CallFuncConsideringUIThreads(() =>
+                        if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
                         {
-                            if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(cleanUpErrorMessage))
-                            {
-                                UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
-                            }
-                        });
+                            UIFactory?.ShowDownloadErrorMessage(this, cleanUpErrorMessage, AppCastUrl);
+                        }
                     }
                 }
                 LogWriter?.PrintMessage("Error on download finished: {0}", e.Error.Message);
-                CallFuncConsideringUIThreads(() =>
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
                 {
-                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(e.Error.Message))
-                    {
-                        UIFactory?.ShowDownloadErrorMessage(this, e.Error.Message, AppCastUrl);
-                    }
-                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
-                });
+                    UIFactory?.ShowDownloadErrorMessage(this, e.Error.Message, AppCastUrl);
+                }
+                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, e.Error);
                 return;
             }
             // test the item for signature
@@ -1275,10 +1170,7 @@ namespace NetSparkleUpdater
                     {
                         var message = "File not found even though it was reported as downloading successfully!";
                         LogWriter?.PrintMessage(message);
-                        CallFuncConsideringUIThreads(() =>
-                        {
-                            DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
-                        });
+                        DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(message));
                     }
 
                     // check the signature
@@ -1290,10 +1182,7 @@ namespace NetSparkleUpdater
                     {
                         LogWriter?.PrintMessage("Error validating signature of file: {0}; {1}", exc.Message, exc.StackTrace ?? "[No stack trace available]");
                         validationRes = ValidationResult.Invalid;
-                        CallFuncConsideringUIThreads(() =>
-                        {
-                            DownloadedFileThrewWhileCheckingSignature?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                        });
+                        DownloadedFileThrewWhileCheckingSignature?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
                     }
                 }
             }
@@ -1301,7 +1190,7 @@ namespace NetSparkleUpdater
             bool isSignatureInvalid = validationRes == ValidationResult.Invalid; // if Unchecked, we accept download as valid
             if (shouldShowUIItems)
             {
-                CallFuncConsideringUIThreads(() => { ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid); });
+                ProgressWindow?.FinishedDownloadingFile(!isSignatureInvalid);
             }
             // signature of file isn't valid so exit with error
             if (isSignatureInvalid)
@@ -1309,28 +1198,22 @@ namespace NetSparkleUpdater
                 LogWriter?.PrintMessage("Invalid signature for downloaded file for app cast: {0}", _downloadTempFileName);
                 string errorMessage = "Downloaded file has invalid signature!";
                 // Default to showing errors in the progress window. Only go to the UIFactory to show errors if necessary.
-                CallFuncConsideringUIThreads(() =>
+                DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
                 {
-                    DownloadedFileIsCorrupt?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                    if (shouldShowUIItems && ProgressWindow != null && !ProgressWindow.DisplayErrorMessage(errorMessage))
-                    {
-                        UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
-                    }
-                    DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(errorMessage));
-                });
+                    UIFactory?.ShowDownloadErrorMessage(this, errorMessage, AppCastUrl);
+                }
+                DownloadHadError?.Invoke(_itemBeingDownloaded, _downloadTempFileName, new NetSparkleException(errorMessage));
             }
             else
             {
                 LogWriter?.PrintMessage("Signature is valid. File successfully downloaded!");
-                CallFuncConsideringUIThreads(() => 
-                { 
-                    DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
-                    bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
-                    if (shouldInstallAndRelaunch)
-                    {
-                        ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
-                    }
-                });
+                DownloadFinished?.Invoke(_itemBeingDownloaded, _downloadTempFileName);
+                bool shouldInstallAndRelaunch = UserInteractionMode == UserInteractionMode.DownloadAndInstall;
+                if (shouldInstallAndRelaunch)
+                {
+                    ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
+                }
             }
             _itemBeingDownloaded = null; // done downloading, so we can clear the download status, basically
         }
@@ -1773,27 +1656,24 @@ namespace NetSparkleUpdater
                                 // If you have better ideas on how to figure out if they've shut all other windows, let me know...
             try
             {
-                await CallFuncConsideringUIThreadsAsync(new Func<Task>(async () =>
+                if (CloseApplicationAsync != null)
                 {
-                    if (CloseApplicationAsync != null)
-                    {
-                        LogWriter?.PrintMessage("Shutting down application via CloseApplicationAsync...");
-                        await CloseApplicationAsync.Invoke();
-                    }
-                    else if (CloseApplication != null)
-                    {
-                        LogWriter?.PrintMessage("Shutting down application via CloseApplication...");
-                        CloseApplication.Invoke();
-                    }
-                    else
-                    {
-                        // Because the download/install window is usually on a separate thread,
-                        // send dual shutdown messages via both the sync context (kills "main" app)
-                        // and the current thread (kills current thread)
-                        LogWriter?.PrintMessage("Shutting down application via UIFactory...");
-                        UIFactory?.Shutdown(this);
-                    }
-                }));
+                    LogWriter?.PrintMessage("Shutting down application via CloseApplicationAsync...");
+                    await CloseApplicationAsync.Invoke();
+                }
+                else if (CloseApplication != null)
+                {
+                    LogWriter?.PrintMessage("Shutting down application via CloseApplication...");
+                    CloseApplication.Invoke();
+                }
+                else
+                {
+                    // Because the download/install window is usually on a separate thread,
+                    // send dual shutdown messages via both the sync context (kills "main" app)
+                    // and the current thread (kills current thread)
+                    LogWriter?.PrintMessage("Shutting down application via UIFactory...");
+                    UIFactory?.Shutdown(this);
+                }
             }
             catch (Exception e)
             {
@@ -1855,21 +1735,18 @@ namespace NetSparkleUpdater
             if (CheckingForUpdatesWindow != null) // if null, user closed 'Checking for Updates...' window or the UIFactory was null
             {
                 CheckingForUpdatesWindow?.Close();
-                CallFuncConsideringUIThreads(() =>
+                switch (updateData.Status)
                 {
-                    switch (updateData.Status)
-                    {
-                        case UpdateStatus.UpdateNotAvailable:
-                            UIFactory?.ShowVersionIsUpToDate(this);
-                            break;
-                        case UpdateStatus.UserSkipped:
-                            UIFactory?.ShowVersionIsSkippedByUserRequest(this); // they can get skipped version from Configuration
-                            break;
-                        case UpdateStatus.CouldNotDetermine:
-                            UIFactory?.ShowCannotDownloadAppcast(this, AppCastUrl);
-                            break;
-                    }
-                });
+                    case UpdateStatus.UpdateNotAvailable:
+                        UIFactory?.ShowVersionIsUpToDate(this);
+                        break;
+                    case UpdateStatus.UserSkipped:
+                        UIFactory?.ShowVersionIsSkippedByUserRequest(this); // they can get skipped version from Configuration
+                        break;
+                    case UpdateStatus.CouldNotDetermine:
+                        UIFactory?.ShowCannotDownloadAppcast(this, AppCastUrl);
+                        break;
+                }
             }
 
             return updateData; // in this case, we've already shown UI talking about the new version
@@ -1921,12 +1798,16 @@ namespace NetSparkleUpdater
                     updates
                 );
 
-                // UpdateDetected allows for catching and overriding the update handling,
-                // so if the user has implemented it, tell them there is an update and stop
-                // handling everything.
-                if (UpdateDetected != null)
+                if (UpdateDetected != null || UpdateDetectedAsync != null)
                 {
-                    UpdateDetected(this, ev); // event's next action can change, here
+                    if (UpdateDetectedAsync != null)
+                    {
+                        await UpdateDetectedAsync(this, ev); // event's next action can change, here
+                    }
+                    else if (UpdateDetected != null)
+                    {
+                        UpdateDetected(this, ev); // event's next action can change, here
+                    }
                     switch (ev.NextAction)
                     {
                         case NextUpdateAction.PerformUpdateUnattended:
@@ -1948,6 +1829,10 @@ namespace NetSparkleUpdater
                                 if (!isUserManuallyCheckingForUpdates)
                                 {
                                     UpdatesHaveBeenDownloaded(updates);
+                                }
+                                else
+                                {
+                                    ShowUpdateNeededUI(updates);
                                 }
                                 break;
                             }
@@ -1975,99 +1860,52 @@ namespace NetSparkleUpdater
             }
         }
 
-        /// <summary>
-        /// Events should always be fired on the thread that started the Sparkle object.
-        /// Used for events that are fired after coming from an update available window
-        /// or the download progress window.
-        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
-        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
-        /// is always on the main thread.
-        /// </summary>
-        /// <param name="action"></param>
-        private void CallFuncConsideringUIThreads(Action action)
-        {
-            if (ShowsUIOnMainThread)
-            {
-                action?.Invoke();
-            }
-            else
-            {
-                _syncContext.Post((state) => action?.Invoke(), null);
-            }
-        }
-
-        /// <summary>
-        /// Events should always be fired on the thread that started the Sparkle object.
-        /// Used for events that are fired after coming from an update available window
-        /// or the download progress window.
-        /// Basically, if <see cref="ShowsUIOnMainThread"/> is true, just invokes the action. Otherwise,
-        /// uses the <seealso cref="SynchronizationContext"/> to call the action. Ensures that the action
-        /// is always on the main thread.
-        /// </summary>
-        /// <param name="action"></param>
-        private async Task CallFuncConsideringUIThreadsAsync(Func<Task> action)
-        {
-            if (ShowsUIOnMainThread)
-            {
-                await action.Invoke();
-            }
-            else
-            {
-                _syncContext.Post(async (state) => await action.Invoke(), null);
-            }
-        }
-
         private async void OnUpdateWindowUserResponded(object sender, UpdateResponseEventArgs args)
         {
             LogWriter?.PrintMessage("Update window response: {0}", args.Result);
             var currentItem = args.UpdateItem;
             var result = args.Result;
-            if (result != UpdateAvailableResult.None && string.IsNullOrWhiteSpace(_downloadTempFileName))
-            {
-                // we need the download file name in order to tell the user the skipped version
-                // file path and/or to run the installer
-                _downloadTempFileName = await GetDownloadPathForAppCastItem(currentItem);
-            }
             if (result == UpdateAvailableResult.SkipUpdate)
             {
-                // skip this version
-                Configuration.SetVersionToSkip(currentItem.Version ?? "");
-                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
+                if (currentItem.Version != null)
+                {
+                    Configuration.SetVersionToSkip(currentItem.Version);
+                }
+                UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
             }
             else if (result == UpdateAvailableResult.InstallUpdate)
             {
-                await CallFuncConsideringUIThreadsAsync(async () =>
+                if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && string.IsNullOrWhiteSpace(_downloadTempFileName))
                 {
-                    UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
-                    if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
-                    {
-                        // Binary should already be downloaded. Run it!
-                        ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
-                    }
-                    else
-                    {
-                        // download the binaries
-                        await InitAndBeginDownload(currentItem);
-                    }
-                });
+                    // we need the download file name in order to run the installer
+                    _downloadTempFileName = await GetDownloadPathForAppCastItem(currentItem);
+                }
+                UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
+                if (UserInteractionMode == UserInteractionMode.DownloadNoInstall && File.Exists(_downloadTempFileName))
+                {
+                    // Binary should already be downloaded. Run it!
+                    ProgressWindowCompleted(this, new DownloadInstallEventArgs(true));
+                }
+                else
+                {
+                    // download the binaries
+                    await InitAndBeginDownload(currentItem);
+                }
             }
             else
             {
-                CallFuncConsideringUIThreads(() => { UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem)); });
+                UserRespondedToUpdate?.Invoke(this, new UpdateResponseEventArgs(result, currentItem));
             }
 
-            CallFuncConsideringUIThreads(() =>
+            if (result != UpdateAvailableResult.None)
             {
-                if (result != UpdateAvailableResult.None)
-                {
-                    // if result is None, then user closed the window some other way to ignore things so we don't need
-                    // to close it
-                    UpdateAvailableWindow?.Close();
-                    UpdateAvailableWindow = null; // done using the window so don't hold onto reference
-                }
-                CheckingForUpdatesWindow?.Close();
-                CheckingForUpdatesWindow = null;
-            });
+                // if result is None, then user closed the window some other way to ignore things so we don't need
+                // to close it
+                UpdateAvailableWindow?.Close();
+                UpdateAvailableWindow = null; // done using the window so don't hold onto reference
+            }
+            CheckingForUpdatesWindow?.Close();
+            CheckingForUpdatesWindow = null;
         }
 
         /// <summary>
@@ -2088,53 +1926,55 @@ namespace NetSparkleUpdater
                 {
                     break;
                 }
-                // set state
+                LogWriter?.PrintMessage("Before starting update loop, pausing for 3 seconds so we don't pop " +
+                    "up update window immediately...");
+                Thread.Sleep(3000);
                 bool isUpdateAvailable = false;
 
-                // notify
-                LoopStarted?.Invoke(this);
+                LogWriter?.PrintMessage("Starting update loop...");
+                _syncContextForWorkerLoop.Post((state) => LoopStarted?.Invoke(this), null);
 
                 // report status
                 if (doInitialCheck)
                 {
-                    // report status
-                    LogWriter?.PrintMessage("Starting update loop...");
-
-                    // read the config
                     LogWriter?.PrintMessage("Reading config...");
                     Configuration config = Configuration;
 
-                    // calc CheckTasp
                     bool checkTSPInternal = checkTSP;
-
                     if (isInitialCheck && checkTSPInternal)
                     {
                         checkTSPInternal = !_forceInitialCheck;
                     }
-
-                    // check if it's ok the recheck to software state
                     TimeSpan csp = DateTime.Now - config.LastCheckTime;
 
+                    LogWriter?.PrintMessage("Done reading config. !CheckTSPInternal = {0}; csp >= _checkFrequency = {1}", 
+                        !checkTSPInternal, csp >= _checkFrequency);
                     if (!checkTSPInternal || csp >= _checkFrequency)
                     {
                         checkTSP = true;
                         // when sparkle will be deactivated wait another cycle
+                        LogWriter?.PrintMessage("Config has check for update true? {0}", config.CheckForUpdate == true);
                         if (config.CheckForUpdate == true)
                         {
-                            // update the runonce feature
                             goIntoLoop = !config.IsFirstRun;
 
                             // check if update is required
                             if (_cancelToken.IsCancellationRequested || !goIntoLoop)
                             {
+                                LogWriter?.PrintMessage("Cancellation token had cancellation requested " +
+                                    "and/or goIntoLoop was false (will happen first time you start the app); stopping loop");
+                                LogWriter?.PrintMessage("_cancelToken.IsCancellationRequested = {0}; goIntoLoop = {1}",
+                                    _cancelToken.IsCancellationRequested, goIntoLoop);
                                 break;
                             }
+                            LogWriter?.PrintMessage("In worker thread loop, getting update status...");
                             _latestDownloadedUpdateInfo = await GetUpdateStatus(config);
                             if (_cancelToken.IsCancellationRequested)
                             {
                                 break;
                             }
                             isUpdateAvailable = _latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable;
+                            LogWriter?.PrintMessage("In worker thread loop, is update available? {0}", isUpdateAvailable);
                             if (isUpdateAvailable)
                             {
                                 List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
@@ -2148,7 +1988,23 @@ namespace NetSparkleUpdater
                                     updates[0],
                                     updates
                                 );
-                                UpdateDetected?.Invoke(this, ev);
+                                if (UpdateDetected != null || UpdateDetectedAsync != null)
+                                {
+                                    var re = new AutoResetEvent(false);
+                                    _syncContextForWorkerLoop.Post(async (state) =>
+                                    {
+                                        if (UpdateDetectedAsync != null)
+                                        {
+                                            await UpdateDetectedAsync(this, ev);
+                                        }
+                                        else if (UpdateDetected != null)
+                                        {
+                                            UpdateDetected.Invoke(this, ev);
+                                        }
+                                        re.Set();
+                                    }, null);
+                                    re.WaitOne(); // wait for UpdateDetected to finish even though we called back to UI thread
+                                }
                                 if (_cancelToken.IsCancellationRequested)
                                 {
                                     break;
@@ -2161,18 +2017,18 @@ namespace NetSparkleUpdater
                                         {
                                             LogWriter?.PrintMessage("Unattended update desired from consumer");
                                             UserInteractionMode = UserInteractionMode.DownloadAndInstall;
-                                            UpdatesHaveBeenDownloaded(updates);
+                                            _syncContextForWorkerLoop.Post((state) => UpdatesHaveBeenDownloaded(updates), null);
                                             break;
                                         }
                                     case NextUpdateAction.ProhibitUpdate:
                                         {
-                                            LogWriter?.PrintMessage("Update prohibited from consumer");
+                                            LogWriter?.PrintMessage("Update prohibited by consumer");
                                             break;
                                         }
                                     default:
                                         {
                                             LogWriter?.PrintMessage("Preparing to show standard update UI");
-                                            UpdatesHaveBeenDownloaded(updates);
+                                            _syncContextForWorkerLoop.Post((state) => UpdatesHaveBeenDownloaded(updates), null);
                                             break;
                                         }
                                 }
@@ -2199,8 +2055,7 @@ namespace NetSparkleUpdater
                 // reset initial check
                 isInitialCheck = false;
 
-                // notify
-                LoopFinished?.Invoke(this, isUpdateAvailable);
+                _syncContextForWorkerLoop.Post((state) => LoopFinished?.Invoke(this, isUpdateAvailable), null);
 
                 // report wait statement
                 LogWriter?.PrintMessage("Sleeping for another {0} minutes, exit event or force update check event", _checkFrequency.TotalMinutes);
@@ -2250,7 +2105,7 @@ namespace NetSparkleUpdater
                 }
             } while (goIntoLoop);
 
-            // reset the islooping handle
+            // reset the looping handle
             if (!_disposed)
             {
                 _loopingHandle?.Reset();

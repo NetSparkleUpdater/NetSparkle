@@ -22,11 +22,20 @@ namespace NetSparkleUpdater
     public delegate void LoopFinishedOperation(object sender, bool updateRequired);
 
     /// <summary>
-    /// An update was detected for the user's currently running software  
+    /// An update was detected for the user's currently running software.
+    /// If both this and UpdateDetectedAsync are implemented, UpdateDetectedAsync is prioritized.
     /// </summary>
     /// <param name="sender">the object that initiated the call</param>
     /// <param name="e">Information about the update that was detected</param>
     public delegate void UpdateDetected(object sender, UpdateDetectedEventArgs e);
+
+    /// <summary>
+    /// An update was detected for the user's currently running software.
+    /// If both this and UpdateDetected are implemented, UpdateDetectedAsync is prioritized.
+    /// </summary>
+    /// <param name="sender">the object that initiated the call</param>
+    /// <param name="e">Information about the update that was detected</param>
+    public delegate Task UpdateDetectedAsync(object sender, UpdateDetectedEventArgs e);
 
     /// <summary>
     /// <see cref="SparkleUpdater"/> has started checking for updates
@@ -65,6 +74,13 @@ namespace NetSparkleUpdater
     /// download began).
     /// </summary>
     public delegate void DownloadEvent(AppCastItem item, string path);
+
+    /// <summary>
+    /// A delegate for download events (start, canceled) with just a path.
+    /// Make sure to check that the path is valid in case this is called when the path is unknown/unset 
+    /// for some reason (e.g. failed before download began).
+    /// </summary>
+    public delegate void DownloadFromPathToPathEvent(object sender, string from, string to);
 
     /// <summary>
     /// Delegate that provides information about some download progress that has been made

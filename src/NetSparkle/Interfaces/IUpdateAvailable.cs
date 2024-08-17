@@ -17,7 +17,7 @@ namespace NetSparkleUpdater.Interfaces
         /// <summary>
         /// Show the UI that displays release notes, etc.
         /// </summary>
-        void Show(bool IsOnMainThread);
+        void Show();
 
         /// <summary>
         /// Hides the release notes 

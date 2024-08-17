@@ -24,8 +24,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
             _sparkle = new CustomSparkleUpdater(appcastToUse, new Ed25519Checker(Enums.SecurityMode.Strict, "8zPswEwycU7XQ7OcGQtI/b22pWo1qM2Ual2OhssaDyI="))
             {
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
-                // Avalonia version doesn't support separate threads: https://github.com/AvaloniaUI/Avalonia/issues/3434#issuecomment-573446972
-                ShowsUIOnMainThread = true,
                 LogWriter = new LogWriter(),
                 RelaunchAfterUpdate = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
@@ -41,7 +39,12 @@ namespace NetSparkleUpdater.Samples.Avalonia
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            _sparkle.StartLoop(true, true);
+            StartSparkle();
+        }
+
+        private async void StartSparkle()
+        {
+            await _sparkle.StartLoop(true, true);
         }
 
         public async void ManualUpdateCheck_Click(object sender, RoutedEventArgs e)

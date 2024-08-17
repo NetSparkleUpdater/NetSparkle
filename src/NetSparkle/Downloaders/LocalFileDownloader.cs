@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +67,9 @@ namespace NetSparkleUpdater.Downloaders
         public bool UseLocalUriPath { get; set; } = false;
 
         /// <inheritdoc/>
+        public event DownloadFromPathToPathEvent? DownloadStarted;
+
+        /// <inheritdoc/>
         public event DownloadProgressEvent? DownloadProgressChanged;
         
         /// <inheritdoc/>
@@ -100,7 +104,7 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async void StartFileDownload(Uri? uri, string downloadFilePath)
+        public async Task DownloadFile(Uri? uri, string downloadFilePath)
         {
             var path = UseLocalUriPath ? uri?.LocalPath : uri?.AbsolutePath;
             if (path != null)
@@ -123,6 +127,7 @@ namespace NetSparkleUpdater.Downloaders
             try
             {
                 var wasCanceled = false;
+                DownloadStarted?.Invoke(this, sourceFile, destinationFile);
                 using (var sourceStream =
                       new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions))
                 using (var destinationStream =

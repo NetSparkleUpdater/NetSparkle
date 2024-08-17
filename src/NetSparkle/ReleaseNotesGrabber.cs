@@ -152,7 +152,7 @@ namespace NetSparkleUpdater
             {
                 _logger?.PrintMessage("Initializing release notes for {0}", castItem.Version ?? "[Unknown version]");
                 // TODO: could we optimize this by doing multiple downloads at once?
-                var releaseNotes = await GetReleaseNotes(castItem, _sparkle, cancellationToken);
+                var releaseNotes = await GetReleaseNotes(castItem, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
                                         castItem.Version,
                                         castItem.PublicationDate != DateTime.MinValue && 
@@ -174,12 +174,10 @@ namespace NetSparkleUpdater
         /// in HTML format so that they can be displayed to the user.
         /// </summary>
         /// <param name="item"><see cref="AppCastItem"/>item to download the release notes for</param>
-        /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
-        /// about the release notes grabbing process (or its failures) -- TODO: Remove this param entirely</param>
         /// <param name="cancellationToken">token that can be used to cancel a release notes 
         /// grabbing operation</param>
         /// <returns>The release notes, formatted as HTML, for a given release of the software</returns>
-        protected virtual async Task<string?> GetReleaseNotes(AppCastItem item, SparkleUpdater? sparkle, CancellationToken cancellationToken)
+        protected virtual async Task<string?> GetReleaseNotes(AppCastItem item, CancellationToken cancellationToken)
         {
             string criticalUpdate = item.IsCriticalUpdate ? "Critical Update" : "";
             // at first try to use embedded description
@@ -216,7 +214,7 @@ namespace NetSparkleUpdater
             // download release notes
             _logger?.PrintMessage("Downloading release notes for {0} at {1}", item.Version ?? "[Unknown version]", item.ReleaseNotesLink ?? "[Unknown release notes link]");
             string notes = item.ReleaseNotesLink != null 
-                ? await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken, sparkle)
+                ? await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken)
                 : "";
             _logger?.PrintMessage("Done downloading release notes for {0}", item.Version ?? "[Unknown version]");
             if (string.IsNullOrWhiteSpace(notes))
@@ -266,11 +264,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="link">string URL to the release notes to download</param>
         /// <param name="cancellationToken">token that can be used to cancel a download operation</param>
-        /// <param name="sparkle"><see cref="SparkleUpdater"/> that can be used for logging information
-        /// about the download process (or its failures) TODO: remove this param as no longer needed; breaking change</param>
         /// <returns>The release notes data (file data) at the given link as a string. Typically this data
         /// is formatted as markdown.</returns>
-        protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken, SparkleUpdater? sparkle)
+        protected virtual async Task<string> DownloadReleaseNotes(string link, CancellationToken cancellationToken)
         {
             try
             {
@@ -280,7 +276,7 @@ namespace NetSparkleUpdater
                     return await httpClient.GetStringAsync(link);
                 }
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
                 _logger?.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";

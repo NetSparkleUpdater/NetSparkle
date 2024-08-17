@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using NetSparkleUpdater.Events;
 
 namespace NetSparkleUpdater
 {
@@ -21,9 +22,22 @@ namespace NetSparkleUpdater
         public event UpdateCheckStarted? UpdateCheckStarted;
         /// <summary>
         /// This event can be used to override the standard user interface
-        /// process when an update is detected
+        /// process when an update is detected. To modify the next action,
+        /// change the value of the <seealso cref="UpdateDetectedEventArgs.NextAction"/>
+        /// property.
+        /// If both this and UpdateDetectedAsync are implemented, UpdateDetectedAsync is
+        /// used, and UpdateDetected is not called.
         /// </summary>
         public event UpdateDetected? UpdateDetected;
+        /// <summary>
+        /// This event can be used to override the standard user interface
+        /// process when an update is detected. To modify the next action,
+        /// change the value of the <seealso cref="UpdateDetectedEventArgs.NextAction"/>
+        /// property.
+        /// If both this and UpdateDetected are implemented, UpdateDetectedAsync is
+        /// used, and UpdateDetected is not called.
+        /// </summary>
+        public event UpdateDetectedAsync? UpdateDetectedAsync;
         /// <summary>
         /// Called when update check is all done. <see cref="UpdateDetected"/> may have been 
         /// called between the start and end of the update check.
