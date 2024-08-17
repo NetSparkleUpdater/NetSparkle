@@ -1798,9 +1798,6 @@ namespace NetSparkleUpdater
                     updates
                 );
 
-                // UpdateDetected allows for catching and overriding the update handling,
-                // so if the user has implemented it, tell them there is an update and stop
-                // handling everything.
                 if (UpdateDetected != null || UpdateDetectedAsync != null)
                 {
                     if (UpdateDetectedAsync != null)
@@ -1832,6 +1829,10 @@ namespace NetSparkleUpdater
                                 if (!isUserManuallyCheckingForUpdates)
                                 {
                                     UpdatesHaveBeenDownloaded(updates);
+                                }
+                                else
+                                {
+                                    ShowUpdateNeededUI(updates);
                                 }
                                 break;
                             }
