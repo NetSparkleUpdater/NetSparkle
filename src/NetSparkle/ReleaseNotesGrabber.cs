@@ -280,7 +280,7 @@ namespace NetSparkleUpdater
                     return await httpClient.GetStringAsync(link);
                 }
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
                 _logger?.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
                 return "";
