@@ -22,10 +22,10 @@
 * Used `SemVerLike` everywhere instead of `System.Version` for semver compatibility
 * `WebFileDownloader` now deletes files on cancellation of a download like `LocalFileDownloader` did already (1cd2284c41bbe85d41566915965ad2acdb1a61f5)
 * `WebFileDownloader` does not call `PrepareToDownloadFile()` in its constructor anymore. Now, it is called after the object is fully created. (420f961dfa9c9071332e2e0737b0f287d2cfa5dc)
-* NOTE: If you update to .NET 8+, the location of `JSONConfiguration` save data, by default, will CHANGE due to a change in .NET 8 for `Environment.SpecialFolder.ApplicationData`. See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix. This may cause user's "skipped version" or other data to be lost unless you migrate this data yourself. For most users who are using the defaults, this is likely only a minor (if any) inconvenience at all, but it is worth noting.
+* NOTE: If you update to .NET 8+ in your own app, the location of `JSONConfiguration` save data, by default, will CHANGE due to a change in .NET 8 for `Environment.SpecialFolder.ApplicationData`. See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix. This may cause user's "skipped version" or other data to be lost unless you migrate this data yourself. For most users who are using the defaults, this is likely only a minor (if any) inconvenience at all, but it is worth noting. SparkleUpdater makes no attempt to account for this change at this time.
 * `AssemblyReflectionAccessor` has been deprecated. Please use `AsmResolverAccessor` instead. (#587)
 * `AssemblyDiagnosticAccessor.AssemblyVersion` now returns `FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion` rather than `FileVersionInfo.GetVersionInfo(assemblyName).FileVersion` so we can get semver versioning information
-* For ed25519 use, changed from BouncyCastle to Chaos.NaCl (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects.
+* For ed25519 use, changed from BouncyCastle to Chaos.NaCl (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects under `NetSparkleUpdater.Chaos.NaCl`.
 * `LogWriter` has undergone several changes:
   * `public static string tag = "netsparkle:";` has changed to `public string Tag { get; set; } = "netsparkle:";`
   * Instead of a simple `bool` to control printing to `Trace.WriteLine` or `Console.WriteLine`, there is now a new enum, `NetSparkleUpdater.Enums.LogWriterOutputMode`, which you can use to control whether `LogWriter` outputs to `Console`, `Trace`, `Debug`, or to `None` (don't output at all).
@@ -57,6 +57,15 @@
 * `IUpdateDownloader.StartFileDownload` returns `Task`
 * `IUpdateDownloader.StartFileDownload` renamed to `IUpdateDownloader.DownloadFile`
 * Background worker loop pauses for a few seconds before starting just in case the loop started with the software -- so the update available window isn't immediately shown to the user (if applicable)
+* `ReleaseNotesGrabber.GetReleaseNotes` and `DownloadAllReleaseNotes` no longer take a `Sparkle` instance since that is given in the constructor (TODO: might adjust more later and only send in the `ISignatureVerifier`)
+* Major UI refactoring:
+  * `ShowsUIOnMainThread` is gone and will not come back. It never really worked as intended and was just confusing. If you want to do fancy things with threads, handle `SparkleUpdater` events and handle things in your own way for your own app's needs.
+  * It's highly recommended to NetSparkle on the main thread.
+    * The background loop will use `SyncronizationContext` to post events and callbacks to whatever thread/context started the main `SparkleUpdater` instance, which is why starting things on the main UI thread is recommended.
+    * You can still do your own things with threads by handling events instead of passing a built-in `UIFactory` to `SparkleUpdater`, but this does not stop you from using a built-in `UIFactory` implementation to actually create said GUI elements. See the `NetSparkle.Samples.Forms.Multithread` sample.
+    * For a sample of running WinForms on multiple UI threads while still using built-in UI objects, see the `NetSparkle.Samples.Forms.Multithread` sample.
+  * NetSparkle basically makes no attempts to worry about threading now (e.g. calling to the main thread) except for the background loop calling to the main thread that started the `SparkleUpdater` instance. For most apps, this will be fine as they are just using their main UI thread.
+  * Practically speaking, though, if you call `SparkleUpdater` functions on a background thread, subsequent events and things that are called as a result of that `SparkleUpdater` call will probably come back on the background thread that first called the event. Use at your own risk. When in doubt, for your own UI needs, make sure to check `InvokeRequired` on WinForms, and on WPF/Avalonia, marshal things to the UI thread (unless you're using data binding in which case it's handled for you!).
 
 **Changes/Fixes**
 
@@ -87,14 +96,16 @@
   * Base language version is now 8.0 (9.0 for Avalonia), but this is only used for nullability compatibility (compile-time), so this shouldn't affect older projects (`.NET 4.6.2`, `netstandard2.0`) and is thus a non-breaking change
 * Fixed initialization issue in DownloadProgressWindow (WinForms) icon use
 * Added `JsonAppCastGenerator` to read/write app casts from/to JSON (output json with the app cast generator option `--output-type json` and then set the `AppCastGenerator` on your `SparkleUpdater` object to an instance of `JsonAppCastGenerator`)
-* Added `ChannelAppCastFilter` (implements `IAppCastFilter`) for easy way to filter your app cast items by a channel, e.g. `beta` or `alpha`. Use by setting `AppCastHelper.AppCastFilter`. Uses simple `string.Contains` invariant lowercase string check to search for channels in the `AppCastItem`'s version information.
-  * If you want to allow versions like `2.0.0-beta.1`, set `ChannelSearchNames` to `new List<string>() {"beta"}`
+* Added `ChannelAppCastFilter` (implements `IAppCastFilter`) for easy way to filter your app cast items by a channel, e.g. `beta` or `alpha`. Use by setting `AppCastHelper.AppCastFilter`. Uses simple `string.Contains` invariant lowercase string check to search for channels in the `AppCastItem`'s version and/or `Channel` information.
+  * If you want to allow versions like `2.0.0-beta.1` or channels such as `beta`, set `ChannelSearchNames` to `new List<string>() {"beta"}`
   * Set `RemoveOlderItems` to `false` if you want to keep old versions when filtering, e.g. for rolling back to an old version
   * Set `KeepItemsWithNoChannelInfo` to `false` if you want to remove all items that don't match the given channel (doing this will not let people on a beta version update to a non-beta version!)
 * `AppCast? SparkleUpdater.AppCastCache` holds the most recently deserialized app cast information.
-* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your `<Version>` property. In the app cast generator, use the `--channel` option to set this (note that using this will set ALL items added to the app cast to that specific channel; to add only new items to your app cast instead of rewriting the whole thing, use the `--reparse-existing` option).
+* `AppCastItem` has a new `Channel` property. Use it along with `ChannelAppCastFilter` if you want to use channels that way instead of via your csproj `<Version>` property. In the app cast generator, use the `--channel` option to set this (note that using this will set ALL items added to the app cast to that specific channel; to add only new items to your app cast instead of rewriting the whole thing, use the `--reparse-existing` option).
 * App cast generator has a new `--use-ed25519-signature-attribute` to use `edSignature` in its XML output instead of `signature` (json output unaffected) to match the original Sparkle library
 * Added `UpdateDetectedAsync` -- prioritized over `UpdateDetected` if both `UpdateDetectedAsync` and `UpdateDetected` are implemented.
+* Fixed calling `CheckForUpdatesAtUserRequest` not showing UI if `UpdateDetected`/`UpdateDetectedAsync` is implemented and the next action is to show the user interface
+* `ReleaseNotesGrabber.DownloadReleaseNotes` catches all exceptions instead of just `WebException`
 
 ## Updating from 0.X or 1.X to 2.X
 
