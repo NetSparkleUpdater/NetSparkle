@@ -1961,7 +1961,10 @@ namespace NetSparkleUpdater
                             // check if update is required
                             if (_cancelToken.IsCancellationRequested || !goIntoLoop)
                             {
-                                LogWriter?.PrintMessage("Cancellation token had cancellation requested and/or goIntoLoop was false");
+                                LogWriter?.PrintMessage("Cancellation token had cancellation requested " +
+                                    "and/or goIntoLoop was false (will happen first time you start the app); stopping loop");
+                                LogWriter?.PrintMessage("_cancelToken.IsCancellationRequested = {0}; goIntoLoop = {1}",
+                                    _cancelToken.IsCancellationRequested, goIntoLoop);
                                 break;
                             }
                             LogWriter?.PrintMessage("In worker thread loop, getting update status...");
