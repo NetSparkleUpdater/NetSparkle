@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NetSparkleUpdater.UI.Avalonia.Helpers
 {
