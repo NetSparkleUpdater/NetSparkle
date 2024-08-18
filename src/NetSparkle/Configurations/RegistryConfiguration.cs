@@ -224,7 +224,10 @@ namespace NetSparkleUpdater.Configurations
             key.SetValue("SkipThisVersion", LastVersionSkipped ?? "", RegistryValueKind.String);
             key.SetValue("DidRunOnce", DidRunOnce.ToString(), RegistryValueKind.String);
             key.SetValue("LastProfileUpdate", ConvertDateToString(LastConfigUpdate), RegistryValueKind.String);
-            key.SetValue("PreviousVersionRun", InstalledVersion, RegistryValueKind.String);
+            if (InstalledVersion != null)
+            {
+                key.SetValue("PreviousVersionRun", InstalledVersion, RegistryValueKind.String);
+            }
 
             return true;
         }
