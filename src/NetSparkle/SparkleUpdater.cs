@@ -756,7 +756,7 @@ namespace NetSparkleUpdater
             // check if the version will be the same then the installed version
             if (updates.Count == 0)
             {
-                LogWriter?.PrintMessage("Installed version is latest, no update needed ({0})", config.InstalledVersion);
+                LogWriter?.PrintMessage("Installed version is latest, no update needed ({0})", config.InstalledVersion ?? "[no installed version]");
                 return new UpdateInfo(UpdateStatus.UpdateNotAvailable, updates);
             }
             LogWriter?.PrintMessage("Latest version on the server is {0}", updates[0].Version ?? "[Unknown]");
@@ -1789,7 +1789,8 @@ namespace NetSparkleUpdater
             if (_latestDownloadedUpdateInfo.Status == UpdateStatus.UpdateAvailable)
             {
                 // there's an update available!
-                LogWriter?.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version ?? "[unknown version]");
+                LogWriter?.PrintMessage("Update needed from version {0} to version {1}", 
+                    config.InstalledVersion ?? "[no installed version]", updates[0].Version ?? "[unknown version]");
 
                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs(
                     NextUpdateAction.ShowStandardUserInterface,
@@ -1979,7 +1980,8 @@ namespace NetSparkleUpdater
                             {
                                 List<AppCastItem> updates = _latestDownloadedUpdateInfo.Updates;
                                 // show the update window
-                                LogWriter?.PrintMessage("Update needed from version {0} to version {1}", config.InstalledVersion, updates[0].Version ?? "[Unknown version]");
+                                LogWriter?.PrintMessage("Update needed from version {0} to version {1}", 
+                                    config.InstalledVersion ?? "[no installed version]", updates[0].Version ?? "[Unknown version]");
 
                                 // send notification if needed
                                 UpdateDetectedEventArgs ev = new UpdateDetectedEventArgs(

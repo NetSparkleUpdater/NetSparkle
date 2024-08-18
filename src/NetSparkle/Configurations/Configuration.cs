@@ -26,7 +26,7 @@ namespace NetSparkleUpdater.Configurations
         /// <summary>
         /// The currently-installed version, e.g. "1.4.3"
         /// </summary>
-        public string InstalledVersion { get; protected set; }
+        public string? InstalledVersion { get; protected set; }
         /// <summary>
         /// Flag to indicate if we should check for updates
         /// </summary>
