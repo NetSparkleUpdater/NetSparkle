@@ -4,12 +4,12 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
-    <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
+    <Product>NetSparkleUpdater.UI.WinForms</Product>
     <Copyright>Copyright © 2024</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WinForms\</OutputPath>
-    <PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>
+    <!--<PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>-->
     <Version>3.0.0-preview20240716002</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
@@ -84,15 +84,23 @@
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+		<LangVersion>8.0</LangVersion>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	</PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows'">
-	  <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows'">
-	  <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
   </ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-		<PackageReference Include="System.Drawing.Common" Version="8.0.7" />
-	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+	<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
