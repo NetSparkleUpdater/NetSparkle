@@ -77,7 +77,7 @@ namespace NetSparkleUpdater.UI.WinForms
                 _sparkle.LogWriter?.PrintMessage("Error in browser init: {0}", ex.Message);
             }
 
-            AppCastItem item = items.FirstOrDefault();
+            AppCastItem? item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? appNameTitle : "the application");
@@ -192,11 +192,14 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         void IUpdateAvailable.Show()
         {
-            Show();
-            //if (!IsOnMainThread)
-            //{
-            //    Application.Run(this);
-            //}
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => Show()));
+            }
+            else
+            {
+                Show();
+            }
         }
 
         void IUpdateAvailable.BringToFront()
@@ -262,7 +265,7 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         /// <param name="sender">not used.</param>
         /// <param name="e">not used.</param>
-        private void OnSkipButtonClick(object? sender, EventArgs e)
+        private void OnSkipButtonClick(object sender, EventArgs e)
         {
             // set the dialog result to no
             DialogResult = DialogResult.No;
@@ -312,7 +315,7 @@ namespace NetSparkleUpdater.UI.WinForms
             _ensureDialogShownTimer.Start();
         }
 
-        private void EnsureDialogeShown_tick(object sender, EventArgs e)
+        private void EnsureDialogeShown_tick(object? sender, EventArgs e)
         {
             // http://stackoverflow.com/a/4831839/3938401 for activating/bringing to front code
             Activate();

@@ -20,15 +20,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tests", "src\Net
 		{74635A21-2BAD-4522-AB95-E3E5703CD301} = {74635A21-2BAD-4522-AB95-E3E5703CD301}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WinForms.NetCore", "src\NetSparkle.UI.WinForms.NetCore\NetSparkle.UI.WinForms.NetCore.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WinForms", "src\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.csproj", "{45F5AADB-A39B-446F-8025-71647238BB89}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WPF", "src\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj", "{6915843C-7947-4268-B569-6F5684651DF4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.NetCore.WPF", "src\NetSparkle.Samples.NetCore.WPF\NetSparkle.Samples.NetCore.WPF.csproj", "{4DD4076B-C086-4A11-B850-898CC9991D90}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.NetCore.WinForms", "src\NetSparkle.Samples.NetCore.WinForms\NetSparkle.Samples.NetCore.WinForms.csproj", "{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.WinForms.NetFramework", "src\NetSparkle.UI.WinForms.NetFramework\NetSparkle.UI.WinForms.NetFramework.csproj", "{DAB16394-9862-49C3-818B-6B84F22EF5FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.UI.Avalonia", "src\NetSparkle.UI.Avalonia\NetSparkle.UI.Avalonia.csproj", "{A50C27FA-CE8E-4253-BC1E-4B60053B0B7E}"
 EndProject
@@ -43,7 +41,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EF1CB9-F6D1-4D71-87C2-F2E80DD53968}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec = nuget\winformsnetframework\NetSparkleUpdater.UI.WinForms.NetFramework.nuspec
 		.github\workflows\publish-nuget.yml = .github\workflows\publish-nuget.yml
 		README.md = README.md
 	EndProjectSection
@@ -52,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Avalonia
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Tests.Trimming", "src\NetSparkle.Tests.Trimming\NetSparkle.Tests.Trimming.csproj", "{7AE76C89-60B5-4F0E-A774-6E52F53B59D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSparkle.Samples.Forms.Multithread", "src\NetSparkle.Samples.Forms.Multithread\NetSparkle.Samples.Forms.Multithread.csproj", "{7952F006-5B13-45CF-93A8-46A0A470575F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetSparkle.Samples.Forms.Multithread", "src\NetSparkle.Samples.Forms.Multithread\NetSparkle.Samples.Forms.Multithread.csproj", "{7952F006-5B13-45CF-93A8-46A0A470575F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -280,26 +277,6 @@ Global
 		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x64.Build.0 = Release|Any CPU
 		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x86.ActiveCfg = Release|Any CPU
 		{0088BDC7-D50B-4AD4-8EE6-D2B7DA150778}.Release|x86.Build.0 = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|ARM.Build.0 = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|x64.Build.0 = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Debug|x86.Build.0 = Debug|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|ARM.ActiveCfg = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|ARM.Build.0 = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|x64.ActiveCfg = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|x64.Build.0 = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|x86.ActiveCfg = Release|Any CPU
-		{DAB16394-9862-49C3-818B-6B84F22EF5FE}.Release|x86.Build.0 = Release|Any CPU
 		{A50C27FA-CE8E-4253-BC1E-4B60053B0B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A50C27FA-CE8E-4253-BC1E-4B60053B0B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A50C27FA-CE8E-4253-BC1E-4B60053B0B7E}.Debug|ARM.ActiveCfg = Debug|Any CPU

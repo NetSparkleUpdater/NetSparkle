@@ -4,16 +4,16 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
-    <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
+    <Product>NetSparkleUpdater.UI.WinForms</Product>
     <Copyright>Copyright © 2024</Copyright>
     <OutputPath>..\bin\$(Configuration)\NetSparkle.UI.WinForms\</OutputPath>
-    <PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>
+    <!--<PackageId>NetSparkleUpdater.UI.WinForms.NetCore</PackageId>-->
     <Version>3.0.0-preview20240716002</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
-    <Description>NetSparkleUpdater/NetSparkle app updater framework with built-in WinForms .NET Core UI. NetSparkleUpdater/NetSparkle is a C# .NET software update framework that allows you to easily download installer files and update your C# .NET Framework or .NET Core software. Built-in UIs are available for WinForms, WPF, and Avalonia. You provide, somewhere on the internet, an XML appcast with software version information along with release notes in Markdown or HTML format. The NetSparkle framework then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The framework can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</Description>
+    <Description>NetSparkleUpdater/NetSparkle app updater framework with built-in WinForms UI. NetSparkleUpdater/NetSparkle is a C# .NET software update framework that allows you to easily download installer files and update your C# .NET Framework or .NET Core software. Built-in UIs are available for WinForms, WPF, and Avalonia. You provide, somewhere on the internet, an app cast with software version information along with release notes in Markdown or HTML format. The NetSparkle framework then checks for an update in the background, displays the release notes to the user, and lets users download or skip the software update. The framework can also perform silent downloads so that you can present all of the UI yourself or set up your own silent software update system, as allowed by your software architecture. It was inspired by the Sparkle (https://sparkle-project.org/) project for Cocoa developers and the WinSparkle (https://winsparkle.org/) project (a Win32 port).</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
@@ -84,15 +84,25 @@
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+	  <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+  </ItemGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+		<LangVersion>8.0</LangVersion>
+		<!--<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>-->
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+	</PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows'">
-	  <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows'">
-	  <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+	  <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
   </ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-		<PackageReference Include="System.Drawing.Common" Version="8.0.7" />
-	</ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+	<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

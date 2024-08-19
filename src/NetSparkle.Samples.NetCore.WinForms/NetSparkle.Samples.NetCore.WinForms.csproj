@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetSparkle.UI.WinForms.NetCore\NetSparkle.UI.WinForms.NetCore.csproj" />
+    <ProjectReference Include="..\NetSparkle.UI.WinForms\NetSparkle.UI.WinForms.csproj" />
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
 
