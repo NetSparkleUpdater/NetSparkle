@@ -107,7 +107,8 @@ namespace NetSparkleUpdater.UI.WPF
         public WindowHandler? ProcessWindowAfterInit { get; set; }
 
         /// <inheritdoc/>
-        public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateUpdateAvailableWindow(List<AppCastItem> updates, ISignatureVerifier? signatureVerifier, 
+            string currentVersion = "", string appName = "the application", bool isUpdateAlreadyDownloaded = false)
         {
             var viewModel = new UpdateAvailableWindowViewModel();
             var window = new UpdateAvailableWindow(viewModel)
@@ -134,20 +135,19 @@ namespace NetSparkleUpdater.UI.WPF
             {
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "", 
-                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, sparkle.AppCastCache?.Title ?? "the application", sparkle.Configuration.AssemblyAccessor.AssemblyVersion);
+            viewModel.Initialize(updates, signatureVerifier, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "", 
+                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, appName, currentVersion);
             ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
 
         /// <inheritdoc/>
-        public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
+        public virtual IDownloadProgress CreateProgressWindow(string downloadTitle, string actionButtonTitleAfterDownload)
         {
             var viewModel = new DownloadProgressWindowViewModel()
             {
-                ItemToDownload = item,
-                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate,
-                DownloadTitle = sparkle.AppCastCache?.Title ?? "application"
+                DownloadingTitle = downloadTitle,
+                ActionButtonTitle = actionButtonTitleAfterDownload
             };
             var window = new DownloadProgressWindow(viewModel)
             {
@@ -158,7 +158,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
+        public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
             var window = new CheckingForUpdatesWindow() { Icon = _applicationIcon };
             ProcessWindowAfterInit?.Invoke(window, this);
@@ -166,50 +166,44 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual void Init(SparkleUpdater sparkle)
-        {
-        }
-
-        /// <inheritdoc/>
-        public virtual void ShowUnknownInstallerFormatMessage(SparkleUpdater sparkle, string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, 
                 string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsUpToDate(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsUpToDate()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsSkippedByUserRequest(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsSkippedByUserRequest()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
         /// <inheritdoc/>
-        public virtual bool CanShowToastMessages(SparkleUpdater sparkle)
+        public virtual bool CanShowToastMessages()
         {
             return true;
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler)
+        public virtual void ShowToast(Action clickHandler)
         {
             Thread thread = new Thread(() =>
             {
                 var toast = new ToastNotification()
                 {
                     ClickAction = clickHandler,
-                    Updates = updates,
                     Icon = _applicationIcon
                 };
                 try
@@ -228,7 +222,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl)
+        public virtual void ShowDownloadErrorMessage(string message, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }
@@ -246,7 +240,7 @@ namespace NetSparkleUpdater.UI.WPF
         }
 
         /// <inheritdoc/>
-        public void Shutdown(SparkleUpdater sparkle)
+        public void Shutdown()
         {
             System.Windows.Application.Current.Shutdown();
         }

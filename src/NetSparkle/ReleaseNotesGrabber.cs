@@ -19,11 +19,9 @@ namespace NetSparkleUpdater
     public class ReleaseNotesGrabber
     {
         /// <summary>
-        /// The <see cref="SparkleUpdater"/> for this ReleaseNotesGrabber. Mostly
-        /// used for logging via <see cref="LogWriter"/>, but also can be used
-        /// to grab other information about updates, etc.
+        /// <seealso cref="ISignatureVerifier"/> to verify release note signatures if user desires. Not required.
         /// </summary>
-        protected SparkleUpdater? _sparkle;
+        protected ISignatureVerifier? _signatureVerifier;
 
         /// <summary>
         /// <seealso cref="ILogger"/> for logging any pertinent data to the console
@@ -93,8 +91,8 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="releaseNotesTemplate">Template to use for separating each item in the HTML</param>
         /// <param name="htmlHeadAddition">Any additional header information to stick in the HTML that will show up in the release notes</param>
-        /// <param name="sparkle">Sparkle updater being used (TODO: This parameter will be removed)</param>
-        public ReleaseNotesGrabber(string? releaseNotesTemplate, string? htmlHeadAddition, SparkleUpdater sparkle)
+        /// <param name="signatureVerifier"><seealso cref="ISignatureVerifier"/> to verify release note signatures if needed/desired</param>
+        public ReleaseNotesGrabber(string? releaseNotesTemplate, string? htmlHeadAddition, ISignatureVerifier? signatureVerifier)
         {
             DateFormat = "D";
             if (htmlHeadAddition == null || string.IsNullOrWhiteSpace(htmlHeadAddition))
@@ -120,7 +118,7 @@ namespace NetSparkleUpdater
 
             ReleaseNotesTemplate = releaseNotesTemplate;
             AdditionalHeaderHTML = htmlHeadAddition;
-            _sparkle = sparkle;
+            _signatureVerifier = signatureVerifier;
             ChecksReleaseNotesSignature = false;
             LoadingHTML = "<p><em>Loading release notes...</em></p>";
         }
@@ -154,7 +152,7 @@ namespace NetSparkleUpdater
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
-                                        castItem.Version,
+                                        castItem.Title,
                                         castItem.PublicationDate != DateTime.MinValue && 
                                         castItem.PublicationDate != DateTime.MaxValue
                                             ? castItem.PublicationDate.ToString(DateFormat) 
@@ -222,15 +220,14 @@ namespace NetSparkleUpdater
                 return null;
             }
 
-            // check dsa of release notes
+            // check signature of release notes
             if (!string.IsNullOrWhiteSpace(item.ReleaseNotesSignature))
             {
                 if (ChecksReleaseNotesSignature &&
-                    _sparkle != null &&
-                    _sparkle.SignatureVerifier != null &&
-                    Utilities.IsSignatureNeeded(_sparkle.SignatureVerifier.SecurityMode, 
-                        _sparkle.SignatureVerifier.HasValidKeyInformation(), false) &&
-                    _sparkle.SignatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature ?? "", notes) == ValidationResult.Invalid)
+                    _signatureVerifier != null &&
+                    Utilities.IsSignatureNeeded(_signatureVerifier.SecurityMode,
+                        _signatureVerifier.HasValidKeyInformation(), false) &&
+                    _signatureVerifier.VerifySignatureOfString(item.ReleaseNotesSignature ?? "", notes) == ValidationResult.Invalid)
                 {
                     return null;
                 }

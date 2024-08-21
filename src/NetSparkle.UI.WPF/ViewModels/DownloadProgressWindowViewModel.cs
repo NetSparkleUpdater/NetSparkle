@@ -11,10 +11,9 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
     /// </summary>
     public class DownloadProgressWindowViewModel : ChangeNotifier
     {
-        private AppCastItem? _itemToDownload;
-
         private bool _isDownloading;
         private bool _didDownloadAnything;
+        private string _downloadingTitle;
 
         private string _errorMessageText;
         private bool _isErrorMessageVisible;
@@ -36,22 +35,10 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             _errorMessageText = "";
             IsErrorMessageVisible = false;
             _userReadableDownloadProgress = "";
-            _actionButtonTitle = "Install";
+            _downloadingTitle = "Downloading...";
+            _actionButtonTitle = "Cancel";
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = false;
-        }
-
-        /// <summary>
-        /// <see cref="AppCastItem"/> that is going to be downloaded.
-        /// </summary>
-        public AppCastItem? ItemToDownload
-        {
-            get => _itemToDownload;
-            set 
-            { 
-                _itemToDownload = value;
-                NotifyPropertyChanged();
-            }
         }
 
         /// <summary>
@@ -94,25 +81,12 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         }
 
         /// <summary>
-        /// Title for software download.
-        /// </summary>
-        public string? DownloadTitle { get; set; } = "";
-
-        /// <summary>
-        /// Title to show to the user (e.g. "Downloading...").
-        /// This property is automatically set when <see cref="ItemToDownload"/>
-        /// is changed
+        /// Title to show to the user (e.g. "Downloading MyApp 1.0...").
         /// </summary>
         public string DownloadingTitle
         {
-            get 
-            {
-                if (_itemToDownload != null)
-                {
-                    return string.Format("Downloading {0}", DownloadTitle + " " + _itemToDownload.Version);
-                }
-                return "Downloading...";
-            }
+            get => _downloadingTitle;
+            set { _downloadingTitle = value; NotifyPropertyChanged(); }
         }
 
         /// <summary>
@@ -154,11 +128,6 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
         }
 
         /// <summary>
-        /// Whether or not the software will relaunch after the update has been installed
-        /// </summary>
-        public bool SoftwareWillRelaunchAfterUpdateInstalled { get; set; } = false;
-
-        /// <summary>
         /// Change whether or not the <see cref="AppCastItem"/> download file has finished downloading
         /// </summary>
         /// <param name="isInstallFileValid">true if the download file has finished downloading;
@@ -172,15 +141,7 @@ namespace NetSparkleUpdater.UI.WPF.ViewModels
             {
                 UserReadableDownloadProgress = string.Format("");
             }
-            if (isInstallFileValid)
-            {
-                IsActionButtonVisible = true;
-                ActionButtonTitle = SoftwareWillRelaunchAfterUpdateInstalled ? "Install and Relaunch" : "Install";
-            }
-            else
-            {
-                IsActionButtonVisible = false;
-            }
+            IsActionButtonVisible = isInstallFileValid;
         }
 
         /// <summary>
