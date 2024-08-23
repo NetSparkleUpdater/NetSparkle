@@ -22,23 +22,12 @@ namespace NetSparkleUpdater.UI.WinForms
         private bool _didCallDownloadProcessCompletedHandler = false;
 
         /// <summary>
-        /// Whether or not the software will relaunch after the update has been installed
-        /// </summary>
-        public bool SoftwareWillRelaunchAfterUpdateInstalled
-        {
-            set
-            {
-                btnInstallAndReLaunch.Text = value ? "Install and Relaunch" : "Install";
-            }
-        }
-
-        /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="item">The appcast item to use</param>
+        /// <param name="downloadTitle">Title to show to the user (e.g. "Downloading MyApp 1.0...").</param>
+        /// <param name="actionButtonTitle">Title to show on the single action button (e.g. "Cancel")</param>
         /// <param name="applicationIcon">Your application Icon</param>
-        /// <param name="downloadTitle">Name of application that is being downloaded</param>
-        public DownloadProgressWindow(AppCastItem item, Icon? applicationIcon, string downloadTitle = "")
+        public DownloadProgressWindow(string downloadTitle, string actionButtonTitle, Icon? applicationIcon)
         {
             InitializeComponent();
 
@@ -50,8 +39,8 @@ namespace NetSparkleUpdater.UI.WinForms
 
             // init ui
             btnInstallAndReLaunch.Visible = false;
-            btnInstallAndReLaunch.Text = "Install and Relaunch";
-            lblHeader.Text = lblHeader.Text.Replace("APP", downloadTitle + " " + item.Version);
+            btnInstallAndReLaunch.Text = actionButtonTitle;
+            lblHeader.Text = downloadTitle;
             downloadProgressLbl.Text = "";
             progressDownload.Maximum = 100;
             progressDownload.Minimum = 0;

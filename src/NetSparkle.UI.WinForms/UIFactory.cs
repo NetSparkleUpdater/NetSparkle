@@ -30,6 +30,8 @@ namespace NetSparkleUpdater.UI.WinForms
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
             _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
+            // enable visual style to ensure that we have XP style or higher
+            Application.EnableVisualStyles();
         }
 
         /// <inheritdoc/>
@@ -86,10 +88,11 @@ namespace NetSparkleUpdater.UI.WinForms
         public FormHandler? ProcessFormAfterInit { get; set; }
 
         /// <inheritdoc/>
-        public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateUpdateAvailableWindow(List<AppCastItem> updates, ISignatureVerifier? signatureVerifier,
+            string currentVersion = "", string appName = "the application", bool isUpdateAlreadyDownloaded = false)
         {
-            var window = new UpdateAvailableWindow(sparkle, updates, _applicationIcon, isUpdateAlreadyDownloaded,
-                ReleaseNotesHTMLTemplate ?? "", AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat ?? "D", sparkle.AppCastCache?.Title ?? "the application", sparkle.Configuration.AssemblyAccessor.AssemblyVersion);
+            var window = new UpdateAvailableWindow(updates, signatureVerifier, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "",
+                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, appName, currentVersion, _applicationIcon);
             if (HideReleaseNotes)
             {
                 (window as IUpdateAvailable).HideReleaseNotes();
@@ -112,19 +115,17 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
+        public virtual IDownloadProgress CreateProgressWindow(string downloadTitle, string actionButtonTitleAfterDownload)
         {
-            var window = new DownloadProgressWindow(item, _applicationIcon, 
-                sparkle.AppCastCache?.Title ?? "application")
+            var window = new DownloadProgressWindow(downloadTitle, actionButtonTitleAfterDownload, _applicationIcon)
             {
-                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate
             };
             ProcessFormAfterInit?.Invoke(window, this);
             return window;
         }
 
         /// <inheritdoc/>
-        public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
+        public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
             var window = new CheckingForUpdatesWindow(_applicationIcon);
             ProcessFormAfterInit?.Invoke(window, this);
@@ -132,53 +133,44 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void Init(SparkleUpdater sparkle)
-        {
-            // enable visual style to ensure that we have XP style or higher
-            // also in WPF applications
-            Application.EnableVisualStyles();
-        }
-
-        /// <inheritdoc/>
-        public virtual void ShowUnknownInstallerFormatMessage(SparkleUpdater sparkle, string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, 
                 string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsUpToDate(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsUpToDate()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsSkippedByUserRequest(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsSkippedByUserRequest()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
         /// <inheritdoc/>
-        public virtual bool CanShowToastMessages(SparkleUpdater sparkle)
+        public virtual bool CanShowToastMessages()
         {
             return true;
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler)
+        public virtual void ShowToast(Action clickHandler)
         {
             Thread thread = new Thread(() =>
             {
                 var toast = new ToastNotifier(_applicationIcon)
                 {
                     ClickAction = clickHandler,
-                    Updates = updates
                 };
                 ProcessFormAfterInit?.Invoke(toast, this);
                 toast.Show(Resources.DefaultUIFactory_ToastMessage, Resources.DefaultUIFactory_ToastCallToAction, 5);
@@ -189,7 +181,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl)
+        public virtual void ShowDownloadErrorMessage(string message, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }
@@ -203,7 +195,7 @@ namespace NetSparkleUpdater.UI.WinForms
         }
 
         /// <inheritdoc/>
-        public void Shutdown(SparkleUpdater sparkle)
+        public void Shutdown()
         {
             Application.Exit();
         }

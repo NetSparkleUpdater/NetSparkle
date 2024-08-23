@@ -8,7 +8,6 @@ namespace NetSparkleUpdater.UI.WinForms
 {
     /// <summary>
     /// Like a notification ballon, but more reliable "toast" because it slowly goes up, then down.
-    /// Subscribe to the Click even to know if the user clicked on it.
     /// </summary>
     public partial class ToastNotifier : Form
     {
@@ -44,18 +43,13 @@ namespace NetSparkleUpdater.UI.WinForms
                 Icon = applicationIcon;
                 this.Image.Image = Icon.ToBitmap();// new Icon(applicationIcon, new Size(48, 48)).ToBitmap();
             }
+            ClickAction = () => { };
         }
 
         /// <summary>
         /// Action to perform when the user clicks on the toast window
         /// </summary>
-        public Action<List<AppCastItem>>? ClickAction { get; set; }
-
-        /// <summary>
-        /// List of <seealso cref="AppCastItem"/> updates that the user is being
-        /// notified about in the toast message
-        /// </summary>
-        public List<AppCastItem>? Updates { get; set; }
+        public Action ClickAction { get; set; }
 
         private void PauseTimerTick(object? sender, EventArgs e)
         {
@@ -112,7 +106,7 @@ namespace NetSparkleUpdater.UI.WinForms
         private void ToastNotifier_Click(object? sender, EventArgs? e)
         {
             DialogResult = DialogResult.Yes;
-            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
+            ClickAction.Invoke();
             Close();
         }
 

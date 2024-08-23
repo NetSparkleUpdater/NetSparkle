@@ -16,7 +16,6 @@ namespace NetSparkleUpdater.UI.WinForms
     /// </summary>
     public partial class UpdateAvailableWindow : Form, IUpdateAvailable
     {
-        private readonly SparkleUpdater _sparkle;
         private readonly List<AppCastItem> _updates;
         private System.Windows.Forms.Timer? _ensureDialogShownTimer;
         private string _releaseNotesHTMLTemplate;
@@ -43,30 +42,33 @@ namespace NetSparkleUpdater.UI.WinForms
         /// </summary>
         public ReleaseNotesGrabber? ReleaseNotesGrabber { get; set; }
 
+        private ISignatureVerifier? _signatureVerifier;
+
         /// <summary>
         /// Form constructor for showing release notes.
         /// </summary>
-        /// <param name="sparkle">The <see cref="SparkleUpdater"/> instance to use</param>
-        /// <param name="items">List of updates to show. Should contain at least one item.</param>
-        /// <param name="applicationIcon">The icon to display</param>
-        /// <param name="isUpdateAlreadyDownloaded">If true, make sure UI text shows that the user is about to install the file instead of download it.</param>
-        /// <param name="releaseNotesHTMLTemplate">HTML template for every single note. Use {0} = Version. {1} = Date. {2} = Note Body</param>
-        /// <param name="additionalReleaseNotesHeaderHTML">Additional text they will inserted into HTML Head. For Stylesheets.</param>
+        /// <param name="signatureVerifier">The <seealso cref="ISignatureVerifier"/> for verifying release note signatures</param>
+        /// <param name="items">The list of <seealso cref="AppCastItem"/> updates that are available for the user</param>
+        /// <param name="isUpdateAlreadyDownloaded">Whether or not the update is already downloaded ot the user's computer</param>
+        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show for the release notes</param>
+        /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
         /// <param name="releaseNotesDateFormat">Date format for release notes</param>
         /// <param name="appNameTitle">Title for application</param>
         /// <param name="installedVersion">Currently installed version of application</param>
-        public UpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> items, Icon? applicationIcon = null, bool isUpdateAlreadyDownloaded = false, 
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D", string appNameTitle = "the application", string installedVersion = "")
+        /// <param name="applicationIcon">The icon to display</param>
+        public UpdateAvailableWindow(List<AppCastItem> items, ISignatureVerifier? signatureVerifier, bool isUpdateAlreadyDownloaded = false,
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D",
+            string appNameTitle = "the application", string installedVersion = "", Icon? applicationIcon = null)
         {
-            _sparkle = sparkle;
             _updates = items;
             _releaseNotesHTMLTemplate = releaseNotesHTMLTemplate;
             _additionalReleaseNotesHeaderHTML = additionalReleaseNotesHeaderHTML;
             _releaseNotesDateFormat = releaseNotesDateFormat;
+            _signatureVerifier = signatureVerifier;
 
             InitializeComponent();
 
-            // init ui 
+            var didError = false; // while loading release notes browser; if we have an error, make sure user sees it so dev can fix whatever happened
             try
             {
                 ReleaseNotesBrowser.AllowWebBrowserDrop = false;
@@ -74,21 +76,26 @@ namespace NetSparkleUpdater.UI.WinForms
             }
             catch (Exception ex)
             {
-                _sparkle.LogWriter?.PrintMessage("Error in browser init: {0}", ex.Message);
+                lblInfoText.Text = string.Format("Error in browser init: {0}", ex.Message);
+                didError = true;
             }
 
             AppCastItem? item = items.FirstOrDefault();
 
             var downloadInstallText = isUpdateAlreadyDownloaded ? "install" : "download";
             lblHeader.Text = lblHeader.Text.Replace("APP", item != null ? appNameTitle : "the application");
-            if (item != null)
+            if (!didError)
             {
-                lblInfoText.Text = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", appNameTitle, item.Version, installedVersion, downloadInstallText);
-            }
-            else
-            {
-                // TODO: string translations (even though I guess this window should never be called with 0 app cast items...)
-                lblInfoText.Text = string.Format("Would you like to {0} it now?", downloadInstallText);
+                if (item != null)
+                {
+                    lblInfoText.Text = string.Format("{0} {1} is now available (you have {2}). Would you like to {3} it now?", 
+                        appNameTitle, item.Version, installedVersion, downloadInstallText);
+                }
+                else
+                {
+                    // TODO: string translations (even though I guess this window should never be called with 0 app cast items...)
+                    lblInfoText.Text = string.Format("Would you like to {0} it now?", downloadInstallText);
+                }
             }
 
             bool isUserMissingCriticalUpdate = items.Any(x => x.IsCriticalUpdate);
@@ -120,7 +127,7 @@ namespace NetSparkleUpdater.UI.WinForms
         {
             if (ReleaseNotesGrabber == null)
             {
-                ReleaseNotesGrabber = new ReleaseNotesGrabber(_releaseNotesHTMLTemplate, _additionalReleaseNotesHeaderHTML, _sparkle)
+                ReleaseNotesGrabber = new ReleaseNotesGrabber(_releaseNotesHTMLTemplate, _additionalReleaseNotesHeaderHTML, _signatureVerifier)
                 {
                     DateFormat = _releaseNotesDateFormat
                 };
