@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetSparkleUpdater.UI.Avalonia.Helpers;
-using NetSparkleUpdater.UI.Avalonia.Interfaces;
+﻿using NetSparkleUpdater.UI.Avalonia.Helpers;
 
 namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
@@ -15,8 +11,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
     /// </summary>
     public class DownloadProgressWindowViewModel : ChangeNotifier
     {
-        private AppCastItem? _itemToDownload;
-
         private bool _isDownloading;
         private bool _didDownloadAnything;
         private string _downloadingTitle;
@@ -46,11 +40,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = false;
         }
-
-        /// <summary>
-        /// Title for software download.
-        /// </summary>
-        public string? DownloadTitle { get; set; } = "";
 
         /// <summary>
         /// Whether or not the app update is downloading right now or not

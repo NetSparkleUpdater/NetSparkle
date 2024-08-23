@@ -1,5 +1,4 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
-using NetSparkleUpdater.Enums;
+﻿using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.UI.WPF.Interfaces;
 using NetSparkleUpdater.UI.WPF.Helpers;
 using System.Collections.Generic;
