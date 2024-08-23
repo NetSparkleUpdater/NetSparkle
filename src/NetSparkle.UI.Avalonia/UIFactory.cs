@@ -27,17 +27,26 @@ namespace NetSparkleUpdater.UI.Avalonia
 
         private Bitmap? _iconBitmap;
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Create a new UIFactory for Avalonia applications
+        /// </summary>
         public UIFactory()
         {
             HideReleaseNotes = false;
             HideRemindMeLaterButton = false;
             HideSkipButton = false;
+            ReleaseNotesHTMLTemplate = "";
+            AdditionalReleaseNotesHeaderHTML = "";
             UseStaticUpdateWindowBackgroundColor = false;
             UpdateWindowGridBackgroundBrush = (IBrush)(new BrushConverter().ConvertFrom("#EEEEEE") ?? new SolidColorBrush(Colors.Transparent));
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Create a new UIFactory for Avalonia applications
+        /// </summary>
+        /// <param name="applicationIcon">Icon to show in various windows</param>
+        /// <param name="releaseNotesSeparatorTemplate">HTML template to put between release notes for different versions. Defaults to "".</param>
+        /// <param name="releaseNotesHeadAddition">Additional HTML to add to the head element of the release notes html</param>
         public UIFactory(WindowIcon applicationIcon, string releaseNotesSeparatorTemplate = "", string releaseNotesHeadAddition = "") : this()
         {
             _applicationIcon = applicationIcon;
@@ -117,7 +126,8 @@ namespace NetSparkleUpdater.UI.Avalonia
         public WindowHandler? ProcessWindowAfterInit { get; set; }
 
         /// <inheritdoc/>
-        public virtual IUpdateAvailable CreateUpdateAvailableWindow(SparkleUpdater sparkle, List<AppCastItem> updates, bool isUpdateAlreadyDownloaded = false)
+        public virtual IUpdateAvailable CreateUpdateAvailableWindow(List<AppCastItem> updates, ISignatureVerifier? signatureVerifier,
+            string currentVersion = "", string appName = "the application", bool isUpdateAlreadyDownloaded = false)
         {
             var viewModel = new UpdateAvailableWindowViewModel();
             var window = new UpdateAvailableWindow(viewModel, _iconBitmap)
@@ -144,19 +154,19 @@ namespace NetSparkleUpdater.UI.Avalonia
             {
                 viewModel.ReleaseNotesGrabber = ReleaseNotesGrabberOverride;
             }
-            viewModel.Initialize(sparkle, updates, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "", AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, sparkle.AppCastCache?.Title ?? "the application", sparkle.Configuration.AssemblyAccessor.AssemblyVersion);
+            viewModel.Initialize(updates, signatureVerifier, isUpdateAlreadyDownloaded, ReleaseNotesHTMLTemplate ?? "",
+                AdditionalReleaseNotesHeaderHTML ?? "", ReleaseNotesDateTimeFormat, appName, currentVersion);
             ProcessWindowAfterInit?.Invoke(window, this);
             return window;
         }
 
         /// <inheritdoc/>
-        public virtual IDownloadProgress CreateProgressWindow(SparkleUpdater sparkle, AppCastItem item)
+        public virtual IDownloadProgress CreateProgressWindow(string downloadTitle, string actionButtonTitleAfterDownload)
         {
             var viewModel = new DownloadProgressWindowViewModel()
             {
-                ItemToDownload = item,
-                SoftwareWillRelaunchAfterUpdateInstalled = sparkle.RelaunchAfterUpdate,
-                DownloadTitle = sparkle.AppCastCache?.Title ?? "application"
+                DownloadingTitle = downloadTitle,
+                ActionButtonTitle = actionButtonTitleAfterDownload
             };
             var window = new DownloadProgressWindow(viewModel, _iconBitmap)
             {
@@ -167,7 +177,7 @@ namespace NetSparkleUpdater.UI.Avalonia
         }
 
         /// <inheritdoc/>
-        public virtual ICheckingForUpdates ShowCheckingForUpdates(SparkleUpdater sparkle)
+        public virtual ICheckingForUpdates ShowCheckingForUpdates()
         {
             var window = new CheckingForUpdatesWindow(_iconBitmap)
             { 
@@ -178,48 +188,43 @@ namespace NetSparkleUpdater.UI.Avalonia
         }
 
         /// <inheritdoc/>
-        public virtual void Init(SparkleUpdater sparkle)
-        {
-        }
-
-        /// <inheritdoc/>
-        public virtual void ShowUnknownInstallerFormatMessage(SparkleUpdater sparkle, string downloadFileName)
+        public virtual void ShowUnknownInstallerFormatMessage(string downloadFileName)
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle,
                 string.Format(Resources.DefaultUIFactory_ShowUnknownInstallerFormatMessageText, downloadFileName));
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsUpToDate(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsUpToDate()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsUpToDateMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowVersionIsSkippedByUserRequest(SparkleUpdater sparkle)
+        public virtual void ShowVersionIsSkippedByUserRequest()
         {
             ShowMessage(Resources.DefaultUIFactory_MessageTitle, Resources.DefaultUIFactory_ShowVersionIsSkippedByUserRequestMessage);
         }
 
         /// <inheritdoc/>
-        public virtual void ShowCannotDownloadAppcast(SparkleUpdater sparkle, string? appcastUrl)
+        public virtual void ShowCannotDownloadAppcast(string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, Resources.DefaultUIFactory_ShowCannotDownloadAppcastMessage);
         }
 
         /// <inheritdoc/>
-        public virtual bool CanShowToastMessages(SparkleUpdater sparkle)
+        public virtual bool CanShowToastMessages()
         {
             return false;
         }
 
         /// <inheritdoc/>
-        public virtual void ShowToast(SparkleUpdater sparkle, List<AppCastItem> updates, Action<List<AppCastItem>>? clickHandler)
+        public virtual void ShowToast(Action clickHandler)
         {
         }
 
         /// <inheritdoc/>
-        public virtual void ShowDownloadErrorMessage(SparkleUpdater sparkle, string message, string? appcastUrl)
+        public virtual void ShowDownloadErrorMessage(string message, string? appcastUrl)
         {
             ShowMessage(Resources.DefaultUIFactory_ErrorTitle, string.Format(Resources.DefaultUIFactory_ShowDownloadErrorMessage, message));
         }
@@ -233,11 +238,11 @@ namespace NetSparkleUpdater.UI.Avalonia
             };
             messageWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ProcessWindowAfterInit?.Invoke(messageWindow, this);
-            messageWindow.Show(); // TODO: This was ShowDialog; will this break anything?
+            messageWindow.Show();
         }
 
         /// <inheritdoc/>
-        public void Shutdown(SparkleUpdater sparkle)
+        public void Shutdown()
         {
             (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
         }
