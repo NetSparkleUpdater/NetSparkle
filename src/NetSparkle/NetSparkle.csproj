@@ -15,7 +15,7 @@
     <Product>NetSparkleUpdater.SparkleUpdater</Product>
     <PackageIcon>software-update-available.png</PackageIcon>
     <PackageIconUrl />
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <RootNamespace>NetSparkleUpdater</RootNamespace>
@@ -108,7 +108,6 @@
     <None Remove="nuget\**" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	<None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
 	<None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\"/>

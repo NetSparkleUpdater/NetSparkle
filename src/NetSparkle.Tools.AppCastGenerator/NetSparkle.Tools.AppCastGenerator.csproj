@@ -29,8 +29,6 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>netsparkle-generate-appcast</ToolCommandName>
     <Nullable>enable</Nullable>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -55,7 +53,8 @@
     <PackageId>NetSparkleUpdater.Tools.AppCastGenerator</PackageId>
     <Version>2.7.0</Version>
     <Authors>Deadpikle</Authors>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/NetSparkleUpdater/NetSparkle</PackageProjectUrl>
     <PackageIcon>software-update-available.png</PackageIcon>
     <RepositoryUrl>https://github.com/NetSparkleUpdater/NetSparkle.git</RepositoryUrl>
@@ -78,7 +77,6 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="..\..\LICENSE.md" Pack="true" PackagePath="\" />
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	<None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
     <None Include="..\NetSparkle\ArtWork\software-update-available.png">
