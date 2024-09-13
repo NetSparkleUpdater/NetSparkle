@@ -38,7 +38,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _downloadingTitle = "Downloading...";
             _actionButtonTitle = "Cancel";
             _downloadProgressValue = 0.0;
-            IsActionButtonVisible = false;
+            IsActionButtonVisible = true;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         public bool IsDownloading
         {
             get => _isDownloading;
-            set { _isDownloading = value; NotifyPropertyChanged(); }
+            set { _isDownloading = value; NotifyPropertyChanged(); NotifyPropertyChanged(nameof(ActionButtonTitle)); }
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// </summary>
         public string ActionButtonTitle
         {
-            get => _actionButtonTitle;
+            get => _isDownloading ? "Cancel" : _actionButtonTitle;
             set { _actionButtonTitle = value; NotifyPropertyChanged(); }
         }
 
