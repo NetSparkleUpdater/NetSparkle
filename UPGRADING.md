@@ -76,6 +76,8 @@
   * `UIFactory` changes:
     * No more `Init` method. Use your constructor and/or your own methods if you need this.
     * Most method signatures have changed and have moved in the direction of only taking what is actually needed. Notably, no methods take a `SparkleUpdater` instance, now.
+    * Basically, if you were using your own `IUIFactory` implementation, you probably need to take a look at the new interface and/or the samples to see how things are done now. Things are simpler, now, in the long run.
+  * Release notes window now uses `AppCastItem.Title` for each item's title instead of just the `Version`
 
 ### Changes/Fixes from 2.x
 
