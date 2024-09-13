@@ -118,6 +118,7 @@
 * `ReleaseNotesGrabber.DownloadReleaseNotes` catches all exceptions instead of just `WebException`
 * WinForms projects are now in the same project/run the same overall code.
 * `NetSparkle.UI.WinForms.NetFramework` now includes `System.Resources.Extensions`
+* Fixed WPF and Avalonia download progress windows not turning red on signature validation failure
 
 ## Updating from 0.X or 1.X to 2.X
 

@@ -87,13 +87,6 @@ namespace NetSparkleUpdater.UI.Avalonia
         void IDownloadProgress.FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             _dataContext?.SetFinishedDownloading(isDownloadedFileValid);
-            if (!isDownloadedFileValid)
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    this.Background = new SolidColorBrush(Colors.Tomato);
-                });
-            }
         }
 
         void IDownloadProgress.Close()
@@ -133,7 +126,10 @@ namespace NetSparkleUpdater.UI.Avalonia
         public void ActionButton_Click()
         {
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(!(_dataContext?.IsDownloading ?? true)));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(
+                (_dataContext?.DidDownloadFail ?? false)
+                ? false 
+                : !(_dataContext?.IsDownloading ?? true)));
         }
     }
 }

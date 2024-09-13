@@ -1,4 +1,5 @@
-﻿using NetSparkleUpdater.UI.Avalonia.Helpers;
+﻿using Avalonia.Media;
+using NetSparkleUpdater.UI.Avalonia.Helpers;
 
 namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
@@ -13,6 +14,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
     {
         private bool _isDownloading;
         private bool _didDownloadAnything;
+        private bool _didDownloadFail;
         private string _downloadingTitle;
 
         private string _errorMessageText;
@@ -24,6 +26,8 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         private string _actionButtonTitle;
         private bool _isActionButtonVisible;
 
+        private Brush _background;
+
         /// <summary>
         /// Default constructor for the view model that sets
         /// everything up for use
@@ -32,6 +36,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             IsDownloading = true;
             DidDownloadAnything = false;
+            _didDownloadFail = false;
             _errorMessageText = "";
             IsErrorMessageVisible = false;
             _userReadableDownloadProgress = "";
@@ -39,6 +44,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _actionButtonTitle = "Cancel";
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = true;
+            _background = new SolidColorBrush(Colors.Transparent);
         }
 
         /// <summary>
@@ -58,6 +64,14 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             get => _didDownloadAnything;
             set { _didDownloadAnything = value; NotifyPropertyChanged(); }
+        }
+
+        /// <summary>
+        /// Whether or not the download failed (e.g. due to signature validation)
+        /// </summary>
+        public bool DidDownloadFail
+        {
+            get => _didDownloadFail;
         }
 
         /// <summary>
@@ -114,7 +128,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// </summary>
         public string ActionButtonTitle
         {
-            get => _isDownloading ? "Cancel" : _actionButtonTitle;
+            get => _isDownloading || _didDownloadFail ? "Cancel" : _actionButtonTitle;
             set { _actionButtonTitle = value; NotifyPropertyChanged(); }
         }
 
@@ -125,6 +139,15 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         {
             get => _isActionButtonVisible;
             set { _isActionButtonVisible = value; NotifyPropertyChanged(); }
+        }
+
+        /// <summary>
+        /// Background color of download window
+        /// </summary>
+        public Brush BackgroundColor
+        {
+            get => _background;
+            set { _background = value; NotifyPropertyChanged(); }
         }
 
         /// <summary>
@@ -142,6 +165,12 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 UserReadableDownloadProgress = string.Format("");
             }
             IsActionButtonVisible = isInstallFileValid;
+            if (!isInstallFileValid)
+            {
+                BackgroundColor = new SolidColorBrush(Colors.Tomato);
+                _didDownloadFail = true;
+                NotifyPropertyChanged(nameof(ActionButtonTitle));
+            }
         }
 
         /// <summary>
