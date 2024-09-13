@@ -21,8 +21,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// Load the assembly with a given assembly name's attributes. All pertinent attributes
         /// that are needed are read during object construction.
         /// </summary>
-        /// <param name="assemblyName">the assembly name. 
-        /// If null is passed, <seealso cref="Assembly.GetEntryAssembly"/> is used to get info on the assembly.</param>
+        /// <param name="assemblyName">The path to the assembly to read</param>
         /// <exception cref="BadImageFormatException">Thrown when the assembly cannot be read</exception>
         /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the assembly doesn't have any readable attributes</exception>
