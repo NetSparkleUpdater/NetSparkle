@@ -121,6 +121,7 @@
 * WinForms projects are now in the same project/run the same overall code.
 * `NetSparkle.UI.WinForms.NetFramework` now includes `System.Resources.Extensions`
 * Fixed WPF and Avalonia download progress windows not turning red on signature validation failure
+* `AppCastItem` operating system checks now use `.Contains` rather than `==`, allowing for OS strings like `macOS-arm64` rather than just `macOS`
 
 ## Updating from 0.X or 1.X to 2.X
 
