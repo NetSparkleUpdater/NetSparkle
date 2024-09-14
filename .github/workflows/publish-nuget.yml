@@ -157,29 +157,17 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
           INCLUDE_SYMBOLS: true
 
-      - name: Publish NetSparkleUpdater.UI.WinForms (NetCore) on version change
-        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
-        with:
-          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj # Relative to repository root
-          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
-          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
-          TAG_COMMIT: false # Flag to enable / disalge git tagging
-          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
-          PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
-          INCLUDE_SYMBOLS: true
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
+        run: |
+          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
+          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetCore --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ./WinFormsNetCore
+          dotnet nuget push ./WinFormsNetCore/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
 
       - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework on version change
-        uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
-        with:
-          PROJECT_FILE_PATH: ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj # Relative to repository root
-          # VERSION_FILE_PATH: Directory.Build.props # Filepath with version info, relative to repository root. Defaults to project file
-          # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
-          TAG_COMMIT: false # Flag to enable / disalge git tagging
-          # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
-          PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetFramework
-          INCLUDE_SYMBOLS: true
+        run: |
+          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
+          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetFramework --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ./WinFormsNetFramework
+          dotnet nuget push ./WinFormsNetFramework/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
