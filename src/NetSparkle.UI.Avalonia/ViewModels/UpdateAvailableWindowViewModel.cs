@@ -1,11 +1,11 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
-using NetSparkleUpdater.Enums;
+﻿using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.UI.Avalonia.Helpers;
 using NetSparkleUpdater.UI.Avalonia.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
+using NetSparkleUpdater.Interfaces;
 
 namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
@@ -223,16 +223,17 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// Initialize this view model with its necessary items so that it can display things
         /// to the user properly
         /// </summary>
-        /// <param name="sparkle">The <seealso cref="SparkleUpdater"/> item that is currently checking for updates</param>
+        /// <param name="signatureVerifier">The <seealso cref="ISignatureVerifier"/> for verifying release note signatures</param>
         /// <param name="items">The list of <seealso cref="AppCastItem"/> updates that are available for the user</param>
         /// <param name="isUpdateAlreadyDownloaded">Whether or not the update is already downloaded ot the user's computer</param>
-        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show in the release notes</param>
+        /// <param name="releaseNotesHTMLTemplate">The HTML string template to show for the release notes</param>
         /// <param name="additionalReleaseNotesHeaderHTML">The HTML string to add into the head element of the HTML for the release notes</param>
         /// <param name="releaseNotesDateFormat">Date format for release notes</param>
         /// <param name="appNameTitle">Title for application</param>
         /// <param name="installedVersion">Currently installed version of application</param>
-        public void Initialize(SparkleUpdater sparkle, List<AppCastItem> items, bool isUpdateAlreadyDownloaded = false,
-            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D", string appNameTitle = "the application", string installedVersion = "")
+        public void Initialize(List<AppCastItem> items, ISignatureVerifier? signatureVerifier, bool isUpdateAlreadyDownloaded = false,
+            string releaseNotesHTMLTemplate = "", string additionalReleaseNotesHeaderHTML = "", string releaseNotesDateFormat = "D",
+            string appNameTitle = "the application", string installedVersion = "")
         {
             _updates = items;
             if (ReleaseNotesGrabber == null)
@@ -246,7 +247,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 {
                     releaseNotesHTMLTemplate = defaultReleaseNotesAvaloniaTemplate;
                 }
-                ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, sparkle)
+                ReleaseNotesGrabber = new ReleaseNotesGrabber(releaseNotesHTMLTemplate, additionalReleaseNotesHeaderHTML, signatureVerifier)
                 {
                     DateFormat = releaseNotesDateFormat
                 };

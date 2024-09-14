@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using NetSparkleUpdater.Interfaces;
@@ -6,7 +7,8 @@ namespace NetSparkleUpdater.AssemblyAccessors
 {
     /// <summary>
     /// An assembly accessor that uses <seealso cref="System.Diagnostics.FileVersionInfo"/>
-    /// to get information on the assembly with a given name
+    /// to get information on the assembly with a given name.
+    /// AssemblyTitle is the same as AssemblyProduct with this assembly accessor.
     /// </summary>
     public class AssemblyDiagnosticsAccessor : IAssemblyAccessor
     {
@@ -27,25 +29,23 @@ namespace NetSparkleUpdater.AssemblyAccessors
         /// <exception cref="FileNotFoundException">Thrown when the path to the assembly with the given name doesn't exist or null is sent to the constructor</exception>
         public AssemblyDiagnosticsAccessor(string? assemblyPath)
         {
-            if (assemblyPath != null)
+            if (assemblyPath == null)
             {
-                string absolutePath = Path.GetFullPath(assemblyPath);
-                if (!File.Exists(absolutePath))
-                {
-                    throw new FileNotFoundException();
-                }
-                FileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
-                _fileVersion = FileVersionInfo.FileVersion;
-                _productVersion = FileVersionInfo.ProductVersion;
-                _productName = FileVersionInfo.ProductName;
-                _companyName = FileVersionInfo.CompanyName;
-                _legalCopyright = FileVersionInfo.LegalCopyright;
-                _fileDescription = FileVersionInfo.Comments;
+                // https://github.com/dotnet/corert/issues/6947#issuecomment-460204830
+                assemblyPath = Path.Combine(System.AppContext.BaseDirectory, Path.GetFileName(Environment.GetCommandLineArgs()[0]));
             }
-            else
+            string absolutePath = Path.GetFullPath(assemblyPath);
+            if (!File.Exists(absolutePath))
             {
                 throw new FileNotFoundException();
             }
+            FileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+            _fileVersion = FileVersionInfo.FileVersion;
+            _productVersion = FileVersionInfo.ProductVersion;
+            _productName = FileVersionInfo.ProductName;
+            _companyName = FileVersionInfo.CompanyName;
+            _legalCopyright = FileVersionInfo.LegalCopyright;
+            _fileDescription = FileVersionInfo.Comments;
         }
 
         #region Assembly Attribute Accessors

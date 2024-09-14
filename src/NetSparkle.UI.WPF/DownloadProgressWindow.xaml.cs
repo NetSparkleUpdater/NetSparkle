@@ -76,13 +76,6 @@ namespace NetSparkleUpdater.UI.WPF
         void IDownloadProgress.FinishedDownloadingFile(bool isDownloadedFileValid)
         {
             _dataContext?.SetFinishedDownloading(isDownloadedFileValid);
-            if (!isDownloadedFileValid)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    this.Background = new SolidColorBrush(Colors.Tomato);
-                });
-            }
         }
 
         void IDownloadProgress.Close()
@@ -116,7 +109,10 @@ namespace NetSparkleUpdater.UI.WPF
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
             _didCallDownloadProcessCompletedHandler = true;
-            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(!(_dataContext?.IsDownloading ?? true)));
+            DownloadProcessCompleted?.Invoke(this, new DownloadInstallEventArgs(
+                (_dataContext?.DidDownloadFail ?? false)
+                ? false
+                : !(_dataContext?.IsDownloading ?? true)));
         }
     }
 }

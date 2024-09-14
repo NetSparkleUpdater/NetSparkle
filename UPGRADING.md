@@ -1,9 +1,13 @@
-## Updating to 3.X
+## NetSparkle 3.x
 
 * Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
 * Lines ending in [**!] have been backported.
 
-**Breaking Changes**
+### Summary of Changes
+
+(TBD)
+
+### Breaking Changes from 2.x
 
 * The built-in Avalonia UI now runs on version 11 of Avalonia (6a9a6426324e357daf0f9991d7a981b19a009b93, a0a7314317e9fc712270f75f31c6442a2d454da3, 46de3e9c9525cac4026a7959e44764752cdf36ee, `avalonia-preview` branch)
 * Bumped minimum version of .NET Framework from 4.5.2 to 4.6.2 (57fa9ad2597ec6615894464b8f2ccef881dda52b) as 4.5.2 is EOL per https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework
@@ -25,7 +29,7 @@
 * NOTE: If you update to .NET 8+ in your own app, the location of `JSONConfiguration` save data, by default, will CHANGE due to a change in .NET 8 for `Environment.SpecialFolder.ApplicationData`. See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/8.0/getfolderpath-unix. This may cause user's "skipped version" or other data to be lost unless you migrate this data yourself. For most users who are using the defaults, this is likely only a minor (if any) inconvenience at all, but it is worth noting. SparkleUpdater makes no attempt to account for this change at this time.
 * `AssemblyReflectionAccessor` has been deprecated. Please use `AsmResolverAccessor` instead. (#587)
 * `AssemblyDiagnosticAccessor.AssemblyVersion` now returns `FileVersionInfo.GetVersionInfo(assemblyName).ProductVersion` rather than `FileVersionInfo.GetVersionInfo(assemblyName).FileVersion` so we can get semver versioning information
-* For ed25519 use, changed from BouncyCastle to Chaos.NaCl (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects under `NetSparkleUpdater.Chaos.NaCl`.
+* For ed25519 use, changed from `BouncyCastle` to a custom fork of `Chaos.NaCl` (large file size savings and we don't need all of BouncyCastle's features). You can verify its use and code online here: https://github.com/NetSparkleUpdater/Chaos.NaCl. Additionally, this package is available on NuGet for your own projects under the package name `NetSparkleUpdater.Chaos.NaCl`.
 * `LogWriter` has undergone several changes:
   * `public static string tag = "netsparkle:";` has changed to `public string Tag { get; set; } = "netsparkle:";`
   * Instead of a simple `bool` to control printing to `Trace.WriteLine` or `Console.WriteLine`, there is now a new enum, `NetSparkleUpdater.Enums.LogWriterOutputMode`, which you can use to control whether `LogWriter` outputs to `Console`, `Trace`, `Debug`, or to `None` (don't output at all).
@@ -50,15 +54,17 @@
     * If you need absolute control more than the above, you can subclass `AppCastHelper` and override methods: `SetupAppCastHelper`, `DownloadAppCast`, and `FilterUpdates`. This probably is not necessary, however, and you can do what you want through the interfaces, most likely.
   * `AppCastHelper.SetupAppCastHelper` signature is now `SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)` (note: no longer takes a `Configuration` object)
 * Renamed `AppCastItem.OperatingSystemString` to `OperatingSystem`
-* XML app casts write `version`, `shortVersion`, and `criticalUpdate` to the `<item>` tag and the `<enclosure>` (both for backwards/Sparkle compat; we'd rather not write to `<enclosure>` but we don't want to break anyone that updates their app cast gen without updating the main library).
+* XML app casts write `version`, `shortVersion`, and `criticalUpdate` to the `<item>` tag and the `<enclosure>` (both for backwards/Sparkle compat; we'd rather not write to `<enclosure>` but we don't want to break anyone that updates their app cast gen without updating the main library, so that may change again in the far future).
   * If both the overall `<item>` and the `<enclosure>` have this data, the info from the `<item>` is prioritized.
   * JSON app casts are not affected.
 * `IUpdateDownloader` has a new event `DownloadStarted` of type `DownloadFromPathToPathEvent(object sender, string from, string to)`, which should be called right before any download begins.
 * `IUpdateDownloader.StartFileDownload` returns `Task`
 * `IUpdateDownloader.StartFileDownload` renamed to `IUpdateDownloader.DownloadFile`
 * Background worker loop pauses for a few seconds before starting just in case the loop started with the software -- so the update available window isn't immediately shown to the user (if applicable)
-* `ReleaseNotesGrabber.GetReleaseNotes` and `DownloadAllReleaseNotes` no longer take a `Sparkle` instance since that is given in the constructor (TODO: might adjust more later and only send in the `ISignatureVerifier`)
-* Major UI refactoring:
+* `ReleaseNotesGrabber.GetReleaseNotes` and `DownloadAllReleaseNotes` no longer take a `SparkleUpdater` instance since that is given in the constructor
+* `ReleaseNotesGrabber` constructor now takes a `ISignatureVerifier` rather than a `SparkleUpdater` instance
+* `ReleaseNotesGrabber` uses the `AppCastItem.Title` property now, which by default includes version when creating via the app cast generator, for display of a release's title instead of just the `Version` property
+* Major UI usage refactoring:
   * `ShowsUIOnMainThread` is gone and will not come back. It never really worked as intended and was just confusing. If you want to do fancy things with threads, handle `SparkleUpdater` events and handle things in your own way for your own app's needs.
   * It's highly recommended to NetSparkle on the main thread.
     * The background loop will use `SyncronizationContext` to post events and callbacks to whatever thread/context started the main `SparkleUpdater` instance, which is why starting things on the main UI thread is recommended.
@@ -67,8 +73,13 @@
     * Note: passing your own `UIFactory` that starts windows/things on new threads into `SparkleUpdater` is not a supported configuration. It might work, it might not. Use at your own risk. 
   * NetSparkle basically makes no attempts to worry about threading now (e.g. calling to the main thread) except for the background loop calling to the main thread that started the `SparkleUpdater` instance. For most apps, this will be fine as they are just using their main UI thread.
   * Practically speaking, though, if you call `SparkleUpdater` functions on a background thread, subsequent events and things that are called as a result of that `SparkleUpdater` call will probably come back on the background thread that first called the event. Use at your own risk. When in doubt, for your own UI needs, make sure to check `InvokeRequired` on WinForms, and on WPF/Avalonia, marshal things to the UI thread (unless you're using data binding in which case it's handled for you!).
+  * `UIFactory` changes:
+    * No more `Init` method. Use your constructor and/or your own methods if you need this.
+    * Most method signatures have changed and have moved in the direction of only taking what is actually needed. Notably, no methods take a `SparkleUpdater` instance, now.
+    * Basically, if you were using your own `IUIFactory` implementation, you probably need to take a look at the new interface and/or the samples to see how things are done now. Things are simpler, now, in the long run.
+  * Release notes window now uses `AppCastItem.Title` for each item's title instead of just the `Version`
 
-**Changes/Fixes**
+### Changes/Fixes from 2.x
 
 * Don't get download name if no need to (e63ebb054d62e26232b808189eb4619566952f3a) [**]
 * Fixed some documentation in `LocalFileDownloader` (6ca714ca62577bc7412353338a148a03810ba81a) [**]
@@ -107,6 +118,9 @@
 * Added `UpdateDetectedAsync` -- prioritized over `UpdateDetected` if both `UpdateDetectedAsync` and `UpdateDetected` are implemented.
 * Fixed calling `CheckForUpdatesAtUserRequest` not showing UI if `UpdateDetected`/`UpdateDetectedAsync` is implemented and the next action is to show the user interface
 * `ReleaseNotesGrabber.DownloadReleaseNotes` catches all exceptions instead of just `WebException`
+* WinForms projects are now in the same project/run the same overall code.
+* `NetSparkle.UI.WinForms.NetFramework` now includes `System.Resources.Extensions`
+* Fixed WPF and Avalonia download progress windows not turning red on signature validation failure
 
 ## Updating from 0.X or 1.X to 2.X
 

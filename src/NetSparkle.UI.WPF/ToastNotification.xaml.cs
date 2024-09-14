@@ -69,13 +69,7 @@ namespace NetSparkleUpdater.UI.WPF
         /// <summary>
         /// The action to take when the user clicks on the toast notification window
         /// </summary>
-        public Action<List<AppCastItem>>? ClickAction { get; set; }
-
-        /// <summary>
-        /// The list of updates that triggered this toast notification being shown to 
-        /// the user
-        /// </summary>
-        public List<AppCastItem>? Updates { get; set; }
+        public Action? ClickAction { get; set; }
         
         private void PauseTimerTick(object? sender, EventArgs e)
         {
@@ -132,7 +126,7 @@ namespace NetSparkleUpdater.UI.WPF
 
         private void ToastNotifier_Click(object? sender, EventArgs e)
         {
-            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
+            ClickAction?.Invoke();
             CloseToastMessage();
         }
 
@@ -173,7 +167,7 @@ namespace NetSparkleUpdater.UI.WPF
 
         private void NotificationLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            ClickAction?.Invoke(Updates ?? new List<AppCastItem>());
+            ClickAction?.Invoke();
             CloseToastMessage();
         }
     }

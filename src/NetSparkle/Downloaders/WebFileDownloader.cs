@@ -23,6 +23,7 @@ namespace NetSparkleUpdater.Downloaders
         private ILogger? _logger;
         private CancellationTokenSource? _cts;
         private string? _downloadFileLocation;
+        private FileStream? _fileStream;
 
         /// <summary>
         /// Default constructor for the web client file downloader.
@@ -177,7 +178,7 @@ namespace NetSparkleUpdater.Downloaders
                     long readCount = 0;
                     _downloadFileLocation = downloadFilePath;
                     const int bufferSize = 32*1024; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
-                    using (FileStream fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, bufferSize, true))
+                    using (_fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, bufferSize, true))
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
                     {
                         totalLength = response.Content.Headers.ContentLength ?? 0;
@@ -200,7 +201,7 @@ namespace NetSparkleUpdater.Downloaders
                                 UpdateDownloadProgress(totalRead, totalLength);
                                 break;
                             }
-                            await fileStream.WriteAsync(buffer, 0, bytesRead);
+                            await _fileStream.WriteAsync(buffer, 0, bytesRead);
                             totalRead += bytesRead;
                             readCount += 1;
                             //await Task.Delay(1000); // for TESTING ONLY ("throttling" the download)
@@ -208,6 +209,7 @@ namespace NetSparkleUpdater.Downloaders
                         } while (IsDownloading);
                         IsDownloading = false;
                     }
+                    _fileStream = null;
                     UpdateDownloadProgress(totalRead, totalLength);
                     DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
                 }
@@ -237,6 +239,7 @@ namespace NetSparkleUpdater.Downloaders
             try
             {
                 _cts?.Cancel();
+                _fileStream?.Close();
                 _httpClient?.CancelPendingRequests();
             } catch {}
             if (File.Exists(_downloadFileLocation))

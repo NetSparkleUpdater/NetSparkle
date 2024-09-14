@@ -5,6 +5,7 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:local="clr-namespace:NetSparkleUpdater.UI.WPF"
                      xmlns:controls="clr-namespace:NetSparkleUpdater.UI.WPF.Controls"
+                     xmlns:viewmodels="clr-namespace:NetSparkleUpdater.UI.WPF.ViewModels"
                      mc:Ignorable="d"
                      Width="600"
                      MaxWidth="600"
@@ -14,7 +15,8 @@
                      x:Name="DownloadProgressWindowControl"
                      d:DesignHeight="250"
                      d:DesignWidth="800" 
-                     WindowStartupLocation="CenterScreen">
+                     WindowStartupLocation="CenterScreen"
+                     Background="{Binding BackgroundColor}">
     <controls:BaseWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </controls:BaseWindow.Resources>
