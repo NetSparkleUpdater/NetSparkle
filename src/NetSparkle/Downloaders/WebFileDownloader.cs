@@ -276,7 +276,6 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        //var totalBytes = response.Content.Headers.ContentLength; // TODO: Use this value as well for a more accurate download %?
                         string destFilename = response.RequestMessage?.RequestUri?.LocalPath ?? "";
                         return Path.GetFileName(destFilename);
                     } else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
