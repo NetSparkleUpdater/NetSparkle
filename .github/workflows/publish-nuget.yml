@@ -133,6 +133,21 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.NetSparkle
           INCLUDE_SYMBOLS: true
 
+      # TODO: Make this more maintainable using variables and stuff; then use in all package publishing so we stop using
+      # nitz/publish-nuget
+
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
+        run: |
+          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
+          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetCore --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetCoreOutput
+          dotnet nuget push ${{ github.workspace }}\WinFormsNetCoreOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
+
+      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework on version change
+        run: |
+          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
+          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetFramework --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetFrameworkOutput
+          dotnet nuget push ${{ github.workspace }}\WinFormsNetFrameworkOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
+          
       - name: Publish NetSparkleUpdater.UI.WPF on version change
         uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
         with:
@@ -157,20 +172,6 @@ jobs:
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
           INCLUDE_SYMBOLS: true
 
-      # TODO: Make this more maintainable using variables and stuff; then use in all package publishing so we stop using
-      # nitz/publish-nuget
-
-      - name: Publish NetSparkleUpdater.UI.WinForms.NetCore on version change
-        run: |
-          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
-          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetCore --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetCoreOutput
-          dotnet nuget push ${{ github.workspace }}/WinFormsNetCoreOutput/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
-
-      - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework on version change
-        run: |
-          dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
-          dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetFramework --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetFrameworkOutput
-          dotnet nuget push ${{ github.workspace }}/WinFormsNetFrameworkOutput/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
 
       - name: Publish NetSparkleUpdater.Tools.DSAHelper
         uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172
