@@ -131,9 +131,9 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// True if this update is a windows update; false otherwise.
-        /// Acceptable OS strings are: "win" or "windows" (this is 
+        /// Acceptable OS strings contain "win" or "windows" (this is 
         /// checked with a case-insensitive check). If not specified,
-        /// assumed to be a Windows update.
+        /// the OS assumed to be a Windows update.
         /// </summary>
         [JsonIgnore]
         public bool IsWindowsUpdate
@@ -143,7 +143,7 @@ namespace NetSparkleUpdater
                 if (OperatingSystem != null)
                 {
                     var lowercasedOS = OperatingSystem.ToLower();
-                    if (lowercasedOS == "win" || lowercasedOS == "windows")
+                    if (lowercasedOS.Contains("win") || lowercasedOS.Contains("windows"))
                     {
                         return true;
                     }
@@ -155,9 +155,9 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// True if this update is a macOS update; false otherwise.
-        /// Acceptable OS strings are: "mac", "osx", or "macos" (this is 
+        /// Acceptable OS strings contain "mac", "osx", or "macos" (this is 
         /// checked with a case-insensitive check). If not specified,
-        /// assumed to be a Windows update.
+        /// the OS is assumed to be a Windows update.
         /// </summary>
         [JsonIgnore]
         public bool IsMacOSUpdate
@@ -167,7 +167,8 @@ namespace NetSparkleUpdater
                 if (OperatingSystem != null)
                 {
                     var lowercasedOS = OperatingSystem.ToLower();
-                    if (lowercasedOS == "mac" || lowercasedOS == "macos" || lowercasedOS == "osx")
+                    if (lowercasedOS.Contains("mac") || lowercasedOS.Contains("macos") || 
+                        lowercasedOS.Contains("osx"))
                     {
                         return true;
                     }
@@ -178,9 +179,9 @@ namespace NetSparkleUpdater
 
         /// <summary>
         /// True if this update is a macOS update; false otherwise.
-        /// Acceptable OS strings are: "linux" (this is 
+        /// Acceptable OS strings contain "linux" (this is 
         /// checked with a case-insensitive check). If not specified,
-        /// assumed to be a Linux update.
+        /// the OS is assumed to be a Windows update.
         /// </summary>
         [JsonIgnore]
         public bool IsLinuxUpdate
@@ -190,7 +191,7 @@ namespace NetSparkleUpdater
                 if (OperatingSystem != null)
                 {
                     var lowercasedOS = OperatingSystem.ToLower();
-                    if (lowercasedOS == "linux")
+                    if (lowercasedOS.Contains("linux"))
                     {
                         return true;
                     }
