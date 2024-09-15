@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using NetSparkleUpdater.UI.Avalonia.Helpers;
+using NetSparkleUpdater.UI.Avalonia.Interfaces;
 
 namespace NetSparkleUpdater.UI.Avalonia.ViewModels
 {
@@ -26,8 +27,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         private string _actionButtonTitle;
         private bool _isActionButtonVisible;
 
-        private Brush _background;
-
         /// <summary>
         /// Default constructor for the view model that sets
         /// everything up for use
@@ -44,7 +43,6 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
             _actionButtonTitle = "Cancel";
             _downloadProgressValue = 0.0;
             IsActionButtonVisible = true;
-            _background = new SolidColorBrush(Colors.Transparent);
         }
 
         /// <summary>
@@ -144,11 +142,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
         /// <summary>
         /// Background color of download window
         /// </summary>
-        public Brush BackgroundColor
-        {
-            get => _background;
-            set { _background = value; NotifyPropertyChanged(); }
-        }
+        public IBackgroundColorChanger? BackgroundColorChanger { get; set; }
 
         /// <summary>
         /// Change whether or not the <see cref="AppCastItem"/> download file has finished downloading
@@ -165,9 +159,9 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 UserReadableDownloadProgress = string.Format("");
             }
             IsActionButtonVisible = isInstallFileValid;
-            if (!isInstallFileValid)
+            if (!isInstallFileValid || true)
             {
-                BackgroundColor = new SolidColorBrush(Colors.Tomato);
+                BackgroundColorChanger?.ChangeBackgroundColor(new SolidColorBrush(Colors.Tomato));
                 _didDownloadFail = true;
                 NotifyPropertyChanged(nameof(ActionButtonTitle));
             }

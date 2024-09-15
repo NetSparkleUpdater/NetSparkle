@@ -13,8 +13,7 @@
         CanResize="False"
         SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
-		x:DataType="viewModels:DownloadProgressWindowViewModel"
-		Background="{Binding BackgroundColor}">
+	 x:DataType="viewModels:DownloadProgressWindowViewModel">
   <Grid Margin="5"
         x:Name="MainGrid"
         ColumnDefinitions="Auto, *"
