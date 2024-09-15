@@ -26,7 +26,6 @@ Built-in supported update download types:
 ## Getting Started
 
 - [Installing NetSparkle](#installing-netsparkle)
-- [Trimming Your Application](#trimming-your-application)
 - [How Updates Work](#how-updates-work)
 - [Basic Usage](#basic-usage)
 - [App Cast](#app-cast)
@@ -58,18 +57,6 @@ NetSparkle is available via NuGet. To choose a NuGet package to use:
 Quick info for tool installations:
 * App cast generator -- `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`; available as `netsparkle-generate-appcast` on your command line after installation
 * DSA Helper -- `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`; available as `netsparkle-dsa` on your command line after installation
-
-## Trimming your application
-
-[Trimming](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options) is a great way to reduce the file size of your application when it is self-published and/or built as a self-contained application. In short, trimming removes unused code from your applications, including external libraries, so you can ship your application with a reduced file size. To trim your application on publish, add `<PublishTrimmed>true</PublishTrimmed>` to your `csproj` file. If you want to trim all assemblies (including those that may not have specified they are compatible with trimming), add `<TrimMode>full</TrimMode>` to your `csproj` file; to only trim those that have opted-in, use `<TrimMode>partial</TrimMode>`. To enable warnings for trimming, add `<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>`.
-
-There are other options to use, which you can learn more about on Microsoft's documentation [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options). For those applications that may not work with the built-in trimming options, please try [Zack.DotNetTrimmer](https://github.com/yangzhongke/Zack.DotNetTrimmer) or other solutions you may find.
-
-We recommend that you trim your application before publishing it and distributing it to your users. Some of NetSparkle's default dependencies are rather large, but the file size can be drastically reduced by the trim process. If you choose to trim your application, don't forget to test it after trimming and make sure you fix any warnings that come up!
-
-You can also read more about trimming libraries [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming).
-
-Regarding AOT compilation: NetSparkleUpdater is compatible with that feature.
 
 ## How updates work
 
@@ -244,7 +231,7 @@ The important tags in each `<item>` are:
         - `sparkle:criticalUpdate`, optional: if equal to `true` or `1`, the UI will indicate that this is a critical update
         - `sparkle:os`: Operating system for the app cast item. Defaults to Windows if not supplied. For Windows, use "win" or "windows"; for macOS, use "macos" or "osx"; for Linux, use "linux".
 
-By default, you need 2 (DSA/Ed25519) signatures (`SecurityMode.Strict`):
+By default, you need 2 signatures (`SecurityMode.Strict`):
 
 1. One in the enclosure tag for the update file (`sparkle:signature="..."`)
 2. Another on your web server to secure the actual app cast file. **This file must be located at [AppCastURL].signature**. In other words, if the app cast URL is http://example.com/awesome-software.xml, you need a valid (DSA/Ed25519) signature for that file at http://example.com/awesome-software.xml.signature. 
@@ -254,27 +241,6 @@ _Note:_ the app cast generator tool creates both of these signatures for you whe
 ### Ed25519 Signatures
 
 You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.AppCastGenerator/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.AppCastGenerator)). **This tool requires the .NET 6, 7, or 8 Desktop Runtime to be installed.** Please see below sections for options and examples on generating the Ed25519 keys and for using them when creating an app cast.
-
-### DSA Signatures
-
-DSA signatures are not recommended when using NetSparkleUpdater 2.0+. They are considered insecure!
-
-You can still generate these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use this tool on Windows like this: 
-
-```
-netsparkle-dsa /genkey_pair
-```
-
-You can use the DSAHelper to get a signature like this:
-
-```
-netsparkle-dsa /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
-```
-
-#### Installing the DSA Helper command-line tool
-
-1. `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`
-2. The tool is now available on your command line as the `netsparkle-dsa` command
 
 ### How can I make the app cast?
 
@@ -420,6 +386,28 @@ Yes. You need to start the `NetSparkleUpdater` forms on a new thread(s). See the
 
 See #238 [and this documentation](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/high-dpi-support-in-windows-forms?view=netframeworkdesktop-4.8#configuring-your-windows-forms-app-for-high-dpi-support) for the fix for making this work on the sample application. Basically, you need to use an app config file and manifest file to let Windows know that your application is DPI-aware. If that doesn't work for you, try some of the tips at [this SO post](https://stackoverflow.com/questions/4075802/creating-a-dpi-aware-application).
 
+### What's all this about trimming?
+
+[Trimming](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options) is a great way to reduce the file size of your application when it is self-published and/or built as a self-contained application. In short, trimming removes unused code from your applications, including external libraries, so you can ship your application with a reduced file size. To trim your application on publish, add `<PublishTrimmed>true</PublishTrimmed>` to your `csproj` file. If you want to trim all assemblies (including those that may not have specified they are compatible with trimming), add `<TrimMode>full</TrimMode>` to your `csproj` file; to only trim those that have opted-in, use `<TrimMode>partial</TrimMode>`. To enable warnings for trimming, add `<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>`.
+
+There are other options to use, which you can learn more about on Microsoft's documentation [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options). For those applications that may not work with the built-in trimming options, please try [Zack.DotNetTrimmer](https://github.com/yangzhongke/Zack.DotNetTrimmer) or other solutions you may find.
+
+We recommend that you trim your application before publishing it and distributing it to your users. Some of NetSparkle's default dependencies are rather large, but the file size can be drastically reduced by the trim process. If you choose to trim your application, don't forget to test it after trimming and make sure you fix any warnings that come up!
+
+You can also read more about trimming libraries [here](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming).
+
+### Is this library compatible with AOT compilation?
+
+Yes.
+
+### Is this library nullable aware?
+
+Yes.
+
+### Can I use relative paths for my app cast item download links?
+
+Yes. In the app cast generator, you can do things like, `-u ../` to make NetSparkle check the directory above the server's `appcast.xml` file for download files.
+
 ### NuGet has lots of packages when I search for "NetSparkle", which one do I use?
 
 `NetSparkleUpdater.SparkleUpdater` is the right package if you want the library with no built-in UI. Otherwise, use `NetSparkleUpdater.UI.{YourChoiceOfUI}`, which will give you a built-in UI and the core library. Previous to 2.0, the UI libraries reference `NetSparkle.New`, which is now deprecated.
@@ -487,6 +475,31 @@ The "Handle Events Yourself" sample will be very helpful to you: https://github.
 ### Does this work with Avalonia version XYZ?
 
 Right now, we are compatible with version 11. If you need to make changes, you can use your own `IUIFactory` implementation to fix any issues that come up.
+
+### Can I use DSA signatures still?
+
+DSA signatures are not recommended when using NetSparkleUpdater 2.0+. They are considered insecure!
+
+You can still generate/use these signatures, however, using the `DSAHelper` tool (from [this NuGet package](https://www.nuget.org/packages/NetSparkleUpdater.Tools.DSAHelper/) or in the [source code here](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Tools.DSAHelper)). Key generation only works on Windows because .NET Core 3 does not have the proper implementation to generate DSA keys on macOS/Linux; however, you can get DSA signatures for a file on any platform. If you need to generate a DSA public/private key, please use the DSAHelper tool on Windows like this: 
+
+```
+netsparkle-dsa /genkey_pair
+```
+
+You can use the DSAHelper to get a signature like this:
+
+```
+netsparkle-dsa /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DSA.priv}
+```
+
+#### Installing the DSA Helper command-line tool
+
+1. `dotnet tool install --global NetSparkleUpdater.Tools.DSAHelper`
+2. The tool is now available on your command line as the `netsparkle-dsa` command
+
+#### DSA Code
+
+Pass a `DSAChecker` into your `SparkleUpdater` constructor rather than an `Ed25519Checker`.
 
 ### Things aren't working. Help!
 
