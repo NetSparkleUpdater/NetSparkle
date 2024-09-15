@@ -3,7 +3,10 @@ using NetSparkleUpdater.Interfaces;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,6 +59,13 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public RedirectHandler? RedirectHandler { get; set; }
 
+#if NETCORE
+        /// <summary>
+        /// If true, don't check the validity of SSL certificates. Defaults to false.
+        /// </summary>
+        public bool TrustEverySSLConnection { get; set; } = false;
+#endif
+
         /// <summary>
         /// Do preparation work necessary to download a file,
         /// aka set up the HttpClient for use.
@@ -88,7 +98,23 @@ namespace NetSparkleUpdater.Downloaders
         /// <returns>The client used for file downloads</returns>
         protected virtual HttpClient CreateHttpClient()
         {
-            return CreateHttpClient(null);
+            var handler = new HttpClientHandler();
+            if (RedirectHandler != null)
+            {
+                handler.AllowAutoRedirect = false;
+            }
+#if NETCORE
+            if (TrustEverySSLConnection)
+            {
+                // ServerCertificateCustomValidationCallback not available on .NET 4.6.2 (first available in 4.7.1)
+                handler.ServerCertificateCustomValidationCallback =
+                    (httpRequestMessage, cert, cetChain, policyErrors) =>
+                    {
+                        return true;
+                    };
+            }
+#endif
+            return CreateHttpClient(handler);
         }
 
         /// <summary>
