@@ -124,6 +124,7 @@
 * `AppCastItem` operating system checks now use `.Contains` rather than `==`, allowing for OS strings like `macOS-arm64` rather than just `macOS`
 * Add `TrustEverySSLConnection` to .NET Core `WebFileDownloader`
 * Fix `WebFileDownloader` not setting up an `HttpClientHandler` (was always auto-redirect'ing before despite setting `RedirectHandler`; now behaves more similarly to `WebRequestAppCastDataDownloader`)
+* Fixed `Unsafe` mode in DSA/ed25519 checkers still checking signatures if a signature existed
 
 ## Updating from 0.X or 1.X to 2.X
 
