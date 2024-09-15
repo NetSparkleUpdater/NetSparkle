@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.UI.Avalonia.Controls;
+using NetSparkleUpdater.UI.Avalonia.Interfaces;
 using NetSparkleUpdater.UI.Avalonia.ViewModels;
 
 namespace NetSparkleUpdater.UI.Avalonia
@@ -15,7 +16,7 @@ namespace NetSparkleUpdater.UI.Avalonia
     /// Window that shows while SparkleUpdater is downloading the update
     /// for the user.
     /// </summary>
-    public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress
+    public partial class DownloadProgressWindow : BaseWindow, IDownloadProgress, IBackgroundColorChanger
     {
         private bool _didCallDownloadProcessCompletedHandler = false;
 
@@ -47,6 +48,7 @@ namespace NetSparkleUpdater.UI.Avalonia
             _actionButton = this.FindControl<Button>("ActionButton");
             Closing += DownloadProgressWindow_Closing;
             DataContext = _dataContext = viewModel;
+            _dataContext.BackgroundColorChanger = this;
             var imageControl = this.FindControl<Image>("AppIcon");
             if (imageControl != null)
             {
@@ -130,6 +132,12 @@ namespace NetSparkleUpdater.UI.Avalonia
                 (_dataContext?.DidDownloadFail ?? false)
                 ? false 
                 : !(_dataContext?.IsDownloading ?? true)));
+        }
+
+        /// <inheritdoc/>
+        public void ChangeBackgroundColor(Brush color)
+        {
+            Background = color;
         }
     }
 }
