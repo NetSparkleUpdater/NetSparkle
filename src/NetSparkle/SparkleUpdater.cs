@@ -864,6 +864,41 @@ namespace NetSparkleUpdater
                     }
                 }
 
+                if (string.IsNullOrWhiteSpace(filename))
+                {
+                    if (item.DownloadLink.StartsWith("..") || item.DownloadLink.StartsWith("."))
+                    {
+                        LogWriter?.PrintMessage("Trying for a relative path with download link of {0} and app cast URL of {1}", item.DownloadLink, AppCastUrl);
+                        var downloadUrl = Utilities.GetAbsoluteURL(item.DownloadLink, AppCastUrl);
+                        if (CheckServerFileName && UpdateDownloader != null)
+                        {
+                            try
+                            {
+                                var appCastItem = new AppCastItem() { DownloadLink = downloadUrl.ToString() };
+                                filename = await UpdateDownloader.RetrieveDestinationFileNameAsync(appCastItem);
+                            }
+                            catch (Exception)
+                            {
+                                // ignore
+                            }
+                        }
+
+                        if (string.IsNullOrWhiteSpace(filename))
+                        {
+                            // attempt to get download file name based on download link
+                            try
+                            {
+                                filename = Path.GetFileName(downloadUrl.LocalPath);
+                            }
+                            catch (UriFormatException)
+                            {
+                                // ignore
+                            }
+                        }
+                        LogWriter?.PrintMessage("After attempting relative path resolving, filename is {0}", filename ?? "");
+                    }
+                }
+
                 if (!string.IsNullOrWhiteSpace(filename))
                 {
                     string tmpPath = TmpDownloadFilePath == null || string.IsNullOrWhiteSpace(TmpDownloadFilePath) 

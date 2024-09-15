@@ -82,7 +82,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             }
             catch (InvalidDataException)
             {
-                UIFactory?.ShowUnknownInstallerFormatMessage(this, downloadFilePath);
+                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath);
                 return;
             }
 
