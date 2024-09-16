@@ -157,6 +157,18 @@ Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplicat
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use `PreparingForExit` or `PreparingToExitAsync`.
 
+#### Using/building your own UI
+
+NetSparkleUpdater does not have to be used with a UI at all. You can do everything yourself or even have the library run your downloaded update automatically by setting the `SparkleUpdater.UserInteractionMode = UserInteractionMode.DownloadAndInstall`. This repo has a sample on doing things yourself without any pre-built UI in [src/NetSparkle.Samples.HandleEventsYourself](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself).
+
+If you want a UI, we offer pre-built UIs with a small number of customizable options for WinForms, WPF, and Avalonia. The UIs are triggered via a `IUIFactory` implementation, called `UIFactory` in each of the built-in options. Most methods in the `UIFactory` can be overridden if you want to tweak behavior, and the `ProcessWindowAfterInit` lets you customize each window after it is made.
+
+If you want to roll your own UI entirely, just implement the `IUIFactory` interface with whatever UI library you want to use. You can copy or reuse view models, code, etc. from NetSparkleUpdater's prebuilt options, and copy+pasting code from this repo into your own is probably a good, quick way to start. Don't forget to set the `SparkleUpdater.UIFactory` property with an instance of your `IUIFactory` implementation, though!
+
+Please note: NetSparkle basically makes no attempts to worry about threading (e.g. calling to the main thread) except for the background loop calling to the main thread that started the `SparkleUpdater` instance. In other words, generally speaking, NetSparkle will do everything on the thread that originally created the `SparkleUpdater` instance. For most apps, this will be fine as they are just using their main UI thread. When in doubt, for your own UI needs, make sure to check `InvokeRequired` on WinForms, and on WPF/Avalonia, marshal things to the UI thread (unless you're using data binding in which case it's handled for you!).
+
+Passing your own `IUIFactory` implementation that starts windows/things on new threads into `SparkleUpdater` is not a supported configuration. If you want to run your own UI on multiple threads (e.g. for WinForms to not have NetSparkleUpdater's windows close when the main form closes), do so using `SparkleUpdater`'s events and not the `UIFactory`; please also see the [src/NetSparkle.Samples.Forms.Multithread](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Forms.Multithread) sample for a practical example of how to do this.
+
 ## App cast
 
 The app cast is just an XML or JSON file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
@@ -171,11 +183,9 @@ We strongly recommend that you make use of the [netsparkle-generate-appcast](#in
 
 #### Sparkle Compatibility 
 
-NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:dsaSignature` so that you can choose how to sign your files/app cast. NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
+By default, NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible XML app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:edSignature` so that you can choose how to sign your files/app cast. (If you want to use `sparkle:edSignature`, pass `--use-ed25519-signature-attribute` to the app cast generator.) Note that NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
 
-#### DSA vs Ed25519 Signatures
-
-If your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 2.0.0-20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519.
+#### Sample App Cast
 
 Here is a sample XML app cast:
 
@@ -545,6 +555,10 @@ netsparkle-dsa /sign_update {YourInstallerPackage.msi} {NetSparkle_PrivateKey_DS
 #### DSA Code
 
 Pass a `DSAChecker` into your `SparkleUpdater` constructor rather than an `Ed25519Checker`.
+
+#### How do I transition from DSA to ed25519 signatures?
+
+If your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview `2.0.0-20200607001`. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled/containing app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519.
 
 ### Things aren't working. Help!
 
