@@ -12,7 +12,6 @@
               Margin="4">
     <TextBlock Text="Welcome to NetSparkle Avalonia!"/>
     <Button Content="Manual Update Check"
-            Click="ManualUpdateCheck_Click"
             Width="150"/>
   </StackPanel>
 </Window>

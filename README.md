@@ -159,7 +159,7 @@ The file that launches your downloaded update executable only waits for 90 secon
 
 ## App cast
 
-The app cast is just an XML file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
+The app cast is just an XML or JSON file.  It contains fields such as the title and description of your product as well as a definition per release of your software.
 
 We strongly recommend that you make use of the [netsparkle-generate-appcast](#install-appcast-generator-tool) tool to create (and later, re-create/update) the file because it can help take care of all signing requirements for you.
 
@@ -177,7 +177,7 @@ NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible
 
 If your app has DSA signatures, the app cast generator uses Ed25519 signatures by default starting with preview 2.0.0-20200607001. To transition to Ed25519 signatures, create an update where the software has your new Ed25519 public key and a NEW url for a NEW app cast that uses Ed25519 signatures. Upload this update with an app cast that has DSA signatures so your old DSA-enabled app can download the Ed25519-enabled update. Then, future updates and app casts should all use Ed25519.
 
-Here is a sample app cast:
+Here is a sample XML app cast:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -254,6 +254,14 @@ _Missing some option you'd like to see? File an issue on this repo or add it you
 
 * `--show-examples`: Print examples of usage to the console.
 * `--help`: Show all options and their descriptions.
+
+### Using JSON app casts
+
+If you'd like to use a JSON app cast rather than XML:
+
+* Use `--output-type json` when generating your app cast file via the app cast generator
+* Set `SparkleUpdater.AppCastGenerator` to `new JsonAppCastGenerator(mySparkleUpdater.LogWriter)`.
+* By default, the output will be human-readable. If you want to turn this off, set the `JsonAppCastGenerator.HumanReadableOutput` property to `false`.
 
 #### General Options When Generating App Cast
 * `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./Output`
@@ -471,6 +479,10 @@ Here's a summary of what you can do:
 5. When it's done downloading, call `_sparkle.InstallUpdate(update, _downloadPath);`
 
 The "Handle Events Yourself" sample will be very helpful to you: https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself
+
+### Can I use an app cast format other than XML or JSON?
+
+Yes. Implement `IAppCastGenerator` and set the `SparkleUpdater.AppCastGenerator` property to an instance of your class. You'll have to make the actual app cast file yourself, though, since the app cast generator is only currently compatible with XML and JSON.
 
 ### Does this work with Avalonia version XYZ?
 
