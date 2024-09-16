@@ -457,7 +457,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 !_operatingSystems.Any(_opts.OperatingSystem.Contains))
             {
                 Console.WriteLine($"Invalid operating system: {_opts.OperatingSystem}", Color.Red);
-                Console.WriteLine($"Valid options are: {0}", string.Join(", ", _operatingSystems));
+                Console.WriteLine($"Valid options must contain one of the following strings: {0}", string.Join(", ", _operatingSystems));
                 return (null, null);
             }
 

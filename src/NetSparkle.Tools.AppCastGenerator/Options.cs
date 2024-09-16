@@ -30,7 +30,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option("file-version", SetName="local", Required = false, HelpText = "Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the --reparse-existing parameter so that old items get picked up. If the generator finds 2 binaries without any known version and --file-version is set, then an error will be emitted.", Default = null)]
         public string? FileVersion { get; set; }
 
-        [Option('o', "os", Required = false, HelpText = "Operating System (windows, macos, linux)", Default = "windows")]
+        [Option('o', "os", Required = false, HelpText = "Operating System (string must contain one of the following: windows, mac, linux; can be string such as 'windows-arm64')", Default = "windows")]
         public string? OperatingSystem { get; set; }
 
         [Option("description-tag", Required = false, HelpText = "Text to put in the app cast <description> tag", Default = "Most recent changes with links to updates")]
@@ -90,7 +90,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         [Option("reparse-existing", SetName = "local", Required = false, HelpText = "Re-parse an existing app cast rather than overriding it and creating it anew. " +
             "Skips versions already in the app cast, so if you deploy a new binary with the same version, you will need to manually " +
-            "edit your app cast to remove the old listing" +
+            "edit your app cast to remove the old listing " +
             "for the version you are re-deploying.", Default = false)]
         public bool ReparseExistingAppCast { get; set; }
 
@@ -110,7 +110,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         [Option("critical-versions", SetName = "local", Required = false, HelpText = "Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., \"1.0.2,1.2.3.1\"", Default = "")]
         public string? CriticalVersions { get; set; }
 
-        [Option("channel", SetName = "local", Required = false, HelpText = "Name of release channel for any items added into the app cast. Should be a single channel; does not support things like \"beta,gamma\". Do not set if you want to use your release channel - if you set this to \"release\" or \"stable\", those will be treated as special channels and not as the stable channel. (Unless you want all your items to be in a specific channel, of course.)", Default = "")]
+        [Option("channel", SetName = "local", Required = false, HelpText = "Name of release channel for any items added into the app cast. Should be a single channel; does not support multiple channels at once, e.g. \"beta,gamma\". Do not set if you want to use your release channel - if you set this to \"release\" or \"stable\", those will be treated as special channels and not as the stable channel. (Unless you want all your items to be in a specific channel, of course.)", Default = "")]
         public string? Channel { get; set; }
 
         [Option("output-type", SetName = "local", Required = false, HelpText = "Output type for app cast file ('xml' or 'json' without the ' marks); defaults to 'xml'", Default = "xml")]

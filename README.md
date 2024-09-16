@@ -264,12 +264,15 @@ If you'd like to use a JSON app cast rather than XML:
 * By default, the output will be human-readable. If you want to turn this off, set the `JsonAppCastGenerator.HumanReadableOutput` property to `false`.
 
 #### General Options When Generating App Cast
-* `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./Output`
-* `-e`/`--ext`: When looking for files to add to the app cast, use the given extension. Defaults to `exe`. Example use: `-e exe`
+* `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./MyAppCastOutput`
+* `-e`/`--ext`: When looking for files to add to the app cast, use the given extension(s) when looking for files. Defaults to `exe`. Example use: `-e exe,msi`
 * `-b`/`--binaries`: File path to directory that should be searched through when looking for files to add to the app cast. Defaults to `.`. Example use: `-b my/build/directory`
 * `-r`/`--search-binary-subdirectories`: True to search the binary directory recursively for binaries; false to only search the top directory. Defaults to `false`. Example use: `-r`.
-* `-f`/`--file-extract-version`: Whether or not to extract the version of the file from the file's name rather than the file itself. Defaults to false. Use when your files that will be downloaded by NetSparkleUpdater will have the version number in the file name, e.g. "My App 1.3.2.exe". Example use: `-f true`
-* `-o`/`--os`: Operating system that the app cast items belong to. Must be one of the following: `windows`, `mac`, `linux`. Defaults to `windows`. Example use: `-o linux`
+* `-f`/`--file-extract-version`: Whether or not to extract the version of the file from the file's name rather than the file (e.g. dll) itself. Defaults to `false`. Use when your files that will be downloaded by NetSparkleUpdater will have the version number in the file name, e.g. "My App 1.3.2-alpha1.exe". Note that this only searches the last four directory items/folders. Example use: `-f true`
+* `--file-version`: Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the `--reparse-existing` parameter so that old items get picked up. If the generator finds 2 binaries without any known version and `--file-version` is set, then an error will be emitted. Example use: `--file-version 1.3.2`
+* `-o`/`--os`: Operating system that the app cast items belong to. String must include one of the following: `windows`, `mac`, `linux`. Defaults to `windows`. Example use: `-o macos-arm64`; `-o windows-x64`
+* `--description-tag`: Text to put in the app cast description tag/information. Defaults to "Most recent changes with links to updates". Example use: `--description-tag "Hello I am a Cool App"`
+* `--link-tag`: Text to put in the app cast `link` tag/information. Should be your app cast download URL if you use this. Example use: `--link-tag https://mysite.com/coolapp/appcast.xml`
 * `-u`/`--base-url`: Beginning portion of the URL to use for downloads. The file name that will be downloaded will be put after this portion of the URL. Example use: `-u https://myawesomecompany.com/downloads`
 * `-l`/`--change-log-url`: Beginning portion of the URL to use for your change log files. The change log file that will be downloaded will be put after this portion of the URL. If this option is not specified, then the change log data will be put into the app cast itself. Example use: `-l https://myawesomecompany.com/changes`
 * `-p`/`--change-log-path`: Path to the change log files for your software. These are expected to be in markdown format with an extension of `.md`. The file name of the change log files must contain the version of the software, e.g. `1.3.2.md`. Example use: `-p path/to/change/logs`. (Note: The generator will also attempt to find change logs whose file names are formatted like so: `MyApp 1.3.2.md`.)
@@ -278,9 +281,21 @@ If you'd like to use a JSON app cast rather than XML:
 * `-x`/`--url-prefix-version`: Add the version number as a prefix to the file name for the download URL. Defaults to false. For example, if `--base-url` is `www.example.com/downloads`, your version is `1.4.2`, and your app name is `MyApp.exe`, your download URL will become `www.example.com/downloads/1.4.2/MyApp.exe`. Example use: `-x true`. 
 * `--key-path`: Path to `NetSparkle_Ed25519.priv` and `NetSparkle_Ed25519.pub` files, which are your private and public Ed25519 keys for your software updates, respectively.  Example use: `--key-path my/path/to/keys`
   * If you want to use keys dynamically, you can set the `SPARKLE_PRIVATE_KEY` and `SPARKLE_PUBLIC_KEY` environment variables before running `generate_appcast`. The tool prioritizes environment keys over keys sitting on disk!
-* `--signature-file-extension`: Extension (WITHOUT the `.`) to use for the appcast xml signature file. Defaults to `signature`. Example use: `--signature-file-extension txt`.
+* `--signature-file-extension`: Extension (WITHOUT the `.`) to use for the app cast signature file. Defaults to `signature`. Example use: `--signature-file-extension txt`.
+* `--output-file-name`: Output file name for the app cast with the `.` or the extension. Extension is controlled by whether it is an xml or json output and is not configurable. Defaults to 'appcast'. Of course, you can always change this later on your own after the app cast has been generated; this option is only for convenience. Example use: `--output-file-name super_app_download_info`.
+* `--use-ed25519-signature-attribute`: If true and doing XML output, the output signature attribute in the XML will be `edSignature` rather than `signature` to match the original [Sparkle](https://github.com/sparkle-project/Sparkle) library. No effect on JSON app casts.
 * `--file-version`: Use to set the version for a binary going into an app cast. Note that this version can only be set once, so when generating an app cast, make sure you either: A) have only one binary in your app cast | B) Utilize the `--reparse-existing` parameter so that old items get picked up. If the generator finds 2 binaries without any known version and `--file-version` is set, then an error will be emitted.
 * `--critical-versions`: Comma-separated list of versions to mark as critical in the app cast. Must match version text exactly. E.g., "1.0.2,1.2.3.1".
+* `--reparse-existing`: Re-parse an existing app cast rather than overriding it and creating it anew. Skips versions already in the app cast, so if you deploy a new binary with the same version, you will need to manually edit your app cast to remove the old listing for the version you are re-deploying. Example use: `--reparse-existing true`
+* `--overwrite-old-items`: Causes app cast items to be rewritten in the app cast if the a binary on disk with the same version number is found. In other words, if 1.0.1 is in the app cast already (either from reparsing or from another binary), and another 1.0.1 is found on disk, then the 1.0.1 data in the app cast will be rewritten based on the binary found. Note that this means that if you have multiple 1.0.1 versions on disk (which you shouldn't do...), the last one found will be the one in your app cast! Example use: `--overwrite-old-items`
+* `--human-readable`: If true, makes the output app cast file human readable (newslines, indents). Example use: `--human-readable true`
+* `--channel`: Name of release channel for any items added into the app cast. Should be a single channel; does not support multiple channels at once, e.g. `beta,gamma`. Do not set if you want to use your release channel - if you set this to `release` or `stable`, those names/words will be treated as special channels and not as the stable channel. (Unless you want all your items to be in a specific channel, of course.) Example use: `--channel beta`
+* `--output-type`: Output type for the app cast file (`xml` or `json`). Defaults to `xml`. Example use: `--output-type json`
+
+#### Overriding public/private keys
+
+* `--public-key-override`: Public key override (ignores whatever is in the public key file) for signing binaries. This overrides ALL other public keys set when verifying binaries, INCLUDING public key set via environment variables! If not set, uses `--key-path` (if set) or the default SignatureManager location. Not used in `--generate-keys` or `--export`. Example use: `--public-key-override asoj341ljsdflj`
+* `--private-key-override`: Private key override (ignores whatever is in the private key file) for signing binaries. This overrides ALL other public keys set when verifying binaries, INCLUDING private key set via environment variables! If not set, uses `--key-path` (if set) or the default SignatureManager location. Not used in `--generate-keys` or `--export`. Example use: `--private-key-override asoj341ljsdflj`
 
 #### Options for Key Generation
 
@@ -367,12 +382,12 @@ netsparkle-generate-appcast -n "macOS version" -o macos -f true -b binary_folder
 netsparkle-generate-appcast --reparse-existing
 
 # Don't overwrite the entire app cast file, but do overwrite items that are still on disk
-netsparkle-generate-appcast --reparse-existing --reparse-overwrite-old-items
+netsparkle-generate-appcast --reparse-existing --overwrite-old-items
 ```
 
 ## Upgrading between major versions
 
-Please see [UPGRADING.md](UPGRADING.md) for information on breaking changes between major versions.
+Please see the [UPGRADING.md](UPGRADING.md) file for information on breaking changes and fixes between major versions.
 
 ## FAQ
 
