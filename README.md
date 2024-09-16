@@ -480,6 +480,24 @@ Here's a summary of what you can do:
 
 The "Handle Events Yourself" sample will be very helpful to you: https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself
 
+### I want to have custom properties in my app cast. Can I handle serializing/deserializing the app cast file myself?
+
+Yes. Implement `IAppCastGenerator` and set the `SparkleUpdater.AppCastGenerator` property to an instance of your class. You will have to implement the following methods:
+
+```csharp
+AppCast DeserializeAppCast(string appCastString);
+Task<AppCast> DeserializeAppCastAsync(string appCastString);
+AppCast DeserializeAppCastFromFile(string filePath);
+Task<AppCast> DeserializeAppCastFromFileAsync(string filePath);
+
+string SerializeAppCast(AppCast appCast);
+Task<string> SerializeAppCastAsync(AppCast appCast);
+void SerializeAppCastToFile(AppCast appCast, string outputPath);
+Task SerializeAppCastToFileAsync(AppCast appCast, string outputPath);
+```
+
+As you can see, many of those functions are small variants of the core serialization and deserialization processes that you want to accomplish. You can look at the implementation of `JsonAppCastGenerator` and `XMLAppCastGenerator` for implementation examples.
+
 ### Can I use an app cast format other than XML or JSON?
 
 Yes. Implement `IAppCastGenerator` and set the `SparkleUpdater.AppCastGenerator` property to an instance of your class. You'll have to make the actual app cast file yourself, though, since the app cast generator is only currently compatible with XML and JSON.
