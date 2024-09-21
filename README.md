@@ -189,6 +189,14 @@ The file that launches your downloaded update executable only waits for 90 secon
   * `RunDownloadedInstaller`
 * Override `UIFactory` if you don't want to implement the entirety of the `IUIFactory` interface yourself and just want to configure a function or two. To use an instance of your class, set `SparkleUpdater.UIFactory`.
 
+#### Using `IAppCastFilter`
+
+You can change how your app cast items are filtered through the `AppCastHelper.AppCastFilter` property (via the `IAppCastFilter` interface). This allows you to change what items are made available to your end users.
+
+NetSparkle contains a built-in `IAppCastFilter` implementation for channel-based filtering called `ChannelAppCastFilter`. For some examples on how to use that class, see [the unit tests here](https://github.com/NetSparkleUpdater/NetSparkle/blob/develop/src/NetSparkle.Tests/ChannelAppCastFilterTests.cs). Basically, set the `List<string> ChannelSearchNames` property to the channels you want to filter by. If you want to keep items with no channel info (e.g. `1.2.3`) in it, set `KeepItemsWithNoChannelInfo` to `true`.
+
+To actually set channels on your app cast items / in your app cast, use the `--channel` property of the app cast CLI tool, or set the `<Version>` property of your project file to the applicable semver-compatible version (e.g. `<Version>1.0.2-beta1</Version>`), and the app cast CLI tool will pick up on this automatically. Or, if you're building your app cast manually, set the `<sparkle:channel>YourChannelHere</sparkle:channel>` property on your `<item>` (or, if using JSON, the `channel` property).
+
 #### Using/building your own UI
 
 NetSparkleUpdater does not have to be used with a UI at all. You can do everything yourself or even have the library run your downloaded update automatically by setting the `SparkleUpdater.UserInteractionMode = UserInteractionMode.DownloadAndInstall`. This repo has a sample on doing things yourself without any pre-built UI in [src/NetSparkle.Samples.HandleEventsYourself](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself).
