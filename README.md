@@ -28,8 +28,10 @@ Built-in supported update download types:
 - [Installing NetSparkle](#installing-netsparkle)
 - [How Updates Work](#how-updates-work)
 - [Basic Usage](#basic-usage)
+- [Quick Start](#quick-start)
+- [Project file setup](#project-file)
 - [App Cast](#app-cast)
-- [Updating from 0.x or 1.x](#updating-from-0x-or-1x)
+- [App cast generator examples](#app-cast-generator-examples)
 - [FAQ](#faq)
 - [Requirements](#requirements)
 - [License](#license)
@@ -89,6 +91,42 @@ We are open to contributions that might make the overall install/update process 
 
 **Please look at the sample projects in this repository for basic, runnable usage samples!!** There are samples on using each of the built-in UIs as well as a "do it yourself in your own UI" sample!
 
+### Quick Start
+
+0. If you want a pre-built UI, install one of the UI NuGet packages. If not, install the core NuGet package.
+1. Set up your project file as mentioned in the following section
+2. Download the app cast generator CLI tool (requires .NET 6, 7, or 8 runtime): `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+3. Create your ed25519 keys (save the generated keys somewhere for safe keeping!):
+```bash
+netsparkle-generate-appcast --generate-keys
+# By default, your Ed25519 signatures are stored on disk in your local 
+# application data folder in a subdirectory called `netsparkle`. 
+# If you want to export your keys to the console, you can do:
+netsparkle-generate-appcast --export
+```
+4. Add code similar to the following to your `MainWindow` or main form or similar:
+```csharp
+private SparkleUpdater _sparkle;
+
+// on your main thread...
+_sparkle = new SparkleUpdater(
+    "https://mywebsite.com/appcast.xml", // link to your app cast file - change extension to .json if using json
+    new Ed25519Checker(SecurityMode.Strict, // security mode -- use .Unsafe to ignore all signature checking (NOT recommended!!)
+                       "base_64_public_key_from_generate_app_cast_tool") // your base 64 public key
+) {
+    UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(icon), // or null, or choose some other UI factory, or build your own IUIFactory implementation!
+    RelaunchAfterUpdate = false, // set to true if needed
+};
+_sparkle.StartLoop(true); // will auto-check for updates
+```
+5. Build your project
+6. Create a change log file (markdown format) if needed
+7. Create an installer for your project using tools like `InnoSetup` (Windows), a DMG file (Linux), a .tar.gz file (Linux), or similar. More information in the [how updates work](#how-updates-work) section.
+8. Run the app cast generator (see other portions of this readme or `netsparkle-generate-appcast --help` for options): `netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs`
+9. Upload your files (including any `.signature` or similar files) to the appropriate locations on your server
+10. Do a test run by rebuilding your project with a temporary software version LOWER than the version you just uploaded. NetSparkle should check for the update, see there's an update, and go through that process for/with you (depending on if you're using a built-in UI, of course).
+11. Things not working? Your first step is to make use of `SparkleUpdater.LogWriter` to see if there is any helpful debug information showing up on the console!
+
 ### Project file
 
 In your project file, make sure you set up a few things so that the library can read in the pertinent details later. _Note: You can use your own `IAssemblyAccessor` to load version information from somewhere else. However, setting things up in your project file is easy, and NetSparkleUpdater can read that in natively!_
@@ -105,7 +143,7 @@ In your project file, make sure you set up a few things so that the library can 
 </PropertyGroup>
 ```
 
-IMPORTANT NOTE: In .NET 8+, a change was made that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We also recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
+IMPORTANT NOTE: In .NET 8+, a change was made in the core of .NET that causes your git/source code commit hash to be included in your app's `<Version>` number. This behavior cannot be avoided by NetSparkleUpdater at this time as we rely on `AssemblyInformationalVersionAttribute`, and this attribute's behavior was changed. Your users may be told that they are currently running `1.0.0+commitHashHere` by NetSparkleUpdater (and your native app itself!). We also recommend adding the following lines to your project file (in a new `<PropertyGroup>` or an existing one):
 
 ```xml
 <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -270,6 +308,7 @@ The important tags in each `<item>` are:
         - `sparkle:signature`, optional: the DSA/Ed25519 signature of the document; NetSparkle does not check this signature for you unless you set `ReleaseNotesGrabber.ChecksReleaseNotesSignature` to `true`, but you may manually verify changelog signatures if you like or set `ReleaseNotesGrabber.ChecksReleaseNotesSignature = true` in your UI.
 - `<pubDate>`
     - The date this update was published
+- `sparkle:channel`: Channel for this app cast item, e.g. `beta` (not required) - only accepts 1 channel
 - `<enclosure>`
     - This tag describes the update file that NetSparkle will download.
     - **Attributes**:
