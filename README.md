@@ -157,11 +157,43 @@ Note that if you do _not_ use a `UIFactory`, you **must** use the `CloseApplicat
 
 The file that launches your downloaded update executable only waits for 90 seconds before giving up! Make sure that your software closes within 90 seconds of [CloseApplication](#closeapplication)/[CloseApplicationAsync](#closeapplicationasync) being called if you implement those events! If you need an event that can be canceled, such as when the user needs to be asked if it's OK to close (e.g. to save their work), use `PreparingForExit` or `PreparingToExitAsync`.
 
+#### What interfaces and classes can I utilitize to configure functionality for my own software's needs?
+
+##### Interfaces 
+
+* If you want to use your own UI, implement `IUIFactory`; set `SparkleUpdater.UIFactory` to utilize an instance of your object.
+  * Implement `ICheckingForUpdates` for your UI that tells the user that `SparkleUpdater` is checking for updates
+  * Impelement `IDownloadProgress` for your UI that shows the user that an update is being downloaded
+  * Implement `IUpdateAvailable` for your UI that shows the user that an update is available along with release notes
+* Implement `IAppCastDataDownloader` to setup your own methods for downloading app cast data; set `SparkleUpdater.AppCastDataDownloader` to utilize an instance of your object.. NetSparkle includes two implementations by default: `WebRequestAppCastDataDownloader` for downloading app cast information from the internet at large, and `LocalFileAppCastDownloader` for copying/"downloading" an app cast from a given path
+* Implement `IAppCastFilter` to do custom filtering on the `AppCastItem` objects in your downloaded app cast, e.g. to only consider a given subset of items as valid updates for your application; set `AppCastHelper.AppCastFilter` (`SparkleUpdater.AppCastHelper.AppCastFilter`) to utilize an instance of your object. NetSparkle includes the `ChannelAppCastFilter` class, which you can use to filter out items by a given product channel (e.g. alpha, beta) if your application utilizes those features.
+* Implement `IAppCastGenerator` to control how app casts are serialized and deserialized; set `SparkleUpdater.AppCastGenerator` to utilize an instance of your object. NetSparkle includes two implementations: `XMLAppCastGenerator`, for XML serialization/deserialization; and `JsonAppCastGenerator`, for JSON serialization/deserialization. The app cast generator CLI tool can also output both XML and JSON app casts.
+* Implement `IAssemblyAccessor` to control how version, copyright, and other product details are loaded for your application; set `Configuration.AssemblyAccessor` (`SparkleUpdater.Configuration.AssemblyAccessor`) to utilize an instance of your object. NetSparkle contains a default implementation, `AssemblyDiagnosticsAccessor`, which should work in the general case of loading data from a given assembly.
+* To log information to a file or to your console, implement `ILogger` and set `SparkleUpdater.LogWriter`. By default, the `LogWriter` class is used (which has the `LogWriterOutputMode` property to control whether the logs are written to `Console`, `Trace`, etc.)
+* Implement `ISignatureVerifier` to change how your signatures for the app cast, downloads, etc. are handled; set `SparkleUpdater.SignatureVerifier` to utilize an instance of your object.
+* Implement `IUpdateDownloader` to setup your own methods for downloading and sending progress on app update files (e.g. installers) for a given app cast item; set `SparkleUpdater.UpdateDownloader` to utilize an instance of your object.. NetSparkle includes two implementations by default: `WebFileDownloader` (default) to download files from the web/internet, and `LocalFileDownloader` for copying/"downloading" a file from a given path.
+
+##### Subclassing
+
+* Subclass `Configuration` to change how certain NetSparkle information is saved and loaded - e.g., skipped version information. This class is the one that utilizes an `IAssemblyAccessor` instance to save and load version information, product name, etc. NetSparkle contains three implementations: `RegistryConfiguration`, which saves and loads info to the Windows registry (default on Windows); `JSONConfiguration`, which saves and loads info to a JSON file (default on macOS/Linux); and `DefaultConfiguration`, which does nothing and serves as a fallback in case `JSONConfiguration` cannot find a valid file location to save and load data. To use the instance of your class, set `SparkleUpdater.Configuration`.
+  * Subclassing `RegistryConfiguration` lets you quickly change the registry path where items are saved via `BuildRegistryPath`
+  * Subclassing `JSONConfiguration` lets you quickly change the file path where data is saved via `GetSavePath`
+* Subclass `AppCastHelper` if you want full control over the app cast downloading and parsing process. Note that you can probably do everything you need to do via the `AppCastHelper` properties (including `IAppCastFilter AppCastFilter`), but subclassing will give you full, absolute control over the whole process. To use the instance of your class, set `SparkleUpdater.AppCastHelper`.
+* Subclass `ReleaseNotesGrabber` to control the release notes downloading (and therefore display) process. To use an instance of your class, set `UIFactory.ReleaseNotesGrabberOverride`.
+* Override `WebFileDownloader` if you don't want to implement `IUpdateDownloader` yourself and just want to override a function or two such as `CreateHttpClient`. To use an instance of your class, set `SparkleUpdater.UpdateDownloader`.
+* Override `WebRequestAppCastDataDownloader` if you don't want to implement `IAppCastDataDownloader` and just want to override a function or two such as `CreateHttpClient`. To use an instance of your class, set `SparkleUpdater.AppCastDataDownloader`.
+* Override `LogWriter` to implement the `PrintMessage` function; because `ILogger` is a pretty simple interface, you can probably just implement that interface yourself if your needs are complex. To use an instance of your class, set `SparkleUpdater.LogWriter`.
+* Override `SparkleUpdater` to implement some different installation-related functions, including:
+  * `GetWindowsInstallerCommand`
+  * `GetInstallerCommand`
+  * `RunDownloadedInstaller`
+* Override `UIFactory` if you don't want to implement the entirety of the `IUIFactory` interface yourself and just want to configure a function or two. To use an instance of your class, set `SparkleUpdater.UIFactory`.
+
 #### Using/building your own UI
 
 NetSparkleUpdater does not have to be used with a UI at all. You can do everything yourself or even have the library run your downloaded update automatically by setting the `SparkleUpdater.UserInteractionMode = UserInteractionMode.DownloadAndInstall`. This repo has a sample on doing things yourself without any pre-built UI in [src/NetSparkle.Samples.HandleEventsYourself](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself).
 
-If you want a UI, we offer pre-built UIs with a small number of customizable options for WinForms, WPF, and Avalonia. The UIs are triggered via a `IUIFactory` implementation, called `UIFactory` in each of the built-in options. Most methods in the `UIFactory` can be overridden if you want to tweak behavior, and the `ProcessWindowAfterInit` lets you customize each window after it is made.
+If you want a UI, we offer pre-built UIs in different NuGet packages with a small number of customizable options for WinForms, WPF, and Avalonia. The UIs are triggered via a `IUIFactory` implementation, called `UIFactory` in each of the built-in options. Most methods in the `UIFactory` can be overridden if you want to tweak behavior, and the `ProcessWindowAfterInit` lets you customize each window after it is made.
 
 If you want to roll your own UI entirely, just implement the `IUIFactory` interface with whatever UI library you want to use. You can copy or reuse view models, code, etc. from NetSparkleUpdater's prebuilt options, and copy+pasting code from this repo into your own is probably a good, quick way to start. Don't forget to set the `SparkleUpdater.UIFactory` property with an instance of your `IUIFactory` implementation, though!
 
@@ -181,11 +213,11 @@ We strongly recommend that you make use of the [netsparkle-generate-appcast](#in
 2. `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
 3. The tool is now available on your command line as the `netsparkle-generate-appcast` command. You can use `netsparkle-generate-appcast --help` to see a full list of options for this tool.
 
-#### Sparkle Compatibility 
+### Sparkle Compatibility 
 
 By default, NetSparkle uses [Sparkle](https://github.com/sparkle-project/Sparkle)-compatible XML app casts _for the most part_. NetSparkle uses `sparkle:signature` rather than `sparkle:edSignature` so that you can choose how to sign your files/app cast. (If you want to use `sparkle:edSignature`, pass `--use-ed25519-signature-attribute` to the app cast generator.) Note that NetSparkle is compatible with and uses Ed25519 signatures by default, but the framework can handle a different implementation of the `ISignatureVerifier` class to check different kinds of signatures without a major version bump/update.
 
-#### Sample App Cast
+### Sample App Cast
 
 Here is a sample XML app cast:
 
@@ -258,13 +290,6 @@ You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [thi
 * Rig up a script that generates the app cast for you in python or some other language (`string.Format` or similar is a wonderful thing).
 * Or you can just copy/paste the above example app cast into your own file and tweak the signatures/download info yourself, then generate the (Ed25519/DSA) signature for the app cast file manually! :)
 
-### App Cast Generator Options
-
-_Missing some option you'd like to see? File an issue on this repo or add it yourself and send us a pull request!_
-
-* `--show-examples`: Print examples of usage to the console.
-* `--help`: Show all options and their descriptions.
-
 ### Using JSON app casts
 
 If you'd like to use a JSON app cast rather than XML:
@@ -273,7 +298,15 @@ If you'd like to use a JSON app cast rather than XML:
 * Set `SparkleUpdater.AppCastGenerator` to `new JsonAppCastGenerator(mySparkleUpdater.LogWriter)`.
 * By default, the output will be human-readable. If you want to turn this off, set the `JsonAppCastGenerator.HumanReadableOutput` property to `false`.
 
+### App Cast Generator Options
+
+_Missing some option you'd like to see? File an issue on this repo or add it yourself and send us a pull request!_
+
+* `--show-examples`: Print examples of usage to the console.
+* `--help`: Show all options and their descriptions.
+
 #### General Options When Generating App Cast
+
 * `-a`/`--appcast-output-directory`: Directory in which to write the output `appcast.xml` file. Example use: `-a ./MyAppCastOutput`
 * `-e`/`--ext`: When looking for files to add to the app cast, use the given extension(s) when looking for files. Defaults to `exe`. Example use: `-e exe,msi`
 * `-b`/`--binaries`: File path to directory that should be searched through when looking for files to add to the app cast. Defaults to `.`. Example use: `-b my/build/directory`
