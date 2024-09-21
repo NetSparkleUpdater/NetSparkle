@@ -159,7 +159,7 @@ namespace NetSparkleUpdater.UI.Avalonia.ViewModels
                 UserReadableDownloadProgress = string.Format("");
             }
             IsActionButtonVisible = isInstallFileValid;
-            if (!isInstallFileValid || true)
+            if (!isInstallFileValid)
             {
                 BackgroundColorChanger?.ChangeBackgroundColor(new SolidColorBrush(Colors.Tomato));
                 _didDownloadFail = true;
