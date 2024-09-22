@@ -442,7 +442,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="sourceBinaryDirectory"></param>
         /// <returns>items, product name</returns>
-        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName, string singleFileToAddToAppCast)
+        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName, string? singleFileToAddToAppCast = null)
         {
             var items = new List<AppCastItem>();
             var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? "");
