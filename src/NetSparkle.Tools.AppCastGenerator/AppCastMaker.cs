@@ -442,15 +442,33 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="sourceBinaryDirectory"></param>
         /// <returns>items, product name</returns>
-        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName)
+        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName, string singleFileToAddToAppCast)
         {
             var items = new List<AppCastItem>();
             var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? "");
-            var binaries = FindBinaries(sourceBinaryDirectory, dirFileSearches, _opts.SearchBinarySubDirectories);
-            if (!binaries.Any())
+            
+            var binaries = new List<string>();
+            if (string.IsNullOrWhiteSpace(singleFileToAddToAppCast))
             {
-                Console.WriteLine($"No files founds matching extensions -- {string.Join(",", dirFileSearches)} -- in {sourceBinaryDirectory}", Color.Yellow);
-                return (null, null);
+                binaries = FindBinaries(sourceBinaryDirectory, dirFileSearches, _opts.SearchBinarySubDirectories).ToList();
+                if (!binaries.Any())
+                {
+                    Console.WriteLine($"No files founds matching extensions -- {string.Join(",", dirFileSearches)} -- in {sourceBinaryDirectory}", Color.Yellow);
+                    return (null, null);
+                }
+            }
+            else
+            {
+                if (File.Exists(singleFileToAddToAppCast))
+                {
+                    Console.WriteLine($"Using single file at path {singleFileToAddToAppCast}");
+                    binaries.Add(singleFileToAddToAppCast);
+                }
+                else
+                {
+                    Console.WriteLine($"No file found at path {singleFileToAddToAppCast}", Color.Yellow);
+                    return (null, null);
+                }
             }
 
             if (_opts.OperatingSystem != null && !string.IsNullOrWhiteSpace(_opts.OperatingSystem) && 
@@ -463,8 +481,15 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             Console.WriteLine();
             Console.WriteLine($"Operating System: {_opts.OperatingSystem}", Color.LightBlue);
-            Console.WriteLine($"Searching: {sourceBinaryDirectory}", Color.LightBlue);
-            Console.WriteLine($"Found {binaries.Count()} {string.Join(",", dirFileSearches)} files(s)", Color.LightBlue);
+            if (string.IsNullOrWhiteSpace(singleFileToAddToAppCast))
+            {
+                Console.WriteLine($"Searching: {sourceBinaryDirectory}", Color.LightBlue);
+                Console.WriteLine($"Found {binaries.Count()} {string.Join(",", dirFileSearches)} files(s)", Color.LightBlue);
+            }
+            else
+            {
+                Console.WriteLine($"Found {binaries.Count()} file at {singleFileToAddToAppCast}", Color.LightBlue);
+            }
             Console.WriteLine();
 
             try
