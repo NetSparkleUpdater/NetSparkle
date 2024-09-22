@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsTrimmable>true</IsTrimmable>
+    <PublishTrimmed>true</PublishTrimmed>
+    <!-- <PublishSingleFile>true</PublishSingleFile> -->
+    <TrimMode>full</TrimMode>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Nullable>enable</Nullable>
+    <!-- <PublishAot>true</PublishAot> -->
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <IlcTrimMetadata>true</IlcTrimMetadata>
+    <IlcDisableReflection>true</IlcDisableReflection>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+
+    <Version>1.0</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <AssemblyTitle>My Simple Console App - NetSparkle</AssemblyTitle>
+    <AssemblyName>SimpleNetSparkleConsoleApp</AssemblyName>
+    <Copyright>NetSparkleUpdater</Copyright>
+    <Company>NetSparkleUpdater</Company>
+    <Product>NetSparkleUpdater</Product>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+  </PropertyGroup>
+</Project>
