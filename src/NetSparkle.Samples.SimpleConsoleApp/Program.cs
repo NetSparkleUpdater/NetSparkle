@@ -11,3 +11,5 @@ Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 Console.WriteLine("");
 Console.WriteLine("");
+Console.WriteLine("(Program is done, hit any key to end...)");
+Console.ReadLine();
