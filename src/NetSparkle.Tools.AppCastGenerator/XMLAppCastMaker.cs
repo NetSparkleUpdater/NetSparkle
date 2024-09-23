@@ -71,7 +71,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                         var currentItem = xmlGenerator.ReadAppCastItem(item);
                         Console.WriteLine("Found an item in the app cast: version {0} ({1}) -- os = {2}",
                             currentItem.Version, currentItem.ShortVersion, currentItem.OperatingSystem);
-                        var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim()).FirstOrDefault();
+                        var itemFound = items.Where(x => x.Version != null && x.Version == currentItem.Version?.Trim() 
+                            && x.OperatingSystem == currentItem.OperatingSystem?.Trim()).FirstOrDefault();
                         if (itemFound == null)
                         {
                             items.Add(currentItem);
