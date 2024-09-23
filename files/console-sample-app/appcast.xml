@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Sparkle Console App</title>
+    <description>Most recent changes with links to updates</description>
+    <language>en</language>
+    <item>
+      <title>Sparkle Console App 2.4</title>
+      <pubDate>Sun, 22 Sep 2024 11:56:55 +09:00</pubDate>
+      <sparkle:version>2.4</sparkle:version>
+      <sparkle:shortVersionString>2.4</sparkle:shortVersionString>
+      <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/console-sample-app/SimpleNetSparkleConsoleApp_linux-x64" sparkle:version="2.4" sparkle:shortVersionString="2.4" length="13420805" sparkle:os="linux-x64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="4lHPb6L9L3w9lHVRTRmJTQ3vN3QTb80mQi7kyUVG8IuF1ValtVrsoxbP4Q3BHGn+HB6eD/sfkMaL3CIJkJtgDQ==" />
+    </item>
+    <item>
+      <title>Sparkle Console App 2.3</title>
+      <pubDate>Mon, 23 Sep 2024 20:05:59 +09:00</pubDate>
+      <sparkle:version>2.3</sparkle:version>
+      <sparkle:shortVersionString>2.3</sparkle:shortVersionString>
+      <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/console-sample-app/SimpleNetSparkleConsoleApp_windows-x64.exe" sparkle:version="2.3" sparkle:shortVersionString="2.3" length="1235456" sparkle:os="windows-x64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="a10m8iZDad7nhNEtJrML4SKYiqPvK75p7nabhjteSxhXrVEPH0nwhbGLofvWEIKbeLREEO4LrhkCt0Eh62RMBw==" />
+    </item>
+    <item>
+      <title>Sparkle Console App 2.1</title>
+      <pubDate>Sun, 22 Sep 2024 12:02:04 +09:00</pubDate>
+      <sparkle:version>2.1</sparkle:version>
+      <sparkle:shortVersionString>2.1</sparkle:shortVersionString>
+      <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/console-sample-app/SimpleNetSparkleConsoleApp_macos-x64" sparkle:version="2.1" sparkle:shortVersionString="2.1" length="1460640" sparkle:os="macos-x64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="TPutMxC90IDtV3Lq0+u8HI9ZKRfskb6/CbIfltPcVeu3yJE6EajOyWaA7BsThx+jW+V1WpuAoQfOu9ZIsHvHAQ==" />
+    </item>
+    <item>
+      <title>Sparkle Console App 2.0</title>
+      <pubDate>Sun, 22 Sep 2024 12:02:02 +09:00</pubDate>
+      <sparkle:version>2.0</sparkle:version>
+      <sparkle:shortVersionString>2.0</sparkle:shortVersionString>
+      <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/console-sample-app/SimpleNetSparkleConsoleApp_macos-arm64" sparkle:version="2.0" sparkle:shortVersionString="2.0" length="1438808" sparkle:os="macos-arm64" type="application/octet-stream" sparkle:criticalUpdate="false" sparkle:signature="hZon/DGMazSll+hmKCwELm5A9TBlxkC9ohxkJ/RFopJiEKcmA0EDHQeV7Pj+Z8fA/AZwUQXmR9AQwWsed8eHCA==" />
+    </item>
+  </channel>
+</rss>
