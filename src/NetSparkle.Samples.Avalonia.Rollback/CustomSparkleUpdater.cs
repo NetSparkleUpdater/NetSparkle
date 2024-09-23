@@ -1,0 +1,215 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using NetSparkleUpdater;
+using NetSparkleUpdater.Interfaces;
+
+namespace NetSparkleUpdater.Samples.Avalonia
+{
+    public class CustomSparkleUpdater : NetSparkleUpdater.SparkleUpdater
+    {
+        public CustomSparkleUpdater(string appcastUrl, ISignatureVerifier signatureVerifier)
+            : base(appcastUrl, signatureVerifier, null)
+        { }
+
+        /// <summary>
+        /// Updates the application via the file at the given path. Figures out which command needs
+        /// to be run, sets up the application so that it will start the downloaded file once the
+        /// main application stops, and then waits to start the downloaded update.
+        /// </summary>
+        /// <param name="downloadFilePath">path to the downloaded installer/updater</param>
+        /// <returns>the awaitable <see cref="Task"/> for the application quitting</returns>
+        protected override async Task RunDownloadedInstaller(string downloadFilePath)
+        {
+            LogWriter.PrintMessage("Running downloaded installer");
+            // get the options for restarting the application
+            string executableName = RestartExecutableName;
+            string workingDir = RestartExecutablePath;
+
+            // generate the batch file path
+#if NETFRAMEWORK
+            bool isWindows = true;
+            bool isMacOS = false;
+#else
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#endif
+            var extension = isWindows ? ".cmd" : ".sh";
+            string batchFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + extension);
+            string installerCmd;
+            try
+            {
+                installerCmd = GetInstallerCommand(downloadFilePath);
+                if (!string.IsNullOrWhiteSpace(CustomInstallerArguments))
+                {
+                    installerCmd += " " + CustomInstallerArguments;
+                }
+            }
+            catch (InvalidDataException)
+            {
+                UIFactory?.ShowUnknownInstallerFormatMessage(downloadFilePath);
+                return;
+            }
+
+            // generate the batch file                
+            LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
+
+            string processID = Environment.ProcessId.ToString();
+            string relaunchAfterUpdate = "";
+            if (RelaunchAfterUpdate)
+            {
+                relaunchAfterUpdate = $@"
+                    cd ""{workingDir}""
+                    ""{executableName}""";
+            }
+
+            using (FileStream stream = new FileStream(batchFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 4096, true))
+            using (StreamWriter write = new StreamWriter(stream, new UTF8Encoding(false))/*new StreamWriter(batchFilePath, false, new UTF8Encoding(false))*/)
+            {
+                if (isWindows)
+                {
+                    // We should wait until the host process has died before starting the installer.
+                    // This way, any DLLs or other items can be replaced properly.
+                    // Code from: http://stackoverflow.com/a/22559462/3938401
+
+                    string output = $@"
+                        @echo off
+                        chcp 65001 > nul
+                        set /A counter=0                       
+                        setlocal ENABLEDELAYEDEXPANSION
+                        :loop
+                        set /A counter=!counter!+1
+                        if !counter! == 90 (
+                            exit /b 1
+                        )
+                        tasklist | findstr ""\<{processID}\>"" > nul
+                        if not errorlevel 1 (
+                            timeout /t 1 > nul
+                            goto :loop
+                        )
+                        :install
+                        {installerCmd}
+                        :afterinstall
+                        {relaunchAfterUpdate.Trim()}
+                        endlocal";
+                    await write.WriteAsync(output);
+                    write.Close();
+                }
+                else
+                {
+                    // We should wait until the host process has died before starting the installer.
+                    var waitForFinish = $@"
+                        COUNTER=0;
+                        while ps -p {processID} > /dev/null;
+                            do sleep 1;
+                            COUNTER=$((++COUNTER));
+                            if [ $COUNTER -eq 90 ] 
+                            then
+                                exit -1;
+                            fi;
+                        done;
+                    ";
+                    if (IsZipDownload(downloadFilePath)) // .zip on macOS or .tar.gz on Linux
+                    {
+                        // waiting for finish based on http://blog.joncairns.com/2013/03/wait-for-a-unix-process-to-finish/
+                        // use tar to extract
+                        var tarCommand = isMacOS ? $"tar -x -f {downloadFilePath} -C \"{workingDir}\"" 
+                            : $"tar -xf {downloadFilePath} -C \"{workingDir}\" --overwrite ";
+                        var output = $@"
+                            {waitForFinish}
+                            {tarCommand}
+                            {relaunchAfterUpdate}";
+                        await write.WriteAsync(output.Replace("\r\n", "\n"));
+                    }
+                    else
+                    {
+                        string installerExt = Path.GetExtension(downloadFilePath);
+                        if (DoExtensionsMatch(installerExt, ".pkg") ||
+                            DoExtensionsMatch(installerExt, ".dmg"))
+                        {
+                            relaunchAfterUpdate = ""; // relaunching not supported for pkg or dmg downloads
+                        }
+                        var output = $@"
+                            {waitForFinish}
+                            chmod +x {installerCmd}
+                            {installerCmd}
+                            {relaunchAfterUpdate}";
+                        await write.WriteAsync(output.Replace("\r\n", "\n"));
+                    }
+                    write.Close();
+                    // if we're on unix, we need to make the script executable!
+                    Exec($"chmod +x {batchFilePath}"); // this could probably be made async at some point
+                }
+            }
+
+            // report
+            LogWriter.PrintMessage("Going to execute script at path: {0}", batchFilePath);
+
+            // init the installer helper
+            if (isWindows)
+            {
+                _installerProcess = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = batchFilePath,
+                        WindowStyle = ProcessWindowStyle.Normal,
+                        UseShellExecute = true,
+                        CreateNoWindow = false
+                    }
+                };
+                // start the installer process. the batch file will wait for the host app to close before starting.
+                LogWriter.PrintMessage("Starting the installer process at {0}", batchFilePath);
+                _installerProcess.Start();
+            }
+            else
+            {
+                // on macOS need to use bash to execute the shell script
+                LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
+                ExecVisible(batchFilePath, false);
+            }
+            await QuitApplication();
+        }
+
+        protected bool ExecVisible(string cmd, bool waitForExit = true, string downloadFilePath = "")
+        {
+            var escapedArgs = cmd.Replace("\"", "\\\"");
+            var shell = "";
+            try
+            {
+                // leave nothing up to chance :)
+                shell = System.Environment.GetEnvironmentVariable("SHELL");
+            }
+            catch { }
+            if (string.IsNullOrWhiteSpace(shell))
+            {
+                shell = "/bin/sh";
+            }
+            LogWriter?.PrintMessage("Shell is {0}", shell);
+
+            _installerProcess = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    CreateNoWindow = false,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    FileName = shell,
+                    Arguments = $"-c \"{escapedArgs}\""
+                }
+            };
+            LogWriter?.PrintMessage("Starting the process via {1} -c \"{0}\"", escapedArgs, shell);
+            _installerProcess.Start();
+            if (waitForExit)
+            {
+                LogWriter?.PrintMessage("Waiting for exit...");
+                _installerProcess.WaitForExit();
+            }
+            return true;
+        }
+    }
+}
