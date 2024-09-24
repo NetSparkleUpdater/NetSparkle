@@ -15,5 +15,7 @@
     <Button Content="Manual Update Check"
 			Command="{CompiledBinding $parent[ui:MainWindow].ManualUpdateCheck_Click}"
             Width="150"/>
+    <Button Content="Print all available versions to console"
+			Command="{CompiledBinding $parent[ui:MainWindow].PrintAvailableVersions_Click}"/>
   </StackPanel>
 </Window>

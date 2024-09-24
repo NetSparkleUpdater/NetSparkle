@@ -8,6 +8,7 @@
     <PublishTrimmed>true</PublishTrimmed>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <Version>3.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\*" />

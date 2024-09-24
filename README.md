@@ -500,6 +500,15 @@ Yes. You need to start the `NetSparkleUpdater` forms on a new thread(s). See the
 
 See #238 [and this documentation](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/high-dpi-support-in-windows-forms?view=netframeworkdesktop-4.8#configuring-your-windows-forms-app-for-high-dpi-support) for the fix for making this work on the sample application. Basically, you need to use an app config file and manifest file to let Windows know that your application is DPI-aware. If that doesn't work for you, try some of the tips at [this SO post](https://stackoverflow.com/questions/4075802/creating-a-dpi-aware-application).
 
+### What about different architectures on the same OS? Does NetSparkle support that?
+
+Yes!
+
+* Starting from v2.8.1 of the app cast CLI tool (note that this tool has different version numbers from the main library!), the app cast generator will check the OS as well as the version when looking to see if the version is already in the app cast
+  * Note that, at this time, that the app cast generator doesn't pick up which architecture your app is made for, so you should make sure to specify the full operating system and architecture string via the `--os` command line parameter.
+* Starting from v3.0 of the main library, the app cast's operating system string can be things like `macos-arm64` or `windows-x64` rather than just `macos` or `windows`
+* The [Rollback sample](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia.Rollback) will be very helpful to you. It has examples on looking at the current architecture of the running app to see which items should be made available to the user, filtering out items that don't apply to the current architecture, and more.
+
 ### What's all this about trimming?
 
 [Trimming](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options) is a great way to reduce the file size of your application when it is self-published and/or built as a self-contained application. In short, trimming removes unused code from your applications, including external libraries, so you can ship your application with a reduced file size. To trim your application on publish, add `<PublishTrimmed>true</PublishTrimmed>` to your `csproj` file. If you want to trim all assemblies (including those that may not have specified they are compatible with trimming), add `<TrimMode>full</TrimMode>` to your `csproj` file; to only trim those that have opted-in, use `<TrimMode>partial</TrimMode>`. To enable warnings for trimming, add `<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>`.
@@ -584,7 +593,7 @@ Here's a summary of what you can do:
 4. Call `await _sparkle.InitAndBeginDownload(update);` with the update you want to download. The download path is provided in the `DownloadFinished` event.
 5. When it's done downloading, call `_sparkle.InstallUpdate(update, _downloadPath);`
 
-The "Handle Events Yourself" sample will be very helpful to you: https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself
+The [Handle Events Yourself sample](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself) and the [Rollback sample](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia.Rollback) will be very helpful to you in learning how to do these sort of things.
 
 ### I want to have custom properties in my app cast. Can I handle serializing/deserializing the app cast file myself?
 

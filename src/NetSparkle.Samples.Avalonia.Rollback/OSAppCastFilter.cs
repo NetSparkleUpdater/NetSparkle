@@ -44,7 +44,11 @@ namespace NetSparkleUpdater.Samples.Avalonia
                     _logWriter?.PrintMessage("Removing older item from filtered app cast results");
                     return false;
                 }
-                return item.OperatingSystem.ToLower() == OSName.ToLower();
+                if (string.IsNullOrWhiteSpace(OSName))
+                {
+                    return true;
+                }
+                return item.OperatingSystem?.ToLower() == OSName.ToLower();
             }).OrderByDescending(x => x.SemVerLikeVersion);
         }
     }
