@@ -12,16 +12,14 @@
 
 # 
 
-NetSparkle is a highly-configurable software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software. 
-
-NetSparkle 2.0 brings the ability to customize most of NetSparkle -- custom UIs are now possible, you can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts), and many more enhancements are available!
-
-_Note: NetSparkle 3.0 development is in progress and includes: built-in JSON app cast reading/writing instead of just XML, built-in ability to use different channels for your apps (e.g. beta, alpha, preview), semver compatibility, a reworked app cast serializing/deserializing API, a new assembly accessor, trimming/AOT compatibility, smaller file size due to fewer dependencies, and more! See the Issues list for more information about what's left. Updates to this README are pending, so ask questions on Gitter or on GitHub discussions if you're using a newer preview/building from source._
+NetSparkle is a highly-configurable software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software.
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
 * macOS -- .tar, .tar.gz, .zip, .pkg, .dmg
 * Linux -- .tar.gz, .deb, .rpm
+
+Please see [UPGRADING.md](https://github.com/NetSparkleUpdater/NetSparkle/blob/develop/UPGRADING.md) for information on major version changes, updates, etc.
 
 ## Getting Started
 
@@ -148,6 +146,21 @@ IMPORTANT NOTE: In .NET 8+, a change was made in the core of .NET that causes yo
 ```xml
 <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 ```
+
+### Available NetSparkle samples
+
+* [NetSparkle.Samples.Avalonia](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia) - Basic Avalonia sample
+* [NetSparkle.Samples.Avalonia.MacOS](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia.MacOS) - Basic Avalonia sample on macOS that shows how to open an update as admin
+* [NetSparkle.Samples.Avalonia.MacOSZip](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia.MacOSZip) - Avalonia sample for macOS that downloads and extracts a zip file update and then starts the app
+* [NetSparkle.Samples.Avalonia.Rollback](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Avalonia.Rollback) - Avalonia sample that demonstrates rollback capability, OS architecture filtering, and downloading available updates in the background for rolling back items yourself
+* [NetSparkle.Samples.DownloadedExe](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.DownloadedExe) - Not really a sample. This is the small GUI downloaded by some of the other samples.
+* [NetSparkle.Samples.Forms.Multithread](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.Multithread) - A sample for Windows WinForms that demonstrates how to run NetSparkle on your own threading model (in this case, one UI thread for every window)
+* [NetSparkle.Samples.HandleEventsYourself](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.HandleEventsYourself) - A sample that shows how to implement a UI yourself using just the core library and handling events yourself
+* [NetSparkle.Samples.NetCore.WinForms](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.NetCore.WinForms) - A simple UI sample on .NET for WinForms
+* [NetSparkle.Samples.NetCore.WPF](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.NetCore.WPF) - A simple UI sample on .NET for WPF
+* [NetSparkle.Samples.NetFramework.WinForms](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.NetFramework.WinForms) - A simple UI sample on .NET Framework for WinForms
+* [NetSparkle.Samples.NetFramework.WPF](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.NetFramework.WPF) - A simple UI sample on .NET Framework for WPF
+* [NetSparkle.Samples.SimpleConsoleApp](https://github.com/NetSparkleUpdater/NetSparkle/tree/develop/src/NetSparkle.Samples.SimpleConsoleApp) - Not really a sample. This is the console app downloaded by the Avalonia.Rollback sample.
 
 ### Code
 

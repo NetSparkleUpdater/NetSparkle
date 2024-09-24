@@ -1,11 +1,21 @@
 ## NetSparkle 3.x
 
-* Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
-* Lines ending in [**!] have been backported.
+### Summary of 3.x Changes
 
-### Summary of Changes
-
-(TBD)
+* Updated .NET and .NET Framework compatibility
+* Built-in JSON app cast reading/writing instead of just XML
+* Built-in ability to use different channels for your apps (e.g. beta, alpha, preview)
+* Semver compatibility
+* Reworked app cast serializing/deserializing API
+* New assembly accessor
+* Trimming/AOT compatibility
+* Nullability annotations
+* Smaller file size due to fewer dependencies
+* Simplified threading model
+* Simplified custom UI interface/usage
+* More samples for end users
+* Updated README and documentation
+* A bunch of bug fixes and adjustments everywhere
 
 ### Breaking Changes from 2.x
 
@@ -81,6 +91,9 @@
 
 ### Changes/Fixes from 2.x
 
+* Lines ending in [**] are candidates for backporting to 2.x if time/desired by users.
+* Lines ending in [**!] have been backported.
+
 * Don't get download name if no need to (e63ebb054d62e26232b808189eb4619566952f3a) [**]
 * Fixed some documentation in `LocalFileDownloader` (6ca714ca62577bc7412353338a148a03810ba81a) [**]
 * Use net8.0 in Avalonia samples (46de3e9c9525cac4026a7959e44764752cdf36ee)
@@ -127,6 +140,19 @@
 * Fixed `Unsafe` mode in DSA/ed25519 checkers still checking signatures if a signature existed
 
 ## Updating from 0.X or 1.X to 2.X
+
+### Summary of changes
+
+* .NET Framework and .NET compatibility adjustments
+* Huge amount/level of configurability compared to prior versions
+* Custom UIs are now possible through the `IUIFactory` interface
+* You can have custom app cast downloaders and handlers (e.g. for FTP download or JSON app casts)
+* Change of base namespace
+* Built-in, ready-to-go UIs for WPF, WinForms, and Avalonia
+* New NuGet packaging scheme
+* Ed25519 compatibility
+
+### Major changes from 0.X/1.Y to 2.A
 
 This section holds info on major changes when moving from versions 0.X or 1.Y. If we've forgotten something important, please [file an issue](https://github.com/NetSparkleUpdater/NetSparkle/issues).
 
