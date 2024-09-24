@@ -482,7 +482,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             <sparkle:releaseNotesLink>
             https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md
             </sparkle:releaseNotesLink>
-            <pubDate>Thu, 27 Oct 2016 10:30:00 +0000</pubDate>
+            <pubDate>Wed, 26 Oct 2016 10:30:00 +0000</pubDate>
             <enclosure url=""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe""
                        sparkle:version=""1.3""
                        sparkle:os=""linux""
@@ -530,7 +530,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         {
                             ""title"": ""Version 1.3"",
                             ""release_notes_link"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md"",
-                            ""publication_date"": ""2016-10-27T10:30:00"",
+                            ""publication_date"": ""2016-10-26T10:30:00"",
                             ""url"": ""https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe"",
                             ""version"": ""1.3"",
                             ""os"": ""linux"",
@@ -556,7 +556,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             File.WriteAllText(fakeAppCastFilePath, appCastData);
             (items, productName) = maker.GetItemsAndProductNameFromExistingAppCast(fakeAppCastFilePath, true);
             Assert.Equal("NetSparkle Test App", productName);
-            Assert.Equal(2, items.Count);
+            Assert.Equal(3, items.Count);
             Assert.Equal("Version 2.0", items[0].Title);
             Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.0-release-notes.md", items[0].ReleaseNotesLink);
             Assert.Equal(28, items[0].PublicationDate.Day);
@@ -566,15 +566,25 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(12288, items[0].UpdateSize);
             Assert.Equal("foo", items[0].DownloadSignature);
 
-            Assert.Equal("Version 1.3 - The Real Deal", items[1].Title);
-            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-real-release-notes.md", items[1].ReleaseNotesLink);
-            Assert.Equal(27, items[1].PublicationDate.Day);
-            Assert.Equal(44, items[1].PublicationDate.Minute);
-            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe", items[1].DownloadLink);
-            Assert.Equal("macOS", items[1].OperatingSystem);
+            Assert.Equal("Version 1.3", items[1].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-release-notes.md", items[1].ReleaseNotesLink);
+            Assert.Equal(26, items[1].PublicationDate.Day);
+            Assert.Equal(30, items[1].PublicationDate.Minute);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13.exe", items[1].DownloadLink);
+            Assert.Equal("linux", items[1].OperatingSystem);
             Assert.Equal("1.3", items[1].Version);
-            Assert.Equal(22222, items[1].UpdateSize);
-            Assert.Equal("moo", items[1].DownloadSignature);
+            Assert.Equal(11555, items[1].UpdateSize);
+            Assert.Equal("bar", items[1].DownloadSignature);
+
+            Assert.Equal("Version 1.3 - The Real Deal", items[2].Title);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/1.3-real-release-notes.md", items[2].ReleaseNotesLink);
+            Assert.Equal(27, items[2].PublicationDate.Day);
+            Assert.Equal(44, items[2].PublicationDate.Minute);
+            Assert.Equal("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate13-real.exe", items[2].DownloadLink);
+            Assert.Equal("macOS", items[2].OperatingSystem);
+            Assert.Equal("1.3", items[2].Version);
+            Assert.Equal(22222, items[2].UpdateSize);
+            Assert.Equal("moo", items[2].DownloadSignature);
         }
 
         // https://stackoverflow.com/a/1344242/3938401
