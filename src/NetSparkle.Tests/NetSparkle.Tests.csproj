@@ -12,13 +12,16 @@
     <AssemblyTitle>NetSparkleUnitTests</AssemblyTitle>
     <Product>NetSparkleUnitTests</Product>
     <Copyright>Copyright © 2024</Copyright>
-	<IsTestProject>true</IsTestProject>
+	  <IsTestProject>true</IsTestProject>
     <OutputPath>..\..\bin\NetSparkle.Tests\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net462'">
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
