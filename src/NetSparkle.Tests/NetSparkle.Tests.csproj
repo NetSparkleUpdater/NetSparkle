@@ -64,7 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
-	<PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
+    <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appcast_with_beta_items.xml">
@@ -73,5 +74,6 @@
     <None Update="appcast_simple.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="..\NetSparkle.Unused\AsmResolverAccessor.cs" />
   </ItemGroup>
 </Project>

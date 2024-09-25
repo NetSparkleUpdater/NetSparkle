@@ -12,7 +12,7 @@ namespace NetSparkleUpdater.AssemblyAccessors
     /// An assembly accessor that uses reflection to learn information
     /// on an assembly with a given name.
     /// </summary>
-    [Obsolete("Uses assembly-based reflection and is not trimmable; Use AsmResolverAccessor instead")]
+    [Obsolete("Uses assembly-based reflection and is not trimmable; Use AssemblyDiagnosticsAccessor instead")]
     public class AssemblyReflectionAccessor : IAssemblyAccessor
     {
         private List<Attribute> _assemblyAttributes = new List<Attribute>();

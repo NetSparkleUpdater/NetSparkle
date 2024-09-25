@@ -133,7 +133,9 @@ In your project file, make sure you set up a few things so that the library can 
 <PropertyGroup>
     <Version>1.0.2-beta1</Version> <!-- accepts semver -->
     <AssemblyVersion>1.0.2</AssemblyVersion> <!-- only accepts Major.Minor.Patch.Revision -->
-    <AssemblyTitle>My Best App</AssemblyTitle>
+    <AssemblyTitle>My Best App</AssemblyTitle> 
+    <!-- When using AssemblyDiagnosticsAccessor, accessor.AssemblyTitle is actually the
+     <Product> information due to limitations with the way the diagnostics access works -->
     <Description>My app is cool (not required)</Description>
     <Company>My Company Name (required unless you set the IAssemblyAccessor save path yourself)</Company>
     <Product>My Product (required unless you set the IAssemblyAccessor save path yourself; set to product name e.g. MyBestApp)</Product>

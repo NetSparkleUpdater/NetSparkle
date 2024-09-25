@@ -99,7 +99,6 @@
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" />
     <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.2" />
   </ItemGroup>
   <ItemGroup>
