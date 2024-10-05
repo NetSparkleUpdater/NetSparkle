@@ -127,17 +127,16 @@ namespace NetSparkleUpdater.AppCastGenerator
                 // if segment has text in it at the start and digits later, get rid of text and +/- symbol
                 if (Regex.IsMatch(segment, @"[a-zA-Z]") && Regex.IsMatch(segment, @"\d"))
                 {
-                    var match = Regex.Match(segment, @"[^+-]*[a-zA-Z][+-]?");
-                    if (match.Success)
+                    var match = Regex.Matches(segment, @"[^+-]*[a-zA-Z][+-]?");
+                    if (match.Count > 0)
                     {
-                        segment = segment.Substring(match.Index + match.Length);
+                        segment = segment.Substring(match.Last().Index + match.Last().Length);
                         lastVersionToCheck = true;
                     }
                 }
 
                 tempSegment = string.IsNullOrWhiteSpace(tempSegment) ? segment : segment + "." + tempSegment;
                 tempSegment = tempSegment.Trim('.');
-
                 if (ContainsValidVersionInfo(tempSegment))
                 {
                     lastValidVersionLeft = tempSegment;
@@ -207,7 +206,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             // Handle a sampling of complex extensions and remove them if they exist
             List<string> extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", 
-            @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
+            @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted", @"\.dmg"];
             // handle user-defined extensions
             if (extensions != null)
             {
