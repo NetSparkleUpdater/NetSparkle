@@ -483,7 +483,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             if (string.IsNullOrWhiteSpace(singleFileToAddToAppCast))
             {
                 Console.WriteLine($"Searching: {sourceBinaryDirectory}", Color.LightBlue);
-                Console.WriteLine($"Found {binaries.Count()} {string.Join(",", dirFileSearches)} files(s)", Color.LightBlue);
+                Console.WriteLine($"Found {binaries.Count()} {string.Join(",", dirFileSearches)} file(s)", Color.LightBlue);
             }
             else
             {
