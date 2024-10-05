@@ -137,7 +137,6 @@ namespace NetSparkleUpdater.AppCastGenerator
 
                 tempSegment = string.IsNullOrWhiteSpace(tempSegment) ? segment : segment + "." + tempSegment;
                 tempSegment = tempSegment.Trim('.');
-
                 if (ContainsValidVersionInfo(tempSegment))
                 {
                     lastValidVersionLeft = tempSegment;
@@ -207,7 +206,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             // Handle a sampling of complex extensions and remove them if they exist
             List<string> extensionPatterns = [@"\.tar\.gz$", @"\.tar$", @"\.gz$", @"\.zip$", @"\.txt$", 
-            @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted"];
+            @"\.exe$", @"\.bin$", @"\.msi$", @"\.excel", @"\.mcdx", @"\.pdf", @"\.dll", @"\.ted", @"\.dmg"];
             // handle user-defined extensions
             if (extensions != null)
             {

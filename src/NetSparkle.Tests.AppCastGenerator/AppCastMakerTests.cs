@@ -142,6 +142,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("appsetup2.10.1.exe"));
             
             // #623
+            Assert.Equal("1.3.0", AppCastMaker.GetVersionFromName("setup-something-1.3.0.dmg"));
             Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("app-setup-2.10.1.exe"));
             Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("my-app-setup-2.10.1.exe"));
             Assert.Equal("2.10.1", AppCastMaker.GetVersionFromName("my-app-setup-2.10.1.exe"));
