@@ -82,6 +82,16 @@
 		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
 		<DefineConstants>DEBUG;TRACE;NETCORE;NET8</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
+		<OutputPath>..\bin\Release\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Release\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>TRACE;NETCORE;NET9</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
+		<OutputPath>..\bin\Debug\NetSparkle\</OutputPath>
+		<DocumentationFile>..\bin\Debug\NetSparkle\NetSparkle.xml</DocumentationFile>
+		<DefineConstants>DEBUG;TRACE;NETCORE;NET9</DefineConstants>
+	</PropertyGroup>
   <!-- .NET 4.6.2 references, compilation flags and build options -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System" />
