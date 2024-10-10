@@ -4,7 +4,7 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
+    <TargetFrameworks>net9.0-windows;net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WinForms</Product>
     <Copyright>Copyright © 2024</Copyright>

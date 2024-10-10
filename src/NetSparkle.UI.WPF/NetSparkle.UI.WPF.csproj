@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
     <UseWPF>true</UseWPF>
-	<TargetFrameworks>net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
+	<TargetFrameworks>net9.0-windows;net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
     <AssemblyTitle>NetSparkleUpdater.UI.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
     <Copyright>Copyright © 2024</Copyright>
