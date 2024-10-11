@@ -146,10 +146,11 @@ namespace NetSparkleUpdater
         /// <returns>a byte[] array of the data in the given stream</returns>
         public static byte[] ConvertStreamToByteArray(Stream stream)
         {
-            // read the data
-            byte[] data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
-            return data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                return ms.ToArray();
+            }
         }
 
         /// <summary>
