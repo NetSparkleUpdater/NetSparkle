@@ -100,7 +100,7 @@
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.2" />
+    <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.3" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="nuget\**" />
