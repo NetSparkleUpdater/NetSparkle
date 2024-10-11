@@ -149,11 +149,19 @@ namespace NetSparkleUpdater
 
         #region Properties
 
+#if NETSTANDARD || NET6 || NET7 || NET8
         /// <summary>
         /// The security protocol used by NetSparkle. Setting this property will also set this 
-        /// for the current AppDomain of the caller. Needs to be set to 
-        /// SecurityProtocolType.Tls12 for some cases (such as when downloading from GitHub).
+        /// for the current AppDomain of the caller. May need to be set to 
+        /// SecurityProtocolType.Tls12 for some cases (such as when downloading from GitHub);
+        /// however, if your app is using a more recent version of .NET, you should be OK.
+        /// See also: https://stackoverflow.com/a/59398678/3938401
+        /// .NET 9 -> ServicePointManager is deprecated
         /// </summary>
+        [Obsolete("Deprecated in .NET 9; this property may be removed at any time " + 
+            "(including minor/patch updates to this library); override pertinent " + 
+            "functions (e.g. to HttpClient) in WebRequestAppCastDataDownloader or " + 
+            "similar to make equivalent changes to your application")]
         public SecurityProtocolType SecurityProtocolType
         {
             get
@@ -165,6 +173,7 @@ namespace NetSparkleUpdater
                 ServicePointManager.SecurityProtocol = value;
             }
         }
+#endif
 
         /// <summary>
         /// Set the user interaction mode for Sparkle to use when there is a valid update for the software
