@@ -10,7 +10,7 @@
     <sparkle:releaseNotesLink>
         https://netsparkleupdater.github.io/NetSparkle/files/sample-app/2.1-release-notes.md
     </sparkle:releaseNotesLink>
-    <pubDate>Fri, 28 Oct 2020 10:30:00 +0000</pubDate>
+    <pubDate>Wed, 28 Oct 2020 10:30:00 +0000</pubDate>
     <enclosure url="https://netsparkleupdater.github.io/NetSparkle/files/sample-app/NetSparkleUpdate.exe"
     sparkle:version="2.1"
     sparkle:os="windows"
