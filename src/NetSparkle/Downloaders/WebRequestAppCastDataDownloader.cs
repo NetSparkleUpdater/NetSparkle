@@ -79,8 +79,12 @@ namespace NetSparkleUpdater.Downloaders
         {
             _appcastUrl = url;
             // configure ssl cert link
+            // .NET 9 -> ServicePointManager is deprecated
+            // we have the lambda below for trusting all connections anyway, so this
+            // is sort of redundant at the moment.
+#if NETSTANDARD || NET6 || NET7 || NET8 
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
-
+#endif
             var handler = new HttpClientHandler();
             if (RedirectHandler != null)
             {
@@ -111,7 +115,10 @@ namespace NetSparkleUpdater.Downloaders
                     if (response.IsSuccessStatusCode)
                     {
                         Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                        // .NET 9 -> ServicePointManager is deprecated
+#if NETSTANDARD || NET6 || NET7 || NET8
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+#endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
                             return await reader.ReadToEndAsync().ConfigureAwait(false);
@@ -143,8 +150,10 @@ namespace NetSparkleUpdater.Downloaders
                     }
                     else
                     {
-                        Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);
+                        Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);// .NET 9 -> ServicePointManager is deprecated
+#if NETSTANDARD || NET6 || NET7 || NET8
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
+#endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
                             return await reader.ReadToEndAsync().ConfigureAwait(false);
