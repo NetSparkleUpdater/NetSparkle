@@ -837,7 +837,7 @@ namespace NetSparkleUpdater
         /// <param name="item">The item that you want to generate a download path for</param>
         /// <returns>The download path for an app cast item if item is not null and has valid download link
         /// Otherwise returns null.</returns>
-        public async Task<string?> GetDownloadPathForAppCastItem(AppCastItem item)
+        public virtual async Task<string?> GetDownloadPathForAppCastItem(AppCastItem item)
         {
             if (item.DownloadLink != null)
             {
