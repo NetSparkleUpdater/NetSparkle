@@ -853,6 +853,7 @@ namespace NetSparkleUpdater
                     try
                     {
                         filename = await UpdateDownloader.RetrieveDestinationFileNameAsync(item);
+                        LogWriter?.PrintMessage("Attempting to get download file name from server. This is what we got: {0} (is it null or whitespace? {1})", filename ?? "", string.IsNullOrWhiteSpace(filename));
                     }
                     catch (Exception)
                     {
@@ -866,6 +867,7 @@ namespace NetSparkleUpdater
                     try
                     {
                         filename = Path.GetFileName(new Uri(item.DownloadLink).LocalPath);
+                        LogWriter?.PrintMessage("Attempting to get download file name based on link. This is what we got: {0} (is it null or whitespace? {1})", filename, string.IsNullOrWhiteSpace(filename));
                     }
                     catch (UriFormatException)
                     {
