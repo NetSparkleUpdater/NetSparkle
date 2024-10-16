@@ -3,7 +3,7 @@
  <metadata>
    <id>NetSparkleUpdater.UI.WinForms.NetFramework</id>
    <title>NetSparkleUpdater WinForms .NET Framework UI</title>
-   <version>3.0.0-preview20240915001</version>
+   <version>3.0.0-preview20241016001</version>
    <authors>Deadpikle, Dirk Eisenberg</authors>
    <owners>Deadpikle</owners>
    <readme>README.md</readme>
@@ -19,7 +19,7 @@
    <releaseNotes>2.0: See https://github.com/NetSparkleUpdater/NetSparkle for all information and to file issues/pull requests for and ask questions about this project.</releaseNotes>
     <dependencies>
       <group targetFramework=".NETFramework4.6.2">
-        <dependency id="NetSparkleUpdater.SparkleUpdater" version="3.0.0-preview20240915001" exclude="Build,Analyzers" />
+        <dependency id="NetSparkleUpdater.SparkleUpdater" version="3.0.0-preview20241016001" exclude="Build,Analyzers" />
       </group>
     </dependencies>
  </metadata>
