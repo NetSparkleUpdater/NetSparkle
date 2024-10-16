@@ -58,6 +58,7 @@ namespace NetSparkleUpdater
         private readonly EventWaitHandle _loopingHandle;
         private TimeSpan _checkFrequency;
         private string? _tmpDownloadFilePath;
+        private string? _tmpDownloadFileNameWithExtension;
         private string? _downloadTempFileName;
         private AppCastItem? _itemBeingDownloaded;
         private bool _hasAttemptedFileRedownload;
@@ -183,12 +184,30 @@ namespace NetSparkleUpdater
         /// <summary>
         /// If set, downloads files to this path. If the folder doesn't already exist, creates
         /// the folder at download time (and not before). 
-        /// Note that this variable is a path, not a full file name.
+        /// Note that this variable is a path, NOT a full file name.
+        /// By default, the file name is grabbed from the server and/or download link.
+        /// You can use <seealso cref="TmpDownloadFileNameWithExtension"/> to control
+        /// the actual file name (NOT path) if you wish.
         /// </summary>
         public string? TmpDownloadFilePath
         {
             get { return _tmpDownloadFilePath; }
             set { _tmpDownloadFilePath = value?.Trim(); }
+        }
+
+        /// <summary>
+        /// If set, downloads files to this file name. Note that this variable is a file name, not a path,
+        /// and it should not be treated as a path. Use <seealso cref="TmpDownloadFilePath"/> to control
+        /// the download path.
+        /// If set, overrides any file name / extension grabbing from the server.
+        /// You probably want to set this manually before the item is downloaded to have some
+        /// unique filename + extension based on the item that's going to be downloaded, or a UUID
+        /// with extension, or similar.
+        /// </summary>
+        public string? TmpDownloadFileNameWithExtension
+        {
+            get { return _tmpDownloadFileNameWithExtension; }
+            set { _tmpDownloadFileNameWithExtension = value?.Trim(); }
         }
 
         /// <summary>
@@ -841,14 +860,17 @@ namespace NetSparkleUpdater
         {
             if (item.DownloadLink != null)
             {
-                string? filename = string.Empty;
+                string? filename = string.IsNullOrWhiteSpace(TmpDownloadFileNameWithExtension) 
+                    ? string.Empty 
+                    : TmpDownloadFileNameWithExtension;
 
                 // default to using the server's file name as the download file name
                 if (UpdateDownloader is WebFileDownloader webFileDownloader)
                 {
                     webFileDownloader.PrepareToDownloadFile(); // reset download operations
                 }
-                if (CheckServerFileName && UpdateDownloader != null)
+                if (string.IsNullOrWhiteSpace(filename) && CheckServerFileName && 
+                    UpdateDownloader != null)
                 {
                     try
                     {

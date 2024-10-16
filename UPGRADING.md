@@ -138,6 +138,8 @@
 * Fix `WebFileDownloader` not setting up an `HttpClientHandler` (was always auto-redirect'ing before despite setting `RedirectHandler`; now behaves more similarly to `WebRequestAppCastDataDownloader`)
 * Fixed `Unsafe` mode in DSA/ed25519 checkers still checking signatures if a signature existed
 * Deprecated `SecurityProtocolType SecurityProtocolType` property in `SparkleUpdater` (deprecated in .NET 9 and you can easily override the pertinent `HttpClient` behavior yourself)
+* `SparkleUpdater.GetDownloadPathForAppCastItem` is now marked `virtual`
+* Added `TmpDownloadFileNameWithExtension` for controlling the download file name (use `TmpDownloadFilePath` to control the download file path)
 
 ## Updating from 0.X or 1.X to 2.X
 
