@@ -240,6 +240,7 @@ The file that launches your downloaded update executable only waits for 90 secon
   * `GetWindowsInstallerCommand`
   * `GetInstallerCommand`
   * `RunDownloadedInstaller`
+  * `GetDownloadPathForAppCastItem`
 * Override `UIFactory` if you don't want to implement the entirety of the `IUIFactory` interface yourself and just want to configure a function or two. To use an instance of your class, set `SparkleUpdater.UIFactory`.
 
 #### Using `IAppCastFilter`
