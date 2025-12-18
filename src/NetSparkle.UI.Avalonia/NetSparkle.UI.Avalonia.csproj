@@ -98,6 +98,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.3.10" />
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
 </Project>
