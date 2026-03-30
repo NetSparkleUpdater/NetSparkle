@@ -37,7 +37,7 @@ jobs:
          fi
         shell: bash
       - uses: actions/checkout@v6.0.2
-      # - uses: nuget/setup-nuget@v2
+      # - uses: nuget/setup-nuget@v3
       #   with:
       #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
       #       nuget-version: '5.x'
@@ -96,7 +96,7 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v6.0.2
-      # - uses: nuget/setup-nuget@v2
+      # - uses: nuget/setup-nuget@v3
       #   with:
       #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
       #       nuget-version: '5.x'
@@ -153,7 +153,7 @@ jobs:
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview' || github.ref == 'refs/heads/versions/2.x'
     steps:
       - uses: actions/checkout@v6.0.2
-      - uses: nuget/setup-nuget@v2
+      - uses: nuget/setup-nuget@v3
         with:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
             nuget-version: '5.x'
