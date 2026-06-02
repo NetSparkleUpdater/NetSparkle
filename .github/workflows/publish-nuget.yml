@@ -36,7 +36,7 @@ jobs:
             ./dotnet-install.sh --architecture x64 --channel 10.0
          fi
         shell: bash
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       # - uses: nuget/setup-nuget@v2
       #   with:
       #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
@@ -95,7 +95,7 @@ jobs:
     runs-on: windows-latest
     needs: test
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       # - uses: nuget/setup-nuget@v2
       #   with:
       #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
@@ -152,7 +152,7 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview' || github.ref == 'refs/heads/versions/2.x'
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: nuget/setup-nuget@v2
         with:
             nuget-api-key: ${{secrets.NUGET_API_KEY}}
