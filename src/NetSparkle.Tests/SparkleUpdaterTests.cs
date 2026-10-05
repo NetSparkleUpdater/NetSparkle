@@ -68,6 +68,14 @@ namespace NetSparkleUnitTests
         }
 
         [Fact]
+        public void IsDownloadingItemIsFalseWhenNothingIsBeingDownloaded()
+        {
+            SparkleUpdater updater = _fixture.CreateUpdater(_fixture.GetSimpleXmlAppCastData(), "1.9");
+            // an item without a signature must not be reported as downloading
+            Assert.False(updater.IsDownloadingItem(new AppCastItem() { DownloadLink = "https://example.com/program.exe" }));
+        }
+
+        [Fact]
         public async Task TestFetchOfLatestAppCastItem()
         {
             SparkleUpdater updater = _fixture.CreateUpdater(_fixture.GetSimpleXmlAppCastData(), "1.9");

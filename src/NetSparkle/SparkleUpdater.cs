@@ -1367,7 +1367,9 @@ namespace NetSparkleUpdater
         /// <returns>true if this item is currently being downloaded; false otherwise</returns>
         public bool IsDownloadingItem(AppCastItem item)
         {
-            return _itemBeingDownloaded?.DownloadSignature == item.DownloadSignature;
+            return _itemBeingDownloaded != null &&
+                _itemBeingDownloaded.DownloadSignature == item.DownloadSignature &&
+                _itemBeingDownloaded.DownloadLink == item.DownloadLink;
         }
 
         /// <summary>
