@@ -154,7 +154,7 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// Checks to see whether a signature is ncessary given the provided
+        /// Checks to see whether a signature is necessary given the provided
         /// info on the <see cref="SecurityMode"/> and whether or not valid
         /// key information exists at the moment.
         /// </summary>
