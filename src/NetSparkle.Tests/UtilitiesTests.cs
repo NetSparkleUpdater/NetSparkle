@@ -40,5 +40,16 @@ namespace NetSparkleUnitTests
             abosluteURL = NetSparkleUpdater.Utilities.GetAbsoluteURL("./program.exe", "https://example.com/subfolder/appcast.xml");
             Assert.Equal("https://example.com/subfolder/program.exe", abosluteURL.ToString());
         }
+
+        [Fact]
+        public void TestConvertNumBytesToUserReadableString()
+        {
+            Assert.Equal("0", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(0));
+            Assert.Equal("1023", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(1023));
+            Assert.Equal("1.00 KB", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(1024));
+            Assert.Equal("1.50 KB", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(1536));
+            Assert.Equal("1.00 MB", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(1024 * 1024));
+            Assert.Equal("1.00 GB", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(1024L * 1024 * 1024));
+        }
     }
 }
