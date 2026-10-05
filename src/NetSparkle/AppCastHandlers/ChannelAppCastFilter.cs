@@ -78,8 +78,8 @@ namespace NetSparkleUpdater.AppCastHandlers
                             _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
                                 channelName, KeepItemsWithNoChannelInfo);
                             var shouldKeep = 
-                                semVer.AllSuffixes.ToLower().Contains(channelName) ||
-                                appCastItemChannel.ToLower().Contains(channelName) ||
+                                semVer.AllSuffixes.ToLowerInvariant().Contains(channelName) ||
+                                appCastItemChannel.ToLowerInvariant().Contains(channelName) ||
                                 (KeepItemsWithNoChannelInfo && 
                                 string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()) &&
                                 string.IsNullOrWhiteSpace(appCastItemChannel));

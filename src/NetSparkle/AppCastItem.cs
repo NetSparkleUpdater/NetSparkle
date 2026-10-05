@@ -142,7 +142,7 @@ namespace NetSparkleUpdater
             {
                 if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystem.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLowerInvariant();
                     if (lowercasedOS.Contains("win") || lowercasedOS.Contains("windows"))
                     {
                         return true;
@@ -166,7 +166,7 @@ namespace NetSparkleUpdater
             {
                 if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystem.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLowerInvariant();
                     if (lowercasedOS.Contains("mac") || lowercasedOS.Contains("macos") || 
                         lowercasedOS.Contains("osx"))
                     {
@@ -190,7 +190,7 @@ namespace NetSparkleUpdater
             {
                 if (OperatingSystem != null)
                 {
-                    var lowercasedOS = OperatingSystem.ToLower();
+                    var lowercasedOS = OperatingSystem.ToLowerInvariant();
                     if (lowercasedOS.Contains("linux"))
                     {
                         return true;

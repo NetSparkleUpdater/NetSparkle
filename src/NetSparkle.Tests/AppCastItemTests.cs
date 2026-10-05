@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using Xunit;
 
@@ -43,6 +44,28 @@ namespace NetSparkleUnitTests
             Assert.Equal(item.IsWindowsUpdate, isWindowsUpdate);
             Assert.Equal(item.IsMacOSUpdate, isMacUpdate);
             Assert.Equal(item.IsLinuxUpdate, isLinuxUpdate);
+        }
+
+        [Theory]
+        [InlineData("WINDOWS", true, false, false)]
+        [InlineData("OSX", false, true, false)]
+        [InlineData("LINUX", false, false, true)]
+        public void OSCheckIsNotAffectedByCurrentCulture(string osString, bool isWindowsUpdate, bool isMacOSUpdate, bool isLinuxUpdate)
+        {
+            var originalCulture = CultureInfo.CurrentCulture;
+            try
+            {
+                // in tr-TR, "I".ToLower() is a dotless "ı", which broke OS string matching
+                CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
+                var item = new AppCastItem() { OperatingSystem = osString };
+                Assert.Equal(isWindowsUpdate, item.IsWindowsUpdate);
+                Assert.Equal(isMacOSUpdate, item.IsMacOSUpdate);
+                Assert.Equal(isLinuxUpdate, item.IsLinuxUpdate);
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = originalCulture;
+            }
         }
     }
 }
