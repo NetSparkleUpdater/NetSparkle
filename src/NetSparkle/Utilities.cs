@@ -53,14 +53,16 @@ namespace NetSparkleUpdater
             var privateKey = File.ReadAllText(privateKeyFilePath);
             if (!string.IsNullOrWhiteSpace(privateKey))
             {
-                DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider();
-                cryptoProvider.FromXmlString(privateKey);
-
-                using (FileStream inputStream = File.OpenRead(fileToSignPath))
+                using (DSACryptoServiceProvider cryptoProvider = new DSACryptoServiceProvider())
                 {
-                    byte[] hash = cryptoProvider.SignData(inputStream);
-                    var dsaSignature = Convert.ToBase64String(hash);
-                    return dsaSignature;
+                    cryptoProvider.FromXmlString(privateKey);
+
+                    using (FileStream inputStream = File.OpenRead(fileToSignPath))
+                    {
+                        byte[] hash = cryptoProvider.SignData(inputStream);
+                        var dsaSignature = Convert.ToBase64String(hash);
+                        return dsaSignature;
+                    }
                 }
             }
 
