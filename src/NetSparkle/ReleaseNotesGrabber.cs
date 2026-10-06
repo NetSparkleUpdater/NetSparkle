@@ -235,7 +235,7 @@ namespace NetSparkleUpdater
 
             // process release notes
             var extension = Path.GetExtension(item.ReleaseNotesLink);
-            if (extension != null && MarkdownExtensions.Contains(extension.ToLower()))
+            if (extension != null && MarkdownExtensions.Contains(extension.ToLowerInvariant()))
             {
                 try
                 {

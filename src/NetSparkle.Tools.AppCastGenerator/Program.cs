@@ -111,7 +111,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             }
 
             // actually create the app cast
-            AppCastMaker generator = opts.OutputType?.ToLower() != "json"
+            AppCastMaker generator = opts.OutputType?.ToLowerInvariant() != "json"
                 ? new XMLAppCastMaker(signatureManager, opts)
                 : new JsonAppCastMaker(signatureManager, opts);
             var appCastFileName = generator.GetPathToAppCastOutput(
