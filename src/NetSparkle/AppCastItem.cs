@@ -178,10 +178,10 @@ namespace NetSparkleUpdater
         }
 
         /// <summary>
-        /// True if this update is a macOS update; false otherwise.
+        /// True if this update is a Linux update; false otherwise.
         /// Acceptable OS strings contain "linux" (this is 
         /// checked with a case-insensitive check). If not specified,
-        /// the OS is assumed to be a Windows update.
+        /// the OS is assumed to be a Windows update, so this returns false.
         /// </summary>
         [JsonIgnore]
         public bool IsLinuxUpdate
