@@ -4,7 +4,7 @@
     <TargetFrameworks>net10.0;net8.0;net9.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetSparkleUpdater.UI.Avalonia</PackageId>
-    <Version>4.0.0-preview20260505001</Version>
+    <Version>4.0.0-preview20261006001</Version>
     <Authors>Deadpikle</Authors>
     <Company>Deadpikle</Company>
     <Product>NetSparkleUpdater.UI.Avalonia</Product>

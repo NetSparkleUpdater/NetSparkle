@@ -8,7 +8,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	<Nullable>Enable</Nullable>
-	<Version>3.1.0</Version>
+	<Version>3.1.1-preview20261006001</Version>
 	<LangVersion>8.0</LangVersion>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
