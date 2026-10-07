@@ -163,6 +163,9 @@ namespace NetSparkleUpdater.Downloaders
 
         private async Task StartFileDownloadAsync(Uri? uri, string downloadFilePath)
         {
+            // CancelDownload replaces _cts, so hold on to the one that belongs to this download
+            // in order to be able to tell later on whether this download was canceled
+            CancellationTokenSource? downloadCts = null;
             try
             {
                 if (uri == null)
@@ -178,9 +181,10 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     _cts = new CancellationTokenSource();
                 }
+                downloadCts = _cts;
                 DownloadStarted?.Invoke(this, uri.ToString(), downloadFilePath);
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
-                using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cts.Token))
+                using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, downloadCts.Token))
                 {
                     if (!response.IsSuccessStatusCode || !response.Content.Headers.ContentLength.HasValue)
                     {
@@ -216,12 +220,7 @@ namespace NetSparkleUpdater.Downloaders
 
                         do
                         {
-                            if (_cts.IsCancellationRequested)
-                            {
-                                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
-                            }
-
-                            int bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, _cts.Token);
+                            int bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, downloadCts.Token);
                             if (bytesRead == 0)
                             {
                                 UpdateDownloadProgress(totalRead, totalLength);
@@ -236,15 +235,31 @@ namespace NetSparkleUpdater.Downloaders
                         IsDownloading = false;
                     }
                     _fileStream = null;
+                    if (downloadCts.IsCancellationRequested)
+                    {
+                        // CancelDownload was called, which stopped the loop above, so this download did not finish
+                        DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
+                        return;
+                    }
                     UpdateDownloadProgress(totalRead, totalLength);
                     DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, false, null));
                 }
             }
             catch (Exception e)
             {
-                _logger?.PrintMessage("Error: {0}", e.Message);
                 IsDownloading = false;
-                DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
+                if (downloadCts != null && downloadCts.IsCancellationRequested)
+                {
+                    // canceling closes the file and the request, which makes the in-flight read/write throw;
+                    // that isn't a download error, so report it as a cancellation (like LocalFileDownloader does)
+                    _logger?.PrintMessage("WebFileDownloader: Download was canceled");
+                    DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
+                }
+                else
+                {
+                    _logger?.PrintMessage("Error: {0}", e.Message);
+                    DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
+                }
             }
         }
 
