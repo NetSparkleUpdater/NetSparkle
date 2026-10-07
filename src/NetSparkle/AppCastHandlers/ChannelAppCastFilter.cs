@@ -81,7 +81,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                                 semVer.AllSuffixes.ToLower().Contains(channelName) ||
                                 appCastItemChannel.ToLower().Contains(channelName) ||
                                 (KeepItemsWithNoChannelInfo && 
-                                string.IsNullOrWhiteSpace(semVer.AllSuffixes.Trim()) &&
+                                string.IsNullOrWhiteSpace(semVer.PreReleaseSuffix) && // build metadata is not channel info
                                 string.IsNullOrWhiteSpace(appCastItemChannel));
                             if (shouldKeep)
                             {
@@ -95,7 +95,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 else
                 {
                     // if we are not wanting any channels but we have a suffix on an item, discard it
-                    if (!string.IsNullOrWhiteSpace(semVer.AllSuffixes))
+                    if (!string.IsNullOrWhiteSpace(semVer.PreReleaseSuffix))
                     {
                         return false;
                     }
