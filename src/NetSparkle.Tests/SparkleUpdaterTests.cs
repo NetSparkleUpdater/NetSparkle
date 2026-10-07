@@ -67,6 +67,17 @@ namespace NetSparkleUnitTests
             }
         }
 
+        [Theory]
+        [InlineData("2.0+abc123", UpdateStatus.UpdateNotAvailable)] // same version; .NET 8+ adds the commit hash after the +
+        [InlineData("2.0+abc123.dirty", UpdateStatus.UpdateNotAvailable)]
+        [InlineData("1.9+abc123", UpdateStatus.UpdateAvailable)]
+        public async Task TestInstalledVersionWithBuildMetadata(string installedVersion, UpdateStatus expectedStatus)
+        {
+            SparkleUpdater updater = _fixture.CreateUpdater(_fixture.GetSimpleXmlAppCastData(), installedVersion);
+            UpdateInfo info = await updater.CheckForUpdatesQuietly();
+            Assert.Equal(expectedStatus, info.Status);
+        }
+
         [Fact]
         public void IsDownloadingItemIsFalseWhenNothingIsBeingDownloaded()
         {

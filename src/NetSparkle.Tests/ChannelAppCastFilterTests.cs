@@ -37,6 +37,33 @@ namespace NetSparkleUnitTests
         }
 
         [Fact]
+        public void BuildMetadataIsNotTreatedAsChannelInfo()
+        {
+            // the app cast generator uses the product version, which has the commit hash in it on .NET 8+
+            var filter = new ChannelAppCastFilter(new LogWriter(LogWriterOutputMode.Console));
+            var currentVersion = new SemVerLike("1.0.0", "+abc123");
+            var items = new List<AppCastItem>()
+            {
+                new AppCastItem() { Version = "2.1-beta.1+abc123" },
+                new AppCastItem() { Version = "2.0.0+abc123" },
+                new AppCastItem() { Version = "1.0.0+def456" },
+            };
+            // no channels: only the release version
+            var filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Single(filtered);
+            Assert.Equal("2.0.0+abc123", filtered[0].Version);
+            // beta channel with items that have no channel info kept: beta and release versions
+            filter.ChannelSearchNames = new List<string>() { "beta" };
+            filter.KeepItemsWithNoChannelInfo = true;
+            filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Equal(new[] { "2.1-beta.1+abc123", "2.0.0+abc123" }, filtered.Select(i => i.Version));
+            // beta channel only
+            filter.KeepItemsWithNoChannelInfo = false;
+            filtered = filter.GetFilteredAppCastItems(currentVersion, items).ToList();
+            Assert.Equal(new[] { "2.1-beta.1+abc123" }, filtered.Select(i => i.Version));
+        }
+
+        [Fact]
         public void CanFilterItemsByVersionChannelStrangeCasing()
         {
             var logWriter = new LogWriter(LogWriterOutputMode.Console);
