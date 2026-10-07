@@ -30,7 +30,9 @@ namespace NetSparkleUpdater.AppCastHandlers
         public override string ToString() => $"{Version}{AllSuffixes}";
 
         /// <summary>
-        /// Compare version
+        /// Compare version. As required by the SemVer spec, build metadata
+        /// (everything after a `+`, e.g. the commit hash that .NET 8+ adds to the
+        /// informational version) is ignored: `1.0.0+abc` and `1.0.0` have the same precedence.
         /// </summary>
         /// <param name="other">Another version</param>
         /// <returns>-1, 0 or 1</returns>
@@ -44,9 +46,11 @@ namespace NetSparkleUpdater.AppCastHandlers
             if ((diff = TextHelper.ExpandDigits(Version).CompareTo(TextHelper.ExpandDigits(other.Version))) == 0)
             {
                 // `1.0.0` is newer than `1.0.0-alpha.1`.
-                if ((diff = (AllSuffixes.Length == 0).CompareTo(other.AllSuffixes.Length == 0)) == 0)
+                var preRelease = RemoveBuildMetadata(AllSuffixes);
+                var otherPreRelease = RemoveBuildMetadata(other.AllSuffixes);
+                if ((diff = (preRelease.Length == 0).CompareTo(otherPreRelease.Length == 0)) == 0)
                 {
-                    diff = TextHelper.ExpandDigits(AllSuffixes).CompareTo(TextHelper.ExpandDigits(other.AllSuffixes));
+                    diff = TextHelper.ExpandDigits(preRelease).CompareTo(TextHelper.ExpandDigits(otherPreRelease));
                 }
             }
             return diff;
@@ -61,7 +65,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            // must match CompareTo: versions that compare as equal need the same hash code
+            return (TextHelper.ExpandDigits(Version) + TextHelper.ExpandDigits(RemoveBuildMetadata(AllSuffixes))).GetHashCode();
         }
 
         /// <summary>
@@ -91,6 +96,16 @@ namespace NetSparkleUpdater.AppCastHandlers
             {
                 return new SemVerLike(version?.Substring(0, mark), version?.Substring(mark));
             }
+        }
+
+        /// <summary>
+        /// Remove the build metadata (`+123`) from the suffixes, leaving only the
+        /// pre-release part (`-beta.1`) that is relevant for version precedence.
+        /// </summary>
+        private static string RemoveBuildMetadata(string allSuffixes)
+        {
+            int buildMetadataStart = allSuffixes.IndexOf('+');
+            return buildMetadataStart == -1 ? allSuffixes : allSuffixes.Substring(0, buildMetadataStart);
         }
 
         private static class TextHelper
