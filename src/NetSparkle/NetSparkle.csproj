@@ -114,13 +114,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="Microsoft.Win32.Registry" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net462'">
-    <PackageReference Include="System.Text.Json" Version="10.0.7" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.4" />
+    <PackageReference Include="NetSparkleUpdater.Chaos.NaCl" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="nuget\**" />

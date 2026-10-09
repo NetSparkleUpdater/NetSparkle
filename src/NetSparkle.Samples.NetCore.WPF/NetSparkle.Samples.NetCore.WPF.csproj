@@ -17,6 +17,10 @@
     <EmbeddedResource Include="NetSparkle_DSA.pub" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+    <PackageReference Include="System.Drawing.Common" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.UI.WPF\NetSparkle.UI.WPF.csproj" />
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />

@@ -42,6 +42,7 @@ namespace NetSparkleUnitTests
         }
 
         [Fact]
+        [UseCulture("en-US")]
         public void TestConvertNumBytesToUserReadableString()
         {
             Assert.Equal("0", NetSparkleUpdater.Utilities.ConvertNumBytesToUserReadableString(0));

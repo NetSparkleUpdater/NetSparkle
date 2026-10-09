@@ -64,11 +64,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="Colorful.Console" Version="1.2.15" />
-    <PackageReference Include="MimeTypes" Version="2.5.2">
+    <PackageReference Include="CommandLineParser" />
+    <PackageReference Include="Colorful.Console" />
+    <PackageReference Include="MimeTypes">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
