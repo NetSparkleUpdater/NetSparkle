@@ -1,18 +1,10 @@
 ﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Policy;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 
 namespace NetSparkleUpdater.Downloaders
 {
@@ -93,8 +85,18 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void Dispose()
         {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
         }
 
         /// <inheritdoc/>
@@ -139,9 +141,17 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     IsDownloading = true;
                     long totalFileLength = sourceStream.Length;
+#if NET6_0_OR_GREATER
+                    while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
+#else
                     while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+#endif
                     {
+#if NET6_0_OR_GREATER
+                        await destinationStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+#else
                         await destinationStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);
+#endif
                         if (cancellationToken.IsCancellationRequested)
                         {
                             destinationStream.Close();

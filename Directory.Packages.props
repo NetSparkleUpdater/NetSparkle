@@ -1,0 +1,33 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="AsmResolver.DotNet" Version="5.5.1" />
+        <PackageVersion Include="Avalonia.Desktop" Version="12.0.1" />
+        <PackageVersion Include="Avalonia.HtmlRenderer" Version="12.0.0" />
+        <PackageVersion Include="Avalonia.Themes.Simple" Version="12.0.1" />
+        <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
+        <PackageVersion Include="BouncyCastle.Cryptography" Version="2.5.1" />
+        <PackageVersion Include="Colorful.Console" Version="1.2.15" />
+        <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+        <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageVersion Include="MimeTypes" Version="2.5.2" />
+        <PackageVersion Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.4" />
+        <PackageVersion Include="xunit" Version="2.9.3" />
+        <PackageVersion Include="xunit.extensibility.execution" Version="2.9.3" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+        <PackageVersion Include="System.Resources.Extensions" Version="9.0.8" />
+        <PackageVersion Include="System.Text.Json" Version="10.0.7" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
+        <PackageVersion Include="System.Text.Json" Version="10.0.7" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+        <PackageVersion Include="System.Drawing.Common" Version="9.0.8" />
+    </ItemGroup>
+</Project>
