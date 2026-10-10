@@ -24,29 +24,35 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
         }
         static void Run(Options opts)
         {
-
             if (opts.ShowExtendedExamples)
             {
                 PrintExtendedExamples();
                 return;
             }
 
-            var signatureManager = new SignatureManager();
+            var keysProvider = new KeysProvider(
+            [
+                new EnvironmentKeysProvider(),
+                new ValueKeysProvider(),
+                new FileKeysProvider()
+            ]);
+            var signatureManager = new SignatureManager(keysProvider);
 
             if (!string.IsNullOrWhiteSpace(opts.PathToKeyFiles))
             {
-                signatureManager.SetStorageDirectory(opts.PathToKeyFiles);
+                var fileKeysProvider = keysProvider.GetRequiredProvider<FileKeysProvider>();
+                fileKeysProvider.SetStorageDirectory(opts.PathToKeyFiles);
             }
 
             if (opts.ExportKeys)
             {
-                if (!signatureManager.KeysExist())
+                if (!signatureManager.KeysProvider.KeysExist())
                 {
                     Console.WriteLine("Error: You must first generate keys before trying to export them!", Color.Red);
                     return;
                 }
-                var privateKey = signatureManager.GetPrivateKey();
-                var publicKey = signatureManager.GetPublicKey();
+                var privateKey = keysProvider.GetPrivateKey();
+                var publicKey = keysProvider.GetPublicKey();
                 if (privateKey == null)
                 {
                     Console.WriteLine("Error: Could not load private key!", Color.Red);
@@ -78,11 +84,14 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (!string.IsNullOrWhiteSpace(opts.PublicKeyOverride))
             {
-                signatureManager.SetPublicKeyOverride(opts.PublicKeyOverride);
+                var valueKeysProvider = keysProvider.GetRequiredProvider<ValueKeysProvider>();
+                valueKeysProvider.SetPublicKey(opts.PublicKeyOverride);
             }
+
             if (!string.IsNullOrWhiteSpace(opts.PrivateKeyOverride))
             {
-                signatureManager.SetPrivateKeyOverride(opts.PrivateKeyOverride);
+                var valueKeysProvider = keysProvider.GetRequiredProvider<ValueKeysProvider>();
+                valueKeysProvider.SetPrivateKey(opts.PrivateKeyOverride);
             }
 
             if (opts.BinaryToSign != null)

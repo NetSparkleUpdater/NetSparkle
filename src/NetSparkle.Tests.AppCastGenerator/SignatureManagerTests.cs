@@ -6,7 +6,6 @@ using Org.BouncyCastle.Security;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace NetSparkle.Tests.AppCastGenerator
@@ -25,7 +24,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         public void TestKeysExist()
         {
             var manager = _fixture.GetSignatureManager();
-            Assert.True(manager.KeysExist());
+            Assert.True(manager.KeysProvider.KeysExist());
         }
 
         [Fact]
@@ -33,10 +32,10 @@ namespace NetSparkle.Tests.AppCastGenerator
         {
             var manager = _fixture.GetSignatureManager();
 
-            var publicKey = manager.GetPublicKey();
+            var publicKey = manager.KeysProvider.GetPublicKey();
             Assert.NotNull(publicKey);
             Assert.NotEmpty(publicKey);
-            var privateKey = manager.GetPrivateKey();
+            var privateKey = manager.KeysProvider.GetPrivateKey();
             Assert.NotNull(privateKey);
             Assert.NotEmpty(privateKey);
         }
@@ -80,8 +79,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             // get signature of file
             var manager = _fixture.GetSignatureManager();
             var signature = manager.GetSignatureForFile(path);
-            var realPublicKey = manager.GetPublicKey();
-            var realPrivateKey = manager.GetPrivateKey();
+            var realPublicKey = manager.KeysProvider.GetPublicKey();
+            var realPrivateKey = manager.KeysProvider.GetPrivateKey();
             // intentionally mess up keys - by regenerating them in a new directory, we use a separate manager for this to preserve the keys
             SignatureManager newManager = _fixture.CreateSignatureManager("netsparkle-tests-wrong");
             try
@@ -89,8 +88,9 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // verify signature does not work
                 Assert.False(newManager.VerifySignature(path, signature));
                 // override and verify that it does work
-                newManager.SetPublicKeyOverride(Convert.ToBase64String(realPublicKey));
-                newManager.SetPrivateKeyOverride(Convert.ToBase64String(realPrivateKey));
+                var valueKeysProvider = newManager.KeysProvider.GetRequiredProvider<ValueKeysProvider>();
+                valueKeysProvider.SetPublicKey(Convert.ToBase64String(realPublicKey));
+                valueKeysProvider.SetPrivateKey(Convert.ToBase64String(realPrivateKey));
                 Assert.True(newManager.VerifySignature(path, signature));
             }
             finally
@@ -128,8 +128,8 @@ namespace NetSparkle.Tests.AppCastGenerator
             var manager = _fixture.GetSignatureManager();
             try
             {
-                Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, privKeyBase64);
-                Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, pubKeyBase64);
+                Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PrivateKeyEnvironmentVariable, privKeyBase64);
+                Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PublicKeyEnvironmentVariable, pubKeyBase64);
                 // get signature of file
                 var signature = manager.GetSignatureForFile(path);
                 manager.Generate(true); // force regeneration of keys to "prove" that we are using environment 
@@ -141,8 +141,8 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // get rid of temp file
                 File.Delete(path);
                 // ensure environment is cleaned up, even if test fails
-                Environment.SetEnvironmentVariable(SignatureManager.PrivateKeyEnvironmentVariable, null);
-                Environment.SetEnvironmentVariable(SignatureManager.PublicKeyEnvironmentVariable, null);
+                Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PrivateKeyEnvironmentVariable, null);
+                Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PublicKeyEnvironmentVariable, null);
             }
         }
     }

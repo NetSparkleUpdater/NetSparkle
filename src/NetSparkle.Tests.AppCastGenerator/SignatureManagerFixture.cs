@@ -17,8 +17,15 @@ namespace NetSparkle.Tests.AppCastGenerator
 
         public SignatureManager CreateSignatureManager(string temp_directory_name)
         {
-            var signatureManager = new SignatureManager();
-            signatureManager.SetStorageDirectory(Path.Combine(Path.GetTempPath(), temp_directory_name));
+            var keysProvider = new KeysProvider(
+            [
+                new EnvironmentKeysProvider(),
+                new ValueKeysProvider(),
+                new FileKeysProvider()
+            ]);
+            var signatureManager = new SignatureManager(keysProvider);
+            var fileKeysProvider = signatureManager.KeysProvider.GetRequiredProvider<FileKeysProvider>();
+            fileKeysProvider.SetStorageDirectory(Path.Combine(Path.GetTempPath(), temp_directory_name));
             signatureManager.Generate(true);
             return signatureManager;
         }
@@ -30,11 +37,12 @@ namespace NetSparkle.Tests.AppCastGenerator
 
         public void CleanupSignatureManager(SignatureManager manager)
         {
-            var storageDir = manager.GetStorageDirectory();
+            var fileKeysProvider = manager.KeysProvider.GetRequiredProvider<FileKeysProvider>();
+            var storageDir = fileKeysProvider.GetStorageDirectory();
             // the testing storage dir should never equal the default one,
             // but because I am paranoid, we will do the check. We never want
             // to erase someone's keys!
-            if (Directory.Exists(storageDir) && storageDir != SignatureManager.GetDefaultStorageDirectory())
+            if (Directory.Exists(storageDir) && storageDir != FileKeysProvider.GetDefaultStorageDirectory())
             {
                 Directory.Delete(storageDir, true);
             }
@@ -42,7 +50,16 @@ namespace NetSparkle.Tests.AppCastGenerator
 
         public void Dispose()
         {
-            CleanupSignatureManager(_manager);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                CleanupSignatureManager(_manager);
+            }
         }
     }
 }
