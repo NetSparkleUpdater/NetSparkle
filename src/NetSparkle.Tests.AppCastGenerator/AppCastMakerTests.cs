@@ -252,7 +252,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -641,7 +641,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -718,7 +718,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -773,7 +773,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -833,7 +833,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -890,7 +890,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
                     : new JsonAppCastMaker(signatureManager, opts);
@@ -910,7 +910,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 // Console.WriteLine(File.ReadAllText(appCastFileName));
                 // test NetSparkle reading file
                 var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
-                var publicKey = signatureManager.GetPublicKey();
+                var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
@@ -968,7 +968,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 var maker = new XMLAppCastMaker(signatureManager, opts);
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory);
@@ -998,7 +998,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             };
 
             var signatureManager = _fixture.GetSignatureManager();
-            Assert.True(signatureManager.KeysExist());
+            Assert.True(signatureManager.KeysProvider.KeysExist());
 
             var maker = new XMLAppCastMaker(signatureManager, opts);
             // no file name sent should default to "appcast"
@@ -1041,7 +1041,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -1090,7 +1090,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -1113,7 +1113,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension())));
                 // test NetSparkle reading file
                 var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
-                var publicKey = signatureManager.GetPublicKey();
+                var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
@@ -1180,7 +1180,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
                 var myApp13Signature = signatureManager.GetSignatureForFile(myApp13FilePath);
                 var myApp14Signature = signatureManager.GetSignatureForFile(myApp14FilePath);
 
@@ -1229,7 +1229,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 }
                 // test NetSparkle reading file
                 var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
-                var publicKey = signatureManager.GetPublicKey();
+                var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
@@ -1298,7 +1298,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -1323,7 +1323,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 Console.WriteLine(File.ReadAllText(Path.Combine(tempDir, "appcast." + maker.GetAppCastExtension())));
                 // test NetSparkle reading file
                 var appCastHelper = new NetSparkleUpdater.AppCastHandlers.AppCastHelper();
-                var publicKey = signatureManager.GetPublicKey();
+                var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
                 var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml 
@@ -1396,7 +1396,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -1506,7 +1506,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml
                     ? new XMLAppCastMaker(signatureManager, opts)
@@ -1764,7 +1764,7 @@ namespace NetSparkle.Tests.AppCastGenerator
             try
             {
                 var signatureManager = _fixture.GetSignatureManager();
-                Assert.True(signatureManager.KeysExist());
+                Assert.True(signatureManager.KeysProvider.KeysExist());
 
                 var appCastFileName = maker.GetPathToAppCastOutput(opts.OutputDirectory, opts.SourceBinaryDirectory, opts.OutputFileName);
                 (items, productName) = maker.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory, opts.ReparseExistingAppCast, appCastFileName);
@@ -1886,7 +1886,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         HumanReadableOutput = true
                     };
                     var signatureManager = _fixture.GetSignatureManager();
-                    Assert.True(signatureManager.KeysExist());
+                    Assert.True(signatureManager.KeysProvider.KeysExist());
 
                     AppCastMaker maker = appCastMakerType == AppCastMakerType.Xml 
                         ? new XMLAppCastMaker(signatureManager, opts)
