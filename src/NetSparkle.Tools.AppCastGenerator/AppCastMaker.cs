@@ -13,14 +13,14 @@ namespace NetSparkleUpdater.AppCastGenerator
     public abstract class AppCastMaker
     {
         private static readonly string[] _operatingSystems = ["windows", "mac", "linux"];
-        
-        protected Options _opts;
+
         private SignatureManager _signatureManager;
+        protected Options _opts;
 
         public AppCastMaker(SignatureManager signatureManager, Options options)
         {
-            _opts = options;
             _signatureManager = signatureManager;
+            _opts = options;
         }
 
         // to create your own app cast maker, you need to override the following three functions
@@ -411,7 +411,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 PublicationDate = binaryFileInfo.CreationTime,
                 UpdateSize = binaryFileInfo.Length,
                 Description = "",
-                DownloadSignature = _signatureManager.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
+                DownloadSignature = _signatureManager.KeysProvider.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
                 OperatingSystem = _opts.OperatingSystem?.Trim(),
                 MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name),
                 Channel = channel,
@@ -608,7 +608,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <returns>true if signature file written; false otherwise</returns>
         public bool CreateSignatureFile(string appCastFileName, string? signatureFileExtension)
         {
-            if (_signatureManager.KeysExist())
+            if (_signatureManager.KeysProvider.KeysExist())
             {
                 var appcastFile = new FileInfo(appCastFileName);
                 var extension = signatureFileExtension?.TrimStart('.') ?? "signature";

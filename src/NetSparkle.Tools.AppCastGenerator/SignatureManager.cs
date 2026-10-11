@@ -1,80 +1,23 @@
+using Chaos.NaCl;
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using Chaos.NaCl;
 using Console = Colorful.Console;
-using System.Drawing;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
     public class SignatureManager
     {
-        private string _storagePath;
-        private string _privateKeyFilePath;
-        private string _publicKeyFilePath;
-        private string _privateKeyOverride;
-        private string _publicKeyOverride;
+        public KeysProvider KeysProvider { get; }
 
-        public const string PrivateKeyEnvironmentVariable = "SPARKLE_PRIVATE_KEY";
-        public const string PublicKeyEnvironmentVariable = "SPARKLE_PUBLIC_KEY";
-
-        public SignatureManager()
+        public SignatureManager(KeysProvider keysProvider)
         {
-            _privateKeyOverride = "";
-            _publicKeyOverride = "";
-            _storagePath = "";
-            _privateKeyFilePath = "";
-            _publicKeyFilePath = "";
-            SetStorageDirectory(GetDefaultStorageDirectory());
-        }
-
-        public static string GetDefaultStorageDirectory()
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "netsparkle");
-        }
-
-        public void SetStorageDirectory(string path)
-        {
-            _storagePath = path;
-
-            if (!Directory.Exists(_storagePath))
-            {
-                Directory.CreateDirectory(_storagePath);
-            }
-
-            _privateKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.priv");
-            _publicKeyFilePath = Path.Combine(_storagePath, "NetSparkle_Ed25519.pub");
-        }
-
-        public string GetStorageDirectory()
-        {
-            return _storagePath;
-        }
-
-        public void SetPublicKeyOverride(string overridePubKey)
-        {
-            _publicKeyOverride = overridePubKey;
-        }
-
-        public void SetPrivateKeyOverride(string overridePrivKey)
-        {
-            _privateKeyOverride = overridePrivKey;
-        }
-
-        public bool KeysExist()
-        {
-            if (GetPublicKey() != null && GetPrivateKey() != null)
-            {
-                return true;
-            }
-
-            return false;
+            KeysProvider = keysProvider;
         }
 
         public bool Generate(bool force = false)
         {
-
-            if (KeysExist() && !force)
+            if (KeysProvider.KeysExist() && !force)
             {
                 Console.WriteLine("Keys already exist, use --force to force regeneration");
                 return false;
@@ -90,10 +33,12 @@ namespace NetSparkleUpdater.AppCastGenerator
             var pubKeyBase64 = Convert.ToBase64String(publicKey);
             var privKeyBase64 = Convert.ToBase64String(seed);
 
-            File.WriteAllText(_privateKeyFilePath, privKeyBase64);
-            File.WriteAllText(_publicKeyFilePath, pubKeyBase64);
+            FileKeysProvider fileKeysProvider = KeysProvider.GetRequiredProvider<FileKeysProvider>();
 
-            Console.WriteLine("Storing public/private keys to " + _storagePath);
+            fileKeysProvider.SetPrivateKey(privKeyBase64);
+            fileKeysProvider.SetPublicKey(pubKeyBase64);
+
+            Console.WriteLine("Storing public/private keys to " + fileKeysProvider.GetStorageDirectory());
             return true;
         }
 
@@ -104,7 +49,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public bool VerifySignature(FileInfo file, string signature)
         {
-            if (!KeysExist())
+            if (!KeysProvider.KeysExist())
             {
                 Console.WriteLine("Keys do not exist");
                 return false;
@@ -120,7 +65,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             const int chunkSize = 1024 * 1024 * 25;
             using FileStream inputStream = File.OpenRead(file.FullName);
             var validator = new Ed25519Signer();
-            validator.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
+            validator.InitWithNonExpandedPrivateKey(KeysProvider.GetPublicKey(), KeysProvider.GetPrivateKey());
             // read file in chunks
             byte[] buffer = new byte[chunkSize]; // read in chunks of 25 MB
             int bytesRead;
@@ -138,7 +83,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
         public string? GetSignatureForFile(FileInfo file)
         {
-            if (!KeysExist())
+            if (!KeysProvider.KeysExist())
             {
                 Console.WriteLine("Keys do not exist");
                 return null;
@@ -150,10 +95,9 @@ namespace NetSparkleUpdater.AppCastGenerator
                 return null;
             }
 
-
             using FileStream inputStream = File.OpenRead(file.FullName);
             var validator = new Ed25519Signer();
-            validator.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
+            validator.InitWithNonExpandedPrivateKey(KeysProvider.GetPublicKey(), KeysProvider.GetPrivateKey());
             // read file in chunks
             const int chunkSize = 1024 * 1024 * 25;
             byte[] buffer = new byte[chunkSize]; // read in chunks of 25 MB
@@ -168,61 +112,9 @@ namespace NetSparkleUpdater.AppCastGenerator
         public string GetSignatureForData(byte[] data)
         { 
             var signer = new Ed25519Signer();
-            signer.InitWithNonExpandedPrivateKey(GetPublicKey(), GetPrivateKey());
+            signer.InitWithNonExpandedPrivateKey(KeysProvider.GetPublicKey(), KeysProvider.GetPrivateKey());
             signer.AddToBuffer(data, 0, data.Length);
             return Convert.ToBase64String(signer.GenerateSignature());
-        }
-
-        public byte[]? GetPrivateKey()
-        {
-            if (!string.IsNullOrWhiteSpace(_privateKeyOverride))
-            {
-                return Convert.FromBase64String(_privateKeyOverride);
-            }
-            return ResolveKeyLocation(PrivateKeyEnvironmentVariable, _privateKeyFilePath);
-        }
-
-        public byte[]? GetPublicKey()
-        {
-            if (!string.IsNullOrWhiteSpace(_publicKeyOverride))
-            {
-                return Convert.FromBase64String(_publicKeyOverride);
-            }
-            return ResolveKeyLocation(PublicKeyEnvironmentVariable, _publicKeyFilePath);
-        }
-
-        private byte[]? ResolveKeyLocation(string environmentVariableName, string fileLocation)
-        {
-            var key = Environment.GetEnvironmentVariable(environmentVariableName);
-
-            if (key != null)
-            {
-                return Convert.FromBase64String(key);
-            }
-
-            if (!File.Exists(fileLocation))
-            {
-                Console.WriteLine("File does not exist: {0}", fileLocation, Color.Red);
-                return null;
-            }
-
-            return Convert.FromBase64String(File.ReadAllText(fileLocation));
-        }
-
-        /// <summary>
-        /// Deletes existing keys off disk. You shouldn't call this if they aren't backed up.
-        /// Useful for cleaning up unit tests.
-        /// </summary>
-        public void DeleteKeys()
-        {
-            if (File.Exists(_publicKeyFilePath))
-            {
-                File.Delete(_publicKeyFilePath);
-            }
-            if (File.Exists(_privateKeyFilePath))
-            {
-                File.Delete(_privateKeyFilePath);
-            }
         }
     }
 }

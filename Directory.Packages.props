@@ -14,6 +14,7 @@
         <PackageVersion Include="coverlet.collector" Version="6.0.4" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageVersion Include="MimeTypes" Version="2.5.2" />
+        <PackageVersion Include="Moq" Version="4.20.70" />
         <PackageVersion Include="NetSparkleUpdater.Chaos.NaCl" Version="0.9.4" />
         <PackageVersion Include="xunit" Version="2.9.3" />
         <PackageVersion Include="xunit.extensibility.execution" Version="2.9.3" />
