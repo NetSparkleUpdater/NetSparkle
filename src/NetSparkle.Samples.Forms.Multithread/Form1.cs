@@ -66,7 +66,7 @@ namespace NetSparkle.Samples.Forms.Multithread
                 // overall func won't return until .Set() called.
                 var t = new Thread(() =>
                 {
-                    var window = _factory.ShowCheckingForUpdates(_sparkleUpdateDetector) as CheckingForUpdatesWindow;
+                    var window = _factory.ShowCheckingForUpdates() as CheckingForUpdatesWindow;
                     window!.FormClosed += (a, b) => Application.ExitThread();
                     window!.Shown += CheckingWindowShown;
                     _checkingForUpdatesWindow = window;
@@ -149,7 +149,7 @@ namespace NetSparkle.Samples.Forms.Multithread
             {
                 var t = new Thread(() =>
                 {
-                    var window = _factory.CreateUpdateAvailableWindow(_sparkleUpdateDetector, _updateInfo.Updates, false) as UpdateAvailableWindow;
+                    var window = _factory.CreateUpdateAvailableWindow(_updateInfo.Updates, null) as UpdateAvailableWindow;
                     window!.FormClosed += (a, b) => Application.ExitThread();
                     window!.Shown += UpdateAvailableWindowShown;
                     window.UserResponded += UpdateWindowUserResponded;
@@ -167,7 +167,7 @@ namespace NetSparkle.Samples.Forms.Multithread
             {
                 var t = new Thread(() =>
                 {
-                    var window = _factory.CreateProgressWindow(_sparkleUpdateDetector, _updateInfo.Updates[0]) as DownloadProgressWindow;
+                    var window = _factory.CreateProgressWindow(_updateInfo.Updates[0].Title!, "Install") as DownloadProgressWindow;
                     window!.FormClosed += (a, b) => Application.ExitThread();
                     window!.Shown += ProgressWindowShown;
                     _downloadProgressWindow = window;
