@@ -1,6 +1,7 @@
 ﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -67,6 +68,14 @@ namespace NetSparkleUpdater.Downloaders
 #endif
 
         /// <summary>
+        /// Custom HTTP headers to send with file download requests
+        /// (e.g. <c>User-Agent</c>). Applied to the inner <see cref="HttpClient"/>'s
+        /// default request headers before each download. Empty by default,
+        /// in which case no extra headers are sent.
+        /// </summary>
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+
+        /// <summary>
         /// Do preparation work necessary to download a file,
         /// aka set up the HttpClient for use.
         /// </summary>
@@ -124,7 +133,26 @@ namespace NetSparkleUpdater.Downloaders
         /// <returns>The client used for file downloads</returns>
         protected virtual HttpClient CreateHttpClient(HttpClientHandler? handler)
         {
-            return handler != null ? new HttpClient(handler) : new HttpClient();
+            var client = handler != null ? new HttpClient(handler) : new HttpClient();
+            ApplyHeaders(client);
+            return client;
+        }
+
+        /// <summary>
+        /// Applies the configured <see cref="Headers"/> to the given client's
+        /// default request headers. Headers with blank names are skipped.
+        /// </summary>
+        /// <param name="client">HttpClient to apply the headers to</param>
+        protected void ApplyHeaders(HttpClient client)
+        {
+            foreach (var header in Headers)
+            {
+                if (string.IsNullOrWhiteSpace(header.Key))
+                {
+                    continue;
+                }
+                client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+            }
         }
 
         /// <inheritdoc/>
