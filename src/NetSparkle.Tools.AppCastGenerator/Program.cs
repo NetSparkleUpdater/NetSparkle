@@ -11,23 +11,25 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             // By default, if no args given, print help
             if (args.Length == 0)
             {
                 args = ["--help"];
             }
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(Run)
-                .WithNotParsed(HandleParseError);
+            return (int)Parser.Default.ParseArguments<Options>(args)
+                .MapResult(
+                    (Options opts) => Run(opts),
+                    errs => HandleParseError(errs));
         }
-        static void Run(Options opts)
+
+        static ExitCode Run(Options opts)
         {
             if (opts.ShowExtendedExamples)
             {
                 PrintExtendedExamples();
-                return;
+                return ExitCode.Success;
             }
 
             var keysProvider = new KeysProvider(
@@ -49,23 +51,25 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (!signatureManager.KeysProvider.KeysExist())
                 {
                     Console.WriteLine("Error: You must first generate keys before trying to export them!", Color.Red);
-                    return;
+                    return ExitCode.ErrorKeysDoNotExist;
                 }
                 var privateKey = keysProvider.GetPrivateKey();
                 var publicKey = keysProvider.GetPublicKey();
                 if (privateKey == null)
                 {
                     Console.WriteLine("Error: Could not load private key!", Color.Red);
+                    return ExitCode.ErrorCouldNotLoadPrivateKey;
                 }
                 if (publicKey == null)
                 {
                     Console.WriteLine("Error: Could not load public key!", Color.Red);
+                    return ExitCode.ErrorCouldNotLoadPublicKey;
                 }
                 Console.WriteLine("Private Key:");
-                Console.WriteLine(Convert.ToBase64String(privateKey ?? []));
+                Console.WriteLine(Convert.ToBase64String(privateKey));
                 Console.WriteLine("Public Key:");
-                Console.WriteLine(Convert.ToBase64String(publicKey ?? []));
-                return;
+                Console.WriteLine(Convert.ToBase64String(publicKey));
+                return ExitCode.Success;
             }
 
             if (opts.GenerateKeys)
@@ -74,12 +78,10 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (didSucceed)
                 {
                     Console.WriteLine("Keys successfully generated", Color.Green);
+                    return ExitCode.Success;
                 }
-                else
-                {
-                    Console.WriteLine("Keys failed to generate", Color.Red);
-                }
-                return;
+                Console.WriteLine("Keys failed to generate", Color.Red);
+                return ExitCode.ErrorKeyGenerationFailed;
             }
 
             if (!string.IsNullOrWhiteSpace(opts.PublicKeyOverride))
@@ -97,10 +99,15 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             if (opts.BinaryToSign != null)
             {
                 var signature = signatureManager.GetSignatureForFile(new FileInfo(opts.BinaryToSign));
+                if (signature == null)
+                {
+                    Console.WriteLine("Error: Could not generate signature for binary!", Color.Red);
+                    return ExitCode.ErrorCouldNotGenerateSignature;
+                }
 
                 Console.WriteLine($"Signature: {signature}", Color.Green);
 
-                return;
+                return ExitCode.Success;
             }
 
             if (opts.BinaryToVerify != null)
@@ -110,13 +117,11 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 if (result)
                 {
                     Console.WriteLine($"Signature valid", Color.Green);
-                } 
-                else
-                {
-                    Console.WriteLine($"Signature invalid", Color.Red);
+                    return ExitCode.Success;
                 }
 
-                return;
+                Console.WriteLine($"Signature invalid", Color.Red);
+                return ExitCode.ErrorSignatureInvalid;
             }
 
             // actually create the app cast
@@ -132,7 +137,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             if (outputDirName == null || string.IsNullOrWhiteSpace(outputDirName))
             {
                 Console.WriteLine("Output directory name is null/whitespace", Color.Red);
-                return;
+                return ExitCode.ErrorNoOutputDirectory;
             }
             if (!Directory.Exists(outputDirName))
             {
@@ -144,12 +149,17 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             {
                 generator.SerializeItemsToFile(items, productName ?? "", appCastFileName);
                 generator.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "");
+                return ExitCode.Success;
             }
+            Console.WriteLine("Error: Could not load app cast items", Color.Red);
+            return ExitCode.ErrorCouldNotLoadAppCastItems;
         }
 
-        static void HandleParseError(IEnumerable<Error> errs)
+        static ExitCode HandleParseError(IEnumerable<Error> errs)
         {
             errs.Output();
+            // --help and --version are not errors
+            return errs.All(e => e is HelpRequestedError or VersionRequestedError) ? ExitCode.Success : ExitCode.ErrorInvalidArguments;
         }
 
         static void PrintExtendedExamples()
@@ -197,7 +207,7 @@ netsparkle-generate-appcast -a directory/for/appcast/output/ -e exe -b directory
 netsparkle-generate-appcast -b binary/folder -p change/log/folder
 
 # Customize download URL for binaries and change logs
-netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
+netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -l https://example.com/downloads/changelogs
 
 # Set your application name for the app cast
 netsparkle-generate-appcast -n ""My Awesome App"" -b binary/folder
