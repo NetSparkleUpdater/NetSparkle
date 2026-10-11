@@ -40,7 +40,7 @@ namespace NetSparkleUnitTests
         {
             public RecordingHandler Recorder { get; } = new RecordingHandler();
 
-            protected override HttpClient CreateHttpClient(HttpClientHandler? handler)
+            protected override HttpClient CreateHttpClient(HttpClientHandler handler)
             {
                 return new HttpClient(Recorder);
             }
