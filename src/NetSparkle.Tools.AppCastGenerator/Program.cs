@@ -198,7 +198,7 @@ netsparkle-generate-appcast -a directory/for/appcast/output/ -e exe -b directory
 netsparkle-generate-appcast -b binary/folder -p change/log/folder
 
 # Customize download URL for binaries and change logs
-netsparkle-generate-appcast -b binary/folder -u https://example.com/downloads -p https://example.com/downloads/changelogs
+netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -l https://example.com/downloads/changelogs
 
 # Set your application name for the app cast
 netsparkle-generate-appcast -n ""My Awesome App"" -b binary/folder
