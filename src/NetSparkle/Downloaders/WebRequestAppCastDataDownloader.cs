@@ -1,5 +1,6 @@
 using NetSparkleUpdater.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -61,6 +62,14 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public RedirectHandler? RedirectHandler { get; set; }
 
+        /// <summary>
+        /// Custom HTTP headers to send with app cast download requests
+        /// (e.g. <c>User-Agent</c>). Applied to the inner <see cref="HttpClient"/>'s
+        /// default request headers before each download. Empty by default,
+        /// in which case no extra headers are sent.
+        /// </summary>
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+
         /// <inheritdoc/>
         public string DownloadAndGetAppCastData(string url)
         {
@@ -104,6 +113,14 @@ namespace NetSparkleUpdater.Downloaders
             }
 
             var httpClient = CreateHttpClient(handler);
+            foreach (var header in Headers)
+            {
+                if (string.IsNullOrWhiteSpace(header.Key))
+                {
+                    continue;
+                }
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+            }
             try
             {
                 if (!string.IsNullOrWhiteSpace(ExtraJsonData))
