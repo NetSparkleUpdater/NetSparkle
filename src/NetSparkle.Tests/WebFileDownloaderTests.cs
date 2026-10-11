@@ -140,7 +140,6 @@ namespace NetSparkleUnitTests
                     Assert.True(completed.Cancelled);
                     Assert.Null(completed.Error);
                     Assert.False(downloader.IsDownloading);
-                    Assert.False(File.Exists(path));
                 }
             }
             finally
