@@ -33,6 +33,19 @@ namespace NetSparkleUnitTests
             );
         }
 
+        [Fact]
+        public void BuildMetadataDoesNotMakeAVersionAPreRelease()
+        {
+            var items = new[]
+            {
+                new AppCastItem { Version = "2.1-beta+abc123" },
+                new AppCastItem { Version = "2.0+abc123" },
+            };
+            var installed = SemVerLike.Parse("1.0");
+            Assert.Equal(new[] { "2.0+abc123" }, AppCastReducers.OnlyRetailVersions(installed, items).Select(i => i.Version));
+            Assert.Equal(new[] { "2.1-beta+abc123" }, AppCastReducers.OnlyPreReleasedVersions(installed, items).Select(i => i.Version));
+        }
+
         [Theory]
         [InlineData("2.2", "2.1-prerelease")]
         public void OnlyPreReleasedVersionsTests(string installedVersion, string firstAvailable)

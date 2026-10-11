@@ -16,7 +16,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns></returns>
         public static IEnumerable<AppCastItem> OnlyRetailVersions(SemVerLike installed, IEnumerable<AppCastItem> items)
         {
-            return items.Where(it => SemVerLike.Parse(it.Version).AllSuffixes.Length == 0);
+            return items.Where(it => SemVerLike.Parse(it.Version).PreReleaseSuffix.Length == 0);
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <returns></returns>
         public static IEnumerable<AppCastItem> OnlyPreReleasedVersions(SemVerLike installed, IEnumerable<AppCastItem> items)
         {
-            return items.Where(it => SemVerLike.Parse(it.Version).AllSuffixes.Length != 0);
+            return items.Where(it => SemVerLike.Parse(it.Version).PreReleaseSuffix.Length != 0);
         }
 
         /// <summary>
