@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Downloaders
@@ -83,8 +84,9 @@ namespace NetSparkleUpdater.Downloaders
         /// failed to download.
         /// </summary>
         /// <param name="url">string URL for the place where the app cast can be downloaded</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The Task to retrieve the app cast data encoded as a string</returns>
-        public async Task<string> DownloadAndGetAppCastDataAsync(string url)
+        public async Task<string> DownloadAndGetAppCastDataAsync(string url, CancellationToken cancellationToken = default)
         {
             _appcastUrl = url;
             // configure ssl cert link
@@ -127,18 +129,27 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
                     request.Content = new StringContent(ExtraJsonData, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                    HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
                     if (response.IsSuccessStatusCode)
                     {
+#if NET6_0_OR_GREATER
+                        Stream responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+#else
                         Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
+
                         // .NET 9 -> ServicePointManager is deprecated
 #if NETSTANDARD || NET6 || NET7 || NET8
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
 #endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
+#if NET7_0_OR_GREATER
+                            return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+#else
                             return await reader.ReadToEndAsync().ConfigureAwait(false);
+#endif
                         }
                     }
                 }
@@ -146,7 +157,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     if (RedirectHandler != null)
                     {
-                        HttpResponseMessage response = await httpClient.GetAsync(url).ConfigureAwait(false);
+                        HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
                         if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399)
                         {
                             var redirectURI = response.Headers.Location;
@@ -157,23 +168,37 @@ namespace NetSparkleUpdater.Downloaders
                             }
                             if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
                             {
-                                return await DownloadAndGetAppCastDataAsync(redirectURI.ToString()).ConfigureAwait(false);
+                                return await DownloadAndGetAppCastDataAsync(redirectURI.ToString(), cancellationToken).ConfigureAwait(false);
                             }
                         }
                         else if (response.IsSuccessStatusCode)
                         {
+#if NET6_0_OR_GREATER
+                            return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+#else
                             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+#endif
                         }
                     }
                     else
                     {
-                        Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);// .NET 9 -> ServicePointManager is deprecated
+#if NET6_0_OR_GREATER
+                        Stream responseStream = await httpClient.GetStreamAsync(url, cancellationToken).ConfigureAwait(false);
+#else
+                        Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);
+#endif
+
+                        // .NET 9 -> ServicePointManager is deprecated
 #if NETSTANDARD || NET6 || NET7 || NET8
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
 #endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
                         {
+#if NET7_0_OR_GREATER
+                            return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
+#else
                             return await reader.ReadToEndAsync().ConfigureAwait(false);
+#endif
                         }
                     }
                 }

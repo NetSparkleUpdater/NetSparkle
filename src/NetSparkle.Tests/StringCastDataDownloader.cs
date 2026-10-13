@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NetSparkleUpdater.Interfaces;
 
@@ -19,7 +20,7 @@ namespace NetSparkleUnitTests
             return _data;
         }
 
-        public Task<string> DownloadAndGetAppCastDataAsync(string url)
+        public Task<string> DownloadAndGetAppCastDataAsync(string url, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(_data);
         }

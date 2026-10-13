@@ -130,6 +130,6 @@
   <ItemGroup>
 	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	<None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
-	<None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\"/>
+	<None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

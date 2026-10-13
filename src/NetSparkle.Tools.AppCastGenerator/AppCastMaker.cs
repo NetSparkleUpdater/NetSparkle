@@ -38,8 +38,8 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="items">List of AppCastItem items to write</param>
         /// <param name="applicationTitle">Title of application (or app cast)</param>
-        /// <param name="path">Output file path/name</param>
-        public abstract void SerializeItemsToFile(List<AppCastItem> items, string applicationTitle, string path);
+        /// <param name="stream">Output stream</param>
+        public abstract void SerializeItems(List<AppCastItem> items, string applicationTitle, Stream stream);
         /// <summary>
         /// Loads an existing app cast file and loads its AppCastItem items and any product name that is in the file.
         /// Should not return duplicate versions.
@@ -48,12 +48,12 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// The items list should always be non-null and sorted by AppCastItem.Version descending when the function
         /// is complete.
         /// </summary>
-        /// <param name="appCastFileName">File name/path for app cast file to read</param>
+        /// <param name="stream">Stream for app cast file to read</param>
         /// <param name="overwriteOldItemsInAppcast">If true and an item is loaded with a version that has already been found,
         /// overwrite the already found item with the newly found one</param>
         /// <returns>Tuple of items and the product name (product name can be null if file does not exist or file 
         /// does not contain a product name)</returns>
-        public abstract (List<AppCastItem>, string?) GetItemsAndProductNameFromExistingAppCast(string appCastFileName, bool overwriteOldItemsInAppcast);
+        public abstract (List<AppCastItem>, string?) GetItemsAndProductNameFromExistingAppCast(Stream stream, bool overwriteOldItemsInAppcast);
 
         // Function to check if a segment is a valid version
         private static bool ContainsValidVersionInfo(string segment)
@@ -75,7 +75,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         {
             if (!Regex.IsMatch(input, @"\d"))
             {
-                return "";
+                return string.Empty;
             }
 
             if (Regex.IsMatch(input, @"[+-]"))
@@ -119,7 +119,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             // If a check fails, then whatever we found previously is what we want.
             // Console.WriteLine("Splitting {0} on periods", part);
             var segments = part.Split('.');
-            string tempSegment = "";
+            string tempSegment = string.Empty;
             bool lastVersionToCheck = false;
             string? lastValidVersionLeft = null;
             for (int i = segments.Length - 1; i >= 0; i--)
@@ -217,7 +217,7 @@ namespace NetSparkleUpdater.AppCastGenerator
 
             if (!string.IsNullOrWhiteSpace(binaryDirectory))
             {
-                fullFileNameWithPath = fullFileNameWithPath.Replace(binaryDirectory, "").Trim();
+                fullFileNameWithPath = fullFileNameWithPath.Replace(binaryDirectory, string.Empty).Trim();
             }
 
             // Handle a sampling of complex extensions and remove them if they exist
@@ -241,7 +241,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             {
                 if (Regex.IsMatch(fullFileNameWithPath, pattern))
                 {
-                    fullFileNameWithPath = Regex.Replace(fullFileNameWithPath, pattern, "").Trim();
+                    fullFileNameWithPath = Regex.Replace(fullFileNameWithPath, pattern, string.Empty).Trim();
                     break;
                 }
             }
@@ -311,7 +311,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             return extensionsStringForSearch.SelectMany(search => Directory.GetFiles(binaryDirectory, search, searchOption));
         }
 
-        public string? GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory, IEnumerable<string>? extensions = null)
+        public static string? GetVersionForBinary(FileInfo binaryFileInfo, bool useFileNameForVersion, string binaryDirectory, IEnumerable<string>? extensions = null)
         {
             if (binaryDirectory == ".")
             {
@@ -344,7 +344,7 @@ namespace NetSparkleUpdater.AppCastGenerator
             var urlEncodedFileName = Uri.EscapeDataString(binaryFileInfo.Name);
             var urlToUse = !string.IsNullOrWhiteSpace(_opts.BaseUrl)
                 ? (_opts.BaseUrl.EndsWith("/") ? _opts.BaseUrl : _opts.BaseUrl + "/")
-                : "";
+                : string.Empty;
             if (_opts.PrefixVersion)
             {
                 urlToUse += $"{fullProductVersionString}/";
@@ -358,11 +358,11 @@ namespace NetSparkleUpdater.AppCastGenerator
             // changelog stuff
             var hasChangelogForFile = false;
             var changelogPath = ".";
-            var changelogFileName = "";
+            var changelogFileName = string.Empty;
             if (_opts.ChangeLogPath != null && !string.IsNullOrWhiteSpace(_opts.ChangeLogPath))
             {
                 changelogFileName = fullProductVersionString + ".md";
-                changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : "";
+                changelogPath = useChangelogs ? Path.Combine(_opts.ChangeLogPath, changelogFileName) : string.Empty;
                 hasChangelogForFile = useChangelogs && File.Exists(changelogPath);
                 if (useChangelogs && !hasChangelogForFile && !string.IsNullOrWhiteSpace(changelogFileNamePrefix))
                 {
@@ -388,12 +388,13 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                 }
             }
-            var changelogSignature = "";
+            var changelogSignature = string.Empty;
 
             if (hasChangelogForFile)
             {
                 Console.WriteLine($"Change log for version {productVersion} was successfully found: {changelogPath}", Color.LightBlue);
-                changelogSignature = _signatureManager.GetSignatureForFile(changelogPath);
+                using var changelogStream = File.OpenRead(changelogPath);
+                changelogSignature = _signatureManager.GetSignatureForFile(changelogStream);
                 changelogFileName = Path.GetFileName(changelogPath); // use whatever filename was found
             }
             if (useChangelogs && !hasChangelogForFile)
@@ -401,6 +402,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 Console.WriteLine($"Unable to find change log for {productVersion}. The app cast will still be generated, but without a change log for this version.", Color.Yellow);
             }
 
+            using var fileStream = File.OpenRead(binaryFileInfo.FullName);
             var productVersionLastDotIndex = productVersion.Version?.LastIndexOf('.') ?? -1;
             var item = new AppCastItem()
             {
@@ -410,8 +412,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                 ShortVersion = productVersion.Version,
                 PublicationDate = binaryFileInfo.CreationTime,
                 UpdateSize = binaryFileInfo.Length,
-                Description = "",
-                DownloadSignature = _signatureManager.KeysProvider.KeysExist() ? _signatureManager.GetSignatureForFile(binaryFileInfo) : null,
+                Description = string.Empty,
+                DownloadSignature = _signatureManager.KeysProvider.KeysExist() ? _signatureManager.GetSignatureForFile(fileStream) : null,
                 OperatingSystem = _opts.OperatingSystem?.Trim(),
                 MIMEType = MimeTypes.GetMimeType(binaryFileInfo.Name),
                 Channel = channel,
@@ -441,7 +443,7 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// <param name="sourceBinaryDirectory"></param>
         /// <param name="appCastFileName">file name for output w/o extension or . for extension</param>
         /// <returns></returns>
-        public string GetPathToAppCastOutput(string desiredOutputDirectory, string sourceBinaryDirectory, string appCastFileName = "appcast")
+        public string GetPathToAppCastOutput(string? desiredOutputDirectory, string sourceBinaryDirectory, string appCastFileName = "appcast")
         {
             if (string.IsNullOrWhiteSpace(desiredOutputDirectory))
             {
@@ -456,10 +458,10 @@ namespace NetSparkleUpdater.AppCastGenerator
         /// </summary>
         /// <param name="sourceBinaryDirectory"></param>
         /// <returns>items, product name</returns>
-        public (List<AppCastItem>?, string?) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, string outputAppCastFileName, string? singleFileToAddToAppCast = null)
+        public (List<AppCastItem>? Items, string? ProductName) LoadAppCastItemsAndProductName(string sourceBinaryDirectory, bool useExistingAppCastItems, Stream stream, string? singleFileToAddToAppCast = null)
         {
             var items = new List<AppCastItem>();
-            var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? "");
+            var dirFileSearches = GetSearchExtensionsFromString(_opts.Extensions ?? string.Empty);
             
             var binaries = new List<string>();
             if (string.IsNullOrWhiteSpace(singleFileToAddToAppCast))
@@ -512,7 +514,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 if (useExistingAppCastItems)
                 {
                     Console.WriteLine("Grabbing items from existing app cast...", Color.LightBlue);
-                    var (existingItems, existingProductName) = GetItemsAndProductNameFromExistingAppCast(outputAppCastFileName, _opts.OverwriteOldItemsInAppcast);
+                    var (existingItems, existingProductName) = GetItemsAndProductNameFromExistingAppCast(stream, _opts.OverwriteOldItemsInAppcast);
                     Console.WriteLine("{0} pre-existing item(s) found in a previously created app cast and are being added to the output", existingItems.Count, Color.LightBlue);
                     items.AddRange(existingItems);
                     if (!string.IsNullOrWhiteSpace(existingProductName))
@@ -526,7 +528,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                 foreach (var binary in binaries)
                 {
                     var fileInfo = new FileInfo(binary);
-                    string? productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory ?? ".", GetExtensionsFromString(_opts.Extensions ?? ""));
+                    string? productVersion = GetVersionForBinary(fileInfo, _opts.FileExtractVersion, _opts.SourceBinaryDirectory ?? ".", GetExtensionsFromString(_opts.Extensions ?? string.Empty));
 
                     if (!string.IsNullOrWhiteSpace(productVersion))
                     {
@@ -558,7 +560,7 @@ namespace NetSparkleUpdater.AppCastGenerator
                     }
                     if (itemFoundInAppcast == null)
                     {
-                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? "", semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix, _opts.Channel);
+                        var item = CreateAppCastItemFromFile(fileInfo, productName ?? string.Empty, semVerLikeVersion, usesChangelogs, _opts.ChangeLogFileNamePrefix, _opts.Channel);
                         if (item != null)
                         {
                             Console.WriteLine("Adding item to app cast with title: {0}, version: {1}, operating system: {1}", item.Title, item.Version, item.OperatingSystem);
@@ -613,9 +615,15 @@ namespace NetSparkleUpdater.AppCastGenerator
                 var appcastFile = new FileInfo(appCastFileName);
                 var extension = signatureFileExtension?.TrimStart('.') ?? "signature";
                 var signatureFileName = appCastFileName + "." + extension;
-                var signature = _signatureManager.GetSignatureForFile(appcastFile);
 
-                var result = _signatureManager.VerifySignature(appcastFile, signature ?? "");
+                using var stream = File.OpenRead(appCastFileName);
+
+                var signature = _signatureManager.GetSignatureForFile(stream);
+
+                stream.Position = 0;
+
+                var result = _signatureManager.VerifySignature(stream, signature ?? string.Empty);
+
                 if (result)
                 {
                     File.WriteAllText(signatureFileName, signature);
