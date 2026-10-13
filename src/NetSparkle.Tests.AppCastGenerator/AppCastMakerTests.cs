@@ -2021,10 +2021,10 @@ namespace NetSparkle.Tests.AppCastGenerator
         }
 
         [Theory]
-        [InlineData(AppCastMakerType.Xml, "testDesiredOutputDirectory", "testSourceBinaryDirectory", @"testDesiredOutputDirectory\appcast.xml")]
-        [InlineData(AppCastMakerType.Json, "testDesiredOutputDirectory", "testSourceBinaryDirectory", @"testDesiredOutputDirectory\appcast.json")]
-        [InlineData(AppCastMakerType.Xml, null, "testSourceBinaryDirectory", @"testSourceBinaryDirectory\appcast.xml")]
-        [InlineData(AppCastMakerType.Json, null, "testSourceBinaryDirectory", @"testSourceBinaryDirectory\appcast.json")]
+        [InlineData(AppCastMakerType.Xml, "testDesiredOutputDirectory", "testSourceBinaryDirectory", "testDesiredOutputDirectory/appcast.xml")]
+        [InlineData(AppCastMakerType.Json, "testDesiredOutputDirectory", "testSourceBinaryDirectory", "testDesiredOutputDirectory/appcast.json")]
+        [InlineData(AppCastMakerType.Xml, null, "testSourceBinaryDirectory", "testSourceBinaryDirectory/appcast.xml")]
+        [InlineData(AppCastMakerType.Json, null, "testSourceBinaryDirectory", "testSourceBinaryDirectory/appcast.json")]
         public async Task GetPathToAppCastOutput(AppCastMakerType appCastMakerType, string desiredOutputDirectory, string sourceBinaryDirectory, string expected)
         {
             var opts = new Options();
@@ -2034,7 +2034,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                 ? new XMLAppCastMaker(signatureManager, opts)
                 : new JsonAppCastMaker(signatureManager, opts);
 
-            Assert.Equal(expected, maker.GetPathToAppCastOutput(desiredOutputDirectory, sourceBinaryDirectory));
+            Assert.Equal(expected, maker.GetPathToAppCastOutput(desiredOutputDirectory, sourceBinaryDirectory).Replace('\\', '/'));
         }
     }
 }
