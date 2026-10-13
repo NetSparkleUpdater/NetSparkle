@@ -50,7 +50,7 @@ namespace NetSparkle.Tests.AppCastGenerator
         private string GetCleanTempDir()
         {
             var tempPath = Path.GetTempPath();
-            var tempDir = Path.Combine(tempPath, Guid.NewGuid().ToString());//"netsparkle-unit-tests-13927");
+            var tempDir = Path.Combine(tempPath, "netsparkle-unit-tests-13927");
             // remove any files set up in previous tests
             if (Directory.Exists(tempDir))
             {
