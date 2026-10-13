@@ -4,7 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="AsmResolver.DotNet" Version="5.5.1" />
-        <PackageVersion Include="Avalonia.Desktop" Version="12.0.1" />
+        <PackageVersion Include="Avalonia.Desktop" Version="12.1.4" />
         <PackageVersion Include="Avalonia.HtmlRenderer" Version="12.0.0" />
         <PackageVersion Include="Avalonia.Themes.Simple" Version="12.0.1" />
         <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
