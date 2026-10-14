@@ -146,8 +146,9 @@ namespace NetSparkleUnitTests
                 else
                 {
                     var path = Path.GetTempFileName();
-                    using var fileWriteStream = File.OpenWrite(path);
+                    var fileWriteStream = File.OpenWrite(path);
                     maker.SerializeAppCast(appCast, fileWriteStream);
+                    fileWriteStream.Dispose();
                     serialized = File.ReadAllText(path);
                     File.Delete(path);
                 }
@@ -161,8 +162,9 @@ namespace NetSparkleUnitTests
                 else
                 {
                     var path = Path.GetTempFileName();
-                    using var fileWriteStream = File.OpenWrite(path);
+                    var fileWriteStream = File.OpenWrite(path);
                     await maker.SerializeAppCastAsync(appCast, fileWriteStream);
+                    fileWriteStream.Dispose();
                     serialized = File.ReadAllText(path);
                     File.Delete(path);
                 }
@@ -345,8 +347,9 @@ namespace NetSparkleUnitTests
                 {
                     var path = Path.GetTempFileName();
                     File.WriteAllText(path, appCastToDeserialize);
-                    using var fileStream = File.OpenRead(path);
+                    var fileStream = File.OpenRead(path);
                     deserialized = maker.DeserializeAppCast(fileStream);
+                    fileStream.Dispose();
                     File.Delete(path);
                 }
             }
@@ -360,8 +363,9 @@ namespace NetSparkleUnitTests
                 {
                     var path = Path.GetTempFileName();
                     File.WriteAllText(path, appCastToDeserialize);
-                    using var fileStream = File.OpenRead(path);
+                    var fileStream = File.OpenRead(path);
                     deserialized = await maker.DeserializeAppCastAsync(fileStream);
+                    fileStream.Dispose();
                     File.Delete(path);
                 }
             }
