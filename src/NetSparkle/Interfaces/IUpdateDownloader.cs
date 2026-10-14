@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
@@ -36,7 +37,8 @@ namespace NetSparkleUpdater.Interfaces
         /// </summary>
         /// <param name="uri">URL for the download</param>
         /// <param name="downloadFilePath">Where to download the file</param>
-        Task DownloadFile(Uri? uri, string downloadFilePath);
+        /// <param name="cancellationToken">The cancellation token</param>
+        Task DownloadFile(Uri? uri, string downloadFilePath, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Cancel the download.
@@ -57,8 +59,9 @@ namespace NetSparkleUpdater.Interfaces
         /// NetSparkle.CheckServerFileName = false can be set to avoid this call.
         /// </summary>
         /// <param name="item">The AppCastItem that will be downloaded</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The file name of the file to download from the server 
         /// (including file extension). Null if not found/had error/not applicable.</returns>
-        Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item);
+        Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item, CancellationToken cancellationToken = default);
     }
 }

@@ -1,6 +1,5 @@
-using NetSparkleUpdater;
-using NetSparkleUpdater.Configurations;
-using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
@@ -30,7 +29,8 @@ namespace NetSparkleUpdater.Interfaces
         /// appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         /// </summary>
         /// <param name="appCastString">the non-null app cast</param>
-        Task<AppCast> DeserializeAppCastAsync(string appCastString);
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
+        Task<AppCast> DeserializeAppCastAsync(string appCastString, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deserialize the app cast from a file at the given path 
@@ -39,8 +39,8 @@ namespace NetSparkleUpdater.Interfaces
         /// as <see cref="AppCastItem"/> objects that are sorted in reverse order like so:
         /// appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         /// </summary>
-        /// <param name="filePath">Path to the file on disk to deserialize</param>
-        AppCast DeserializeAppCastFromFile(string filePath);
+        /// <param name="stream">Stream containing the app cast data to deserialize</param>
+        AppCast DeserializeAppCast(Stream stream);
 
         /// <summary>
         /// Deserialize the app cast from a file at the given path asynchronously 
@@ -49,8 +49,9 @@ namespace NetSparkleUpdater.Interfaces
         /// as <see cref="AppCastItem"/> objects that are sorted in reverse order like so:
         /// appCast.Items.Sort((item1, item2) => -1 * item1.CompareTo(item2));
         /// </summary>
-        /// <param name="filePath">Path to the file on disk to deserialize</param>
-        Task<AppCast> DeserializeAppCastFromFileAsync(string filePath);
+        /// <param name="stream">Stream containing the app cast data to deserialize</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
+        Task<AppCast> DeserializeAppCastAsync(Stream stream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Serialize the given <see cref="AppCast"/> to a string.
@@ -65,8 +66,9 @@ namespace NetSparkleUpdater.Interfaces
         /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
         /// <returns>The string representation of the given <see cref="AppCast"/></returns>
-        Task<string> SerializeAppCastAsync(AppCast appCast);
+        Task<string> SerializeAppCastAsync(AppCast appCast, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Serialize the given <see cref="AppCast"/> to a file. Can overwrite
@@ -74,8 +76,8 @@ namespace NetSparkleUpdater.Interfaces
         /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
-        /// <param name="outputPath">Output path for data.</param>
-        void SerializeAppCastToFile(AppCast appCast, string outputPath);
+        /// <param name="stream">Output stream for data.</param>
+        void SerializeAppCast(AppCast appCast, Stream stream);
 
         /// <summary>
         /// Serialize the given <see cref="AppCast"/> to a file asyncronously. Can overwrite
@@ -83,8 +85,9 @@ namespace NetSparkleUpdater.Interfaces
         /// <seealso cref="AppCastItem"/> objects should have at least their version and download link set.
         /// </summary>
         /// <param name="appCast"><see cref="AppCast"/> to serialize</param>
-        /// <param name="outputPath">Output path for data.</param>
+        /// <param name="stream">Output stream for data.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
         /// <returns>The <seealso cref="Task"/> that can be await'ed for this operation</returns>
-        Task SerializeAppCastToFileAsync(AppCast appCast, string outputPath);
+        Task SerializeAppCastAsync(AppCast appCast, Stream stream, CancellationToken cancellationToken = default);
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -110,13 +111,13 @@ namespace NetSparkleUpdater.AppCastHandlers
                     false);
         }
 
-        private async Task<string?> DownloadSignatureData(string appCastUrl, string signatureExtension)
+        private async Task<string?> DownloadSignatureData(string appCastUrl, string signatureExtension, CancellationToken cancellationToken = default)
         {
             try
             {
                 if (_dataDownloader != null)
                 {
-                    var signatureData = await _dataDownloader.DownloadAndGetAppCastDataAsync(appCastUrl + "." + signatureExtension.Trim().TrimStart('.'));
+                    var signatureData = await _dataDownloader.DownloadAndGetAppCastDataAsync(appCastUrl + "." + signatureExtension.Trim().TrimStart('.'), cancellationToken);
                     return signatureData;
                 }
             }
@@ -133,9 +134,10 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// Configure functionality by implementing your own <seealso cref="IAppCastDataDownloader"/> 
         /// or by overriding this method in a subclass.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>Downloaded app cast raw string if download and verification succeeded. Null if
         /// the operation failed somehow.</returns>
-        public virtual async Task<string?> DownloadAppCast()
+        public virtual async Task<string?> DownloadAppCast(CancellationToken cancellationToken = default)
         {
             CheckSetupCalled();
             if (_castUrl == null || string.IsNullOrWhiteSpace(_castUrl))
@@ -151,7 +153,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             try
             {
                 _logWriter?.PrintMessage("Downloading app cast data...");
-                var appCast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl) ?? "";
+                var appCast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl, cancellationToken) ?? "";
                 if (string.IsNullOrWhiteSpace(appCast))
                 {
                     _logWriter?.PrintMessage("Failed to download app cast from URL {0}", _castUrl ?? "");
@@ -163,11 +165,11 @@ namespace NetSparkleUpdater.AppCastHandlers
                     _logWriter?.PrintMessage("Downloading app cast signature data...");
                     var signature = "";
                     var extension = SignatureFileExtension?.Trim() ?? "signature";
-                    signature = await DownloadSignatureData(_castUrl, extension);
+                    signature = await DownloadSignatureData(_castUrl, extension, cancellationToken);
                     if (string.IsNullOrWhiteSpace(signature))
                     {
                         _logWriter?.PrintMessage("Attempting to check for legacy .dsa signature data...");
-                        signature = await DownloadSignatureData(_castUrl, ".dsa");
+                        signature = await DownloadSignatureData(_castUrl, ".dsa", cancellationToken);
                     }
                     isValidAppCast = VerifyAppCast(appCast, signature);
                 }

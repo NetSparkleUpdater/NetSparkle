@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Interfaces
@@ -29,8 +30,9 @@ namespace NetSparkleUpdater.Interfaces
         /// failed to download.
         /// </summary>
         /// <param name="url">non-null string URL for the place where the app cast can be downloaded</param>
+        /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The app cast data encoded as a string</returns>
-        Task<string> DownloadAndGetAppCastDataAsync(string url);
+        Task<string> DownloadAndGetAppCastDataAsync(string url, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get the string encoding (e.g. UTF8 or ASCII) of the 
