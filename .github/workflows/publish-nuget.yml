@@ -24,16 +24,10 @@ jobs:
             softwareupdate --install-rosetta --agree-to-license
             wget https://dot.net/v1/dotnet-install.sh
             chmod +x dotnet-install.sh
-            ./dotnet-install.sh --architecture arm64 --channel 6.0
-            ./dotnet-install.sh --architecture x64 --channel 6.0
-            ./dotnet-install.sh --architecture arm64 --channel 7.0
-            ./dotnet-install.sh --architecture x64 --channel 7.0
-            ./dotnet-install.sh --architecture arm64 --channel 8.0
-            ./dotnet-install.sh --architecture x64 --channel 8.0
-            ./dotnet-install.sh --architecture arm64 --channel 9.0
-            ./dotnet-install.sh --architecture x64 --channel 9.0
             ./dotnet-install.sh --architecture arm64 --channel 10.0
             ./dotnet-install.sh --architecture x64 --channel 10.0
+            ./dotnet-install.sh --architecture arm64 --channel 11.0
+            ./dotnet-install.sh --architecture x64 --channel 11.0
          fi
         shell: bash
       - uses: actions/checkout@v7.0.1
@@ -46,49 +40,28 @@ jobs:
         uses: microsoft/setup-msbuild@v3.0.0
         if: matrix.os == 'windows-latest'
       
-      - name: Setup .NET 6.0, 7.0, 8.0, 9.0, 10 for tests
+      - name: Setup .NET 10.0, 11.0 for tests
         uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
-            6.0.x
-            7.0.x
-            8.0.x
-            9.0.x
             10.0.x
+            11.0.x
 
-      - name: Run NetSparkle.Tests in .NET 4.6.2
-        run: dotnet test -f net462 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+      - name: Run NetSparkle.Tests in .NET 4.7
+        run: dotnet test -f net47 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
         if: matrix.os == 'windows-latest'
-
-      - name: Run NetSparkle.Tests in .NET 6
-        run: dotnet test -f net6.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
-
-      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 6
-        run: dotnet test -f net6.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
-
-      - name: Run NetSparkle.Tests in .NET 7
-        run: dotnet test -f net7.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
-
-      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 7
-        run: dotnet test -f net7.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
-
-      - name: Run NetSparkle.Tests in .NET 8
-        run: dotnet test -f net8.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
-
-      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 8
-        run: dotnet test -f net8.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
-
-      - name: Run NetSparkle.Tests in .NET 9
-        run: dotnet test -f net9.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
-
-      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 9
-        run: dotnet test -f net9.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
       - name: Run NetSparkle.Tests in .NET 10
         run: dotnet test -f net10.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
 
       - name: Run NetSparkle.Tests.AppCastGenerator in .NET 10
         run: dotnet test -f net10.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
+
+      - name: Run NetSparkle.Tests in .NET 11
+        run: dotnet test -f net11.0 ${{ github.workspace }}/src/NetSparkle.Tests/NetSparkle.Tests.csproj
+
+      - name: Run NetSparkle.Tests.AppCastGenerator in .NET 11
+        run: dotnet test -f net11.0 ${{ github.workspace }}/src/NetSparkle.Tests.AppCastGenerator/NetSparkle.Tests.AppCastGenerator.csproj
 
   build:
     name: Build all packages as smoke test
@@ -104,15 +77,12 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v3.0.0
       
-      - name: Setup .NET 6.0, 7.0, 8.0, 9.0, 10.0
+      - name: Setup .NET 10.0, 11.0
         uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
-            6.0.x
-            7.0.x
-            8.0.x
-            9.0.x
             10.0.x
+            11.0.x
 
       - name: Clean things to be safe
         run: |
@@ -161,15 +131,12 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v3.0.0
       
-      - name: Setup .NET 6.0, 7.0, 8.0, 9.0, 10
+      - name: Setup .NET 10.0, 11.0
         uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
-            6.0.x
-            7.0.x
-            8.0.x
-            9.0.x
             10.0.x
+            11.0.x
       
       - name: Publish NetSparkleUpdater.SparkleUpdater on version change
         uses: nitz/publish-nuget@60fd3adf9d9eecc3bbf8a98738734d3061347172

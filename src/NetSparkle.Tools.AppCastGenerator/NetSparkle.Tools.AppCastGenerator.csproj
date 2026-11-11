@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.AppCastGenerator</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Tools.AppCastGenerator</AssemblyName>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -75,8 +75,8 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <ItemGroup>
-	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
-	<None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
+  <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  <None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
     <None Include="..\NetSparkle\ArtWork\software-update-available.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

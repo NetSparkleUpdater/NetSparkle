@@ -91,7 +91,7 @@ namespace NetSparkleUpdater.Downloaders
             // .NET 9 -> ServicePointManager is deprecated
             // we have the lambda below for trusting all connections anyway, so this
             // is sort of redundant at the moment.
-#if NETSTANDARD || NET6 || NET7 || NET8 
+#if NETSTANDARD
             ServicePointManager.ServerCertificateValidationCallback += ValidateRemoteCertificate;
 #endif
             var handler = new HttpClientHandler();
@@ -133,7 +133,7 @@ namespace NetSparkleUpdater.Downloaders
                     {
                         Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                         // .NET 9 -> ServicePointManager is deprecated
-#if NETSTANDARD || NET6 || NET7 || NET8
+#if NETSTANDARD
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
 #endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
@@ -168,7 +168,7 @@ namespace NetSparkleUpdater.Downloaders
                     else
                     {
                         Stream responseStream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);// .NET 9 -> ServicePointManager is deprecated
-#if NETSTANDARD || NET6 || NET7 || NET8
+#if NETSTANDARD
                         ServicePointManager.ServerCertificateValidationCallback -= ValidateRemoteCertificate;
 #endif
                         using (StreamReader reader = new StreamReader(responseStream, GetAppCastEncoding()))
@@ -208,11 +208,6 @@ namespace NetSparkleUpdater.Downloaders
         public Encoding GetAppCastEncoding()
         {
             return Encoding.UTF8;
-        }
-
-        private bool AlwaysTrustRemoteCert(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
-        {
-            return true;
         }
 
         /// <summary>

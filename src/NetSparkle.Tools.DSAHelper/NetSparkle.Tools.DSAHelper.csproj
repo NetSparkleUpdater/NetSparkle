@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>NetSparkleUpdater.DSAHelper</RootNamespace>
     <AssemblyName>NetSparkleUpdater.Tools.DSAHelper</AssemblyName>
-    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net11.0;net10.0</TargetFrameworks>
     <AssemblyTitle>NetSparkle</AssemblyTitle>
     <Product>NetSparkleUpdater.Tools.DSAHelper</Product>
     <Description>Command line tool 'netsparkle-dsa' to generate and use DSA signatures. WARNING: DSA signatures are insecure. If possible, please use NetSparkleUpdater.Tools.AppCastGenerator instead to use ed25519 signatures. Use in conjunction with the NetSparkleUpdater library.</Description>
@@ -28,7 +28,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>sparkle, netsparkle, update, software, updater, appcast, generate, software, app cast, dsa</PackageTags>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
-	<Nullable>enable</Nullable>
+  <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>

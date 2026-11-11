@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net11.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-	<ApplicationIcon>software-update-available.ico</ApplicationIcon>
-	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  <ApplicationIcon>software-update-available.ico</ApplicationIcon>
+  <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle.UI.WinForms.NetCore\NetSparkle.UI.WinForms.NetCore.csproj" />
@@ -18,7 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="software-update-available.ico" />
-	<EmbeddedResource Include="NetSparkle_DSA.pub" />
+  <EmbeddedResource Include="NetSparkle_DSA.pub" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Form1.cs">

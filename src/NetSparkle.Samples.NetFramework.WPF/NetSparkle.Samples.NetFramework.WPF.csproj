@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net47</TargetFramework>
     <OutputType>WinExe</OutputType>
     <RootNamespace>NetSparkle.TestAppWPF</RootNamespace>
     <AssemblyName>NetSparkle.TestAppWPF</AssemblyName>

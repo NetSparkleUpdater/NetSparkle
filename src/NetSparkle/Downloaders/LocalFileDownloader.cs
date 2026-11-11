@@ -141,13 +141,13 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     IsDownloading = true;
                     long totalFileLength = sourceStream.Length;
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
                     while ((bytesRead = await sourceStream.ReadAsync(buffer, cancellationToken)) > 0)
 #else
                     while ((bytesRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
 #endif
                     {
-#if NET6_0_OR_GREATER
+#if NET10_0_OR_GREATER
                         await destinationStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
 #else
                         await destinationStream.WriteAsync(buffer, 0, bytesRead, cancellationToken);

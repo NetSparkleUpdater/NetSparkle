@@ -14,7 +14,7 @@ using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.AssemblyAccessors;
 using System.Text;
-#if NETSTANDARD || NET6 || NET7 || NET8 || NET9 || NET10
+#if NETSTANDARD || NET10_0_OR_GREATER
 using System.Runtime.InteropServices;
 #endif
 
@@ -150,7 +150,7 @@ namespace NetSparkleUpdater
 
         #region Properties
 
-#if NETSTANDARD || NET6 || NET7 || NET8
+#if NETSTANDARD || NET10_0_OR_GREATER
         /// <summary>
         /// The security protocol used by NetSparkle. Setting this property will also set this 
         /// for the current AppDomain of the caller. May need to be set to 
@@ -274,7 +274,7 @@ namespace NetSparkleUpdater
             {
                 if (_configuration == null)
                 {
-#if NETSTANDARD || NET6 || NET7 || NET8 || NET9 || NET10
+#if NETSTANDARD || NET10_0_OR_GREATER
                         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         {
                             _configuration = new RegistryConfiguration(new AssemblyDiagnosticsAccessor(_appReferenceAssembly));
@@ -539,7 +539,7 @@ namespace NetSparkleUpdater
             {
                 if (_processIDToKillBeforeInstallerRuns == null || string.IsNullOrWhiteSpace(_processIDToKillBeforeInstallerRuns))
                 {
-#if NET5_0_OR_GREATER
+#if NET10_0_OR_GREATER
                     return Environment.ProcessId.ToString();
 #else
                     using (var process = Process.GetCurrentProcess())

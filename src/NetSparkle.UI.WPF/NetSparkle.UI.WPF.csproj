@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{6915843C-7947-4268-B569-6F5684651DF4}</ProjectGuid>
     <UseWPF>true</UseWPF>
-    <TargetFrameworks>net10.0-windows;net9.0-windows;net8.0-windows;net7.0-windows;net6.0-windows;net462</TargetFrameworks>
+    <TargetFrameworks>net11.0-windows;net10.0-windows;net47</TargetFrameworks>
     <AssemblyTitle>NetSparkleUpdater.UI.WPF</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WPF</Product>
     <Copyright>Copyright © 2026</Copyright>
@@ -22,10 +22,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace>NetSparkleUpdater.UI.WPF</RootNamespace>
-	<Nullable>enable</Nullable>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
-	<LangVersion>9.0</LangVersion>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net47'">
+	  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
@@ -38,7 +38,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DocumentationFile>..\bin\Release\NetSparkle.UI.WPF\NetSparkle.UI.WPF.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' ">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Drawing" />
@@ -52,7 +52,7 @@
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
   <Target Name="_addDrawingReference" AfterTargets="ResolveTargetingPackAssets">
-    <ItemGroup Condition="'$(TargetFramework)' != 'net462'">
+    <ItemGroup Condition="'$(TargetFramework)' != 'net47'">
       <Reference Condition="'%(Reference.FileName)' == 'PresentationCore'" Include="%(Reference.RootDir)%(Reference.Directory)System.Drawing.Common.dll" />
     </ItemGroup>
   </Target>

@@ -18,7 +18,7 @@
    <tags>Update NetSparkle Sparkle Autoupdate .NET Update WinForms software</tags>    
    <releaseNotes>3.0: See https://github.com/NetSparkleUpdater/NetSparkle for all information and to file issues/pull requests for and ask questions about this project.</releaseNotes>
     <dependencies>
-      <group targetFramework=".NETFramework4.6.2">
+      <group targetFramework=".NETFramework4.7">
         <dependency id="NetSparkleUpdater.SparkleUpdater" version="3.1.1-preview20261011001" exclude="Build,Analyzers" />
       </group>
     </dependencies>

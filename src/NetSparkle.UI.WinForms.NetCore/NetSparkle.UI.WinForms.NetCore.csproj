@@ -4,7 +4,7 @@
     <RootNamespace>NetSparkleUpdater.UI.WinForms</RootNamespace>
     <AssemblyName>NetSparkleUpdater.UI.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
-    <TargetFrameworks>net10.0-windows;net9.0-windows;net8.0-windows;net7.0-windows;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net11.0-windows;net10.0-windows</TargetFrameworks>
     <AssemblyTitle>NetSparkle.NetFramework.WinForms</AssemblyTitle>
     <Product>NetSparkleUpdater.UI.WinForms.NetCore</Product>
     <Copyright>Copyright © 2026</Copyright>
@@ -84,7 +84,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NetSparkle\NetSparkle.csproj" />
   </ItemGroup>
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net47'">
 		<LangVersion>8.0</LangVersion>
 		<!--<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>-->
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
