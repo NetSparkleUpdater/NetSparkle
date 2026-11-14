@@ -5,6 +5,19 @@
 * Bumped minimum version of .NET Framework to 4.7.0 (a624d05d8cd5d8503bc6ba9e1e7cd6cc45491596)
 * Bumped minimum .NET version to .NET 10 (dropped .NET 6 through 9) (a624d05d8cd5d8503bc6ba9e1e7cd6cc45491596)
 * `IAppCastGenerator` and `IUpdateDownloader` methods have been updated to take `Stream` objects and use `CancellationToken` as appropriate (f4cb2409135025867643a367aefac1b0b50a0e9c)
+* Ordering for semantic versions has been tweaked; now ordered by maturity: dev/nightly/canary/snapshot/ci/pre-alpha, then alpha, beta, preview/pre, rc, then any other label. Any pre-release is older than the release. See #742.
+
+### Changes/Fixes from 3.x
+
+* Fix byte size formatting at unit boundaries (#735)
+* Dispose `DSACryptoServiceProvider` in `GetDSASignature` (#736)
+* Fix `IsDownloadingItem` returning `true` when nothing is downloading (#737)
+* Fixed docs for `IsLinuxUpdate` (#738)
+* Use invariant culture when lowercasing OS, channel and file extension strings (#739)
+* Report canceled downloads as canceled in WebFileDownloader (#741)
+* Fix ignore build metadata in version compare (#742) -- fixes a bunch of issues with semantic versioning
+* Return non-zero exit codes on errors in netsparkle-generate-appcast (#743)
+* Add custom HTTP headers support to appcast downloads (#744)
 
 ## NetSparkle 3.x
 
