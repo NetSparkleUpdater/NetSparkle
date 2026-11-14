@@ -19,7 +19,7 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <RootNamespace>NetSparkleUpdater</RootNamespace>
     <PackageReleaseNotes>See https://github.com/NetSparkleUpdater/NetSparkle/releases for all release information and to file issues/pull requests for this project.</PackageReleaseNotes>
-    <IsTrimmable>true</IsTrimmable>
+    <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsTrimmable>
     <TrimMode>partial</TrimMode>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
     <Nullable>enable</Nullable>
