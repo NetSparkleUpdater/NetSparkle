@@ -1,3 +1,11 @@
+## NetSparkle 4.x
+
+### Breaking Changes from 3.x
+
+* Bumped minimum version of .NET Framework to 4.7.0 (a624d05d8cd5d8503bc6ba9e1e7cd6cc45491596)
+* Bumped minimum .NET version to .NET 10 (dropped .NET 6 through 9) (a624d05d8cd5d8503bc6ba9e1e7cd6cc45491596)
+* `IAppCastGenerator` and `IUpdateDownloader` methods have been updated to take `Stream` objects and use `CancellationToken` as appropriate (f4cb2409135025867643a367aefac1b0b50a0e9c)
+
 ## NetSparkle 3.x
 
 ### Summary of 3.x Changes

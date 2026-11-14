@@ -12,7 +12,7 @@
 
 # 
 
-NetSparkle is a highly-configurable software update framework for C# that is compatible with .NET 6+ and .NET Framework 4.6.2+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 6+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software.
+NetSparkle is a highly-configurable software update framework for C# that is compatible with .NET 10+/.NET standard 2.0 and .NET Framework 4.7+, has pre-built UIs for .NET Framework (WinForms, WPF) and .NET 10+ (WinForms, WPF, Avalonia), uses Ed25519 or other cryptographic signatures, and even allows for custom UIs or no built-in UI at all! (Note: NetSparkle v4.x drops older .NET versions; v3.x is compatible with .NET 6 and 4.6.2) You provide, somewhere on the internet, an [app cast](#app-cast) with update and version information, along with release notes in Markdown or HTML format. This library then helps you check for an update, show the user the release notes, and offer to download/install the new version of the software.
 
 Built-in supported update download types:
 * Windows -- .exe, .msi, .msp
@@ -93,7 +93,7 @@ We are open to contributions that could make the overall install/update process 
 
 0. If you want a pre-built UI, install one of the UI NuGet packages. If not, install the core NuGet package.
 1. Set up your project file as mentioned in the following section
-2. Download the app cast generator CLI tool (requires .NET 6, 7, 8, or 9 runtime): `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
+2. Download the app cast generator CLI tool (requires .NET 10 or 11 runtime starting with v3.x): `dotnet tool install --global NetSparkleUpdater.Tools.AppCastGenerator`
 3. Create your ed25519 keys (save the generated keys somewhere for safe keeping!):
 ```bash
 netsparkle-generate-appcast --generate-keys
