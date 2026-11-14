@@ -31,10 +31,6 @@ jobs:
          fi
         shell: bash
       - uses: actions/checkout@v7.0.1
-      # - uses: nuget/setup-nuget@v2
-      #   with:
-      #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
-      #       nuget-version: '5.x'
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v3.0.0
@@ -69,10 +65,6 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v7.0.1
-      # - uses: nuget/setup-nuget@v2
-      #   with:
-      #       nuget-api-key: ${{secrets.NUGET_API_KEY}}
-      #       nuget-version: '5.x'
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v3.0.0
@@ -117,15 +109,24 @@ jobs:
           msbuild ${{ github.workspace }}/src/NetSparkle.UI.WinForms.NetFramework/NetSparkle.UI.WinForms.NetFramework.csproj /property:Configuration=Release /p:OutputPath=../../nuget/winformsnetframework/lib/net462 /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
 
   publish:
+    permissions:
+      id-token: write  # enable GitHub OIDC token issuance for this job
     name: Build and publish all packages to NuGet
     runs-on: windows-latest
     needs: build
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/avalonia-preview' || github.ref == 'refs/heads/versions/2.x'
     steps:
+      # Get a short-lived NuGet API key, see https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{secrets.NUGET_USERNAME}}
+
       - uses: actions/checkout@v7.0.1
       - uses: nuget/setup-nuget@v4
         with:
-            nuget-api-key: ${{secrets.NUGET_API_KEY}}
+            nuget-api-key: ${{steps.login.outputs.NUGET_API_KEY}}
             nuget-version: '5.x'
 
       - name: Add MSBuild to PATH
@@ -146,7 +147,7 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.SparkleUpdater
           INCLUDE_SYMBOLS: true
 
@@ -157,13 +158,13 @@ jobs:
       #   run: |
       #     dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
       #     dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetCore --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetCoreOutput
-      #     dotnet nuget push ${{ github.workspace }}\WinFormsNetCoreOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
+      #     dotnet nuget push ${{ github.workspace }}\WinFormsNetCoreOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{steps.login.outputs.NUGET_API_KEY}} --skip-duplicate
 
       # - name: Publish NetSparkleUpdater.UI.WinForms.NetFramework on version change
       #   run: |
       #     dotnet build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj
       #     dotnet pack -p:PackageID=NetSparkleUpdater.UI.WinForms.NetFramework --include-symbols -p:SymbolPackageFormat=snupkg --no-build -c Release ${{ github.workspace }}/src/NetSparkle.UI.WinForms/NetSparkle.UI.WinForms.csproj -o ${{ github.workspace }}/WinFormsNetFrameworkOutput
-      #     dotnet nuget push ${{ github.workspace }}\WinFormsNetFrameworkOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
+      #     dotnet nuget push ${{ github.workspace }}\WinFormsNetFrameworkOutput\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{steps.login.outputs.NUGET_API_KEY}} --skip-duplicate
           
       - name: Clean and publish NetSparkleUpdater.UI.WinForms.NetFramework on version change
         run: |
@@ -184,7 +185,7 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WPF
           INCLUDE_SYMBOLS: true
 
@@ -196,7 +197,7 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.Avalonia
           INCLUDE_SYMBOLS: true
 
@@ -208,7 +209,7 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetCore
           INCLUDE_SYMBOLS: true
 
@@ -220,7 +221,7 @@ jobs:
       #     # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
       #     TAG_COMMIT: false # Flag to enable / disalge git tagging
       #     # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-      #     NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+      #     NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
       #     PACKAGE_NAME: NetSparkleUpdater.UI.WinForms.NetFramework
       #     INCLUDE_SYMBOLS: true
 
@@ -232,7 +233,7 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.DSAHelper
           INCLUDE_SYMBOLS: true
 
@@ -244,6 +245,6 @@ jobs:
           # VERSION_REGEX: <Version>(.*)<\/Version> # Regex pattern to extract version info in a capturing group
           TAG_COMMIT: false # Flag to enable / disalge git tagging
           # TAG_FORMAT: v* # Format of the git tag, [*] gets replaced with version
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}} # nuget.org API key
+          NUGET_KEY: ${{steps.login.outputs.NUGET_API_KEY}} # nuget.org API key
           PACKAGE_NAME: NetSparkleUpdater.Tools.AppCastGenerator
           INCLUDE_SYMBOLS: true
