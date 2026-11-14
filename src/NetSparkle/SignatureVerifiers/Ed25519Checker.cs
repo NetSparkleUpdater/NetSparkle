@@ -95,13 +95,13 @@ namespace NetSparkleUpdater.SignatureVerifiers
             switch (SecurityMode)
             {
                 case SecurityMode.UseIfPossible:
-                    // if we have a DSA key, we only accept non-null signatures
+                    // if we have a key, we only accept non-null signatures
                     if (HasValidKeyInformation() && string.IsNullOrWhiteSpace(signature))
                     {
                         result = ValidationResult.Invalid;
                         return false;
                     }
-                    // if we don't have an dsa key, we accept any signature
+                    // if we don't have a key, we accept any signature
                     if (!HasValidKeyInformation())
                     {
                         result = ValidationResult.Unchecked;
