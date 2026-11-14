@@ -20,7 +20,7 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
             }
             return (int)Parser.Default.ParseArguments<Options>(args)
                 .MapResult(
-                    (Options opts) => Run(opts),
+                    Run,
                     errs => HandleParseError(errs));
         }
 
@@ -98,10 +98,14 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.BinaryToSign != null)
             {
-                var signature = signatureManager.GetSignatureForFile(new FileInfo(opts.BinaryToSign));
+                using var binaryToSignStream = File.OpenRead(opts.BinaryToSign);
+                
+                var signature = signatureManager.GetSignatureForFile(binaryToSignStream);
+
                 if (signature == null)
                 {
                     Console.WriteLine("Error: Could not generate signature for binary!", Color.Red);
+
                     return ExitCode.ErrorCouldNotGenerateSignature;
                 }
 
@@ -112,15 +116,19 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
 
             if (opts.BinaryToVerify != null)
             {
-                var result = signatureManager.VerifySignature(new FileInfo(opts.BinaryToVerify), opts.Signature ?? "");
+                using var binaryToVerifyStream = File.OpenRead(opts.BinaryToVerify);
+
+                var result = signatureManager.VerifySignature(binaryToVerifyStream, opts.Signature ?? string.Empty);
 
                 if (result)
                 {
                     Console.WriteLine($"Signature valid", Color.Green);
+
                     return ExitCode.Success;
                 }
 
                 Console.WriteLine($"Signature invalid", Color.Red);
+
                 return ExitCode.ErrorSignatureInvalid;
             }
 
@@ -129,8 +137,8 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 ? new XMLAppCastMaker(signatureManager, opts)
                 : new JsonAppCastMaker(signatureManager, opts);
             var appCastFileName = generator.GetPathToAppCastOutput(
-                opts.OutputDirectory ?? ".", 
-                opts.SourceBinaryDirectory ?? ".", 
+                opts.OutputDirectory ?? ".",
+                opts.SourceBinaryDirectory ?? ".",
                 opts.OutputFileName ?? "appcast"
             );
             var outputDirName = Path.GetDirectoryName(appCastFileName);
@@ -144,10 +152,18 @@ namespace NetSparkleUpdater.Tools.AppCastGenerator
                 Console.WriteLine("Creating {0}", outputDirName);
                 Directory.CreateDirectory(outputDirName);
             }
-            var (items, productName) = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory ?? ".", opts.ReparseExistingAppCast, appCastFileName, opts.FileToAddToAppCast ?? "");
-            if (items != null)
+
+            (List<AppCastItem>? Items, string? ProductName) appCastData;
+
+            using (var appCastReadStream = File.OpenRead(appCastFileName))
             {
-                generator.SerializeItemsToFile(items, productName ?? "", appCastFileName);
+                appCastData = generator.LoadAppCastItemsAndProductName(opts.SourceBinaryDirectory ?? ".", opts.ReparseExistingAppCast, appCastReadStream, opts.FileToAddToAppCast ?? "");
+            }
+
+            if (appCastData.Items != null)
+            {
+                using var appCastWriteStream = File.OpenWrite(appCastFileName);
+                generator.SerializeItems(appCastData.Items, appCastData.ProductName ?? "", appCastWriteStream);
                 generator.CreateSignatureFile(appCastFileName, opts.SignatureFileExtension ?? "");
                 return ExitCode.Success;
             }

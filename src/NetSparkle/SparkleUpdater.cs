@@ -745,8 +745,9 @@ namespace NetSparkleUpdater
         /// </summary>
         /// <param name="config">the SparkleUpdater configuration for the reference assembly</param>
         /// <param name="ignoreSkippedVersions">true to ignore skipped versions, false otherwise</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
         /// <returns><see cref="UpdateInfo"/> with information on whether there is an update available or not.</returns>
-        protected async Task<UpdateInfo> GetUpdateStatus(Configuration config, bool ignoreSkippedVersions = false)
+        protected async Task<UpdateInfo> GetUpdateStatus(Configuration config, bool ignoreSkippedVersions = false, CancellationToken cancellationToken = default)
         {
             List<AppCastItem>? updates = null;
             // report
@@ -763,11 +764,11 @@ namespace NetSparkleUpdater
             try
             {
                 LogWriter?.PrintMessage("About to start downloading the app cast...");
-                var appCastStr = await AppCastHelper.DownloadAppCast();
+                var appCastStr = await AppCastHelper.DownloadAppCast(cancellationToken);
                 if (appCastStr != null && !string.IsNullOrWhiteSpace(appCastStr))
                 {
                     LogWriter?.PrintMessage("App cast successfully downloaded. Parsing...");
-                    var appCast = AppCastCache = await AppCastGenerator.DeserializeAppCastAsync(appCastStr);
+                    var appCast = AppCastCache = await AppCastGenerator.DeserializeAppCastAsync(appCastStr, cancellationToken);
                     LogWriter?.PrintMessage("App cast parsed; getting available updates...");
                     updates = AppCastHelper.FilterUpdates(appCast.Items);
                 }

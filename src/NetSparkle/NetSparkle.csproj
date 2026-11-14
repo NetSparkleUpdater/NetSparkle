@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net11.0;net10.0;netstandard2.0;net47</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -98,8 +97,8 @@
     <None Remove="nuget\**" />
   </ItemGroup>
   <ItemGroup>
-  <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-  <None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
-  <None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\UPGRADING.md" Pack="true" PackagePath="\" />
+    <None Include="ArtWork\software-update-available.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

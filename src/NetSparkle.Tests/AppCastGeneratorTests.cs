@@ -1,18 +1,14 @@
+using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Interfaces;
-using NetSparkleUpdater;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using System.IO;
-using Xunit.Sdk;
-using System.Text.Json;
+using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml;
+using Xunit;
 
 namespace NetSparkleUnitTests
 {
@@ -72,7 +68,7 @@ namespace NetSparkleUnitTests
             Assert.Equal("0.9", deserialized.Items[2].Version);
             // write to file
             var path = System.IO.Path.GetTempFileName();
-            try 
+            try
             {
                 maker.SerializeAppCastToFile(appCast, path);
                 deserialized = maker.DeserializeAppCastFromFile(path);
@@ -93,15 +89,19 @@ namespace NetSparkleUnitTests
         }
 
         [Theory]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCast))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCastAsync))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCastToFile))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCastToFileAsync))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCast))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCastAsync))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCastToFile))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCastToFileAsync))]
-        public async Task TestCanSerializeAppCast(AppCastMakerType appCastMakerType, string serializeFuncName)
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCast), typeof(string))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCastAsync), typeof(string))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCast), typeof(Stream))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.SerializeAppCastAsync), typeof(Stream))]
+        [InlineData(AppCastMakerType.Xml, nameof(AppCastGeneratorExtensions.SerializeAppCastToFile), null)]
+        [InlineData(AppCastMakerType.Xml, nameof(AppCastGeneratorExtensions.SerializeAppCastToFileAsync), null)]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCast), typeof(string))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCastAsync), typeof(string))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCast), typeof(Stream))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.SerializeAppCastAsync), typeof(Stream))]
+        [InlineData(AppCastMakerType.Json, nameof(AppCastGeneratorExtensions.SerializeAppCastToFile), null)]
+        [InlineData(AppCastMakerType.Json, nameof(AppCastGeneratorExtensions.SerializeAppCastToFileAsync), null)]
+        public async Task TestCanSerializeAppCast(AppCastMakerType appCastMakerType, string serializeFuncName, Type parameterType)
         {
             var appCast = new AppCast()
             {
@@ -111,9 +111,9 @@ namespace NetSparkleUnitTests
                 Language = "en_US",
                 Items = new List<AppCastItem>()
                 {
-                    new AppCastItem() 
-                    { 
-                        Version = "1.3", 
+                    new AppCastItem()
+                    {
+                        Version = "1.3",
                         DownloadLink = "https://mysite.com/update.deb",
                         DownloadSignature = "seru3112",
                         IsCriticalUpdate = true,
@@ -121,7 +121,7 @@ namespace NetSparkleUnitTests
                         PublicationDate = new DateTime(2023, 12, 09, 12, 12, 12, DateTimeKind.Utc),
                         Channel = "",
                     },
-                    new AppCastItem() 
+                    new AppCastItem()
                     {
                         Title = "Super Beta",
                         Version = "0.9-beta1",
@@ -139,22 +139,46 @@ namespace NetSparkleUnitTests
             var serialized = "";
             if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCast))
             {
-                serialized = maker.SerializeAppCast(appCast);
+                if (parameterType == typeof(string))
+                {
+                    serialized = maker.SerializeAppCast(appCast);
+                }
+                else
+                {
+                    var path = Path.GetTempFileName();
+                    var fileWriteStream = File.OpenWrite(path);
+                    maker.SerializeAppCast(appCast, fileWriteStream);
+                    fileWriteStream.Dispose();
+                    serialized = File.ReadAllText(path);
+                    File.Delete(path);
+                }
             }
             else if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCastAsync))
             {
-                serialized = await maker.SerializeAppCastAsync(appCast);
+                if (parameterType == typeof(string))
+                {
+                    serialized = await maker.SerializeAppCastAsync(appCast);
+                }
+                else
+                {
+                    var path = Path.GetTempFileName();
+                    var fileWriteStream = File.OpenWrite(path);
+                    await maker.SerializeAppCastAsync(appCast, fileWriteStream);
+                    fileWriteStream.Dispose();
+                    serialized = File.ReadAllText(path);
+                    File.Delete(path);
+                }
             }
-            else if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCastToFile))
+            else if (serializeFuncName == nameof(AppCastGeneratorExtensions.SerializeAppCastToFile))
             {
-                var path = System.IO.Path.GetTempFileName();
+                var path = Path.GetTempFileName();
                 maker.SerializeAppCastToFile(appCast, path);
                 serialized = File.ReadAllText(path);
                 File.Delete(path);
             }
-            else if (serializeFuncName == nameof(IAppCastGenerator.SerializeAppCastToFileAsync))
+            else if (serializeFuncName == nameof(AppCastGeneratorExtensions.SerializeAppCastToFileAsync))
             {
-                var path = System.IO.Path.GetTempFileName();
+                var path = Path.GetTempFileName();
                 await maker.SerializeAppCastToFileAsync(appCast, path);
                 serialized = File.ReadAllText(path);
                 File.Delete(path);
@@ -230,15 +254,19 @@ namespace NetSparkleUnitTests
         }
 
         [Theory]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCast))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastAsync))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastFromFile))]
-        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCast))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastAsync))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastFromFile))]
-        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))]
-        public async Task TestCanDeserializeAppCast(AppCastMakerType appCastMakerType, string deserializeFuncName)
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCast), typeof(string))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastAsync), typeof(string))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCast), typeof(Stream))]
+        [InlineData(AppCastMakerType.Xml, nameof(IAppCastGenerator.DeserializeAppCastAsync), typeof(Stream))]
+        [InlineData(AppCastMakerType.Xml, nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFile), null)]
+        [InlineData(AppCastMakerType.Xml, nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFileAsync), null)]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCast), typeof(string))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastAsync), typeof(string))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCast), typeof(Stream))]
+        [InlineData(AppCastMakerType.Json, nameof(IAppCastGenerator.DeserializeAppCastAsync), typeof(Stream))]
+        [InlineData(AppCastMakerType.Json, nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFile), null)]
+        [InlineData(AppCastMakerType.Json, nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFileAsync), null)]
+        public async Task TestCanDeserializeAppCast(AppCastMakerType appCastMakerType, string deserializeFuncName, Type parameterType)
         {
             var appCastToDeserialize = "";
             if (appCastMakerType == AppCastMakerType.Xml)
@@ -311,22 +339,46 @@ namespace NetSparkleUnitTests
             AppCast deserialized = null;
             if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCast))
             {
-                deserialized = maker.DeserializeAppCast(appCastToDeserialize);
+                if (parameterType == typeof(string))
+                {
+                    deserialized = maker.DeserializeAppCast(appCastToDeserialize);
+                }
+                else
+                {
+                    var path = Path.GetTempFileName();
+                    File.WriteAllText(path, appCastToDeserialize);
+                    var fileStream = File.OpenRead(path);
+                    deserialized = maker.DeserializeAppCast(fileStream);
+                    fileStream.Dispose();
+                    File.Delete(path);
+                }
             }
             else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastAsync))
             {
-                deserialized = await maker.DeserializeAppCastAsync(appCastToDeserialize);
+                if (parameterType == typeof(string))
+                {
+                    deserialized = await maker.DeserializeAppCastAsync(appCastToDeserialize);
+                }
+                else
+                {
+                    var path = Path.GetTempFileName();
+                    File.WriteAllText(path, appCastToDeserialize);
+                    var fileStream = File.OpenRead(path);
+                    deserialized = await maker.DeserializeAppCastAsync(fileStream);
+                    fileStream.Dispose();
+                    File.Delete(path);
+                }
             }
-            else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFile))
+            else if (deserializeFuncName == nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFile))
             {
-                var path = System.IO.Path.GetTempFileName();
+                var path = Path.GetTempFileName();
                 File.WriteAllText(path, appCastToDeserialize);
                 deserialized = maker.DeserializeAppCastFromFile(path);
                 File.Delete(path);
             }
-            else if (deserializeFuncName == nameof(IAppCastGenerator.DeserializeAppCastFromFileAsync))
+            else if (deserializeFuncName == nameof(AppCastGeneratorExtensions.DeserializeAppCastFromFileAsync))
             {
-                var path = System.IO.Path.GetTempFileName();
+                var path = Path.GetTempFileName();
                 File.WriteAllText(path, appCastToDeserialize);
                 deserialized = await maker.DeserializeAppCastFromFileAsync(path);
                 File.Delete(path);

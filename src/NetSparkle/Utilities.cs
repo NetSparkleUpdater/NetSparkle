@@ -1,9 +1,12 @@
 ﻿using NetSparkleUpdater.Enums;
 using System;
 using System.IO;
+#if NETCORE
 using System.Runtime.InteropServices;
+#endif
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater
@@ -33,7 +36,7 @@ namespace NetSparkleUpdater
             }
             return version.ToString(2);
         }
-        
+
         /// <summary>
         /// Gets the signature of a file with the given DSA private key.
         /// </summary>
@@ -192,10 +195,11 @@ namespace NetSparkleUpdater
         /// From: https://stackoverflow.com/a/64860277/3938401
         /// </summary>
         /// <param name="path">path to file to read</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests</param>
         /// <returns>file data</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task<string> ReadAllTextAsync(string path)
+        public static async Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken = default)
         {
             switch (path)
             {
@@ -203,38 +207,20 @@ namespace NetSparkleUpdater
                 case null: throw new ArgumentNullException(nameof(path));
             }
 
-            using var sourceStream = new FileStream(path, FileMode.Open, 
-                FileAccess.Read, FileShare.Read, 
+            using var sourceStream = new FileStream(path, FileMode.Open,
+                FileAccess.Read, FileShare.Read,
                 bufferSize: 4096,
                 useAsync: true);
-            using var streamReader = new StreamReader(sourceStream, Encoding.UTF8, 
-                detectEncodingFromByteOrderMarks: true); 
+            using var streamReader = new StreamReader(sourceStream, Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: true);
             // detectEncodingFromByteOrderMarks allows you to handle files with BOM correctly. 
             // Otherwise you may get chinese characters even when your text does not contain any
 
+#if NET7_0_OR_GREATER
+            return await streamReader.ReadToEndAsync(cancellationToken);
+#else 
             return await streamReader.ReadToEndAsync();
-        }
-
-        /// <summary>
-        /// Write text asynchronously (this method is a fill-in for 
-        /// .NET Framework and .NET Standard)
-        /// https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/using-async-for-file-access
-        /// </summary>
-        /// <param name="filePath">Location to write text</param>
-        /// <param name="text">Text to write</param>
-        /// <returns><seealso cref="Task"/> that you can await for the completion of this function</returns>
-        public static async Task WriteTextAsync(string filePath, string text)
-        {
-            byte[] encodedText = Encoding.UTF8.GetBytes(text);
-
-            using (var sourceStream =
-                new FileStream(
-                    filePath,
-                    FileMode.Create, FileAccess.Write, FileShare.None,
-                    bufferSize: 4096, useAsync: true))
-            {
-                await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
-            }
+#endif
         }
 
         /// <summary>
@@ -244,9 +230,9 @@ namespace NetSparkleUpdater
         /// <param name="str">String to turn into a stream</param>
         /// <param name="encoding"><seealso cref="Encoding"/> for stream</param>
         /// <returns></returns>
-        public static MemoryStream GenerateStreamFromString(string str, Encoding encoding)
+        public static MemoryStream GenerateStreamFromString(string? str, Encoding encoding)
         {
-            return new MemoryStream(encoding.GetBytes(str ?? ""));
+            return new MemoryStream(encoding.GetBytes(str ?? string.Empty));
         }
     }
 }

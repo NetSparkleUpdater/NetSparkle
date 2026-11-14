@@ -60,9 +60,13 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
             var manager = _fixture.GetSignatureManager();
-            var signature = manager.GetSignatureForFile(path);
-            // verify signature
-            Assert.True(manager.VerifySignature(path, signature));
+            using (var stream = File.OpenRead(path))
+            {
+                var signature = manager.GetSignatureForFile(stream);
+                stream.Position = 0;
+                // verify signature
+                Assert.True(manager.VerifySignature(stream, signature));
+            }
             // get rid of temp file
             File.Delete(path);
         }
@@ -78,20 +82,24 @@ namespace NetSparkle.Tests.AppCastGenerator
             Assert.Equal(tempData, File.ReadAllText(path));
             // get signature of file
             var manager = _fixture.GetSignatureManager();
-            var signature = manager.GetSignatureForFile(path);
+            var stream = File.OpenRead(path);
+            var signature = manager.GetSignatureForFile(stream);
             var realPublicKey = manager.KeysProvider.GetPublicKey();
             var realPrivateKey = manager.KeysProvider.GetPrivateKey();
             // intentionally mess up keys - by regenerating them in a new directory, we use a separate manager for this to preserve the keys
             SignatureManager newManager = _fixture.CreateSignatureManager("netsparkle-tests-wrong");
             try
             {
+                stream.Position = 0;
                 // verify signature does not work
-                Assert.False(newManager.VerifySignature(path, signature));
+                Assert.False(newManager.VerifySignature(stream, signature));
                 // override and verify that it does work
                 var valueKeysProvider = newManager.KeysProvider.GetRequiredProvider<ValueKeysProvider>();
                 valueKeysProvider.SetPublicKey(Convert.ToBase64String(realPublicKey));
                 valueKeysProvider.SetPrivateKey(Convert.ToBase64String(realPrivateKey));
-                Assert.True(newManager.VerifySignature(path, signature));
+                stream.Position = 0;
+                Assert.True(newManager.VerifySignature(stream, signature));
+                stream.Dispose();
             }
             finally
             {
@@ -130,11 +138,13 @@ namespace NetSparkle.Tests.AppCastGenerator
             {
                 Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PrivateKeyEnvironmentVariable, privKeyBase64);
                 Environment.SetEnvironmentVariable(EnvironmentKeysProvider.PublicKeyEnvironmentVariable, pubKeyBase64);
+                using var stream = File.OpenRead(path);
                 // get signature of file
-                var signature = manager.GetSignatureForFile(path);
+                var signature = manager.GetSignatureForFile(stream);
                 manager.Generate(true); // force regeneration of keys to "prove" that we are using environment 
+                stream.Position = 0;
                 // verify signature
-                Assert.True(manager.VerifySignature(path, signature));
+                Assert.True(manager.VerifySignature(stream, signature));
             }
             finally
             {

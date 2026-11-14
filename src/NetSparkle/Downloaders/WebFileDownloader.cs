@@ -4,10 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -89,11 +86,12 @@ namespace NetSparkleUpdater.Downloaders
                 // and start a new request as needed
                 if (IsDownloading)
                 {
-                    try 
+                    try
                     {
                         _cts?.Cancel();
                         _httpClient.CancelPendingRequests();
-                    } catch {}
+                    }
+                    catch { }
                 }
             }
             _logger?.PrintMessage("WebFileDownloader: Creating new HttpClient...");
@@ -163,7 +161,7 @@ namespace NetSparkleUpdater.Downloaders
 
         /// <inheritdoc/>
         public event DownloadProgressEvent? DownloadProgressChanged;
-        
+
         /// <inheritdoc/>
         public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
@@ -176,20 +174,20 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async Task DownloadFile(Uri? uri, string downloadFilePath)
+        public async Task DownloadFile(Uri? uri, string downloadFilePath, CancellationToken cancellationToken = default)
         {
             if (uri == null)
             {
                 _logger?.PrintMessage("WebFileDownloader: DownloadFile had a null Uri; not going to download anything");
             }
-            else 
+            else
             {
                 _logger?.PrintMessage("WebFileDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
-                await StartFileDownloadAsync(uri, downloadFilePath);
+                await StartFileDownloadAsync(uri, downloadFilePath, cancellationToken);
             }
         }
 
-        private async Task StartFileDownloadAsync(Uri? uri, string downloadFilePath)
+        private async Task StartFileDownloadAsync(Uri? uri, string downloadFilePath, CancellationToken cancellationToken = default)
         {
             // CancelDownload replaces _cts, so hold on to the one that belongs to this download
             // in order to be able to tell later on whether this download was canceled
@@ -209,7 +207,7 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     _cts = new CancellationTokenSource();
                 }
-                downloadCts = _cts;
+                downloadCts = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token, cancellationToken);
                 DownloadStarted?.Invoke(this, uri.ToString(), downloadFilePath);
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri))
                 using (HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, downloadCts.Token))
@@ -221,7 +219,7 @@ namespace NetSparkleUpdater.Downloaders
                             var redirectURI = response.Headers.Location;
                             if (RedirectHandler.Invoke(uri.ToString(), redirectURI?.ToString() ?? "", response))
                             {
-                                await StartFileDownloadAsync(redirectURI, downloadFilePath);
+                                await StartFileDownloadAsync(redirectURI, downloadFilePath, downloadCts.Token);
                             }
                         }
                         else
@@ -235,14 +233,18 @@ namespace NetSparkleUpdater.Downloaders
                     long totalRead = 0;
                     long readCount = 0;
                     _downloadFileLocation = downloadFilePath;
-                    const int bufferSize = 32*1024; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
+                    const int bufferSize = 32 * 1024; // read 32 KB at a time -- increased on 9/27/2022 from 4 KB
                     using (_fileStream = new FileStream(downloadFilePath, FileMode.Create, FileAccess.Write, FileShare.Read, bufferSize, true))
+#if NET6_0_OR_GREATER
+                    using (Stream contentStream = await response.Content.ReadAsStreamAsync(downloadCts.Token))
+#else
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+#endif
                     {
                         totalLength = response.Content.Headers.ContentLength ?? 0;
                         totalRead = 0;
                         readCount = 0;
-                        byte[] buffer = new byte[bufferSize]; 
+                        byte[] buffer = new byte[bufferSize];
                         UpdateDownloadProgress(0, totalLength);
                         IsDownloading = true;
 
@@ -254,7 +256,7 @@ namespace NetSparkleUpdater.Downloaders
                                 UpdateDownloadProgress(totalRead, totalLength);
                                 break;
                             }
-                            await _fileStream.WriteAsync(buffer, 0, bytesRead);
+                            await _fileStream.WriteAsync(buffer, 0, bytesRead, downloadCts.Token);
                             totalRead += bytesRead;
                             readCount += 1;
                             //await Task.Delay(1000); // for TESTING ONLY ("throttling" the download)
@@ -312,18 +314,21 @@ namespace NetSparkleUpdater.Downloaders
                 _cts?.Cancel();
                 _fileStream?.Close();
                 _httpClient?.CancelPendingRequests();
-            } catch {}
+            }
+            catch { }
             if (File.Exists(_downloadFileLocation))
             {
-                try {
+                try
+                {
                     File.Delete(_downloadFileLocation);
-                } catch {}
+                }
+                catch { }
             }
             IsDownloading = false;
             _cts = new CancellationTokenSource();
         }
 
-        private async Task<string?> RetrieveDestinationFileNameAsyncForUri(Uri? uri)
+        private async Task<string?> RetrieveDestinationFileNameAsyncForUri(Uri? uri, CancellationToken cancellationToken = default)
         {
             if (uri == null)
             {
@@ -336,7 +341,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 if (_cts == null)
                 {
-                    _cts = new CancellationTokenSource();
+                    _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 }
                 using (var response =
                     await httpClient.SendAsync(new HttpRequestMessage
@@ -349,12 +354,13 @@ namespace NetSparkleUpdater.Downloaders
                     {
                         string destFilename = response.RequestMessage?.RequestUri?.LocalPath ?? "";
                         return Path.GetFileName(destFilename);
-                    } else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
+                    }
+                    else if ((int)response.StatusCode >= 300 && (int)response.StatusCode <= 399 && RedirectHandler != null)
                     {
                         var redirectURI = response.Headers.Location;
                         if (RedirectHandler.Invoke(uri.ToString(), redirectURI?.ToString() ?? "", response))
                         {
-                            return await RetrieveDestinationFileNameAsyncForUri(redirectURI);
+                            return await RetrieveDestinationFileNameAsyncForUri(redirectURI, _cts.Token);
                         }
                     }
                     return null;
@@ -368,13 +374,13 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public virtual async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
+        public virtual async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item, CancellationToken cancellationToken = default)
         {
             if (item.DownloadLink == null)
             {
                 return null;
             }
-            return await RetrieveDestinationFileNameAsyncForUri(new Uri(item.DownloadLink));
+            return await RetrieveDestinationFileNameAsyncForUri(new Uri(item.DownloadLink), cancellationToken);
         }
     }
 }

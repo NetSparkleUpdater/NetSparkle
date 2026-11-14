@@ -1,12 +1,8 @@
 ﻿using NetSparkleUpdater.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetSparkleUpdater.Downloaders
@@ -39,16 +35,17 @@ namespace NetSparkleUpdater.Downloaders
             {
                 return File.ReadAllText(new Uri(url).LocalPath);
             }
+
             return File.ReadAllText(url);
         }
         
         /// <inheritdoc/>
-        public async Task<string> DownloadAndGetAppCastDataAsync(string url)
+        public async Task<string> DownloadAndGetAppCastDataAsync(string url, CancellationToken cancellationToken = default)
         {
             #if NETFRAMEWORK || NETSTANDARD
-                return await Utilities.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url);
+                return await Utilities.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url, cancellationToken);
             #else
-                return await File.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url);
+                return await File.ReadAllTextAsync(UseLocalUriPath ? new Uri(url).LocalPath : url, cancellationToken);
             #endif
         }
 

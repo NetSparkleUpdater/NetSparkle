@@ -63,7 +63,7 @@ namespace NetSparkleUpdater.Downloaders
 
         /// <inheritdoc/>
         public event DownloadProgressEvent? DownloadProgressChanged;
-        
+
         /// <inheritdoc/>
         public event AsyncCompletedEventHandler? DownloadFileCompleted;
 
@@ -76,9 +76,11 @@ namespace NetSparkleUpdater.Downloaders
             IsDownloading = false;
             if (!string.IsNullOrWhiteSpace(_downloadFileLocation) && File.Exists(_downloadFileLocation))
             {
-                try {
+                try
+                {
                     File.Delete(_downloadFileLocation);
-                } catch {}
+                }
+                catch { }
             }
         }
 
@@ -100,13 +102,13 @@ namespace NetSparkleUpdater.Downloaders
         }
 
         /// <inheritdoc/>
-        public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item)
+        public async Task<string?> RetrieveDestinationFileNameAsync(AppCastItem item, CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() => Path.GetFileName(item.DownloadLink));
+            return await Task.Run(() => Path.GetFileName(item.DownloadLink), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task DownloadFile(Uri? uri, string downloadFilePath)
+        public async Task DownloadFile(Uri? uri, string downloadFilePath, CancellationToken cancellationToken = default)
         {
             var path = UseLocalUriPath ? uri?.LocalPath : uri?.AbsolutePath;
             if (path == null)
@@ -116,7 +118,10 @@ namespace NetSparkleUpdater.Downloaders
             else
             {
                 _logger?.PrintMessage("LocalFileDownloader: Starting file copy from {0} to {1}", path, downloadFilePath);
-                await CopyFileAsync(path, downloadFilePath, _cancellationTokenSource.Token);
+
+                var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
+
+                await CopyFileAsync(path, downloadFilePath, cancellationTokenSource.Token);
             }
         }
 
@@ -179,9 +184,11 @@ namespace NetSparkleUpdater.Downloaders
         {
             if (File.Exists(destinationFile))
             {
-                try {
+                try
+                {
                     File.Delete(destinationFile);
-                } catch {}
+                }
+                catch { }
             }
             IsDownloading = false;
         }

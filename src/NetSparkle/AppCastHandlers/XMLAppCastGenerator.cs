@@ -1,13 +1,8 @@
-using NetSparkleUpdater;
-using NetSparkleUpdater.Configurations;
-using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,20 +14,18 @@ namespace NetSparkleUpdater.AppCastHandlers
     /// <summary>
     /// An XML-based app cast document downloader and handler
     /// </summary>
-    public class XMLAppCastGenerator : IAppCastGenerator
+    public class XMLAppCastGenerator : AppCastGenerator
     {
-        private ILogger? _logWriter;
-
         /// <summary>
         /// Sparkle XML namespace
         /// </summary>
         public static readonly XNamespace SparkleNamespace = "http://www.andymatuschak.org/xml-namespaces/sparkle";
-        
+
         /// <summary>
         /// Default XML attribute name for ed25519 signatures
         /// </summary>
         public static readonly string Ed25519SignatureAttribute = "edSignature";
-        
+
         /// <summary>
         /// Default XML attribute name for a signature for an unspecified algorithm
         /// </summary>
@@ -42,9 +35,8 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// An app cast generator that reads/writes XML
         /// </summary>
         /// <param name="logger">Optional <seealso cref="ILogger"/> for logging data</param>
-        public XMLAppCastGenerator(ILogger? logger = null)
+        public XMLAppCastGenerator(ILogger? logger = null) : base(logger)
         {
-            _logWriter = logger;
             HumanReadableOutput = true;
             OutputSignatureAttribute = SignatureAttribute;
         }
@@ -63,7 +55,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         public string OutputSignatureAttribute { get; set; }
 
         /// <inheritdoc/>
-        public AppCast DeserializeAppCast(string appCastString)
+        public override AppCast DeserializeAppCast(string appCastString)
         {
             var appCast = new AppCast();
             if (!string.IsNullOrWhiteSpace(appCastString))
@@ -83,7 +75,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     foreach (var item in docItems)
                     {
                         var currentItem = ReadAppCastItem(item);
-                        _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}", 
+                        _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}",
                             currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystem ?? "[Unknown operating system]");
                         appCast.Items.Add(currentItem);
                     }
@@ -95,26 +87,23 @@ namespace NetSparkleUpdater.AppCastHandlers
         }
 
         /// <inheritdoc/>
-        public async Task<AppCast> DeserializeAppCastAsync(string appCastString)
+        public override async Task<AppCast> DeserializeAppCastAsync(string appCastString, CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() => DeserializeAppCast(appCastString));
+            return await Task.Run(() => DeserializeAppCast(appCastString), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public AppCast DeserializeAppCastFromFile(string filePath)
+        public override async Task<AppCast> DeserializeAppCastAsync(Stream stream, CancellationToken cancellationToken = default)
         {
-            return DeserializeAppCast(File.ReadAllText(filePath));
-        }
+            using var reader = new StreamReader(stream);
 
-        /// <inheritdoc/>
-        public async Task<AppCast> DeserializeAppCastFromFileAsync(string filePath)
-        {
-#if NETFRAMEWORK || NETSTANDARD
-            var data = await Utilities.ReadAllTextAsync(filePath);
+#if NET7_0_OR_GREATER
+            string data = await reader.ReadToEndAsync(cancellationToken);
 #else
-            var data = await File.ReadAllTextAsync(filePath);
+            string data = await reader.ReadToEndAsync();
 #endif
-            return await Task.Run(() => DeserializeAppCast(data));
+
+            return await Task.Run(() => DeserializeAppCast(data), cancellationToken);
         }
 
         // https://stackoverflow.com/a/955698/3938401
@@ -134,64 +123,45 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             return new XmlWriterSettings()
             {
-                NewLineChars = Environment.NewLine, 
-                Encoding = new UTF8Encoding(false), 
+                NewLineChars = Environment.NewLine,
+                Encoding = new UTF8Encoding(false),
                 Indent = HumanReadableOutput,
                 Async = async
             };
         }
 
         /// <inheritdoc/>
-        public string SerializeAppCast(AppCast appCast)
+        public override string SerializeAppCast(AppCast appCast)
         {
             var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
             var settings = GetXmlWriterSettings();
-            using (TextWriter writer = new Utf8StringWriter())
+            
+            using TextWriter writer = new Utf8StringWriter();
+            using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
-                {
-                    doc.Save(writer);
-                }
-                return writer.ToString() ?? "";
+                doc.Save(writer);
             }
+
+            return writer.ToString() ?? string.Empty;
         }
 
         /// <inheritdoc/>
-        public async Task<string> SerializeAppCastAsync(AppCast appCast)
+        public override async Task<string> SerializeAppCastAsync(AppCast appCast, CancellationToken cancellationToken = default)
         {
             var doc = GenerateAppCastXml(appCast.Items, appCast.Title, appCast.Link, appCast.Description, appCast.Language);
             var settings = GetXmlWriterSettings(true);
-            using (TextWriter writer = new Utf8StringWriter())
+            
+            using TextWriter writer = new Utf8StringWriter();
+            using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
             {
-                using (XmlWriter xmlWriter = XmlWriter.Create(writer, settings))
-                {
 #if NETFRAMEWORK || NETSTANDARD
-                    await Task.Run(() => doc.Save(writer));
+                await Task.Run(() => doc.Save(writer), cancellationToken);
 #else
-                    var cancelTokenSource = new CancellationTokenSource();
-                    var cancelToken = cancelTokenSource.Token;
-                    await doc.SaveAsync(xmlWriter, cancelToken);
+                await doc.SaveAsync(xmlWriter, cancellationToken);
 #endif
-                }
-                return writer.ToString() ?? "";
             }
-        }
 
-        /// <inheritdoc/>
-        public void SerializeAppCastToFile(AppCast appCast, string outputPath)
-        {
-            File.WriteAllText(outputPath, SerializeAppCast(appCast));
-        }
-
-        /// <inheritdoc/>
-        public async Task SerializeAppCastToFileAsync(AppCast appCast, string outputPath)
-        {
-            string xml = await SerializeAppCastAsync(appCast);
-#if NETFRAMEWORK || NETSTANDARD
-            await Utilities.WriteTextAsync(outputPath, xml);
-#else
-            await File.WriteAllTextAsync(outputPath, xml);
-#endif
+            return writer.ToString() ?? string.Empty;
         }
 
         private const string _itemNode = "item";
@@ -239,7 +209,7 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             //description
             newAppCastItem.Description = item.Element(_descriptionNode)?.Value.Trim() ?? string.Empty;
-            
+
             newAppCastItem.Version = item.Element(SparkleNamespace + _versionAttribute)?.Value ?? string.Empty;
             newAppCastItem.ShortVersion = item.Element(SparkleNamespace + _shortVersionAttribute)?.Value ?? string.Empty;
             bool isCritical = false;
@@ -329,10 +299,10 @@ namespace NetSparkleUpdater.AppCastHandlers
                 //      e.g. "Sat, 26 Oct 2019 22:05:11 GMT"
                 // "ddd, dd MMM yyyy HH:mm:ss" => Standard date format with no timezone (fallback)
                 //      e.g. "Sat, 26 Oct 2019 22:05:11"
-                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z", 
+                string[] formats = { "ddd, dd MMM yyyy HH:mm:ss zzz", "ddd, dd MMM yyyy HH:mm:ss Z",
                     "ddd, dd MMM yyyy HH:mm:ss", "ddd, dd MMM yyyy HH:mm:ss K" };
                 string dt = pubDateElement.Value.Trim();
-                if (DateTime.TryParseExact(dt, formats, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
+                if (DateTime.TryParseExact(dt, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                 {
                     _logWriter?.PrintMessage("While parsing app cast item, converted '{0}' to {1}.", dt, dateValue);
                     newAppCastItem.PublicationDate = dateValue;
