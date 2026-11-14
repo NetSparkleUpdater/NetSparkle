@@ -6,6 +6,7 @@
 * Bumped minimum .NET version to .NET 10 (dropped .NET 6 through 9) (a624d05d8cd5d8503bc6ba9e1e7cd6cc45491596)
 * `IAppCastGenerator` and `IUpdateDownloader` methods have been updated to take `Stream` objects and use `CancellationToken` as appropriate (f4cb2409135025867643a367aefac1b0b50a0e9c)
 * Ordering for semantic versions has been tweaked; now ordered by maturity: dev/nightly/canary/snapshot/ci/pre-alpha, then alpha, beta, preview/pre, rc, then any other label. Any pre-release is older than the release. See #742.
+* Fixed `NetSparkleDelegates.InstallUpdateFailure` returning a `bool` that was unused.
 
 ### Changes/Fixes from 3.x
 
