@@ -41,7 +41,7 @@ jobs:
         if: matrix.os == 'windows-latest'
       
       - name: Setup .NET 10.0, 11.0 for tests
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           dotnet-version: |
             10.0.x
@@ -78,7 +78,7 @@ jobs:
         uses: microsoft/setup-msbuild@v3.0.0
       
       - name: Setup .NET 10.0, 11.0
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           dotnet-version: |
             10.0.x
@@ -132,7 +132,7 @@ jobs:
         uses: microsoft/setup-msbuild@v3.0.0
       
       - name: Setup .NET 10.0, 11.0
-        uses: actions/setup-dotnet@v6.0.0
+        uses: actions/setup-dotnet@v6.1.0
         with:
           dotnet-version: |
             10.0.x
