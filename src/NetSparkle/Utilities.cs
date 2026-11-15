@@ -183,6 +183,7 @@ namespace NetSparkleUpdater
                 case SecurityMode.Unsafe:
                     return false;
                 case SecurityMode.OnlyVerifySoftwareDownloads:
+                case SecurityMode.OnlyVerifySoftwareDownloadsAndRequireIfPublicKeyAvailable:
                     return isCheckingSoftwareDownload;
 
             }

@@ -19,6 +19,8 @@
 * Fix ignore build metadata in version compare (#742) -- fixes a bunch of issues with semantic versioning
 * Return non-zero exit codes on errors in netsparkle-generate-appcast (#743)
 * Add custom HTTP headers support to appcast downloads (#744)
+* Added the very long-named `SecurityMode.OnlyVerifySoftwareDownloadsAndRequireIfPublicKeyAvailable` to add an alternative to `SecurityMode.UseIfPossible` where a public key makes a signature required (but only for software downloads). `SecurityMode.OnlyVerifySoftwareDownloads` does not require a signature when there is a public key available and only verifies if there is both a public key and a signature.
+* Clarified some documentation
 
 ## NetSparkle 3.x
 

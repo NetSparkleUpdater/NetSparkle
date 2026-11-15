@@ -34,9 +34,19 @@ namespace NetSparkleUpdater.Enums
         /// <summary>
         /// Only verify the signature of software downloads (via an ISignatureVerifier).
         /// Do not verify the signature of anything else: app casts, release notes, etc.
-        /// Note that if you do not ship a public key, the download will not be verified, 
+        /// Note that if you ship a public key but the download has no signature, the download will not be verified, 
         /// unlike UseIfPossible, which requires a signature if there is a public key available.
         /// </summary>
         OnlyVerifySoftwareDownloads = 4,
+
+        /// <summary>
+        /// Only verify the signature of software downloads (via an ISignatureVerifier).
+        /// Do not verify the signature of anything else: app casts, release notes, etc.
+        /// If you ship a public key, a signature will be required like UseIfPossible and
+        /// unlike OnlyVerifySoftwareDownloads.
+        /// If you don't ship a public key, like OnlyVerifySoftwareDownloads,
+        /// the download will not be verified.
+        /// </summary>
+        OnlyVerifySoftwareDownloadsAndRequireIfPublicKeyAvailable = 5,
     }
 }

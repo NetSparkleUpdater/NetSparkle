@@ -95,6 +95,7 @@ namespace NetSparkleUpdater.SignatureVerifiers
             switch (SecurityMode)
             {
                 case SecurityMode.UseIfPossible:
+                case SecurityMode.OnlyVerifySoftwareDownloadsAndRequireIfPublicKeyAvailable:
                     // if we have a key, we only accept non-null signatures
                     if (HasValidKeyInformation() && string.IsNullOrWhiteSpace(signature))
                     {
