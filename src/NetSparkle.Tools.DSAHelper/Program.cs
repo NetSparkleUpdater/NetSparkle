@@ -17,9 +17,9 @@ namespace NetSparkleUpdater.DSAHelper
             try
             {
                 // check if we have some parameters
-                if (args.Count() < 1)
+                if (args.Length < 1)
                 {
-                    Console.WriteLine("[ERROR] args.Count() < 1");
+                    Console.WriteLine("[ERROR] args.Length < 1");
                     Usage();
                     Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
                     return;
@@ -64,7 +64,7 @@ namespace NetSparkleUpdater.DSAHelper
                         {
                             if (args.Length != 3)
                             {
-                                Console.WriteLine("[ERROR] args.Count() != 3");
+                                Console.WriteLine("[ERROR] args.Length != 3");
                                 PrintArgs(args);
                                 Usage();
                                 Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
@@ -96,7 +96,7 @@ namespace NetSparkleUpdater.DSAHelper
                         {
                             if (args.Length != 4)
                             {
-                                Console.WriteLine("[ERROR] args.Count() != 4");
+                                Console.WriteLine("[ERROR] args.Length != 4");
                                 PrintArgs(args);
                                 Usage();
                                 Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
