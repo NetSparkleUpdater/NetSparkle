@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using System.Security.Cryptography;
 using NetSparkleUpdater.Enums;
+using NetSparkleUpdater.Tools.AppCastGenerator;
 
 namespace NetSparkleUpdater.DSAHelper
 {
@@ -20,6 +21,7 @@ namespace NetSparkleUpdater.DSAHelper
                 {
                     Console.WriteLine("[ERROR] args.Count() < 1");
                     Usage();
+                    Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
                     return;
                 }
 
@@ -34,8 +36,8 @@ namespace NetSparkleUpdater.DSAHelper
                             // verify if output file exists
                             if (File.Exists(_dsaPrivKey) || File.Exists(_dsaPubKey))
                             {
-                                Console.WriteLine("Error: Output files are currently exists");
-                                Environment.ExitCode = -1;
+                                Console.WriteLine("Error: Output files already exist and will not be overridden");
+                                Environment.ExitCode = (int)ExitCode.ErrorKeysAlreadyExist;
                                 return;
                             }
 
@@ -60,30 +62,30 @@ namespace NetSparkleUpdater.DSAHelper
                         break;
                     case "/sign_update":
                         {
-                            if (args.Count() != 3)
+                            if (args.Length != 3)
                             {
                                 Console.WriteLine("[ERROR] args.Count() != 3");
                                 PrintArgs(args);
                                 Usage();
-                                Environment.ExitCode = -1;
+                                Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
                                 return;
                             }
 
                             // get parameter
-                            String binary = args[1];
-                            String privKey = args[2];
+                            string binary = args[1];
+                            string privKey = args[2];
 
                             if (!File.Exists(binary))
                             {
-                                Console.Error.WriteLine("Target binary " + binary + " does not exists");
-                                Environment.ExitCode = -1;
+                                Console.Error.WriteLine("Target binary " + binary + " does not exist");
+                                Environment.ExitCode = (int)ExitCode.ErrorFileDoesNotExist;
                                 return;
                             }
 
                             if (!File.Exists(privKey))
                             {
-                                Console.Error.WriteLine("Private key file does not exists");
-                                Environment.ExitCode = -1;
+                                Console.Error.WriteLine("Private key file does not exist");
+                                Environment.ExitCode = (int)ExitCode.ErrorCouldNotLoadPrivateKey;
                                 return;
                             }
 
@@ -92,12 +94,12 @@ namespace NetSparkleUpdater.DSAHelper
                         break;
                     case "/verify_update":
                         {
-                            if (args.Count() != 4)
+                            if (args.Length != 4)
                             {
                                 Console.WriteLine("[ERROR] args.Count() != 4");
                                 PrintArgs(args);
                                 Usage();
-                                Environment.ExitCode = -1;
+                                Environment.ExitCode = (int)ExitCode.ErrorInvalidArguments;
                                 return;
                             }
 
@@ -134,6 +136,7 @@ namespace NetSparkleUpdater.DSAHelper
             {
                 Console.WriteLine("Something went wrong :-(");
                 Console.WriteLine(e.StackTrace);
+                Environment.ExitCode = (int)ExitCode.ErrorUnknownError;
             }
         }
 
