@@ -7,6 +7,7 @@
 * `IAppCastGenerator` and `IUpdateDownloader` methods have been updated to take `Stream` objects and use `CancellationToken` as appropriate (f4cb2409135025867643a367aefac1b0b50a0e9c)
 * Ordering for semantic versions has been tweaked; now ordered by maturity: dev/nightly/canary/snapshot/ci/pre-alpha, then alpha, beta, preview/pre, rc, then any other label. Any pre-release is older than the release. See #742.
 * Fixed `NetSparkleDelegates.InstallUpdateFailure` returning a `bool` that was unused. (8f9110db733daf36552c65cf1efd441436db5d69)
+* Removed the custom `NetSparkleUpdater.Interfaces.ILogger`, `LogWriter`, and `LogWriterOutputMode` APIs. Logging now uses `Microsoft.Extensions.Logging.ILogger`. Rename `SparkleUpdater.LogWriter` and the corresponding logging properties to `Logger`, and pass in an `ILogger` configured by your application. Configure providers in your application as needed; NetSparkle does not configure providers and emits no logs when no logger is supplied.
 
 ### Changes/Fixes from 3.x
 

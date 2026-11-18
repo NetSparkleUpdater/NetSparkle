@@ -9,6 +9,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xunit;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace NetSparkleUnitTests
 {
@@ -22,10 +23,7 @@ namespace NetSparkleUnitTests
 
         private IAppCastGenerator GetGeneratorForType(AppCastMakerType appCastMakerType)
         {
-            var logger = new LogWriter()
-            {
-                OutputMode = NetSparkleUpdater.Enums.LogWriterOutputMode.Console
-            };
+            var logger = NullLogger.Instance;
             if (appCastMakerType == AppCastMakerType.Xml)
             {
                 return new XMLAppCastGenerator(logger);

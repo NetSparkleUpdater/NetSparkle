@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -75,8 +76,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     foreach (var item in docItems)
                     {
                         var currentItem = ReadAppCastItem(item);
-                        _logWriter?.PrintMessage("Found an item in the app cast: version {0} ({1}) -- os = {2}",
-                            currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystem ?? "[Unknown operating system]");
+                        _logger?.LogInformation("Found an item in the app cast: version {Version} ({ShortVersion}) -- OS = {OperatingSystem}.", currentItem.Version ?? "[Unknown version]", currentItem.ShortVersion ?? "[Unknown short version]", currentItem.OperatingSystem ?? "[Unknown operating system]");
                         appCast.Items.Add(currentItem);
                     }
                 }
@@ -304,12 +304,12 @@ namespace NetSparkleUpdater.AppCastHandlers
                 string dt = pubDateElement.Value.Trim();
                 if (DateTime.TryParseExact(dt, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateValue))
                 {
-                    _logWriter?.PrintMessage("While parsing app cast item, converted '{0}' to {1}.", dt, dateValue);
+                    _logger?.LogInformation("While parsing app cast item, converted '{DateText}' to {PublicationDate}.", dt, dateValue);
                     newAppCastItem.PublicationDate = dateValue;
                 }
                 else
                 {
-                    _logWriter?.PrintMessage("Cannot parse item's DateTime: {0}", dt);
+                    _logger?.LogError("Cannot parse item's DateTime: {DateText}.", dt);
                 }
             }
 

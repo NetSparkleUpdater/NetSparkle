@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 #nullable enable
 
 using NetSparkleUpdater.AppCastHandlers;
@@ -19,12 +20,12 @@ namespace NetSparkleUpdater.Samples.Avalonia
     /// </summary>
     public class OSAppCastFilter : IAppCastFilter
     {
-        private ILogger? _logWriter;
+        private ILogger? _logger;
 
-        public OSAppCastFilter(ILogger? logWriter = null)
+        public OSAppCastFilter(ILogger? logger = null)
         {
             RemoveOlderItems = true;
-            _logWriter = logWriter;
+            _logger = logger;
             OSName = "";
         }
 
@@ -41,7 +42,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
                 var appCastItemChannel = item.Channel ?? "";
                 if (RemoveOlderItems && semVer.CompareTo(installed) <= 0)
                 {
-                    _logWriter?.PrintMessage("Removing older item from filtered app cast results");
+                    _logger?.LogInformation("Removing older item from filtered app cast results");
                     return false;
                 }
                 if (string.IsNullOrWhiteSpace(OSName))

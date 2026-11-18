@@ -1,4 +1,4 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 
 using Console = Colorful.Console;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
@@ -37,8 +38,8 @@ namespace NetSparkleUpdater.AppCastGenerator
             string? productName = null;
             try
             {
-                var logWriter = new LogWriter(LogWriterOutputMode.Console);
-                var generator = new JsonAppCastGenerator(logWriter);
+                var logger = NullLogger.Instance;
+                var generator = new JsonAppCastGenerator(logger);
                 var appCast = generator.DeserializeAppCastWithoutSorting(stream);
                 Console.WriteLine("Deserializing app cast from JSON file...{0} = title", appCast.Title);
                 productName = appCast.Title;

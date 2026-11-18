@@ -12,6 +12,7 @@
         <PackageVersion Include="Colorful.Console" Version="1.2.15" />
         <PackageVersion Include="CommandLineParser" Version="2.9.1" />
         <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.15" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
         <PackageVersion Include="MimeTypes" Version="2.5.2" />
         <PackageVersion Include="Moq" Version="4.20.70" />

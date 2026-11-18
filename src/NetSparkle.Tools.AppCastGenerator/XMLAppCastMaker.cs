@@ -1,4 +1,4 @@
-﻿using NetSparkleUpdater.AppCastHandlers;
+using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Enums;
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Xml.Linq;
 
 using Console = Colorful.Console;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace NetSparkleUpdater.AppCastGenerator
 {
@@ -56,8 +57,8 @@ namespace NetSparkleUpdater.AppCastGenerator
                 }
 
                 var docDescendants = doc.Descendants("item");
-                var logWriter = new LogWriter(LogWriterOutputMode.Console);
-                var xmlGenerator = new XMLAppCastGenerator(logWriter);
+                var logger = NullLogger.Instance;
+                var xmlGenerator = new XMLAppCastGenerator(logger);
                 foreach (var item in docDescendants)
                 {
                     var currentItem = xmlGenerator.ReadAppCastItem(item);

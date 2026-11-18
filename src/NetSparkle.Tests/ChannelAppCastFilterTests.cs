@@ -1,4 +1,4 @@
-﻿using NetSparkleUpdater;
+using NetSparkleUpdater;
 using NetSparkleUpdater.AppCastHandlers;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.SignatureVerifiers;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Xunit;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace NetSparkleUnitTests
 {
@@ -16,8 +17,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void CanFilterItemsByVersionChannel()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -40,7 +41,7 @@ namespace NetSparkleUnitTests
         public void BuildMetadataIsNotTreatedAsChannelInfo()
         {
             // the app cast generator uses the product version, which has the commit hash in it on .NET 8+
-            var filter = new ChannelAppCastFilter(new LogWriter(LogWriterOutputMode.Console));
+            var filter = new ChannelAppCastFilter(NullLogger.Instance);
             var currentVersion = new SemVerLike("1.0.0", "+abc123");
             var items = new List<AppCastItem>()
             {
@@ -66,8 +67,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void CanFilterItemsByVersionChannelStrangeCasing()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -90,8 +91,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void CanFilterItemsByAppCastItemChannel()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -123,8 +124,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void CanUpgradeToNewStableVersionWhileOnBeta()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.1-alpha1", "");
             var items = new List<AppCastItem>()
             {
@@ -142,8 +143,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void CanFilterByMultipleChannels()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -161,8 +162,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void FirstItemIsLatestInSeriesOfChannel()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -180,8 +181,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void NonStableIgnoredIfNoChannels()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -203,8 +204,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void GetsLatestIfBothStableAndChannelAvailable()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
             {
@@ -236,8 +237,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void TestRemoveOlderItems()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             filter.RemoveOlderItems = false;
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()
@@ -267,8 +268,8 @@ namespace NetSparkleUnitTests
         [Fact]
         public void TestKeepItemsWithSuffix()
         {
-            var logWriter = new LogWriter(LogWriterOutputMode.Console);
-            var filter = new ChannelAppCastFilter(logWriter);
+            var logger = NullLogger.Instance;
+            var filter = new ChannelAppCastFilter(logger);
             filter.KeepItemsWithNoChannelInfo = true;
             var currentVersion = new SemVerLike("1.0.0", "");
             var items = new List<AppCastItem>()

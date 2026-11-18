@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater.Configurations;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.Interfaces;
@@ -21,7 +22,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         private string? _installedVersion;
         private string? _castUrl;
         private ISignatureVerifier? _signatureVerifier;
-        private ILogger? _logWriter;
+        private ILogger? _logger;
         private IAppCastDataDownloader? _dataDownloader;
 
         /// <summary>
@@ -75,31 +76,31 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="castUrl">full URL to the app cast file</param>
         /// <param name="installedVersion">installed version of the software</param>
         /// <param name="signatureVerifier">Object to check signatures of app cast information</param>
-        /// <param name="logWriter">object that you can utilize to do any necessary logging</param>
+        /// <param name="logger">object that you can utilize to do any necessary logging</param>
         public virtual void SetupAppCastHelper(IAppCastDataDownloader dataDownloader, string castUrl, 
-            string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logWriter = null)
+            string? installedVersion, ISignatureVerifier? signatureVerifier, ILogger? logger = null)
         {
             _dataDownloader = dataDownloader;
             _installedVersion = installedVersion;
             _castUrl = castUrl;
 
             _signatureVerifier = signatureVerifier;
-            _logWriter = logWriter;
+            _logger = logger;
         }
 
         private void CheckSetupCalled()
         {
             if (_dataDownloader == null)
             {
-                _logWriter?.PrintMessage("Warning: AppCastHandler has no IAppCastDataDownloader; did you forget to call SetupAppCastHandler()?");
+                _logger?.LogWarning("AppCastHandler has no IAppCastDataDownloader; did you forget to call SetupAppCastHandler()?");
             }
             if (string.IsNullOrWhiteSpace(_castUrl))
             {
-                _logWriter?.PrintMessage("Warning: AppCastHandler has no app cast URL; did you forget to call SetupAppCastHandler()?");
+                _logger?.LogWarning("AppCastHandler has no app cast URL; did you forget to call SetupAppCastHandler()?");
             }
             if (_signatureVerifier == null)
             {
-                _logWriter?.PrintMessage("Warning: AppCastHandler has no ISignatureVerifier; did you forget to call SetupAppCastHandler()?");
+                _logger?.LogWarning("AppCastHandler has no ISignatureVerifier; did you forget to call SetupAppCastHandler()?");
             }
         }
 
@@ -123,7 +124,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
             catch (Exception e)
             {
-                _logWriter?.PrintMessage("Error grabbing signature {0}.{2}: {1} ", appCastUrl, e.Message, signatureExtension);
+                _logger?.LogError(e, "Error grabbing signature for app cast from {AppCastUrl} with extension {SignatureExtension}.", appCastUrl, signatureExtension);
             }
             return null;
         }
@@ -142,48 +143,48 @@ namespace NetSparkleUpdater.AppCastHandlers
             CheckSetupCalled();
             if (_castUrl == null || string.IsNullOrWhiteSpace(_castUrl))
             {
-                _logWriter?.PrintMessage("Warning: DownloadAndParse called with no app cast URL set; did you forget to call SetupAppCastHandler()?");
+                _logger?.LogWarning("DownloadAndParse called with no app cast URL set; did you forget to call SetupAppCastHandler()?");
                 return null;
             }
             if (_dataDownloader == null)
             {
-                _logWriter?.PrintMessage("Warning: DownloadAndParse called with no data downloader set; did you forget to call SetupAppCastHandler()?");
+                _logger?.LogWarning("DownloadAndParse called with no data downloader set; did you forget to call SetupAppCastHandler()?");
                 return null;
             }
             try
             {
-                _logWriter?.PrintMessage("Downloading app cast data...");
+                _logger?.LogInformation("Downloading app cast data...");
                 var appCast = await _dataDownloader.DownloadAndGetAppCastDataAsync(_castUrl, cancellationToken) ?? "";
                 if (string.IsNullOrWhiteSpace(appCast))
                 {
-                    _logWriter?.PrintMessage("Failed to download app cast from URL {0}", _castUrl ?? "");
+                    _logger?.LogError("Failed to download app cast from URL {AppCastUrl}.", _castUrl ?? "");
                     return null;
                 }
                 bool isValidAppCast = true;
                 if (IsSignatureNeeded())
                 {
-                    _logWriter?.PrintMessage("Downloading app cast signature data...");
+                    _logger?.LogInformation("Downloading app cast signature data...");
                     var signature = "";
                     var extension = SignatureFileExtension?.Trim() ?? "signature";
                     signature = await DownloadSignatureData(_castUrl, extension, cancellationToken);
                     if (string.IsNullOrWhiteSpace(signature))
                     {
-                        _logWriter?.PrintMessage("Attempting to check for legacy .dsa signature data...");
+                        _logger?.LogInformation("Attempting to check for legacy .dsa signature data...");
                         signature = await DownloadSignatureData(_castUrl, ".dsa", cancellationToken);
                     }
                     isValidAppCast = VerifyAppCast(appCast, signature);
                 }
                 if (isValidAppCast)
                 {
-                    _logWriter?.PrintMessage("Appcast is valid!");
+                    _logger?.LogInformation("Appcast is valid!");
                     return appCast;
                 }
             }
             catch (Exception e)
             {
-                _logWriter?.PrintMessage("Error downloading app cast {0}: {1} ", _castUrl, e.Message);
+                _logger?.LogError(e, "Error downloading app cast from {AppCastUrl}.", _castUrl);
             }
-            _logWriter?.PrintMessage("Appcast is not valid");
+            _logger?.LogError("Appcast is not valid.");
             return null;
         }
 
@@ -199,7 +200,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         {
             if (string.IsNullOrWhiteSpace(appCast))
             {
-                _logWriter?.PrintMessage("Cannot read response from URL {0}", _castUrl ?? "");
+                _logger?.LogError("Cannot read the response from URL {AppCastUrl}.", _castUrl ?? "");
                 return false;
             }
 
@@ -210,8 +211,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     signature ?? "", appcastBytes ?? Array.Empty<byte>()) ?? ValidationResult.Invalid) 
                     == ValidationResult.Invalid)
             {
-                _logWriter?.PrintMessage("Signature check of appcast failed (Security mode is {0})", 
-                    _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible);
+                _logger?.LogError("Signature check of appcast failed (security mode: {SecurityMode}).", _signatureVerifier?.SecurityMode ?? SecurityMode.UseIfPossible);
                 return false;
             }
             return true;
@@ -237,7 +237,7 @@ namespace NetSparkleUpdater.AppCastHandlers
 
             if (AppCastFilter != null)
             {
-                _logWriter?.PrintMessage("Using custom AppCastFilter to filter out items...");
+                _logger?.LogInformation("Using custom AppCastFilter to filter out items...");
                 items = AppCastFilter.GetFilteredAppCastItems(installedVersion, items)?.ToList() ?? new List<AppCastItem>();
 
                 // AppCastFilter user has responsibility to filter out both older and not needed versions,
@@ -248,9 +248,8 @@ namespace NetSparkleUpdater.AppCastHandlers
             }
 
             var signatureNeeded = IsSignatureNeeded();
-            _logWriter?.PrintMessage("Looking for available updates; our installed version is {0}; " +
-                "do we need a signature? {1}; are we filtering out smaller versions than our " +
-                "current version? {2}", installedVersion, signatureNeeded, shouldFilterOutSmallerVersions);
+            _logger?.LogInformation("Looking for available updates; installed version is {InstalledVersion}; " +
+                "signature required = {SignatureNeeded}; filtering out older versions = {FilterOutOlderVersions}.", installedVersion, signatureNeeded, shouldFilterOutSmallerVersions);
             return items.Where((item) =>
             {
                 var filterResult = FilterAppCastItem(installedVersion, shouldFilterOutSmallerVersions, signatureNeeded, item);
@@ -267,8 +266,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                         return false;
                     }
                     // accept all valid items
-                    _logWriter?.PrintMessage("Item with version {0} ({1}) is a valid update! It can be downloaded at {2}", 
-                        item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                    _logger?.LogInformation("Item with version {Version} ({ShortVersion}) is a valid update and can be downloaded at {DownloadLink}.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                     return true;
                 }
                 return false;
@@ -300,10 +298,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 // filter smaller versions
                 if (SemVerLike.Parse(item.Version).CompareTo(installed) <= 0)
                 {
-                    _logWriter?.PrintMessage(
-                        "Rejecting update for {0} ({1}, {2}) because it is older than our current version of {3}",
-                        item.Version ?? "[Unknown version]",
-                        item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", installed);
+                    _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {Title}) because it is older than the installed version {InstalledVersion}.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", installed);
                     return FilterItemResult.VersionIsOlderThanCurrent;
                 }
             }
@@ -312,9 +307,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             if (signatureNeeded && 
                 string.IsNullOrWhiteSpace(item.DownloadSignature) && !string.IsNullOrWhiteSpace(item.DownloadLink))
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it we needed a Ed25519/other signature and " +
-                    "the item has no signature yet has a download link of {3}", item.Version ?? "[Unknown version]",
-                    item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink ?? "[Unknown download link]");
+                _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {Title}) because a signature is required but missing for download link {DownloadLink}.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.Title ?? "[Unknown title]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.SignatureIsMissing;
             }
 
@@ -334,8 +327,7 @@ namespace NetSparkleUpdater.AppCastHandlers
             // don't allow non-windows updates
             if (!item.IsWindowsUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows update and we're on Windows", item.Version ?? "[Unknown version]", 
-                    item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {DownloadLink}) because it isn't a Windows update.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
 #else
@@ -343,23 +335,17 @@ namespace NetSparkleUpdater.AppCastHandlers
             // operating system
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !item.IsWindowsUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Windows " +
-                    "update and we're on Windows", item.Version ?? "[Unknown version]", 
-                    item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {DownloadLink}) because it isn't a Windows update.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && !item.IsMacOSUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a macOS " +
-                    "update and we're on macOS", item.Version ?? "[Unknown version]", 
-                    item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {DownloadLink}) because it isn't a macOS update.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && !item.IsLinuxUpdate)
             {
-                _logWriter?.PrintMessage("Rejecting update for {0} ({1}, {2}) because it isn't a Linux " +
-                    "update and we're on Linux", item.Version ?? "[Unknown version]", 
-                    item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
+                _logger?.LogInformation("Rejecting update {Version} ({ShortVersion}, {DownloadLink}) because it isn't a Linux update.", item.Version ?? "[Unknown version]", item.ShortVersion ?? "[Unknown short version]", item.DownloadLink ?? "[Unknown download link]");
                 return FilterItemResult.NotThisPlatform;
             }
 #endif

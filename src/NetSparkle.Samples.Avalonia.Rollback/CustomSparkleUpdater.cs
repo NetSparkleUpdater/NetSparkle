@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater;
 using NetSparkleUpdater.Interfaces;
 
@@ -24,7 +25,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
         /// <returns>the awaitable <see cref="Task"/> for the application quitting</returns>
         protected override async Task RunDownloadedInstaller(string downloadFilePath)
         {
-            LogWriter.PrintMessage("Running downloaded installer");
+            Logger?.LogInformation("Running downloaded installer");
             // get the options for restarting the application
             string executableName = RestartExecutableName;
             string workingDir = RestartExecutablePath;
@@ -55,7 +56,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             }
 
             // generate the batch file                
-            LogWriter.PrintMessage("Generating batch in {0}", Path.GetFullPath(batchFilePath));
+            Logger?.LogInformation("Generating batch in {BatchFilePath}.", Path.GetFullPath(batchFilePath));
 
             string processID = Environment.ProcessId.ToString();
             string relaunchAfterUpdate = "";
@@ -146,7 +147,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             }
 
             // report
-            LogWriter.PrintMessage("Going to execute script at path: {0}", batchFilePath);
+            Logger?.LogInformation("Going to execute script at path: {BatchFilePath}.", batchFilePath);
 
             // init the installer helper
             if (isWindows)
@@ -162,13 +163,13 @@ namespace NetSparkleUpdater.Samples.Avalonia
                     }
                 };
                 // start the installer process. the batch file will wait for the host app to close before starting.
-                LogWriter.PrintMessage("Starting the installer process at {0}", batchFilePath);
+                Logger?.LogInformation("Starting the installer process at {BatchFilePath}.", batchFilePath);
                 _installerProcess.Start();
             }
             else
             {
                 // on macOS need to use bash to execute the shell script
-                LogWriter.PrintMessage("Starting the installer script process at {0} via shell exec", batchFilePath);
+                Logger?.LogInformation("Starting the installer script process at {BatchFilePath} via shell exec.", batchFilePath);
                 ExecVisible(batchFilePath, false);
             }
             await QuitApplication();
@@ -188,7 +189,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             {
                 shell = "/bin/sh";
             }
-            LogWriter?.PrintMessage("Shell is {0}", shell);
+            Logger?.LogInformation("Shell is {Shell}.", shell);
 
             _installerProcess = new Process()
             {
@@ -202,11 +203,11 @@ namespace NetSparkleUpdater.Samples.Avalonia
                     Arguments = $"-c \"{escapedArgs}\""
                 }
             };
-            LogWriter?.PrintMessage("Starting the process via {1} -c \"{0}\"", escapedArgs, shell);
+            Logger?.LogInformation("Starting the process via {Shell} -c \"{EscapedArgs}\"", shell, escapedArgs);
             _installerProcess.Start();
             if (waitForExit)
             {
-                LogWriter?.PrintMessage("Waiting for exit...");
+                Logger?.LogInformation("Waiting for exit...");
                 _installerProcess.WaitForExit();
             }
             return true;

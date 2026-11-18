@@ -24,7 +24,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
             _sparkle = new CustomSparkleUpdater(appcastToUse, new Ed25519Checker(Enums.SecurityMode.Strict, "8zPswEwycU7XQ7OcGQtI/b22pWo1qM2Ual2OhssaDyI="))
             {
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
-                LogWriter = new LogWriter(),
                 RelaunchAfterUpdate = true,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
 
