@@ -1,0 +1,51 @@
+name: Pack and publish NuGet package
+description: Packs a project and publishes its NuGet package
+inputs:
+  project_path:
+    description: Project path relative to the workspace
+    required: true
+  output_directory_name:
+    description: Directory name under RUNNER_TEMP for packed packages
+    required: true
+  build_configuration:
+    description: Build configuration passed to dotnet pack
+    required: true
+  nuget_source:
+    description: NuGet feed URL
+    required: true
+  nuget_api_key:
+    description: API key for the NuGet feed
+    required: true
+  disable_package_on_build:
+    description: Disable GeneratePackageOnBuild for projects that require it
+    required: false
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - name: Pack ${{ inputs.output_directory_name }}
+      id: pack
+      shell: pwsh
+      env:
+        PROJECT_PATH: ${{ inputs.project_path }}
+        OUTPUT_DIRECTORY_NAME: ${{ inputs.output_directory_name }}
+        BUILD_CONFIGURATION: ${{ inputs.build_configuration }}
+        DISABLE_PACKAGE_ON_BUILD: ${{ inputs.disable_package_on_build }}
+      run: |
+        $projectPath = Join-Path $env:GITHUB_WORKSPACE $env:PROJECT_PATH
+        $packageDirectory = Join-Path $env:RUNNER_TEMP $env:OUTPUT_DIRECTORY_NAME
+        $packArguments = @('pack', $projectPath, '--configuration', $env:BUILD_CONFIGURATION, '--output', $packageDirectory)
+        if ($env:DISABLE_PACKAGE_ON_BUILD -eq 'true') {
+          $packArguments += '-p:GeneratePackageOnBuild=false'
+        }
+        & dotnet @packArguments &&
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "packageDirectory=$packageDirectory"
+
+    - name: Publish ${{ inputs.output_directory_name }}
+      shell: pwsh
+      env:
+        PACKAGE_DIRECTORY: ${{ steps.pack.outputs.packageDirectory }}
+        NUGET_SOURCE: ${{ inputs.nuget_source }}
+        NUGET_API_KEY: ${{ inputs.nuget_api_key }}
+      run: |
+        dotnet nuget push "$env:PACKAGE_DIRECTORY\*.nupkg" --source $env:NUGET_SOURCE --api-key $env:NUGET_API_KEY --skip-duplicate
