@@ -123,7 +123,7 @@ _sparkle.StartLoop(true); // will auto-check for updates
 8. Run the app cast generator (see other portions of this readme or `netsparkle-generate-appcast --help` for options): `netsparkle-generate-appcast -b binary/folder -p change/log/folder -u https://example.com/downloads -l https://example.com/downloads/changelogs`
 9. Upload your files (including any `.signature` or similar files) to the appropriate locations on your server
 10. Do a test run by rebuilding your project with a temporary software version LOWER than the version you just uploaded. NetSparkle should check for the update, see there's an update, and go through that process for/with you (depending on if you're using a built-in UI, of course).
-11. Things not working? Your first step is to make use of `SparkleUpdater.LogWriter` to see if there is any helpful debug information showing up on the console!
+11. Things not working? Configure logging providers in your application and set `SparkleUpdater.Logger` to an `ILogger` instance to receive diagnostic messages.
 
 ### Project file
 
@@ -222,7 +222,7 @@ The file that launches your downloaded update executable only waits for 90 secon
 * Implement `IAppCastFilter` to do custom filtering on the `AppCastItem` objects in your downloaded app cast, e.g. to only consider a given subset of items as valid updates for your application; set `AppCastHelper.AppCastFilter` (`SparkleUpdater.AppCastHelper.AppCastFilter`) to utilize an instance of your object. NetSparkle includes the `ChannelAppCastFilter` class, which you can use to filter out items by a given product channel (e.g. alpha, beta) if your application utilizes those features.
 * Implement `IAppCastGenerator` to control how app casts are serialized and deserialized; set `SparkleUpdater.AppCastGenerator` to utilize an instance of your object. NetSparkle includes two implementations: `XMLAppCastGenerator`, for XML serialization/deserialization; and `JsonAppCastGenerator`, for JSON serialization/deserialization. The app cast generator CLI tool can also output both XML and JSON app casts.
 * Implement `IAssemblyAccessor` to control how version, copyright, and other product details are loaded for your application; set `Configuration.AssemblyAccessor` (`SparkleUpdater.Configuration.AssemblyAccessor`) to utilize an instance of your object. NetSparkle contains a default implementation, `AssemblyDiagnosticsAccessor`, which should work in the general case of loading data from a given assembly.
-* To log information to a file or to your console, implement `ILogger` and set `SparkleUpdater.LogWriter`. By default, the `LogWriter` class is used (which has the `LogWriterOutputMode` property to control whether the logs are written to `Console`, `Trace`, etc.)
+* NetSparkle uses `Microsoft.Extensions.Logging.ILogger` for diagnostic logging. Set `SparkleUpdater.Logger` to an `ILogger` configured by your application. NetSparkle does not configure logging providers; configure the providers you need in your application. If no logger is supplied, NetSparkle emits no logs.
 * Implement `ISignatureVerifier` to change how your signatures for the app cast, downloads, etc. are handled; set `SparkleUpdater.SignatureVerifier` to utilize an instance of your object.
 * Implement `IUpdateDownloader` to setup your own methods for downloading and sending progress on app update files (e.g. installers) for a given app cast item; set `SparkleUpdater.UpdateDownloader` to utilize an instance of your object.. NetSparkle includes two implementations by default: `WebFileDownloader` (default) to download files from the web/internet, and `LocalFileDownloader` for copying/"downloading" a file from a given path.
 
@@ -235,7 +235,7 @@ The file that launches your downloaded update executable only waits for 90 secon
 * Subclass `ReleaseNotesGrabber` to control the release notes downloading (and therefore display) process. To use an instance of your class, set `UIFactory.ReleaseNotesGrabberOverride`.
 * Override `WebFileDownloader` if you don't want to implement `IUpdateDownloader` yourself and just want to override a function or two such as `CreateHttpClient` or `RetreiveDestinationFileNameAsync`. To use an instance of your class, set `SparkleUpdater.UpdateDownloader`.
 * Override `WebRequestAppCastDataDownloader` if you don't want to implement `IAppCastDataDownloader` and just want to override a function or two such as `CreateHttpClient`. To use an instance of your class, set `SparkleUpdater.AppCastDataDownloader`.
-* Override `LogWriter` to implement the `PrintMessage` function; because `ILogger` is a pretty simple interface, you can probably just implement that interface yourself if your needs are complex. To use an instance of your class, set `SparkleUpdater.LogWriter`.
+* Configure the logging providers in your application and pass the resulting `Microsoft.Extensions.Logging.ILogger` to `SparkleUpdater.Logger`; NetSparkle does not create providers.
 * Override `SparkleUpdater` to implement some different installation-related functions, including:
   * `GetWindowsInstallerCommand`
   * `GetInstallerCommand`
@@ -358,7 +358,7 @@ You can generate Ed25519 signatures using the `AppCastGenerator` tool (from [thi
 If you'd like to use a JSON app cast rather than XML:
 
 * Use `--output-type json` when generating your app cast file via the app cast generator
-* Set `SparkleUpdater.AppCastGenerator` to `new JsonAppCastGenerator(mySparkleUpdater.LogWriter)`.
+* Set `SparkleUpdater.AppCastGenerator` to `new JsonAppCastGenerator(mySparkleUpdater.Logger)`.
 * By default, the output will be human-readable. If you want to turn this off, set the `JsonAppCastGenerator.HumanReadableOutput` property to `false`.
 
 ### App Cast Generator Options
@@ -578,7 +578,7 @@ public override bool DownloadAndParse()
 {
     try
     {
-        _logWriter.PrintMessage("Downloading app cast data...");
+        _logger.LogInformation("Downloading app cast data...");
 
         var appCast = _dataDownloader.DownloadAndGetAppCastData(_castUrl);
         if (!string.IsNullOrWhiteSpace(appCast))
@@ -590,7 +590,7 @@ public override bool DownloadAndParse()
     }
     catch (Exception e)
     {
-        _logWriter.PrintMessage("Error reading app cast {0}: {1} ", _castUrl, e.Message);
+        _logger.LogError(e, "Error reading app cast from {CastUrl}.", _castUrl);
     }
 
     return false;
@@ -670,7 +670,7 @@ If your app has DSA signatures, the app cast generator uses Ed25519 signatures b
 
 Here are some things you can do to figure out how to get your app running:
 
-* Make sure you have enabled and debugged your application thoroughly. A great way to do this is to set `SparkleUpdater.LogWriter = new LogWriter(LogWriterOutputMode.Console)` and then watch your console output while debugging.
+* Make sure you have enabled and debugged your application thoroughly. Configure an `ILogger` and its providers in your application, then set `SparkleUpdater.Logger` to receive diagnostic messages.
 * Look at the NetSparkleUpdater samples by downloading this repo and running the samples. You can even try putting your app cast URL in there and using your public key to debug with the source code!
 * Ask for help in our [Gitter](https://gitter.im/NetSparkleUpdater/NetSparkle)
 * Post an issue and wait for someone to respond with assistance

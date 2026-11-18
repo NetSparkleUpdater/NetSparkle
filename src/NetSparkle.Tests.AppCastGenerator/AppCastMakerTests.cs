@@ -11,6 +11,7 @@ using NetSparkleUpdater.Interfaces;
 using NetSparkleUpdater.AppCastHandlers;
 using System.Threading.Tasks;
 using System.IO.Enumeration;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace NetSparkle.Tests.AppCastGenerator
 {
@@ -954,10 +955,10 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var appCastHelper = new AppCastHelper();
                 var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
-                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                var logger = NullLogger.Instance;
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml
-                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logger)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logger);
                 appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(),
                         appCastFileName,
@@ -965,7 +966,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        logWriter);
+                        logger);
                 var appCast = await appCastHelper.DownloadAppCast();
                 Assert.False(string.IsNullOrWhiteSpace(appCast));
                 var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
@@ -1165,10 +1166,10 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var appCastHelper = new AppCastHelper();
                 var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
-                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                var logger = NullLogger.Instance;
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml
-                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logger)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logger);
                 appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(),
                         appCastFileName,
@@ -1176,7 +1177,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        logWriter);
+                        logger);
                 var appCast = await appCastHelper.DownloadAppCast();
                 Assert.False(string.IsNullOrWhiteSpace(appCast));
                 var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
@@ -1291,10 +1292,10 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var appCastHelper = new AppCastHelper();
                 var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
-                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                var logger = NullLogger.Instance;
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml
-                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logger)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logger);
                 appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(),
                         appCastFileName,
@@ -1302,7 +1303,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             NetSparkleUpdater.Enums.SecurityMode.Strict,
                             publicKeyString),
-                        logWriter);
+                        logger);
                 var appCast = await appCastHelper.DownloadAppCast();
                 Assert.False(string.IsNullOrWhiteSpace(appCast));
                 var appCastObj = appCastGenerator.DeserializeAppCast(appCast);
@@ -1396,10 +1397,10 @@ namespace NetSparkle.Tests.AppCastGenerator
                 var appCastHelper = new AppCastHelper();
                 var publicKey = signatureManager.KeysProvider.GetPublicKey();
                 var publicKeyString = Convert.ToBase64String(publicKey);
-                var logWriter = new NetSparkleUpdater.LogWriter(LogWriterOutputMode.Console);
+                var logger = NullLogger.Instance;
                 IAppCastGenerator appCastGenerator = appCastMakerType == AppCastMakerType.Xml
-                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logWriter)
-                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logWriter);
+                        ? new NetSparkleUpdater.AppCastHandlers.XMLAppCastGenerator(logger)
+                        : new NetSparkleUpdater.AppCastHandlers.JsonAppCastGenerator(logger);
                 appCastHelper.SetupAppCastHelper(
                         new NetSparkleUpdater.Downloaders.LocalFileAppCastDownloader(),
                         appCastFileName,
@@ -1407,7 +1408,7 @@ namespace NetSparkle.Tests.AppCastGenerator
                         new NetSparkleUpdater.SignatureVerifiers.Ed25519Checker(
                             SecurityMode.Strict,
                             publicKeyString),
-                        logWriter);
+                        logger);
                 var appCast = await appCastHelper.DownloadAppCast();
                 Assert.False(string.IsNullOrWhiteSpace(appCast));
                 var appCastObj = appCastGenerator.DeserializeAppCast(appCast);

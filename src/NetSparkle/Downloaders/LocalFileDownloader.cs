@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 ﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
@@ -23,7 +24,6 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public LocalFileDownloader()
         {
-            _logger = new LogWriter();
             _cancellationTokenSource = new CancellationTokenSource();
             _downloadFileLocation = "";
         }
@@ -43,7 +43,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from LocalFileDownloader
         /// </summary>
-        public ILogger? LogWriter
+        public ILogger? Logger
         {
             set { _logger = value; }
             get { return _logger; }
@@ -113,11 +113,11 @@ namespace NetSparkleUpdater.Downloaders
             var path = UseLocalUriPath ? uri?.LocalPath : uri?.AbsolutePath;
             if (path == null)
             {
-                _logger?.PrintMessage("LocalFileDownloader: DownloadFile had a null Uri; not going to copy anything.");
+                _logger?.LogInformation("DownloadFile had a null Uri; not going to copy anything.");
             }
             else
             {
-                _logger?.PrintMessage("LocalFileDownloader: Starting file copy from {0} to {1}", path, downloadFilePath);
+                _logger?.LogInformation("Starting file copy from {SourcePath} to {DestinationPath}.", path, downloadFilePath);
 
                 var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(_cancellationTokenSource.Token, cancellationToken);
 
@@ -173,7 +173,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter?.PrintMessage("Error: {0}", e.Message);
+                Logger?.LogError(e, "Error downloading local file to {DestinationFile}.", destinationFile);
                 Cancel(destinationFile);
                 DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, true, null));
                 IsDownloading = false;
