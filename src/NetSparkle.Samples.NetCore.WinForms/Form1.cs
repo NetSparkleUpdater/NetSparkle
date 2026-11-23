@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using NetSparkleUpdater;
 using NetSparkleUpdater.Enums;
 using NetSparkleUpdater.SignatureVerifiers;
+using Microsoft.Extensions.Logging;
 
 namespace NetSparkleUpdater.Samples.NetCore.WinForms
 {
@@ -17,6 +18,15 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
         {
             InitializeComponent();
 
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddConsole()
+                    .AddDebug()
+                    .AddEventSourceLogger();
+            });
+
             var appcastUrl = "https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml";
             // set icon in project properties!
             string manifestModuleName = System.Reflection.Assembly.GetEntryAssembly().ManifestModule.FullyQualifiedName;
@@ -24,6 +34,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WinForms
             _sparkleUpdateDetector = new SparkleUpdater(appcastUrl, new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WinForms.UIFactory(icon),
+                Logger = loggerFactory.CreateLogger("NetSparkle"),
                 //RelaunchAfterUpdate = true,
                 //ShowsUIOnMainThread = true,
                 //UseNotificationToast = true

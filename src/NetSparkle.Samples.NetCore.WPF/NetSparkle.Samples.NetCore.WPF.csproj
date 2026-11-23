@@ -17,6 +17,12 @@
     <EmbeddedResource Include="NetSparkle_DSA.pub" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventSource" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <PackageReference Include="System.Drawing.Common" />
   </ItemGroup>

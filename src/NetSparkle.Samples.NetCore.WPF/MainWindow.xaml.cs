@@ -1,4 +1,5 @@
-﻿using NetSparkleUpdater.SignatureVerifiers;
+﻿using Microsoft.Extensions.Logging;
+using NetSparkleUpdater.SignatureVerifiers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,15 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
         {
             InitializeComponent();
 
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddConsole()
+                    .AddDebug()
+                    .AddEventSourceLogger();
+            });
+
             // remove the netsparkle key from registry 
             try
             {
@@ -40,6 +50,7 @@ namespace NetSparkleUpdater.Samples.NetCore.WPF
             _sparkle = new SparkleUpdater("https://netsparkleupdater.github.io/NetSparkle/files/sample-app/appcast.xml", new DSAChecker(Enums.SecurityMode.Strict))
             {
                 UIFactory = new NetSparkleUpdater.UI.WPF.UIFactory(NetSparkleUpdater.UI.WPF.IconUtilities.ToImageSource(icon)),
+                Logger = loggerFactory.CreateLogger("NetSparkle"),
                 //RelaunchAfterUpdate = true,
                 //UseNotificationToast = true
             };
