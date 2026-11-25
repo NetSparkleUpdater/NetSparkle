@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -25,12 +25,11 @@ namespace NetSparkleUpdater.Samples.Avalonia
             _sparkle = new CustomSparkleUpdater(url, new Ed25519Checker(Enums.SecurityMode.Unsafe, "8zPswEwycU7XQ7OcGQtI/b22pWo1qM2Ual2OhssaDyI="))
             {
                 UIFactory = new NetSparkleUpdater.UI.Avalonia.UIFactory(Icon),
-                LogWriter = new LogWriter(LogWriterOutputMode.Console)
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
-            var dler = new WebRequestAppCastDataDownloader(_sparkle.LogWriter) { TrustEverySSLConnection = true };
-            // var fileDler = new WebFileDownloader(_sparkle.LogWriter) { TrustEverySSLConnection = true };
+            var dler = new WebRequestAppCastDataDownloader(_sparkle.Logger) { TrustEverySSLConnection = true };
+            // var fileDler = new WebFileDownloader(_sparkle.Logger) { TrustEverySSLConnection = true };
             _sparkle.AppCastDataDownloader = dler;
             // _sparkle.UpdateDownloader = fileDler;
             StartSparkle();

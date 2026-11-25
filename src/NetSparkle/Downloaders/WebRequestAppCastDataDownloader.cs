@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from WebRequestAppCastDataDownloader
         /// </summary>
-        public ILogger? LogWriter
+        public ILogger? Logger
         {
             set { _logger = value; }
             get { return _logger; }
@@ -163,7 +164,7 @@ namespace NetSparkleUpdater.Downloaders
                             var redirectURI = response.Headers.Location;
                             if (redirectURI == null)
                             {
-                                _logger?.PrintMessage("Response had a redirect status code but no location header; this is an error state as we do not know where to redirect this request to");
+                                _logger?.LogError("Response had a redirect status code but no location header; cannot determine where to redirect this request.");
                                 return "";
                             }
                             if (RedirectHandler.Invoke(url, redirectURI.ToString(), response))
@@ -200,7 +201,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                LogWriter?.PrintMessage("Error: {0}", e.Message);
+                Logger?.LogError(e, "Error downloading app cast data.");
             }
             return "";
         }

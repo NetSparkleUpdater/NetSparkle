@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
@@ -80,7 +81,7 @@ namespace NetSparkleUpdater
         /// <summary>
         /// ILogger to log data from LocalFileDownloader
         /// </summary>
-        public ILogger? LogWriter
+        public ILogger? Logger
         {
             set { _logger = value; }
             get { return _logger; }
@@ -142,13 +143,13 @@ namespace NetSparkleUpdater
         /// <returns>The release notes formatted as HTML and ready to display to the user</returns>
         public virtual async Task<string> DownloadAllReleaseNotes(List<AppCastItem> items, AppCastItem latestVersion, CancellationToken cancellationToken)
         {
-            _logger?.PrintMessage("Preparing to initialize release notes...");
+            _logger?.LogInformation("Preparing to initialize release notes...");
             var sb = new StringBuilder(InitialHTML);
             var hasAddedFirstItem = false;
             //items.Add(items.First()); // DEBUG -- use to test with multiple release note items in samples
             foreach (AppCastItem castItem in items)
             {
-                _logger?.PrintMessage("Initializing release notes for {0}", castItem.Version ?? "[Unknown version]");
+                _logger?.LogInformation("Initializing release notes for version {Version}.", castItem.Version ?? "[Unknown version]");
                 // TODO: could we optimize this by doing multiple downloads at once?
                 var releaseNotes = await GetReleaseNotes(castItem, cancellationToken);
                 sb.Append(string.Format((hasAddedFirstItem ? "<br/>" : "") + ReleaseNotesTemplate,
@@ -163,7 +164,7 @@ namespace NetSparkleUpdater
             }
             sb.Append("</body></html>");
 
-            _logger?.PrintMessage("Done initializing release notes!");
+            _logger?.LogInformation("Done initializing release notes!");
             return sb.ToString();
         }
 
@@ -210,11 +211,11 @@ namespace NetSparkleUpdater
             }
 
             // download release notes
-            _logger?.PrintMessage("Downloading release notes for {0} at {1}", item.Version ?? "[Unknown version]", item.ReleaseNotesLink ?? "[Unknown release notes link]");
+            _logger?.LogInformation("Downloading release notes for version {Version} at {ReleaseNotesLink}.", item.Version ?? "[Unknown version]", item.ReleaseNotesLink ?? "[Unknown release notes link]");
             string notes = item.ReleaseNotesLink != null 
                 ? await DownloadReleaseNotes(item.ReleaseNotesLink, cancellationToken)
                 : "";
-            _logger?.PrintMessage("Done downloading release notes for {0}", item.Version ?? "[Unknown version]");
+            _logger?.LogInformation("Done downloading release notes for version {Version}.", item.Version ?? "[Unknown version]");
             if (string.IsNullOrWhiteSpace(notes))
             {
                 return null;
@@ -248,7 +249,7 @@ namespace NetSparkleUpdater
                 }
                 catch (Exception ex)
                 {
-                    _logger?.PrintMessage("Error parsing Markdown syntax: {0}", ex.Message);
+                    _logger?.LogError(ex, "Error parsing Markdown syntax.");
                 }
             }
             return notes;
@@ -275,7 +276,7 @@ namespace NetSparkleUpdater
             }
             catch (Exception ex)
             {
-                _logger?.PrintMessage("Cannot download release notes from {0} because {1}", link, ex.Message);
+                _logger?.LogError(ex, "Cannot download release notes from {ReleaseNotesLink}.", link);
                 return "";
             }
         }

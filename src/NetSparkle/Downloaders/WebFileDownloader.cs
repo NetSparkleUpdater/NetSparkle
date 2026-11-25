@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 ﻿using NetSparkleUpdater.Events;
 using NetSparkleUpdater.Interfaces;
 using System;
@@ -45,7 +46,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <summary>
         /// ILogger to log data from WebFileDownloader
         /// </summary>
-        public ILogger? LogWriter
+        public ILogger? Logger
         {
             set { _logger = value; }
             get { return _logger; }
@@ -78,10 +79,10 @@ namespace NetSparkleUpdater.Downloaders
         /// </summary>
         public virtual void PrepareToDownloadFile()
         {
-            _logger?.PrintMessage("WebFileDownloader: Preparing to download file...");
+            _logger?.LogInformation("Preparing to download file...");
             if (_httpClient != null)
             {
-                _logger?.PrintMessage("WebFileDownloader: HttpClient existed already. Canceling...");
+                _logger?.LogInformation("HttpClient existed already. Canceling...");
                 // can't re-use WebClient, so cancel old requests
                 // and start a new request as needed
                 if (IsDownloading)
@@ -94,7 +95,7 @@ namespace NetSparkleUpdater.Downloaders
                     catch { }
                 }
             }
-            _logger?.PrintMessage("WebFileDownloader: Creating new HttpClient...");
+            _logger?.LogInformation("Creating new HttpClient...");
             _cts = new CancellationTokenSource();
             _httpClient = CreateHttpClient();
         }
@@ -178,11 +179,11 @@ namespace NetSparkleUpdater.Downloaders
         {
             if (uri == null)
             {
-                _logger?.PrintMessage("WebFileDownloader: DownloadFile had a null Uri; not going to download anything");
+                _logger?.LogInformation("DownloadFile had a null Uri; not going to download anything.");
             }
             else
             {
-                _logger?.PrintMessage("WebFileDownloader: Starting file download from {0} to {1}", uri, downloadFilePath);
+                _logger?.LogInformation("Starting file download from {DownloadUri} to {DestinationPath}.", uri, downloadFilePath);
                 await StartFileDownloadAsync(uri, downloadFilePath, cancellationToken);
             }
         }
@@ -196,7 +197,7 @@ namespace NetSparkleUpdater.Downloaders
             {
                 if (uri == null)
                 {
-                    _logger?.PrintMessage("StartFileDownloadAsync had a null Uri; not going to download anything");
+                    _logger?.LogInformation("StartFileDownloadAsync had a null Uri; not going to download anything");
                     return;
                 }
                 if (_httpClient == null)
@@ -284,12 +285,12 @@ namespace NetSparkleUpdater.Downloaders
                 {
                     // canceling closes the file and the request, which makes the in-flight read/write throw;
                     // that isn't a download error, so report it as a cancellation (like LocalFileDownloader does)
-                    _logger?.PrintMessage("WebFileDownloader: Download was canceled");
+                    _logger?.LogInformation("Download was canceled.");
                     DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(null, true, null));
                 }
                 else
                 {
-                    _logger?.PrintMessage("Error: {0}", e.Message);
+                    _logger?.LogError(e, "Error downloading file.");
                     DownloadFileCompleted?.Invoke(this, new AsyncCompletedEventArgs(e, false, null));
                 }
             }
@@ -308,7 +309,7 @@ namespace NetSparkleUpdater.Downloaders
         /// <inheritdoc/>
         public void CancelDownload()
         {
-            _logger?.PrintMessage("WebFileDownloader: Canceling download");
+            _logger?.LogInformation("Canceling download");
             try
             {
                 _cts?.Cancel();
@@ -332,7 +333,7 @@ namespace NetSparkleUpdater.Downloaders
         {
             if (uri == null)
             {
-                _logger?.PrintMessage("RetrieveDestinationFileNameAsyncForUri had a null Uri; not going to download anything");
+                _logger?.LogInformation("RetrieveDestinationFileNameAsyncForUri had a null Uri; not going to download anything");
                 return "";
             }
             var httpClient = CreateHttpClient();
@@ -368,7 +369,7 @@ namespace NetSparkleUpdater.Downloaders
             }
             catch (Exception e)
             {
-                _logger?.PrintMessage("Error retrieving destination file name: {0}", e.Message);
+                _logger?.LogError(e, "Error retrieving destination file name.");
             }
             return null;
         }

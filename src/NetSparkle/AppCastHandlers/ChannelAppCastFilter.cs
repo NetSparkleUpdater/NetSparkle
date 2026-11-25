@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,18 +17,18 @@ namespace NetSparkleUpdater.AppCastHandlers
     /// </summary>
     public class ChannelAppCastFilter : IAppCastFilter
     {
-        private ILogger? _logWriter;
+        private ILogger? _logger;
 
         /// <summary>
         /// Constructor for <seealso cref="ChannelAppCastFilter"/>
         /// </summary>
-        /// <param name="logWriter">Optional <seealso cref="ILogger"/> for logging data</param>
-        public ChannelAppCastFilter(ILogger? logWriter = null)
+        /// <param name="logger">Optional <seealso cref="ILogger"/> for logging data</param>
+        public ChannelAppCastFilter(ILogger? logger = null)
         {
             RemoveOlderItems = true;
             KeepItemsWithNoChannelInfo = true;
             ChannelSearchNames = new List<string>();
-            _logWriter = logWriter;
+            _logger = logger;
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                 var appCastItemChannel = item.Channel ?? "";
                 if (RemoveOlderItems && semVer.CompareTo(installed) <= 0)
                 {
-                    _logWriter?.PrintMessage("Removing older item from filtered app cast results");
+                    _logger?.LogInformation("Removing older item from filtered app cast results");
                     return false;
                 }
                 if (lowerChannelNames.Length > 0)
@@ -75,8 +76,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                     {
                         if (!string.IsNullOrWhiteSpace(channelName)) // ignore empty channel names
                         {
-                            _logWriter?.PrintMessage("Filtering by channel: {0}; keeping items with no suffix = {1}", 
-                                channelName, KeepItemsWithNoChannelInfo);
+                            _logger?.LogInformation("Filtering by channel: {ChannelName}; keeping items with no suffix = {KeepItemsWithNoChannelInfo}.", channelName, KeepItemsWithNoChannelInfo);
                             var shouldKeep = 
                                 semVer.AllSuffixes.ToLowerInvariant().Contains(channelName) ||
                                 appCastItemChannel.ToLowerInvariant().Contains(channelName) ||
@@ -89,7 +89,7 @@ namespace NetSparkleUpdater.AppCastHandlers
                             }
                         }
                     }
-                    _logWriter?.PrintMessage("Item with version {0} was discarded", semVer.ToString());
+                    _logger?.LogInformation("Item with version {Version} was discarded.", semVer.ToString());
                     return false;
                 }
                 else

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 ﻿using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;
@@ -10,7 +11,7 @@ namespace NetSparkleUpdater.AppCastHandlers
     public abstract class AppCastGenerator : IAppCastGenerator
     {
         /// <inheritdoc/>
-        protected readonly ILogger? _logWriter;
+        protected readonly ILogger? _logger;
 
         /// <summary>
         /// An app cast generator that reads/writes Json
@@ -18,7 +19,7 @@ namespace NetSparkleUpdater.AppCastHandlers
         /// <param name="logger">Optional <seealso cref="ILogger"/> for logging data</param>
         protected AppCastGenerator(ILogger? logger = null)
         {
-            _logWriter = logger;
+            _logger = logger;
         }
 
         /// <inheritdoc/>

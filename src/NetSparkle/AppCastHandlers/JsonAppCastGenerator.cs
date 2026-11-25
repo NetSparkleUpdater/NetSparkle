@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using NetSparkleUpdater.Interfaces;
 using System;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -32,7 +32,7 @@ namespace NetSparkleUpdater.Samples.Avalonia
             };
             // TLS 1.2 required by GitHub (https://developer.github.com/changes/2018-02-01-weak-crypto-removal-notice/)
             _sparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            var filter = new OSAppCastFilter(_sparkle.LogWriter) { RemoveOlderItems = false };
+            var filter = new OSAppCastFilter(_sparkle.Logger) { RemoveOlderItems = false };
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 filter.OSName = "windows-x64";
@@ -54,7 +54,6 @@ namespace NetSparkleUpdater.Samples.Avalonia
             {
                 filter.OSName = "linux-x64";
             }
-            (_sparkle.LogWriter as LogWriter).OutputMode = LogWriterOutputMode.Console;
             _sparkle.AppCastHelper.AppCastFilter = filter;
             StartSparkle();
         }
@@ -82,9 +81,8 @@ namespace NetSparkleUpdater.Samples.Avalonia
                 RelaunchAfterUpdate = false,
                 //UseNotificationToast = false // Avalonia version doesn't yet support notification toast messages
             };
-            (allOlderUpdatesSparkle.LogWriter as LogWriter).OutputMode = LogWriterOutputMode.Console;
             allOlderUpdatesSparkle.SecurityProtocolType = System.Net.SecurityProtocolType.Tls12;
-            var filter = new OSAppCastFilter(allOlderUpdatesSparkle.LogWriter) { RemoveOlderItems = false };
+            var filter = new OSAppCastFilter(allOlderUpdatesSparkle.Logger) { RemoveOlderItems = false };
             allOlderUpdatesSparkle.AppCastHelper.AppCastFilter = filter;
             UpdateInfo info = await allOlderUpdatesSparkle.CheckForUpdatesQuietly();
             Console.WriteLine("Update info status: {0}", info.Status);
